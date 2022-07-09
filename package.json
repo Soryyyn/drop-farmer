@@ -1,0 +1,13 @@
+{
+  "scripts": {
+
+  },
+  "dependencies": {
+    "puppeteer": "^15.3.2",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-stealth": "^2.11.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  }
+}
