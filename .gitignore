@@ -1,2 +1,7 @@
 # generated files / folders
 node_modules/
+dist/
+build/
+
+# environment variables
+.env
