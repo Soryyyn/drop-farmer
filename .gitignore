@@ -2,6 +2,7 @@
 node_modules/
 dist/
 build/
+settings.json
 
 # environment variables
 .env

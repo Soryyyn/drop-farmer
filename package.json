@@ -1,13 +1,15 @@
 {
-  "scripts": {
-
-  },
-  "dependencies": {
-    "puppeteer": "^15.3.2",
-    "puppeteer-extra": "^3.3.4",
-    "puppeteer-extra-plugin-stealth": "^2.11.0"
-  },
-  "devDependencies": {
-    "typescript": "^4.7.4"
-  }
+    "scripts": {
+        "dist": "tsc",
+        "start": "tsc && node dist/main.js",
+        "start:debug": "tsc && node inspect dist/main.js"
+    },
+    "dependencies": {
+        "puppeteer": "^15.3.2",
+        "puppeteer-extra": "^3.3.4",
+        "puppeteer-extra-plugin-stealth": "^2.11.0"
+    },
+    "devDependencies": {
+        "typescript": "^4.7.4"
+    }
 }
