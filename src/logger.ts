@@ -3,11 +3,25 @@ import { writeFileSync, existsSync } from "fs";
 import { join } from "path";
 import { APP_PATH, writeToFile } from "./fileHandling";
 
+/**
+ * Logger singleton which writes log entries to log file on desired actions.
+ */
 class Logger {
     private _fileName: string = ".log";
 
+    /**
+     * Constructor empty because no action is needed to perform here
+     * (for now).
+     */
     constructor() { }
 
+    /**
+     * Creates an appropriate log entry for the log file with timestamp, type and message.
+     *
+     * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
+     * @param {string} message Message to include in log entry.
+     * @returns {string} Prepared log entry.
+     */
     private createLogEntry(type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): string {
         let currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss:SSS");
         return `[${type}] ${currentTimeStamp} - ${message}\n`;
@@ -33,6 +47,12 @@ class Logger {
         }
     }
 
+    /**
+     * Logs (writes) a log entry into the ".log" file in the app dir.
+     *
+     * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
+     * @param {string} message Message to log.
+     */
     public log(type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): void {
         let entry = this.createLogEntry(type, message);
 
@@ -44,6 +64,10 @@ class Logger {
     }
 }
 
+/**
+ * Create the Logger class instance and freeze it to prevent mutation.
+ * Export the frozen instance to make it a singleton.
+ */
 const loggerInstance = new Logger();
 Object.freeze(loggerInstance);
 export default loggerInstance;
