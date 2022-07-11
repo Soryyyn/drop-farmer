@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFile } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 
 /**
@@ -56,8 +56,10 @@ export default class Settings {
      * Write a new default settigns file into the application directory.
      */
     private createSettingsFile() {
-        writeFile(this._settingsFilePath, JSON.stringify(this._defaultSettings, null, 4), (err) => {
-            if (err) throw err;
-        });
+        try {
+            writeFileSync(this._settingsFilePath, JSON.stringify(this._defaultSettings, null, 4));
+        } catch (err) {
+            throw err;
+        }
     }
 }
