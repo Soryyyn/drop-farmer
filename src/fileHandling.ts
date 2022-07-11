@@ -1,8 +1,9 @@
+import Logger from "./logger";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 
 // NOTE: refactor to more paths if necessary
-const APP_PATH: string = join(__dirname, "..");
+export const APP_PATH: string = join(__dirname, "..");
 
 /**
  * Gets the path of the wanted file by name.
@@ -21,10 +22,18 @@ export function getFilePath(fileName: string): string {
  * @param {string|Buffer} data Data which is written to the file on creation.
  */
 export function createFile(fileName: string, data: string | Buffer): void {
+    if (existsSync(join(APP_PATH, fileName))) {
+        Logger.log("INFO", `\"${fileName}\" at \"${APP_PATH}\" already exists, skipping creation...`)
+        return;
+    }
+
+    Logger.log("INFO", `Creating ${fileName} file...`);
     try {
         writeFileSync(join(APP_PATH, fileName), data);
+        Logger.log("INFO", `Created ${fileName} file.`);
     } catch (err) {
-        throw new Error(`Could not create file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+        Logger.log("ERROR", `Could not create file \"${fileName}\" at \"${APP_PATH}\". Reason: \"${err}\"`);
+        throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
     }
 }
 
@@ -37,12 +46,15 @@ export function createFile(fileName: string, data: string | Buffer): void {
  */
 export function readFile(fileName: string): string {
     if (!existsSync(join(APP_PATH, fileName))) {
+        Logger.log("ERROR", `Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
         throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
     }
 
+    Logger.log("INFO", `Reading ${fileName} file...`);
     try {
         return readFileSync(join(APP_PATH, fileName)).toString();
     } catch (err) {
+        Logger.log("ERROR", `Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
         throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
     }
 }
@@ -57,12 +69,14 @@ export function readFile(fileName: string): string {
  */
 export function writeToFile(fileName: string, data: string, flag: "a" | "w"): void {
     if (!existsSync(join(APP_PATH, fileName))) {
+        Logger.log("ERROR", `Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
         throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
     }
 
     try {
         writeFileSync(join(APP_PATH, fileName), data, { flag: flag })
     } catch (err) {
+        Logger.log("ERROR", `Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
         throw new Error(`Could not write to file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
     }
 }

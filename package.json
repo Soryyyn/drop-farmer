@@ -5,6 +5,7 @@
         "start:debug": "tsc && node inspect dist/main.js"
     },
     "dependencies": {
+        "dayjs": "^1.11.3",
         "puppeteer": "^15.3.2",
         "puppeteer-extra": "^3.3.4",
         "puppeteer-extra-plugin-stealth": "^2.11.0"
