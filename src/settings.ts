@@ -1,62 +1,59 @@
 import { readFile, createFile } from "./fileHandling";
+import { log } from "./logger";
+
+let currentSettings: Object | undefined = {};
+const FILE_NAME: string = "settings.json";
+const DEFAULT_SETTINGS = {
+    headless: false,
+    launchOnStartup: false,
+    checkingRate: 30,
+    players: [],
+    farms: []
+};
 
 /**
- * Class for managing the settings file and the system around it.
+ * Read the settings file and save it in the current settings object.
  */
-export default class Settings {
-    private _fileName: string = "settings.json";
-    private _defaultSettings = {
-        headless: false,
-        autoRestart: false,
-        launchOnStartup: false,
-        players: [],
-        farms: []
-    };
-    private _settings: Object | undefined;
+export function initSettings(): void {
+    createSettingsFile();
+    currentSettings = readSettingsFile();
+}
 
-    /**
-     * Read the settings file and save it in the class on class init.
-     */
-    constructor() {
-        this.createSettingsFile();
-        this._settings = this.readSettingsFile();
+/**
+ * Write a new default settigns file into the
+ * application directory.
+ */
+function createSettingsFile(): void {
+    try {
+        createFile(FILE_NAME, JSON.stringify(DEFAULT_SETTINGS, null, 4));
+    } catch (err) {
+        // TODO: send event for error?
+        log("FATAL", `Failed creating settings file. Exiting drop-farmer. Error message:\n\t"${err}"`);
     }
+}
 
-    /**
-     * Get the current settings.
-     * Also re-reads the settings file to get actual **current** settings.
-     */
-    public getCurrentSettings(): Object | undefined {
-        if (this._settings) {
-            this._settings = this.readSettingsFile();
-            return this._settings;
-        } else {
-            // TODO: send event for error?
-        }
+/**
+ * Read the settings file from the set filepath.
+ * Also checks if the settings file exists,
+ * if not it creates a new default one.
+ */
+function readSettingsFile(): Object | undefined {
+    try {
+        let fileData = readFile(FILE_NAME);
+        return JSON.parse(fileData);
+    } catch (err) {
+        // TODO: send event for error?
+        log("ERROR", `Failed reading settings file. Using default settings. App functions may not work properly. Error message:\n\t"${err}"`);
+        return DEFAULT_SETTINGS;
     }
+}
 
-    /**
-     * Read the settings file from the set filepath.
-     * Also checks if the settings file exists, if not it creates a new default one.
-     */
-    public readSettingsFile(): Object | undefined {
-        try {
-            let fileData = readFile(this._fileName);
-            return JSON.parse(fileData);
-        } catch (err) {
-            // TODO: send event for error?
-        }
-    }
-
-    /**
-     * Write a new default settigns file into the application directory.
-     */
-    private createSettingsFile(): void {
-        try {
-            createFile(this._fileName, JSON.stringify(this._defaultSettings, null, 4));
-        } catch (err) {
-            // TODO: send event for error?
-        }
-
-    }
+/**
+ * Get the current settings.
+ * Also re-reads the settings file to get actual
+ * *current** settings.
+ */
+export function getCurrentSettings(): Object | undefined {
+    currentSettings = readSettingsFile();
+    return currentSettings!;
 }

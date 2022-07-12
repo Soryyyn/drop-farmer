@@ -1,5 +1,9 @@
-import Logger from "./logger";
-import Settings from "./settings";
+import { initLogger } from "./logger";
+import { initSettings, getCurrentSettings } from "./settings";
 
-Logger.createLogFile();
-const appSettings = new Settings();
+function initApp() {
+    initLogger();
+    initSettings();
+}
+
+initApp();
