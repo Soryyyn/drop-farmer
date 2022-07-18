@@ -3,7 +3,7 @@
         "src/**/*"
     ],
     "compilerOptions": {
-        "target": "es5",
+        "target": "ES2015",
         "module": "commonjs",
         "declaration": true,
         "declarationMap": true,
@@ -14,6 +14,10 @@
         "noUnusedParameters": true,
         "moduleResolution": "node",
         "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "typeRoots": [
+            "./node_modules/@types",
+            "./types",
+        ]
     }
 }

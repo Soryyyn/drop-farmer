@@ -1,9 +1,11 @@
 import { initLogger } from "./logger";
-import { initSettings, getCurrentSettings } from "./settings";
+import { initSettings } from "./settings";
+import { initFarms } from "./farms";
 
 function initApp() {
     initLogger();
     initSettings();
+    initFarms();
 }
 
 initApp();

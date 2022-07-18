@@ -3,6 +3,7 @@ node_modules/
 dist/
 build/
 settings.json
+farms.json
 .log
 
 # environment variables

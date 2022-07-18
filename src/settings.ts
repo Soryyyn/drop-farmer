@@ -1,14 +1,13 @@
 import { readFile, createFile } from "./fileHandling";
 import { log } from "./logger";
 
-let currentSettings: Object | undefined = {};
+let currentSettings: any | undefined = {};
 const FILE_NAME: string = "settings.json";
-const DEFAULT_SETTINGS = {
+const DEFAULT_SETTINGS: SettingsFile = {
     headless: false,
     launchOnStartup: false,
     checkingRate: 30,
     players: [],
-    farms: []
 };
 
 /**
@@ -37,7 +36,7 @@ function createSettingsFile(): void {
  * Also checks if the settings file exists,
  * if not it creates a new default one.
  */
-function readSettingsFile(): Object | undefined {
+function readSettingsFile(): SettingsFile | undefined {
     try {
         let fileData = readFile(FILE_NAME);
         return JSON.parse(fileData);
@@ -53,7 +52,7 @@ function readSettingsFile(): Object | undefined {
  * Also re-reads the settings file to get actual
  * *current** settings.
  */
-export function getCurrentSettings(): Object | undefined {
+export function getCurrentSettings(): SettingsFile {
     currentSettings = readSettingsFile();
-    return currentSettings!;
+    return currentSettings! as SettingsFile;
 }
