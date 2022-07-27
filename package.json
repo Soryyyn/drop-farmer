@@ -1,6 +1,7 @@
 {
     "name": "drop-farmer",
     "productName": "drop-farmer",
+    "description": "Stream drops farmer application",
     "version": "1.0.0",
     "main": ".webpack/main",
     "scripts": {

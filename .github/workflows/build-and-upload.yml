@@ -18,7 +18,7 @@ jobs:
             run: yarn
 
           - name: Build application
-            run: yarn start make
+            run: yarn run make
 
           - name: Upload artifacts
             uses: actions/upload-artifact@v3
