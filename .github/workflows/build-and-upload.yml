@@ -24,6 +24,4 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-windows-x64
-                path: |
-                  out/make/zip/win32/x64/*.zip
-                  out/make/squirrel.windows/x64/*.exe
+                path: out/make/
