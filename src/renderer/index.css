@@ -1,7 +1,22 @@
+/*
+Main Colors:
+    primary lighter: rgb(186, 213, 241) / #bad5f1
+    primary darker: rgb(42, 39, 107) / #2a276b
+*/
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-  margin: auto;
-  max-width: 38rem;
-  padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+        Arial, sans-serif;
+    margin: auto;
+    max-width: 38rem;
+    padding: 2rem;
+    height: 100vh;
+
+    background-image: linear-gradient(rgb(186, 213, 241) 5%, rgb(42, 39, 107) 150%);
 }

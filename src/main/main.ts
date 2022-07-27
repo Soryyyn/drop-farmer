@@ -23,9 +23,25 @@ function createWindow(): void {
     const mainWindow = new BrowserWindow({
         height: 600,
         width: 800,
+        center: true,
+        show: false,
+        title: "drop-farmer",
+        autoHideMenuBar: true,
+        titleBarStyle: "hidden",
+        titleBarOverlay: {
+            color: "#a7b8d9",
+            symbolColor: "#000000",
+        },
     });
 
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+
+    /**
+     * Show when the window is ready.
+     */
+    mainWindow.on("ready-to-show", () => {
+        mainWindow.show();
+    });
 };
 
 /**
