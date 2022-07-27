@@ -1,20 +1,79 @@
 {
+    "name": "drop-farmer",
+    "productName": "drop-farmer",
+    "version": "1.0.0",
+    "main": ".webpack/main",
     "scripts": {
-        "dist": "tsc",
-        "start": "tsc && node dist/main.js",
-        "start:debug": "tsc && node inspect dist/main.js"
+        "start": "electron-forge start",
+        "package": "electron-forge package",
+        "make": "electron-forge make",
+        "publish": "electron-forge publish"
     },
-    "dependencies": {
-        "dayjs": "^1.11.3",
-        "node-cron": "^3.0.1",
-        "puppeteer": "^15.3.2",
-        "puppeteer-extra": "^3.3.4",
-        "puppeteer-extra-plugin-stealth": "^2.11.0",
-        "uuid": "^8.3.2"
+    "author": {
+        "name": "Soryn Bächli",
+        "email": "soryn.baechli@gmail.com"
+    },
+    "license": "MIT",
+    "config": {
+        "forge": {
+            "packagerConfig": {},
+            "makers": [
+                {
+                    "name": "@electron-forge/maker-squirrel",
+                    "config": {
+                        "name": "drop-farmer"
+                    }
+                },
+                {
+                    "name": "@electron-forge/maker-zip"
+                }
+            ],
+            "plugins": [
+                [
+                    "@electron-forge/plugin-webpack",
+                    {
+                        "mainConfig": "./webpack.main.config.js",
+                        "renderer": {
+                            "config": "./webpack.renderer.config.js",
+                            "entryPoints": [
+                                {
+                                    "html": "./src/renderer/index.html",
+                                    "js": "./src/renderer/renderer.ts",
+                                    "name": "main_window"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
     },
     "devDependencies": {
-        "@types/node": "^18.0.4",
+        "@electron-forge/cli": "^6.0.0-beta.63",
+        "@electron-forge/maker-deb": "^6.0.0-beta.63",
+        "@electron-forge/maker-rpm": "^6.0.0-beta.63",
+        "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
+        "@electron-forge/maker-zip": "^6.0.0-beta.63",
+        "@electron-forge/plugin-webpack": "6.0.0-beta.63",
+        "@types/node": "^18.6.1",
         "@types/node-cron": "^3.0.2",
-        "typescript": "^4.7.4"
+        "@vercel/webpack-asset-relocator-loader": "1.7.0",
+        "css-loader": "^6.0.0",
+        "electron": "19.0.9",
+        "fork-ts-checker-webpack-plugin": "^6.0.1",
+        "node-loader": "^2.0.0",
+        "style-loader": "^3.0.0",
+        "ts-loader": "^9.2.2",
+        "typescript": "~4.5.4"
+    },
+    "dependencies": {
+        "@types/react": "^18.0.15",
+        "@types/react-dom": "^18.0.6",
+        "dayjs": "^1.11.4",
+        "electron-squirrel-startup": "^1.0.0",
+        "node-cron": "^3.0.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "uuid": "^8.3.2"
     }
 }

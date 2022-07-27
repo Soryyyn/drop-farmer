@@ -1,9 +1,13 @@
+import { app } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { log } from "./logger";
 
-// NOTE: refactor to more paths if necessary
-export const APP_PATH: string = join(__dirname, "..");
+/**
+ * The userData (roaming/drop-farmer) directory in production mode.
+ * Changes to current root directory when in dev mode.
+ */
+export const APP_PATH: string = (process.env.NODE_ENV === "production") ? app.getPath("userData") : join(__dirname, "../../");
 
 /**
  * Creates a file with given name and data at the app root path.

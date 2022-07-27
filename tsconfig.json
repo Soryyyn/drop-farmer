@@ -1,23 +1,35 @@
 {
-    "include": [
-        "src/**/*"
-    ],
     "compilerOptions": {
-        "target": "ES2015",
-        "module": "commonjs",
-        "declaration": true,
-        "declarationMap": true,
-        "outDir": "./dist",
-        "rootDir": "./src",
+        "target": "ES5",
+        "lib": [
+            "DOM",
+            "DOM.Iterable",
+            "ESNext"
+        ],
+        "allowJs": true,
+        "module": "ESNext",
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
         "strict": true,
         "noImplicitAny": true,
-        "noUnusedParameters": true,
+        "sourceMap": true,
+        "baseUrl": ".",
+        "outDir": "dist",
         "moduleResolution": "node",
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "jsx": "react",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        },
         "typeRoots": [
             "./node_modules/@types",
             "./types",
         ]
-    }
+    },
+    "include": [
+        "src/**/*"
+    ]
 }
