@@ -1,9 +1,9 @@
 on: push
-name: Make and upload artifacts
+name: Build application and upload artifacts
 
 jobs:
     build-and-upload:
-        name: Setup environment & build application
+        name: Build application (Windows x64)
         runs-on: windows-latest
         steps:
           - name: Checkout
@@ -23,5 +23,7 @@ jobs:
           - name: Upload artifacts
             uses: actions/upload-artifact@v3
             with:
-                name: drop-farmer-windows-64bit
-                path: out/make/zip/win32/x64/*.zip
+                name: drop-farmer-windows-x64
+                path: |
+                  out/make/zip/win32/x64/*.zip
+                  out/squirrel.windows/x64/*.exe
