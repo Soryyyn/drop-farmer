@@ -13,5 +13,19 @@ Main Colors:
 }
 
 body {
+    height: 100vh;
+    width: 100vw;
     background-image: linear-gradient(rgb(186, 213, 241) 5%, rgb(42, 39, 107) 150%);
+}
+
+#dragbar {
+    background: rgba(0, 0, 0, 0.2);
+
+    -webkit-app-region: drag;
+    width: 100vw;
+    height: 2rem;
+}
+
+#spacer {
+    padding: 2rem 2rem 2rem 2rem;
 }

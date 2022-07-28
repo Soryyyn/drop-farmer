@@ -1,5 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
+import App from "./App";
 import "./global.scss";
 
-render(<p>test</p>, document.getElementById("root"));
+render(<App />, document.getElementById("root"));
