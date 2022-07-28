@@ -23,18 +23,15 @@ function createWindow(): void {
     const mainWindow = new BrowserWindow({
         height: 600,
         width: 800,
-        resizable: false,
-        maximizable: false,
         center: true,
         show: false,
         title: "drop-farmer",
-        frame: false,
         autoHideMenuBar: true,
-        // titleBarStyle: "hidden",
-        // titleBarOverlay: {
-        //     color: "#a7b8d9",
-        //     symbolColor: "#000000",
-        // },
+        titleBarStyle: "hidden",
+        titleBarOverlay: {
+            color: "#a7b8d9",
+            symbolColor: "#000000",
+        },
     });
 
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
