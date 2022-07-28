@@ -1,4 +1,8 @@
-on: push
+on:
+    # only activate on master branch commits
+    push:
+        branches:
+          - 'master'
 name: Build application and upload artifacts
 
 jobs:
