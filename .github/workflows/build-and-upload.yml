@@ -2,7 +2,7 @@ on: push
 name: Build application and upload artifacts
 
 jobs:
-    build-and-upload:
+    build-windows-x64:
         name: Build application (Windows x64)
         runs-on: windows-latest
         steps:
@@ -12,6 +12,7 @@ jobs:
           - name: Install Nodejs
             uses: actions/setup-node@v3
             with:
+                # current version of node im using
                 node-version: 18.6.0
                 cache: 'yarn'
           - name: Install dependencies
@@ -20,8 +21,9 @@ jobs:
           - name: Build application
             run: yarn run make
 
-          - name: Upload artifacts
+          - name: Upload build artifacts
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-windows-x64
+                # export every folder and artifact from build folder
                 path: out/make/
