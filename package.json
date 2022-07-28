@@ -2,7 +2,7 @@
     "name": "drop-farmer",
     "productName": "drop-farmer",
     "description": "Stream drops farmer application",
-    "version": "1.0.0",
+    "version": "1.0",
     "main": ".webpack/main",
     "scripts": {
         "start": "electron-forge start",
@@ -39,7 +39,7 @@
                             "entryPoints": [
                                 {
                                     "html": "./src/renderer/index.html",
-                                    "js": "./src/renderer/renderer.ts",
+                                    "js": "./src/renderer/renderer.tsx",
                                     "name": "main_window"
                                 }
                             ]
@@ -63,6 +63,8 @@
         "electron": "19.0.9",
         "fork-ts-checker-webpack-plugin": "^6.0.1",
         "node-loader": "^2.0.0",
+        "sass": "^1.54.0",
+        "sass-loader": "^13.0.2",
         "style-loader": "^3.0.0",
         "ts-loader": "^9.2.2",
         "typescript": "~4.5.4"
