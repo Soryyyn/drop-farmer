@@ -31,7 +31,7 @@ function createWindow(): void {
         autoHideMenuBar: true,
         titleBarStyle: "hidden",
         titleBarOverlay: {
-            color: "#606B8C",
+            color: "#bad5f1",
             symbolColor: "#000000",
         },
     });

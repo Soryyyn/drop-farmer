@@ -21,6 +21,9 @@ export default function Home() {
                         <div>
                             <img src="assets/web.svg" />
                         </div>
+                        <div>
+                            <img src="assets/gear.svg" />
+                        </div>
                     </div>
                 </div>
             </div>

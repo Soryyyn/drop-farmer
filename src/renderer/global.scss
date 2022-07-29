@@ -9,6 +9,10 @@ Main Colors:
     src: url("assets/fonts/Rubik-VariableFont_wght.ttf");
 }
 
+@mixin default-dark-shadow {
+    box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
+}
+
 // Global stylings
 *,
 *::before,
@@ -27,8 +31,6 @@ body {
 }
 
 #dragbar {
-    background: rgba(59, 62, 97, 0.7);
-
     -webkit-app-region: drag;
     position: absolute;
     top: 0;
@@ -38,7 +40,7 @@ body {
 }
 
 #spacer {
-    padding: 4rem 2rem 2rem 2rem;
+    padding: 2rem 2rem 2rem 2rem;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -51,38 +53,30 @@ body {
     height: 100%;
 
     #home-farms-status {
+        @include default-dark-shadow;
+
         padding: 2rem;
         background: rgba(59, 62, 97, 0.7);
         width: 50%;
         border-radius: 10px;
     }
 
-
     #home-container {
-        // border: 2px red solid;
-
         flex-grow: 1;
         display: flex;
         justify-content: center;
         align-items: center;
 
         #home-content {
-            // border: 2px solid blue;
             display: flex;
             flex-direction: column;
-            // width: 100%;
-            // height: 100%;
 
             video {
-                // border: solid 2px purple;
-                // width: 400px;
                 width: 65%;
                 align-self: center;
             }
 
             h1#home-title {
-                // border: solid 2px yellow;
-                // width: 100%;
                 margin-top: -20px;
                 text-align: center;
                 font-weight: bold;
@@ -103,6 +97,8 @@ body {
                 justify-content: center;
 
                 div {
+                    @include default-dark-shadow;
+
                     color: rgb(12, 14, 22);
                     display: flex;
                     align-items: center;
@@ -115,6 +111,7 @@ body {
                     transition: 0.1s;
 
                     &:hover {
+                        cursor: pointer;
                         transition: 0.1s;
                         background: rgba(45, 42, 75, 0.7);
                     }
