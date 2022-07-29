@@ -21,15 +21,17 @@ if (require("electron-squirrel-startup")) {
  */
 function createWindow(): void {
     const mainWindow = new BrowserWindow({
-        height: 600,
-        width: 800,
+        height: 800,
+        width: 1200,
         center: true,
+        maximizable: false,
+        resizable: false,
         show: false,
         title: "drop-farmer",
         autoHideMenuBar: true,
         titleBarStyle: "hidden",
         titleBarOverlay: {
-            color: "#a7b8d9",
+            color: "#606B8C",
             symbolColor: "#000000",
         },
     });

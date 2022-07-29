@@ -22,12 +22,12 @@ body {
     -webkit-font-smoothing: antialiased;
     height: 100vh;
     width: 100vw;
-    background-image: linear-gradient(rgb(186, 213, 241) 5%, rgb(42, 39, 107) 150%);
+    background-image: linear-gradient(rgb(186, 213, 241) 5%, rgb(42, 39, 107) 125%);
     font-family: "Rubik";
 }
 
 #dragbar {
-    background: #a7b8d9;
+    background: rgba(59, 62, 97, 0.7);
 
     -webkit-app-region: drag;
     position: absolute;
@@ -38,24 +38,93 @@ body {
 }
 
 #spacer {
-    padding: 2rem 2rem 2rem 2rem;
+    padding: 4rem 2rem 2rem 2rem;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 2rem);
+    height: 100vh;
 }
 
 // Home site
-#home-container {
-    border: 2px red solid;
-
-    flex-grow: 1;
+#home-divider {
     display: flex;
-    justify-items: center;
-    align-items: center;
+    flex-direction: row;
+    height: 100%;
 
-    h1#title {
-        width: 100%;
-        border: solid 2px yellow;
-        text-align: center;
+    #home-farms-status {
+        padding: 2rem;
+        background: rgba(59, 62, 97, 0.7);
+        width: 50%;
+        border-radius: 10px;
+    }
+
+
+    #home-container {
+        // border: 2px red solid;
+
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        #home-content {
+            // border: 2px solid blue;
+            display: flex;
+            flex-direction: column;
+            // width: 100%;
+            // height: 100%;
+
+            video {
+                // border: solid 2px purple;
+                // width: 400px;
+                width: 65%;
+                align-self: center;
+            }
+
+            h1#home-title {
+                // border: solid 2px yellow;
+                // width: 100%;
+                margin-top: -20px;
+                text-align: center;
+                font-weight: bold;
+                color: rgb(24, 26, 41);
+                font-size: 3rem;
+            }
+
+            #home-desc {
+                text-align: center;
+                color: rgb(24, 26, 41);
+                font-size: 1.25rem;
+            }
+
+            #home-socials {
+                margin-top: 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                div {
+                    color: rgb(12, 14, 22);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(59, 62, 97, 0.7);
+                    padding: 0.8rem;
+                    aspect-ratio: 1 / 1;
+                    margin-inline: 0.5rem;
+                    border-radius: 10px;
+                    transition: 0.1s;
+
+                    &:hover {
+                        transition: 0.1s;
+                        background: rgba(45, 42, 75, 0.7);
+                    }
+
+                    img {
+                        color: white;
+                        height: 22px;
+                    }
+                }
+            }
+        }
     }
 }
