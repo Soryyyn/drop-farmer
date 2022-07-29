@@ -7,22 +7,22 @@ export default function Home() {
             <div id="home-container">
                 <div id="home-content">
                     <video autoPlay loop>
-                        <source src="assets/crate-falling.webm" type="video/webm" />
+                        <source src="../assets/crate-falling.webm" type="video/webm" />
                     </video>
                     <h1 id="home-title">DROP-FARMER</h1>
                     <p id="home-desc">Stream drops farmer application</p>
                     <div id="home-socials">
                         <div>
-                            <img src="assets/github.svg" />
+                            <img src="../assets/github.svg" />
                         </div>
                         <div>
-                            <img src="assets/mail.svg" />
+                            <img src="../assets/mail.svg" />
                         </div>
                         <div>
-                            <img src="assets/web.svg" />
+                            <img src="../assets/web.svg" />
                         </div>
                         <div>
-                            <img src="assets/gear.svg" />
+                            <img src="../assets/gear.svg" />
                         </div>
                     </div>
                 </div>
