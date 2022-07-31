@@ -1,13 +1,16 @@
 import { app, BrowserWindow } from "electron";
+import { resolve } from "path";
 import { initLogger } from "./logger";
 import { initSettings } from "./settings";
 import { initFarms } from "./farms";
 
 /**
- * Pick up constant from electron-forge for the main window entry.
+ * Pick up constant from electron-forge for the main window entry and the
+ * preload file entry.
  * Depends on production and development.
  */
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 /**
  * Handling the creating/deletion of shortcuts when installing/uninstalling via squirrel.
@@ -35,7 +38,7 @@ function createWindow(): void {
             symbolColor: "#000000",
         },
         webPreferences: {
-            preload: "./preload.js"
+            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
         },
     });
 

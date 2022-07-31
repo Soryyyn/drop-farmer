@@ -30,6 +30,7 @@
         ]
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "types/common/renderer.d.ts"
     ]
 }
