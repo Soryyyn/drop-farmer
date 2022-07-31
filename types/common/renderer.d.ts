@@ -3,7 +3,7 @@
  */
 
 export interface API {
-    channels: Object
+    channels: any
     callMain: (channel: string, ...args: any[]) => Promise<unknown>,
     answerMain: (channel: string, callback: (data: any) => any) => void
 }

@@ -1,5 +1,4 @@
 import { app, BrowserWindow } from "electron";
-import { resolve } from "path";
 import { initLogger } from "./logger";
 import { initSettings } from "./settings";
 import { initFarms } from "./farms";
@@ -57,9 +56,21 @@ function createWindow(): void {
  * Some API's might only be available after it has started.
  */
 app.on("ready", () => {
-    createWindow();
+    /**
+     * Load all ipc listeners when the app is ready.
+     */
+    require("./ipc");
 
+    /**
+     * Initialize all drop-farmer background functions.
+     */
     initLogger();
     initSettings();
     initFarms();
+
+    /**
+     * Finally, create the actual application window and show it when it has
+     * been created.
+     */
+    createWindow();
 });

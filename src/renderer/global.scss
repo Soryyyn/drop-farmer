@@ -125,6 +125,11 @@ body {
                         filter: invert(4%) sepia(9%) saturate(3216%) hue-rotate(191deg) brightness(97%) contrast(96%);
                         height: 22px;
                     }
+
+                    &:active {
+                        transform: scale(0.95);
+                        transition: 0.1s;
+                    }
                 }
             }
         }
