@@ -34,6 +34,9 @@ function createWindow(): void {
             color: "#bad5f1",
             symbolColor: "#000000",
         },
+        webPreferences: {
+            preload: "./preload.js"
+        },
     });
 
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);

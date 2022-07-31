@@ -19,10 +19,6 @@ module.exports = {
                 {
                     from: path.resolve(__dirname, 'src', 'renderer', 'assets'),
                     to: path.resolve(__dirname, '.webpack/renderer', 'assets')
-                },
-                {
-                    from: path.resolve(__dirname, 'src', 'common'),
-                    to: path.resolve(__dirname, '.webpack', 'common')
                 }
             ]
         })
