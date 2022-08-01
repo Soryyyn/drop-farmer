@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import ExtraButton from "../components/ExtraButton";
 import FarmStatus from "../components/FarmStatus";
-import SocialButton from "../components/SocialButton";
+import Sidebar from "../components/Sidebar";
 
 export default function Home() {
     const [farms, setFarms] = useState<Farm[]>([]);
@@ -20,21 +21,7 @@ export default function Home() {
 
     return (
         <div id="home-divider">
-            <div id="home-farms-status">
-                {farms.length > 0
-                    ? <ul>
-                        {
-                            farms.map((farm: Farm) => {
-                                return <FarmStatus
-                                    key={farm.id}
-                                    farm={farm}
-                                />
-                            })
-                        }
-                    </ul>
-                    : <p>no farms</p>
-                }
-            </div>
+            <Sidebar />
             <div id="home-container">
                 <div id="home-content">
                     <video autoPlay loop>
@@ -42,13 +29,15 @@ export default function Home() {
                     </video>
                     <h1 id="home-title">DROP-FARMER</h1>
                     <p id="home-desc">Stream drops farmer application</p>
-                    <div id="home-socials">
-                        <SocialButton imgPath="../assets/github.svg" onClick={() => {
+                    <div id="home-extra">
+                        <ExtraButton imgPath="../assets/github.svg" onClick={() => {
                             window.api.callMain(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn");
                         }} />
-                        <SocialButton imgPath="../assets/web.svg" onClick={() => {
+                        <ExtraButton imgPath="../assets/web.svg" onClick={() => {
                             window.api.callMain(window.api.channels.openLinkInExternal, "https://soryn.dev");
                         }} />
+                        <ExtraButton imgPath="../assets/statistics.svg" onClick={() => { }} />
+                        <ExtraButton imgPath="../assets/gear.svg" onClick={() => { }} />
                     </div>
                 </div>
             </div>

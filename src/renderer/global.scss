@@ -42,6 +42,7 @@ Main Colors:
 }
 
 body {
+    user-select: none;
     -webkit-font-smoothing: antialiased;
     height: 100vh;
     width: 100vw;
@@ -49,6 +50,7 @@ body {
     font-family: "Rubik";
 }
 
+// Top dragbar
 #dragbar {
     -webkit-app-region: drag;
     position: absolute;
@@ -58,6 +60,7 @@ body {
     height: 2rem;
 }
 
+// Spacer from app edge to app content
 #spacer {
     padding: 2rem 2rem 2rem 2rem;
     display: flex;
@@ -71,40 +74,97 @@ body {
     flex-direction: row;
     height: 100%;
 
-    #home-farms-status {
+    #sidebar {
         @include default-dark-shadow;
         @include darker-with-border;
 
         padding: 2rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
         width: 50%;
 
-        #farm-status-divider {
-            @include default-dark-shadow;
-            @include container-with-hover;
+        ul {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
 
+            #farm-status-divider {
+                @include default-dark-shadow;
+                @include container-with-hover;
+
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                padding: 1rem;
+                margin-bottom: 1rem;
+
+                .farm-status {
+                    display: flex;
+                    flex-direction: column;
+                    width: calc(100% - 20px);
+                    color: #0c0e16;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-weight: bold;
+                    flex-grow: 1;
+
+                    p {
+                        width: 98%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+
+                .farm-status-indicator {
+                    justify-self: flex-end;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    margin-top: 4px;
+                }
+
+                #indicator-running {
+                    background: rgb(33, 219, 135);
+                    box-shadow: 0 0 10px rgba(33, 219, 135, 0.5);
+                }
+
+                #indicator-waiting {
+                    background: rgb(241, 185, 31);
+                    box-shadow: 0 0 10px rgba(241, 185, 31, 0.5);
+                }
+
+                #indicator-disabled {
+                    background: rgb(231, 75, 101);
+                    box-shadow: 0 0 10px rgba(231, 75, 101, 0.5);
+                }
+            }
+        }
+
+        #sidebar-buttons {
             display: flex;
             flex-direction: row;
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 1rem;
+            margin-top: 1rem;
+            column-gap: 1rem;
 
-            .farm-status {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                color: #0c0e16;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                font-weight: bold;
+            button {
+                @include default-dark-shadow;
+                @include darker-with-border;
+
+                padding: 1rem;
+                flex-grow: 1;
             }
 
-            #farm-status-indicator {
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                background: rgb(33, 219, 135);
-                box-shadow: 0 0 10px rgba(33, 219, 135, 0.5);
-                margin-top: 4px;
+            #settings-button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-grow: 0;
+
+                img {
+                    height: 22px;
+                }
             }
         }
     }
@@ -138,7 +198,7 @@ body {
                 font-size: 1.25rem;
             }
 
-            #home-socials {
+            #home-extra {
                 margin-top: 2rem;
                 display: flex;
                 align-items: center;
@@ -152,9 +212,9 @@ body {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 0.8rem;
                     aspect-ratio: 1 / 1;
                     margin-inline: 0.5rem;
+                    width: 7%;
 
                     img {
                         filter: invert(4%) sepia(9%) saturate(3216%) hue-rotate(191deg) brightness(97%) contrast(96%);

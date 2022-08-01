@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 /**
  * Farms status display for the home page to inform the user of all enabled farms.
@@ -8,13 +8,18 @@ import React from "react";
 export default function FarmStatus({ farm }: {
     farm: Farm
 }) {
+    const [status, setStatus] = useState<"running" | "waiting" | "disabled">("waiting");
+
     return (
         <div id="farm-status-divider">
             <div className="farm-status" id={`farm-${farm.id}`}>
                 <p>{farm.name}</p>
             </div>
-            <div id="farm-status-indicator"></div>
-        </div>
+            <div
+                className="farm-status-indicator"
+                id={`indicator-${status}`}
+            ></div>
+        </div >
 
     );
 }
