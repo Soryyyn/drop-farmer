@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { writeFileSync, existsSync } from "fs";
+import { existsSync, writeFileSync } from "fs";
 import { join } from "path";
 import { APP_PATH, writeToFile } from "./fileHandling";
 

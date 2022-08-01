@@ -14,9 +14,22 @@ Main Colors:
 }
 
 @mixin darker-with-border {
-    background: rgba(59, 62, 97, 0.7);
-    border: 1px solid rgba(59, 62, 97, 0.2);
+    background: rgba(59, 62, 97, 0.5);
+    border: 1px solid rgba(59, 62, 97, 0.1);
     border-radius: 10px;
+
+    transition: 0.1s;
+}
+
+@mixin container-with-hover {
+    @include darker-with-border;
+    transition: 0.1s;
+
+    &:hover {
+        cursor: pointer;
+        transition: 0.1s;
+        background: rgba(59, 62, 97, 0.7) !important;
+    }
 }
 
 // Global stylings
@@ -32,7 +45,7 @@ body {
     -webkit-font-smoothing: antialiased;
     height: 100vh;
     width: 100vw;
-    background-image: linear-gradient(rgb(186, 213, 241) 5%, rgb(42, 39, 107) 125%);
+    background-image: linear-gradient(rgb(200, 222, 245) 5%, rgb(71, 78, 136) 125%);
     font-family: "Rubik";
 }
 
@@ -67,7 +80,7 @@ body {
 
         #farm-status-divider {
             @include default-dark-shadow;
-            @include darker-with-border;
+            @include container-with-hover;
 
             display: flex;
             flex-direction: row;
@@ -81,7 +94,7 @@ body {
                 width: 100%;
                 color: #0c0e16;
                 text-transform: uppercase;
-                letter-spacing: 0.75px;
+                letter-spacing: 1px;
                 font-weight: bold;
             }
 
@@ -133,7 +146,7 @@ body {
 
                 div {
                     @include default-dark-shadow;
-                    @include darker-with-border;
+                    @include container-with-hover;
 
                     color: #0c0e16;
                     display: flex;
@@ -142,13 +155,6 @@ body {
                     padding: 0.8rem;
                     aspect-ratio: 1 / 1;
                     margin-inline: 0.5rem;
-                    transition: 0.1s;
-
-                    &:hover {
-                        cursor: pointer;
-                        transition: 0.1s;
-                        background: rgba(45, 42, 75, 0.7);
-                    }
 
                     img {
                         filter: invert(4%) sepia(9%) saturate(3216%) hue-rotate(191deg) brightness(97%) contrast(96%);

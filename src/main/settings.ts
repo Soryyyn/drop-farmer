@@ -1,4 +1,4 @@
-import { readFile, createFile } from "./fileHandling";
+import { createFile, readFile } from "./fileHandling";
 import { log } from "./logger";
 
 let currentSettings: any | undefined = {};

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import SocialButton from "../components/SocialButton";
+import React, { useEffect, useState } from "react";
 import FarmStatus from "../components/FarmStatus";
+import SocialButton from "../components/SocialButton";
 
 export default function Home() {
     const [farms, setFarms] = useState<Farm[]>([]);
@@ -49,9 +49,6 @@ export default function Home() {
                         <SocialButton imgPath="../assets/web.svg" onClick={() => {
                             window.api.callMain(window.api.channels.openLinkInExternal, "https://soryn.dev");
                         }} />
-                        <div>
-                            <img src="../assets/gear.svg" />
-                        </div>
                     </div>
                 </div>
             </div>

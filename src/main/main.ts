@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from "electron";
+import { initFarms } from "./farms";
 import { initLogger } from "./logger";
 import { initSettings } from "./settings";
-import { initFarms } from "./farms";
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -33,7 +33,7 @@ function createWindow(): void {
         autoHideMenuBar: true,
         titleBarStyle: "hidden",
         titleBarOverlay: {
-            color: "#bad5f1",
+            color: "#c8def5",
             symbolColor: "#000000",
         },
         webPreferences: {

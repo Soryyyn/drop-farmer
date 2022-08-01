@@ -1,6 +1,6 @@
 import { schedule } from "node-cron";
+import { createFile, readFile, writeToFile } from "./fileHandling";
 import { log } from "./logger";
-import { createFile, writeToFile, readFile } from "./fileHandling";
 
 const FILE_NAME: string = "farms.json";
 const DEFAULT_FARMS_FILE: FarmsFile = {
