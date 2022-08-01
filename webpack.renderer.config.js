@@ -27,5 +27,3 @@ module.exports = {
         extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss'],
     },
 };
-
-console.log(__dirname);
