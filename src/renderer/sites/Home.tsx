@@ -39,6 +39,7 @@ export default function Home() {
                         <ExtraButton imgPath="../assets/statistics.svg" onClick={() => { }} />
                         <ExtraButton imgPath="../assets/gear.svg" onClick={() => { }} />
                     </div>
+                    <p id="made-by">copyright © soryn</p>
                 </div>
             </div>
         </div>
