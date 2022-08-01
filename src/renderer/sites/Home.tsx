@@ -1,10 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import SocialButton from "../components/SocialButton";
+import FarmStatus from "../components/FarmStatus";
 
 export default function Home() {
+    const [farms, setFarms] = useState<Farm[]>([]);
+
+    /**
+     * On site load, get all farms from main process and display the enabled ones.
+     */
+    useEffect(() => {
+        window.api.callMain(window.api.channels.getFarms)
+            .then((farmsFromMain: any) => {
+                setFarms(farmsFromMain);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
+
     return (
         <div id="home-divider">
-            <div id="home-farms-status">farms are listed here with status</div>
+            <div id="home-farms-status">
+                {farms.length > 0
+                    ? <ul>
+                        {
+                            farms.map((farm: Farm) => {
+                                return <FarmStatus
+                                    key={farm.id}
+                                    farm={farm}
+                                />
+                            })
+                        }
+                    </ul>
+                    : <p>no farms</p>
+                }
+            </div>
             <div id="home-container">
                 <div id="home-content">
                     <video autoPlay loop>

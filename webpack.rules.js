@@ -27,13 +27,26 @@ module.exports = [
         },
     },
     {
-        test: /\.s[ac]ss$/i,
+        test: /\.module.s[ac]ss$/i,
         use: [
-            // Creates `style` nodes from JS strings
             "style-loader",
-            // Translates CSS into CommonJS
+            {
+                loader: "css-loader",
+                options: {
+                    modules: true,
+                    sourceMap: true,
+                    importLoaders: 1,
+                },
+            },
+            "sass-loader",
+        ],
+    },
+    {
+        test: /\.s[ac]ss$/i,
+        exclude: /\.module.(s[ac]ss)$/,
+        use: [
+            "style-loader",
             "css-loader",
-            // Compiles Sass to CSS
             "sass-loader",
         ],
     },

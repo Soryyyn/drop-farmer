@@ -24,6 +24,8 @@ module.exports = {
         })
     ],
     resolve: {
-        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
+        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss'],
     },
 };
+
+console.log(__dirname);

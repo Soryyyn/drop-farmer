@@ -3,7 +3,5 @@
  */
 export enum Channels {
     openLinkInExternal = "open-link-in-external",
-    refreshFarms = "refresh-farms",
-    updateFarm = "update-farm",
-    removeFarm = "remove-farm",
+    getFarms = "get-farms"
 }
