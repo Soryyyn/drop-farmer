@@ -4,10 +4,12 @@ import { initSettings } from "./settings";
 import { initFarms } from "./farms";
 
 /**
- * Pick up constant from electron-forge for the main window entry.
+ * Pick up constant from electron-forge for the main window entry and the
+ * preload file entry.
  * Depends on production and development.
  */
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 /**
  * Handling the creating/deletion of shortcuts when installing/uninstalling via squirrel.
@@ -34,6 +36,9 @@ function createWindow(): void {
             color: "#bad5f1",
             symbolColor: "#000000",
         },
+        webPreferences: {
+            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
+        },
     });
 
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -51,9 +56,21 @@ function createWindow(): void {
  * Some API's might only be available after it has started.
  */
 app.on("ready", () => {
-    createWindow();
+    /**
+     * Load all ipc listeners when the app is ready.
+     */
+    require("./ipc");
 
+    /**
+     * Initialize all drop-farmer background functions.
+     */
     initLogger();
     initSettings();
     initFarms();
+
+    /**
+     * Finally, create the actual application window and show it when it has
+     * been created.
+     */
+    createWindow();
 });

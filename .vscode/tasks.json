@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Start application (normal mode / hot reload)",
+            "command": "yarn run start || npm start",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": true,
+                "close": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Build application",
+            "command": "yarn run make || npm make",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "showReuseMessage": false,
+                "clear": true,
+                "close": true
+            }
+        },
+    ]
+}
