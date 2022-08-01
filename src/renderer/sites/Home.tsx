@@ -31,7 +31,7 @@ export default function Home() {
                     <p id="home-desc">Stream drops farmer application</p>
                     <div id="home-extra">
                         <ExtraButton imgPath="../assets/github.svg" onClick={() => {
-                            window.api.callMain(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn");
+                            window.api.callMain(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn/drop-farmer");
                         }} />
                         <ExtraButton imgPath="../assets/web.svg" onClick={() => {
                             window.api.callMain(window.api.channels.openLinkInExternal, "https://soryn.dev");
