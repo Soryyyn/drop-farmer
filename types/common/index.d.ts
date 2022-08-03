@@ -14,6 +14,13 @@ type Farm = {
     farmedDropsToday: number;
 }
 
+type FarmStatus = "farming" | "idle" | "checking" | "disabled"
+
+type FarmStatusObject = {
+    id: number;
+    status: FarmStatus;
+}
+
 type SettingsFile = {
     headless: boolean;
     launchOnStartup: boolean;

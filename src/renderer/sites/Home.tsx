@@ -10,7 +10,7 @@ export default function Home() {
      * On site load, get all farms from main process and display the enabled ones.
      */
     useEffect(() => {
-        window.api.callMain(window.api.channels.getFarms)
+        window.api.sendAndWait(window.api.channels.getFarms)
             .then((farmsFromMain: any) => {
                 setFarms(farmsFromMain);
             })
@@ -31,10 +31,10 @@ export default function Home() {
                     <p id="home-desc">Stream drops farmer application</p>
                     <div id="home-extra">
                         <ExtraButton imgPath="../assets/github.svg" onClick={() => {
-                            window.api.callMain(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn/drop-farmer");
+                            window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn/drop-farmer");
                         }} />
                         <ExtraButton imgPath="../assets/web.svg" onClick={() => {
-                            window.api.callMain(window.api.channels.openLinkInExternal, "https://soryn.dev");
+                            window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://soryn.dev");
                         }} />
                         <ExtraButton imgPath="../assets/statistics.svg" onClick={() => { }} />
                         <ExtraButton imgPath="../assets/gear.svg" onClick={() => { }} />

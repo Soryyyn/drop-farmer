@@ -3,5 +3,6 @@
  */
 export enum Channels {
     openLinkInExternal = "open-link-in-external",
-    getFarms = "get-farms"
+    getFarms = "get-farms",
+    farmStatusChange = "farm-status-change",
 }

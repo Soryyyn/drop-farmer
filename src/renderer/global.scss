@@ -94,7 +94,8 @@ body {
                 @include container-with-hover;
 
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
+                row-gap: 0.25rem;
                 width: 100%;
                 padding: 1rem;
                 margin-bottom: 1rem;
@@ -102,7 +103,7 @@ body {
                 .farm-status {
                     display: flex;
                     flex-direction: column;
-                    width: calc(100% - 20px);
+                    width: 100%;
                     color: #0c0e16;
                     text-transform: uppercase;
                     letter-spacing: 1px;
@@ -110,34 +111,65 @@ body {
                     flex-grow: 1;
 
                     p {
-                        width: 98%;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }
                 }
 
-                .farm-status-indicator {
-                    justify-self: flex-end;
-                    width: 10px;
-                    height: 10px;
-                    border-radius: 50%;
-                    margin-top: 4px;
-                }
+                #indicator-container {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: baseline;
+                    column-gap: 0.35rem;
 
-                #indicator-running {
-                    background: rgb(33, 219, 135);
-                    box-shadow: 0 0 10px rgba(33, 219, 135, 0.5);
-                }
+                    p {
+                        font-size: 1rem;
+                        color: rgba(24, 26, 41, 0.8);
+                        letter-spacing: 0.5px;
+                    }
 
-                #indicator-waiting {
-                    background: rgb(241, 185, 31);
-                    box-shadow: 0 0 10px rgba(241, 185, 31, 0.5);
-                }
+                    .farm-status-indicator {
+                        justify-self: flex-end;
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 50%;
+                    }
 
-                #indicator-disabled {
-                    background: rgb(231, 75, 101);
-                    box-shadow: 0 0 10px rgba(231, 75, 101, 0.5);
+                    #indicator-farming {
+                        background: rgb(33, 219, 135);
+                        box-shadow: 0 0 10px rgba(33, 219, 135, 0.5);
+                    }
+
+                    @keyframes checking-blink {
+
+                        0%,
+                        49% {
+                            background: rgb(241, 133, 31);
+                            box-shadow: 0 0 10px rgba(241, 133, 31, 0.5);
+
+                        }
+
+                        50%,
+                        100% {
+                            background: rgb(241, 185, 31);
+                            box-shadow: 0 0 10px rgba(241, 185, 31, 0.5);
+                        }
+                    }
+
+                    #indicator-checking {
+                        animation: checking-blink 2s infinite;
+                    }
+
+                    #indicator-idle {
+                        background: rgb(241, 133, 31);
+                        box-shadow: 0 0 10px rgba(241, 133, 31, 0.5);
+                    }
+
+                    #indicator-disabled {
+                        background: rgb(231, 75, 101);
+                        box-shadow: 0 0 10px rgba(231, 75, 101, 0.5);
+                    }
                 }
             }
         }

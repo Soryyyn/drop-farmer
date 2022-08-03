@@ -1,18 +1,25 @@
 import { schedule } from "node-cron";
+import { Channels } from "./common/channels";
 import { createFile, readFile, writeToFile } from "./fileHandling";
+import { sendOneWay } from "./ipc";
 import { log } from "./logger";
+import { getMainWindow } from "./windows";
 
 const FILE_NAME: string = "farms.json";
 const DEFAULT_FARMS_FILE: FarmsFile = {
     uptime: 0,
     farms: []
 };
+let farmsStatus: FarmStatusObject[] = [];
 
 /**
- * Initialize the farms file.
+ * Initialize the farms file, continuosly check if farming is available and set
+ * the default farms status.
  */
 export function initFarms(): void {
     createFarmsFile();
+    setDefaultFarmsStatus();
+
     checkIfNeedsToFarm();
 }
 
@@ -31,11 +38,19 @@ export function getFarms(): Farm[] {
 export function checkIfNeedsToFarm(): void {
     let enabledFarms = getFarms().filter(farm => farm.enabled);
 
-    // for each enabled farm, check if application can farm
+    /**
+     * For each enabled farm, check if application can farm.
+     */
     enabledFarms.forEach((farm: Farm) => {
-        schedule("*/30 * * * *", () => {
-            console.log("checking farm:");
-            console.log(farm);
+
+        //TODO: change back to */30 * * * * on prod build.
+        schedule("* * * * *", () => {
+            /**
+             * Set the farm status to "checking".
+             */
+            let farmStatus: FarmStatusObject = setFarmStatus(farm, "checking");
+
+            sendOneWay(getMainWindow(), Channels.farmStatusChange, farmStatus);
         });
     });
 }
@@ -78,5 +93,62 @@ function writeToFarmsFile(newData: FarmsFile): void {
         writeToFile(FILE_NAME, JSON.stringify(newData, null, 4), "w");
     } catch (err) {
         log("ERROR", `Failed to update farms file. Error message:\n\t"${err}"`);
+    }
+}
+
+/**
+ * Set the farms status to the default which is idle.
+ * If the farm is disabled in the settings, then set the state as disabled.
+ */
+function setDefaultFarmsStatus(): void {
+    let farms: Farm[] = getFarms();
+
+    farms.forEach((farm) => {
+        farmsStatus.push({
+            id: farm.id,
+            status: (!farm.enabled) ? "disabled" : "idle"
+        })
+
+        /**
+         * Set the farm status to "disabled" or "idle" on status initialization.
+         */
+        let farmStatus: FarmStatusObject = setFarmStatus(farm, (!farm.enabled) ? "disabled" : "idle");
+        sendOneWay(getMainWindow(), Channels.farmStatusChange, farmStatus);
+    });
+}
+
+/**
+ * Get the status of the wanted farm.
+ *
+ * @param {Farm} farm The farm which to get the status from.
+ * @returns {FarmStatus} The status of the wanted farm.
+ */
+function getFarmStatus(farm: Farm): FarmStatusObject {
+    let farmStatus: FarmStatusObject = farmsStatus.filter((farmStatus: FarmStatusObject) => farmStatus.id === farm.id)[0];
+    return farmStatus;
+}
+
+/**
+ * Get all farms status.
+ *
+ * @returns All farms status.
+ */
+export function getFarmsStatus(): FarmStatusObject[] {
+    return farmsStatus;
+}
+
+/**
+ * Set the status of a farm.
+ *
+ * @param farm The farm to set the status of.
+ * @param newStatus The new status to apply to the farm status object.
+ * @returns The new farm status object with the newly applied status.
+ */
+export function setFarmStatus(farm: Farm, newStatus: FarmStatus): FarmStatusObject {
+    let temp: FarmStatusObject = getFarmStatus(farm);
+
+    return {
+        id: temp.id,
+        status: newStatus
     }
 }

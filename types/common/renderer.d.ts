@@ -4,8 +4,10 @@
 
 export interface API {
     channels: any
-    callMain: (channel: string, ...args: any[]) => Promise<unknown>,
-    answerMain: (channel: string, callback: (data: any) => any) => void
+    sendOneWay: (channel: string, ...args: any[]) => void,
+    sendAndWait: (channel: string, ...args: any[]) => Promise<unknown>,
+    handleOneWay: (channel: string, listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void) => void,
+    removeAllListeners: (channel: string) => void
 }
 
 declare global {

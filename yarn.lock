@@ -2273,6 +2273,11 @@ electron-to-chromium@^1.4.202:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.202.tgz#0c2ed733f42b02ec49a955c5badfcc65888c390b"
   integrity sha512-JYsK2ex9lmQD27kj19fhXYxzFJ/phLAkLKHv49A5UY6kMRV2xED3qMMLg/voW/+0AR6wMiI+VxlmK9NDtdxlPA==
 
+electron-use-ipc-listener@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/electron-use-ipc-listener/-/electron-use-ipc-listener-1.0.0.tgz#8fb20338ec9a5b81ee4c456570dbab6f093e8864"
+  integrity sha512-wvmBOqRtL4Ngbjaz4Aa+UHq5S61XDLKMnJAlBlAo//8OXOU7jCpUI+gEeH288KbWuvjShlZy3dnuY1yetMCM+Q==
+
 electron-winstaller@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/electron-winstaller/-/electron-winstaller-5.0.0.tgz#0db968f34d498b16c69566a40848f562e70e7bcc"
