@@ -1,6 +1,4 @@
 const { contextBridge, ipcRenderer } = require("electron");
-// import { ipcRenderer } from "electron-better-ipc";
-import useIpcListener from "electron-use-ipc-listener";
 import { Channels } from "./common/channels";
 
 /**
