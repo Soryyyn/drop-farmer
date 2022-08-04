@@ -1,5 +1,4 @@
-import { shell } from "electron";
-import { ipcMain } from "electron-better-ipc";
+import { ipcMain, shell } from "electron";
 import { Channels } from "./common/channels";
 import { getFarms, getFarmsStatus } from "./farms";
 

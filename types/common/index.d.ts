@@ -7,7 +7,7 @@ type Farm = {
     id: number;
     name: string;
     enabled: boolean;
-    player: Player;
+    player: string;
     websiteToCheck: string;
     uptime: number; // in minutes
     farmedDropsLifetime: number;
