@@ -32,3 +32,8 @@ type FarmsFile = {
     uptime: number;
     farms: Farm[];
 }
+
+type FarmWindow = {
+    id: number;
+    windows: Electron.BrowserWindow[]
+}

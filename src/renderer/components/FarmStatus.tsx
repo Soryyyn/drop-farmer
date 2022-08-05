@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 /**
  * Farms status display for the home page to inform the user of all enabled farms.
@@ -27,7 +27,21 @@ export default function FarmStatus({ farm, status }: {
             </div>
             <div
                 id="farms-status-side"
-                onClick={() => setShowingWindows(!showingWindows)}
+                onClick={() => {
+                    /**
+                     * Only react if there are actual windows.
+                     */
+                    if (status === "checking" || status === "farming") {
+                        setShowingWindows(!showingWindows);
+                        /**
+                         * When the eye symbol is pressed and the windows should be showed or hidden.
+                         */
+                        window.api.sendOneWay(window.api.channels.farmWindowsVisibility, {
+                            farm: farm,
+                            show: !showingWindows
+                        });
+                    }
+                }}
             >
                 {
                     (showingWindows)

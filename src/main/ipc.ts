@@ -1,6 +1,7 @@
 import { ipcMain, shell } from "electron";
 import { Channels } from "./common/channels";
 import { getFarms, getFarmsStatus } from "./farms";
+import { hideFarmWindows, showFarmWindows } from "./windows";
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -43,4 +44,15 @@ handleAndReply(Channels.getFarms, () => {
         farms: getFarms(),
         farmsStatus: getFarmsStatus()
     };
+});
+
+/**
+ * React when the eye symbol is pressed on the renderer to hide or show all farm windows.
+ */
+handleOneWay(Channels.farmWindowsVisibility, (event, value) => {
+    if (value.show) {
+        showFarmWindows(value.farm);
+    } else {
+        hideFarmWindows(value.farm);
+    }
 });

@@ -3,7 +3,7 @@ import { Channels } from "./common/channels";
 import { createFile, readFile, writeToFile } from "./fileHandling";
 import { sendOneWay } from "./ipc";
 import { log } from "./logger";
-import { getMainWindow } from "./windows";
+import { checkIfNoWindows, createFarmWindow, getMainWindow } from "./windows";
 
 const FILE_NAME: string = "farms.json";
 const DEFAULT_FARMS_FILE: FarmsFile = {
@@ -11,6 +11,7 @@ const DEFAULT_FARMS_FILE: FarmsFile = {
     farms: []
 };
 let farmsStatus: FarmStatusObject[] = [];
+let farmWindows: FarmWindow[] = [];
 
 /**
  * Initialize the farms file, continuosly check if farming is available and set
@@ -19,6 +20,7 @@ let farmsStatus: FarmStatusObject[] = [];
 export function initFarms(): void {
     createFarmsFile();
     setDefaultFarmsStatus();
+    createFarmWindowArrays();
 
     checkIfNeedsToFarm();
 }
@@ -40,6 +42,8 @@ export function checkIfNeedsToFarm(): void {
 
     /**
      * For each enabled farm, check if application can farm.
+     * Farm if it's possible.
+     * And idle if there are no more windows.
      */
     enabledFarms.forEach((farm: Farm) => {
 
@@ -49,9 +53,25 @@ export function checkIfNeedsToFarm(): void {
              * Set the farm status to "checking".
              */
             let farmStatus: FarmStatusObject = setFarmStatus(farm, "checking");
-
             sendOneWay(getMainWindow(), Channels.farmStatusChange, farmStatus);
+
+            /**
+             * Create the window.
+             */
+            createFarmWindow(farm);
+
+            /**
+             * Check if there are any more farm windows left.
+             * TODO: Move to automatic window closing and check if there are any
+             * more windows left.
+             */
+            // if (checkIfNoWindows(farm)) {
+            //     let farmStatus: FarmStatusObject = setFarmStatus(farm, "idle");
+            //     sendOneWay(getMainWindow(), Channels.farmStatusChange, farmStatus);
+            // }
         });
+
+
     });
 }
 
@@ -151,4 +171,39 @@ export function setFarmStatus(farm: Farm, newStatus: FarmStatus): FarmStatusObje
         id: temp.id,
         status: newStatus
     }
+}
+
+/**
+ * Initialize the farm windows array with 0 windows per farm.
+ */
+function createFarmWindowArrays(): void {
+    let farms = getFarms();
+
+    farms.forEach((farm: Farm) => {
+        farmWindows.push({
+            id: farm.id,
+            windows: []
+        });
+    });
+}
+
+/**
+ * Adds the created browser window to the array of the specified farm.
+ *
+ * @param {Farm} farm The farm to which to add the browser window to.
+ * @param {Electron.BrowserWindow} window The newly created browser window.
+ */
+export function addFarmWindowToArray(farm: Farm, window: Electron.BrowserWindow): void {
+    farmWindows.forEach((farmWindow: FarmWindow) => {
+        if (farmWindow.id === farm.id) {
+            farmWindow.windows.push(window);
+        }
+    });
+}
+
+/**
+ * Returns the farm windows array.
+ */
+export function getFarmWindows(): FarmWindow[] {
+    return farmWindows;
 }

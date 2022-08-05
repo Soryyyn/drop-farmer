@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import { initFarms } from "./farms";
 import { initLogger } from "./logger";
+import { initPuppeteerConnection } from "./puppeteer";
 import { initSettings } from "./settings";
 import { createMainWindow } from "./windows";
 
@@ -10,6 +11,11 @@ import { createMainWindow } from "./windows";
 if (require("electron-squirrel-startup")) {
     app.quit();
 }
+
+/**
+ * Puppeteer connection to electron application must happen before the app is ready.
+ */
+initPuppeteerConnection();
 
 /**
  * Gets executed when electron has finished starting.
