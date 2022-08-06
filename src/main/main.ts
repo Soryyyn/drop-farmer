@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app } from "electron";
 import { initFarms } from "./farms";
 import { initLogger } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";

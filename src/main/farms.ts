@@ -46,7 +46,6 @@ export function checkIfNeedsToFarm(): void {
      * And idle if there are no more windows.
      */
     enabledFarms.forEach((farm: Farm) => {
-
         //TODO: change back to */30 * * * * on prod build.
         schedule("* * * * *", () => {
             /**

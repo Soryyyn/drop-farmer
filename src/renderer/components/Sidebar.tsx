@@ -27,27 +27,41 @@ export default function Sidebar() {
      */
     useEffect(() => {
         window.api.handleOneWay(window.api.channels.farmStatusChange, (event: Electron.IpcRendererEvent, newFarmStatus: FarmStatusObject) => {
+
+            /**
+             * Create empty array for the state.
+             */
+            let tempState: FarmStatusObject[] = [];
+
+            /**
+             * Check which farm had a status change.
+             */
             for (let i = 0; i < farms.length; i++) {
-
                 if (farms[i].id === newFarmStatus.id) {
-                    console.log(farms[i]);
-                    console.log(newFarmStatus);
 
-                    let tempStatus = [...farmsStatus];
+                    /**
+                     * Clear the temporary state to apply latest changes to states.
+                     */
+                    tempState = [];
+                    tempState = [...farmsStatus];
                     let changed: FarmStatusObject = {
                         ...newFarmStatus
                     }
 
-                    tempStatus[i] = changed;
-                    setFarmsStatus(tempStatus);
+                    tempState[i] = changed;
                 }
             }
+
+            /**
+             * Set the state after going through each farm.
+             */
+            setFarmsStatus(tempState);
         });
 
         return () => {
             window.api.removeAllListeners(window.api.channels.farmStatusChange)
         };
-    }, [farms])
+    }, [farmsStatus])
 
     return (
         <div id="sidebar">
