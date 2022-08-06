@@ -3,7 +3,7 @@ import { Channels } from "./common/channels";
 import { createFile, readFile, writeToFile } from "./fileHandling";
 import { sendOneWay } from "./ipc";
 import { log } from "./logger";
-import { checkIfNoWindows, createFarmWindow, getMainWindow } from "./windows";
+import { checkIfNoWindows, closeWindow, createFarmWindow, getMainWindow } from "./windows";
 
 const FILE_NAME: string = "farms.json";
 const DEFAULT_FARMS_FILE: FarmsFile = {
@@ -205,4 +205,15 @@ export function addFarmWindowToArray(farm: Farm, window: Electron.BrowserWindow)
  */
 export function getFarmWindows(): FarmWindow[] {
     return farmWindows;
+}
+
+/**
+ * Go through each farm and close all windows.
+ */
+export function closeAllFarmWindows(): void {
+    farmWindows.forEach((farmWindowObject: FarmWindow) => {
+        farmWindowObject.windows.forEach((window: Electron.BrowserWindow) => {
+            closeWindow(window);
+        })
+    })
 }

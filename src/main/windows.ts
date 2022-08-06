@@ -124,3 +124,12 @@ export function checkIfNoWindows(farm: Farm): boolean {
 
     return noWindows;
 }
+
+/**
+ * Close the specified browser window.
+ *
+ * @param {Electron.BrowserWindow} window The browser window to close.
+ */
+export function closeWindow(window: Electron.BrowserWindow): void {
+    window.destroy();
+}
