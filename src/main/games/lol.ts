@@ -1,4 +1,3 @@
-
 import { controlWindow } from "../puppeteer";
 import { GameFarmTemplate } from "./gameFarmTemplate";
 
@@ -31,6 +30,7 @@ export class LOL extends GameFarmTemplate {
 
     farmCheck(timeOfCheck: Date) {
         this.changeStatus("checking");
+        this.createFarmCheckingWindow();
     }
 
     startFarming(): void {

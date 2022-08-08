@@ -1,6 +1,7 @@
 import { ipcMain, shell } from "electron";
 import { Channels } from "./common/channels";
-import { getFarms } from "./farms";
+import { getFarms, getFarmsForRenderer } from "./farms";
+import { GameFarmTemplate } from "./games/gameFarmTemplate";
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -39,19 +40,20 @@ handleOneWay(Channels.openLinkInExternal, (event, link: string) => {
  * Also sends the status of all farms to handle.
  */
 handleAndReply(Channels.getFarms, () => {
-    return getFarms();
+    return getFarmsForRenderer();
 });
 
 /**
  * React when the eye symbol is pressed on the renderer to hide or show all farm windows.
  */
 handleOneWay(Channels.farmWindowsVisibility, (event, value) => {
-    getFarms().forEach((farm) => {
-        if (farm.gameName === value.farm.gameName)
+    getFarms().forEach((farm: GameFarmTemplate) => {
+        if (farm.gameName === value.farm.gameName) {
             if (value.show) {
                 farm.showWindows()
             } else {
                 farm.hideWindows()
             }
+        }
     });
 });

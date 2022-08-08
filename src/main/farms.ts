@@ -78,7 +78,7 @@ function readCacheFile(): void {
 /**
  * Get all farm data for renderer process.
  */
-export function getFarms(): GameFarmTemplate[] {
+export function getFarmsForRenderer(): FarmRendererObject[] {
     const farms: any[] = [];
     FARMS.forEach((farm: GameFarmTemplate) => {
         farms.push({
@@ -90,12 +90,17 @@ export function getFarms(): GameFarmTemplate[] {
 }
 
 /**
+ * Returns all the available farms.
+ */
+export function getFarms(): GameFarmTemplate[] {
+    return FARMS;
+}
+
+/**
  * Go through each farm and close all windows.
  */
 export function destroyAllWindows(): void {
     FARMS.forEach((farm: GameFarmTemplate) => {
-        // farm.destroyWindow(farm.checkerWindow);
-
         /**
          * Check if farm windows are available.
          * If yes, destroy them.
