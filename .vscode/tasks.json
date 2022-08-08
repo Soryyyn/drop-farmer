@@ -3,8 +3,19 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "drop-farmer: Start application (normal mode / hot reload)",
+            "label": "drop-farmer: Start application (with cache)",
             "command": "yarn run start || npm start",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": true,
+                "close": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "drop-farmer: Start application (as fresh/new user)",
+            "command": "yarn run start:fresh || npm start:fresh",
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,

@@ -1,24 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ExtraButton from "../components/ExtraButton";
 import FarmStatus from "../components/FarmStatus";
 import Sidebar from "../components/Sidebar";
 
 export default function Home() {
-    const [farms, setFarms] = useState<Farm[]>([]);
-
-    /**
-     * On site load, get all farms from main process and display the enabled ones.
-     */
-    useEffect(() => {
-        window.api.sendAndWait(window.api.channels.getFarms)
-            .then((farmsFromMain: any) => {
-                setFarms(farmsFromMain);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, []);
-
     return (
         <div id="home-divider">
             <Sidebar />

@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS: SettingsFile = {
     players: [],
 };
 
+
 /**
  * Read the settings file and save it in the current settings object.
  */
@@ -38,8 +39,7 @@ function createSettingsFile(): void {
  */
 function readSettingsFile(): SettingsFile | undefined {
     try {
-        let fileData = readFile(FILE_NAME);
-        return JSON.parse(fileData);
+        return JSON.parse(readFile(FILE_NAME));
     } catch (err) {
         // TODO: send event for error?
         log("ERROR", `Failed reading settings file. Using default settings. App functions may not work properly. Error message:\n\t"${err}"`);

@@ -1,6 +1,7 @@
-import { app } from "electron";
+import { app, session } from "electron";
+import * as eid from "electron-is-dev";
 import { destroyAllWindows, initFarms } from "./farms";
-import { initLogger } from "./logger";
+import { initLogger, log } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
 import { initSettings } from "./settings";
 import { createMainWindow } from "./windows";
@@ -11,6 +12,13 @@ import { createMainWindow } from "./windows";
 if (require("electron-squirrel-startup")) {
     app.quit();
 }
+
+/**
+ * Initialize all drop-farmer background functions.
+ */
+initLogger();
+initSettings();
+initFarms();
 
 /**
  * Puppeteer connection to electron application must happen before the app is ready.
@@ -24,6 +32,14 @@ initPuppeteerConnection();
 app.whenReady()
     .then(() => {
         /**
+         * Check if app is running as fresh/dev mode.
+         */
+        if (eid) {
+            log("INFO", "Cleared application session data");
+            session.defaultSession.clearStorageData();
+        }
+
+        /**
          * Create the actual application window and show it when it has
          * been created.
          */
@@ -32,13 +48,6 @@ app.whenReady()
          * Load all ipc listeners when the app is ready.
          */
         require("./ipc");
-
-        /**
-         * Initialize all drop-farmer background functions.
-         */
-        initLogger();
-        initSettings();
-        initFarms();
     });
 
 /**

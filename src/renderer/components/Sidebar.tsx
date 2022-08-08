@@ -18,6 +18,10 @@ export default function Sidebar() {
             .catch((err) => {
                 console.log(err);
             });
+
+        return () => {
+            window.api.removeAllListeners(window.api.channels.getFarms)
+        };
     }, []);
 
     /**

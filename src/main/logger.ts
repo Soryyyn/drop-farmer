@@ -1,3 +1,4 @@
+import * as color from "ansi-colors";
 import dayjs from "dayjs";
 import { existsSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -40,6 +41,23 @@ function createLogEntry(type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", mes
 }
 
 /**
+ * Creates an appropriate log entry for the the terminal with colors.
+ *
+ * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
+ * @param {string} message Message to include in log entry.
+ * @returns {string} Prepared log entry.
+ */
+function createTerminalLogEntry(type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): string {
+    let currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
+
+    let typeText = (type === "FATAL" || type === "ERROR") ? color.bold.red(`[${type}]`) : color.bold.blue(`[${type}]`);
+    let timeStampText = color.yellow(`${currentTimeStamp}`);
+    let messageText = color.white(`${message}`);
+
+    return `${typeText} ${timeStampText} - ${messageText}`;
+}
+
+/**
  * Logs (writes) a log entry into the ".log" file in the app dir.
  *
  * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
@@ -47,8 +65,9 @@ function createLogEntry(type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", mes
  */
 export function log(type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: any): void {
     let entry = createLogEntry(type, message);
-
+    let terminalEntry = createTerminalLogEntry(type, message);
     try {
+        console.log(terminalEntry);
         writeToFile(FILE_NAME, `${entry}`, "a");
     } catch (err) {
         console.log(err);

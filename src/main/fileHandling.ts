@@ -1,7 +1,6 @@
 import { app } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { log } from "./logger";
 
 /**
  * The userData (roaming/drop-farmer) directory in production mode.

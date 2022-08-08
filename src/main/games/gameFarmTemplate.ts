@@ -117,7 +117,8 @@ export abstract class GameFarmTemplate {
      * Destroy window after checking is done.
      */
     createFarmCheckingWindow(): void {
-        this.checkerWindow = createFarmWindow(this);
+        if (!this.checkerWindow)
+            this.checkerWindow = createFarmWindow(this);
     }
 
     /**
