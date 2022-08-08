@@ -34,6 +34,28 @@ type FarmsFile = {
 }
 
 type FarmWindow = {
+    link: string;
+    browserWindow: Electron.BrowserWindow
+}
+
+type FarmWindowObject = {
     id: number;
-    windows: Electron.BrowserWindow[]
+    windows: FarmWindow[]
+}
+
+type FarmsCacheFile = {
+    uptime: number;
+    farms: tempFarm[];
+}
+
+type tempFarm = {
+    gameName: string;
+    checkerWebsite: string;
+    enabled: boolean;
+    schedule: number;
+}
+
+type FarmRendererObject = {
+    gameName: string;
+    status: FarmStatus;
 }

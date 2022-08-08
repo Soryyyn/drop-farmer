@@ -1,5 +1,5 @@
 import { app } from "electron";
-import { closeAllFarmWindows, initFarms } from "./farms";
+import { destroyAllWindows, initFarms } from "./farms";
 import { initLogger } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
 import { initSettings } from "./settings";
@@ -45,5 +45,5 @@ app.whenReady()
  * Close all farm windows when app quits.
  */
 app.on("before-quit", () => {
-    closeAllFarmWindows();
+    destroyAllWindows();
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 /**
  * Farms status display for the home page to inform the user of all enabled farms.
@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
  * @param {Object} props Farm to show the status of.
  */
 export default function FarmStatus({ farm, status }: {
-    farm: Farm,
+    farm: FarmRendererObject,
     status: FarmStatus
 }) {
     const [showingWindows, setShowingWindows] = useState<boolean>(false);
@@ -14,8 +14,8 @@ export default function FarmStatus({ farm, status }: {
     return (
         <div id="farm-status-container">
             <div id="farm-status-main">
-                <div className="farm-status" id={`farm-${farm.id}`}>
-                    <p>{farm.name}</p>
+                <div className="farm-status" id={`farm-${farm.gameName}`}>
+                    <p>{farm.gameName}</p>
                 </div>
                 <div id="indicator-container">
                     <div

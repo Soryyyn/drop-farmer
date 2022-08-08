@@ -1,219 +1,115 @@
-import { schedule } from "node-cron";
-import { Channels } from "./common/channels";
-import { createFile, readFile, writeToFile } from "./fileHandling";
-import { sendOneWay } from "./ipc";
+import { createFile, readFile } from "./fileHandling";
+import { GameFarmTemplate } from "./games/gameFarmTemplate";
+import { LOL } from "./games/lol";
 import { log } from "./logger";
-import { checkIfNoWindows, closeWindow, createFarmWindow, getMainWindow } from "./windows";
-
-const FILE_NAME: string = "farms.json";
-const DEFAULT_FARMS_FILE: FarmsFile = {
-    uptime: 0,
-    farms: []
-};
-let farmsStatus: FarmStatusObject[] = [];
-let farmWindows: FarmWindow[] = [];
 
 /**
- * Initialize the farms file, continuosly check if farming is available and set
- * the default farms status.
+ * The cache file name.
+ */
+const CACHE_FILE_NAME: string = "farms_cache.json";
+
+/**
+ * All the farms in array to access.
+ */
+const FARMS: GameFarmTemplate[] = [
+    new LOL(),
+];
+
+/**
+ * Initizalize all farms and create the cache file for the farms to use if it
+ * doesn't exist already.
+ *
+ * Go through each farm and start the schedule to farm.
  */
 export function initFarms(): void {
-    createFarmsFile();
-    setDefaultFarmsStatus();
-    createFarmWindowArrays();
+    createCacheFile();
+    readCacheFile();
 
-    checkIfNeedsToFarm();
-}
-
-/**
- * Gets all currently saved farms from the farms file.
- *
- * @returns {Farm[]} All currently saved farms.
- */
-export function getFarms(): Farm[] {
-    return readFarmsFile().farms;
-}
-
-/**
- * Check all farms if application can farm and if they are enabled.
- */
-export function checkIfNeedsToFarm(): void {
-    let enabledFarms = getFarms().filter(farm => farm.enabled);
-
-    /**
-     * For each enabled farm, check if application can farm.
-     * Farm if it's possible.
-     * And idle if there are no more windows.
-     */
-    enabledFarms.forEach((farm: Farm) => {
-        //TODO: change back to */30 * * * * on prod build.
-        schedule("* * * * *", () => {
-            /**
-             * Set the farm status to "checking".
-             */
-            let farmStatus: FarmStatusObject = setFarmStatus(farm, "checking");
-            sendOneWay(getMainWindow(), Channels.farmStatusChange, farmStatus);
-
-            /**
-             * Create the window.
-             */
-            createFarmWindow(farm);
-
-            /**
-             * Check if there are any more farm windows left.
-             * TODO: Move to automatic window closing and check if there are any
-             * more windows left.
-             */
-            // if (checkIfNoWindows(farm)) {
-            //     let farmStatus: FarmStatusObject = setFarmStatus(farm, "idle");
-            //     sendOneWay(getMainWindow(), Channels.farmStatusChange, farmStatus);
-            // }
-        });
-
-
+    FARMS.forEach((farm: GameFarmTemplate) => {
+        farm.scheduleCheckingFarm();
     });
 }
 
 /**
- * Create the farms file.
+ * Create the cache file.
+ * File does *not* get created if it already exists.
  */
-function createFarmsFile(): void {
+function createCacheFile(): void {
     try {
-        createFile(FILE_NAME, JSON.stringify(DEFAULT_FARMS_FILE, null, 4));
+        const cache: FarmsCacheFile = {
+            uptime: 0,
+            farms: []
+        };
+
+        FARMS.forEach((farm: GameFarmTemplate) => {
+            cache.farms.push(farm.getCacheDataData());
+        });
+
+        createFile(CACHE_FILE_NAME, JSON.stringify(cache, null, 4));
     } catch (err) {
         // TODO: send event for error?
-        log("FATAL", `Failed creating farms file. Drop-farmer can't work without the farms file. Error message:\n\t"${err}"`);
+        log("FATAL", `Failed creating farms cache file. Drop-farmer will only use the default configurations without the cache file and wont track progress. Error message:\n\t"${err}"`);
     }
 }
 
 /**
- * Read the current farms file.
- *
- * @returns {FarmsFile} Current farms file.
+ * Reads the cache file and sets the data of each farm from the cache.
+ * If not cache is read or an error occurs the default farm configurations will be used.
  */
-function readFarmsFile(): FarmsFile {
+function readCacheFile(): void {
     try {
-        let fileData = readFile(FILE_NAME);
-        return JSON.parse(fileData);
-    } catch (err) {
-        // TODO: send event for error?
-        log("ERROR", `Failed reading farms file. Error message:\n\t"${err}"`);
-        return DEFAULT_FARMS_FILE;
-    }
-}
-
-/**
- * Re-writes the farms file with the new data given.
- *
- * @param {FarmsFile} newData New data to write to the farms file.
- */
-function writeToFarmsFile(newData: FarmsFile): void {
-    try {
-        writeToFile(FILE_NAME, JSON.stringify(newData, null, 4), "w");
-    } catch (err) {
-        log("ERROR", `Failed to update farms file. Error message:\n\t"${err}"`);
-    }
-}
-
-/**
- * Set the farms status to the default which is idle.
- * If the farm is disabled in the settings, then set the state as disabled.
- */
-function setDefaultFarmsStatus(): void {
-    let farms: Farm[] = getFarms();
-
-    farms.forEach((farm) => {
-        farmsStatus.push({
-            id: farm.id,
-            status: (!farm.enabled) ? "disabled" : "idle"
-        })
+        const cacheData: FarmsCacheFile = JSON.parse(readFile(CACHE_FILE_NAME));
 
         /**
-         * Set the farm status to "disabled" or "idle" on status initialization.
+         * Go through each farm cache and load each one respectively into each farm.
          */
-        let farmStatus: FarmStatusObject = setFarmStatus(farm, (!farm.enabled) ? "disabled" : "idle");
-        sendOneWay(getMainWindow(), Channels.farmStatusChange, farmStatus);
-    });
-}
-
-/**
- * Get the status of the wanted farm.
- *
- * @param {Farm} farm The farm which to get the status from.
- * @returns {FarmStatus} The status of the wanted farm.
- */
-function getFarmStatus(farm: Farm): FarmStatusObject {
-    let farmStatus: FarmStatusObject = farmsStatus.filter((farmStatus: FarmStatusObject) => farmStatus.id === farm.id)[0];
-    return farmStatus;
-}
-
-/**
- * Get all farms status.
- *
- * @returns All farms status.
- */
-export function getFarmsStatus(): FarmStatusObject[] {
-    return farmsStatus;
-}
-
-/**
- * Set the status of a farm.
- *
- * @param farm The farm to set the status of.
- * @param newStatus The new status to apply to the farm status object.
- * @returns The new farm status object with the newly applied status.
- */
-export function setFarmStatus(farm: Farm, newStatus: FarmStatus): FarmStatusObject {
-    let temp: FarmStatusObject = getFarmStatus(farm);
-
-    return {
-        id: temp.id,
-        status: newStatus
+        cacheData.farms.forEach((cache: tempFarm) => {
+            FARMS.forEach((farm: GameFarmTemplate) => {
+                if (cache.gameName === farm.gameName)
+                    farm.setCachedFarmData(cache);
+            });
+        });
+    } catch (err) {
+        // TODO: send event for error?
+        log("ERROR", `Failed reading farms cache file. Error message:\n\t"${err}"`);
     }
 }
 
 /**
- * Initialize the farm windows array with 0 windows per farm.
+ * Get all farm data for renderer process.
  */
-function createFarmWindowArrays(): void {
-    let farms = getFarms();
-
-    farms.forEach((farm: Farm) => {
-        farmWindows.push({
-            id: farm.id,
-            windows: []
+export function getFarms(): GameFarmTemplate[] {
+    const farms: any[] = [];
+    FARMS.forEach((farm: GameFarmTemplate) => {
+        farms.push({
+            gameName: farm.gameName,
+            status: farm.status
         });
     });
-}
-
-/**
- * Adds the created browser window to the array of the specified farm.
- *
- * @param {Farm} farm The farm to which to add the browser window to.
- * @param {Electron.BrowserWindow} window The newly created browser window.
- */
-export function addFarmWindowToArray(farm: Farm, window: Electron.BrowserWindow): void {
-    farmWindows.forEach((farmWindow: FarmWindow) => {
-        if (farmWindow.id === farm.id) {
-            farmWindow.windows.push(window);
-        }
-    });
-}
-
-/**
- * Returns the farm windows array.
- */
-export function getFarmWindows(): FarmWindow[] {
-    return farmWindows;
+    return farms;
 }
 
 /**
  * Go through each farm and close all windows.
  */
-export function closeAllFarmWindows(): void {
-    farmWindows.forEach((farmWindowObject: FarmWindow) => {
-        farmWindowObject.windows.forEach((window: Electron.BrowserWindow) => {
-            closeWindow(window);
-        })
-    })
+export function destroyAllWindows(): void {
+    FARMS.forEach((farm: GameFarmTemplate) => {
+        // farm.destroyWindow(farm.checkerWindow);
+
+        /**
+         * Check if farm windows are available.
+         * If yes, destroy them.
+         */
+        if (farm.farmingWindows.length > 0) {
+            farm.farmingWindows.forEach((window: Electron.BrowserWindow) => {
+                farm.destroyWindow(window);
+            });
+        }
+
+        /**
+         * Destroy the checker window if available.
+         */
+        if (farm.checkerWindow)
+            farm.destroyWindow(farm.checkerWindow);
+    });
 }

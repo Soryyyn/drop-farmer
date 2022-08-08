@@ -1,5 +1,6 @@
 import { BrowserWindow } from "electron";
-import { addFarmWindowToArray, getFarmWindows } from "./farms";
+import { destroyAllWindows } from "./farms";
+import { GameFarmTemplate } from "./games/gameFarmTemplate";
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -42,6 +43,14 @@ export function createMainWindow(): void {
     mainWindow.on("ready-to-show", () => {
         mainWindow.show();
     });
+
+    /**
+     * When close button on main windows is clicked.
+     */
+    // TODO: Change to "close to tray" when functionality is added.
+    mainWindow.on("close", () => {
+        destroyAllWindows();
+    });
 }
 
 /**
@@ -56,80 +65,14 @@ export function getMainWindow(): BrowserWindow {
  *
  * @param {Farm} farm The farm to create the window for.
  */
-export function createFarmWindow(farm: Farm): BrowserWindow {
+export function createFarmWindow(farm: GameFarmTemplate): BrowserWindow {
     const window = new BrowserWindow({
         height: 1080,
         width: 1920,
         show: false,
-        closable: false
+        closable: false,
     });
 
-    window.loadURL(farm.websiteToCheck);
-
-    /**
-     * Add the window to the farm array.
-     */
-    addFarmWindowToArray(farm, window);
-
+    window.loadURL(farm.checkerWebsite);
     return window;
-}
-
-/**
- * Show all windows of specified farm.
- *
- * @param {Farm} farm Farm to show all windows for.
- */
-export function showFarmWindows(farm: Farm): void {
-    getFarmWindows().forEach((farmWindow: FarmWindow) => {
-        if (farmWindow.id === farm.id) {
-            for (let i = 0; i < farmWindow.windows.length; i++) {
-                farmWindow.windows[i].show();
-            }
-        }
-    });
-}
-
-/**
- * Hide all windows of the specified farm.
- *
- * @param {Farm} farm Farm to hide all the windows.
- */
-export function hideFarmWindows(farm: Farm): void {
-    getFarmWindows().forEach((farmWindow: FarmWindow) => {
-        if (farmWindow.id === farm.id) {
-            for (let i = 0; i < farmWindow.windows.length; i++) {
-                farmWindow.windows[i].hide();
-            }
-        }
-    });
-}
-
-/**
- * Routinely checks if there are any windows for the specified farm left.
- * If not, sends the idle signal to renderer.
- *
- * @param {Farm} farm Farm to check the windows for.
- */
-export function checkIfNoWindows(farm: Farm): boolean {
-    let noWindows: boolean = false;
-
-    getFarmWindows().forEach((farmWindow: FarmWindow) => {
-        if (farmWindow.id === farm.id) {
-            if (farmWindow.windows.length === 0)
-                noWindows = true;
-            else
-                noWindows = false;
-        }
-    });
-
-    return noWindows;
-}
-
-/**
- * Close the specified browser window.
- *
- * @param {Electron.BrowserWindow} window The browser window to close.
- */
-export function closeWindow(window: Electron.BrowserWindow): void {
-    window.destroy();
 }

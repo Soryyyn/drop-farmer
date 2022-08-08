@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import FarmStatus from "./FarmStatus";
 
+/**
+ * The sidebar component which displays all farms and their status.
+ */
 export default function Sidebar() {
-    const [farms, setFarms] = useState<Farm[]>([]);
-    const [farmsStatus, setFarmsStatus] = useState<FarmStatusObject[]>([]);
+    const [farms, setFarms] = useState<FarmRendererObject[]>([]);
 
     /**
      * On site load, get all farms from main process and display the enabled ones.
@@ -11,8 +13,7 @@ export default function Sidebar() {
     useEffect(() => {
         window.api.sendAndWait(window.api.channels.getFarms)
             .then((data: any) => {
-                setFarms(data.farms);
-                setFarmsStatus(data.farmsStatus);
+                setFarms(data);
             })
             .catch((err) => {
                 console.log(err);
@@ -26,52 +27,48 @@ export default function Sidebar() {
      * - If it is this one, then change the status.
      */
     useEffect(() => {
-        window.api.handleOneWay(window.api.channels.farmStatusChange, (event: Electron.IpcRendererEvent, newFarmStatus: FarmStatusObject) => {
+        window.api.handleOneWay(window.api.channels.farmStatusChange, (event: Electron.IpcRendererEvent, changedStatus: FarmRendererObject) => {
 
             /**
              * Create empty array for the state.
              */
-            let tempState: FarmStatusObject[] = [];
+            let tempCopy: FarmRendererObject[] = [];
 
             /**
              * Check which farm had a status change.
              */
             for (let i = 0; i < farms.length; i++) {
-                if (farms[i].id === newFarmStatus.id) {
 
+                if (farms[i].gameName === changedStatus.gameName) {
                     /**
                      * Clear the temporary state to apply latest changes to states.
                      */
-                    tempState = [];
-                    tempState = [...farmsStatus];
-                    let changed: FarmStatusObject = {
-                        ...newFarmStatus
-                    }
-
-                    tempState[i] = changed;
+                    tempCopy = [];
+                    tempCopy = [...farms];
+                    tempCopy[i] = changedStatus;
                 }
             }
 
             /**
              * Set the state after going through each farm.
              */
-            setFarmsStatus(tempState);
+            setFarms(tempCopy);
         });
 
         return () => {
             window.api.removeAllListeners(window.api.channels.farmStatusChange)
         };
-    }, [farmsStatus])
+    }, [farms])
 
     return (
         <div id="sidebar">
             <ul>
                 {
-                    farms && farms.map((farm: Farm) => {
+                    farms && farms.map((farm: FarmRendererObject) => {
                         return <FarmStatus
-                            key={farm.id}
+                            key={farm.gameName}
                             farm={farm}
-                            status={farmsStatus[farm.id].status}
+                            status={farm.status}
                         />
                     })
                 }
