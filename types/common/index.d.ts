@@ -3,23 +3,7 @@ type Player = {
     qualityToSet: string;
 }
 
-type Farm = {
-    id: number;
-    name: string;
-    enabled: boolean;
-    player: string;
-    websiteToCheck: string;
-    uptime: number; // in minutes
-    farmedDropsLifetime: number;
-    farmedDropsToday: number;
-}
-
 type FarmStatus = "farming" | "idle" | "checking" | "disabled"
-
-type FarmStatusObject = {
-    id: number;
-    status: FarmStatus;
-}
 
 type SettingsFile = {
     headless: boolean;
@@ -28,31 +12,16 @@ type SettingsFile = {
     players: Player[];
 }
 
-type FarmsFile = {
-    uptime: number;
-    farms: Farm[];
-}
-
-type FarmWindow = {
-    link: string;
-    browserWindow: Electron.BrowserWindow
-}
-
-type FarmWindowObject = {
-    id: number;
-    windows: FarmWindow[]
-}
-
-type FarmsCacheFile = {
-    uptime: number;
-    farms: tempFarm[];
-}
-
-type tempFarm = {
+type Farm = {
     gameName: string;
     checkerWebsite: string;
     enabled: boolean;
     schedule: number;
+}
+
+type FarmsCacheFile = {
+    uptime: number;
+    farms: Farm[];
 }
 
 type FarmRendererObject = {

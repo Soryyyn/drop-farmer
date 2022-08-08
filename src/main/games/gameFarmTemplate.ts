@@ -85,7 +85,7 @@ export abstract class GameFarmTemplate {
      * Cache the data of the farm to the farms file.
      * Gets executed on application close or on changing of the settings.
      */
-    getCacheDataData(): tempFarm {
+    getCacheDataData(): Farm {
         return {
             gameName: this.gameName,
             checkerWebsite: this.checkerWebsite,
@@ -100,7 +100,7 @@ export abstract class GameFarmTemplate {
      *
      * Re-cache after load.
      */
-    setCachedFarmData(cachedData: tempFarm): void {
+    setCachedFarmData(cachedData: Farm): void {
         this.gameName = cachedData.gameName;
         this._enabled = cachedData.enabled;
         this.checkerWebsite = cachedData.checkerWebsite;

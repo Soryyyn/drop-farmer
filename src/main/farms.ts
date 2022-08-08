@@ -63,7 +63,7 @@ function readCacheFile(): void {
         /**
          * Go through each farm cache and load each one respectively into each farm.
          */
-        cacheData.farms.forEach((cache: tempFarm) => {
+        cacheData.farms.forEach((cache: Farm) => {
             FARMS.forEach((farm: GameFarmTemplate) => {
                 if (cache.gameName === farm.gameName)
                     farm.setCachedFarmData(cache);
