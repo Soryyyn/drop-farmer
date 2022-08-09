@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ExtraButton from "../components/ExtraButton";
-import FarmStatus from "../components/FarmStatus";
 import Sidebar from "../components/Sidebar";
 
 export default function Home() {
+    const [internetConnection, setInternetConnection] = useState<boolean>(true);
+
+    /**
+     * On site load, get internet connection
+     */
+    useEffect(() => {
+        window.api.sendAndWait(window.api.channels.getInternetConnection)
+            .then((connection: any) => {
+                setInternetConnection(connection)
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        return () => {
+            window.api.removeAllListeners(window.api.channels.getInternetConnection)
+        };
+    }, []);
+
     return (
         <div id="home-divider">
             <Sidebar />
@@ -24,7 +42,8 @@ export default function Home() {
                         <ExtraButton imgPath="../assets/statistics.svg" onClick={() => { }} />
                         <ExtraButton imgPath="../assets/gear.svg" onClick={() => { }} />
                     </div>
-                    <p id="made-by">copyright © soryn</p>
+                    <p id="made-by">Copyright © Soryn</p>
+                    <p id="internet-connection">Internet connection: {(internetConnection) ? "Connected" : "No internet"}</p>
                 </div>
             </div>
         </div>

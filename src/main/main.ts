@@ -1,6 +1,7 @@
 import { app, session } from "electron";
 import * as eid from "electron-is-dev";
-import { destroyAllWindows, initFarms } from "./farms";
+import { initFarms } from "./farms";
+import { checkInternetConnection } from "./internet";
 import { initLogger, log } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
 import { initSettings } from "./settings";
@@ -19,6 +20,11 @@ if (require("electron-squirrel-startup")) {
 initLogger();
 initSettings();
 initFarms();
+
+/**
+ * Check if application has access to the internet.
+ */
+checkInternetConnection();
 
 /**
  * Puppeteer connection to electron application must happen before the app is ready.
@@ -44,6 +50,7 @@ app.whenReady()
          * been created.
          */
         createMainWindow();
+
         /**
          * Load all ipc listeners when the app is ready.
          */

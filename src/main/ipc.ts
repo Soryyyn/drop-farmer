@@ -2,6 +2,7 @@ import { ipcMain, shell } from "electron";
 import { Channels } from "./common/channels";
 import { getFarms, getFarmsForRenderer } from "./farms";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
+import { checkInternetConnection, getCurrentInternetConnection } from "./internet";
 import { log } from "./logger";
 
 /**
@@ -60,4 +61,14 @@ handleOneWay(Channels.farmWindowsVisibility, (event, value) => {
             }
         }
     });
+});
+
+/**
+ * React when the current status of the internet connection is wanted.
+ */
+handleAndReply(Channels.getInternetConnection, (event) => {
+    log("INFO", `Received one-way signal on channel \"${Channels.getInternetConnection}\"`);
+
+    checkInternetConnection();
+    return getCurrentInternetConnection();
 });

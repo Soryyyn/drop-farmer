@@ -81,6 +81,7 @@
         "dayjs": "^1.11.4",
         "electron-is-dev": "^2.0.0",
         "electron-squirrel-startup": "^1.0.0",
+        "is-online": "^10.0.0",
         "node-cron": "^3.0.1",
         "puppeteer-core": "^16.0.0",
         "puppeteer-in-electron": "^3.0.5",

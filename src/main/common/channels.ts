@@ -5,5 +5,6 @@ export enum Channels {
     openLinkInExternal = "open-link-in-external",
     getFarms = "get-farms",
     farmStatusChange = "farm-status-change",
-    farmWindowsVisibility = "farm-windows-visibility"
+    farmWindowsVisibility = "farm-windows-visibility",
+    getInternetConnection = "get-internet-connection",
 }
