@@ -54,5 +54,5 @@ app.whenReady()
  * Close all farm windows when app quits.
  */
 app.on("before-quit", () => {
-    destroyAllWindows();
+    log("INFO", "Quitting application");
 });

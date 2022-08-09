@@ -1,6 +1,7 @@
 import { BrowserWindow } from "electron";
 import { destroyAllWindows } from "./farms";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
+import { log } from "./logger";
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -41,6 +42,7 @@ export function createMainWindow(): void {
      * Show when the window is ready.
      */
     mainWindow.on("ready-to-show", () => {
+        log("INFO", "Created main window; showing now");
         mainWindow.show();
     });
 
@@ -74,5 +76,16 @@ export function createFarmWindow(farm: GameFarmTemplate): BrowserWindow {
     });
 
     window.loadURL(farm.checkerWebsite);
+    log("INFO", `Created farm window for \"${farm.gameName}\"`);
     return window;
+}
+
+
+/**
+ * Destroy the wanted window.
+ *
+ * @param {Electron.BrowserWindow} window The window to destroy.
+ */
+export function destroyWindow(window: Electron.BrowserWindow): void {
+    window.destroy();
 }

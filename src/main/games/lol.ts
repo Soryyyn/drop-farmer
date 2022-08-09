@@ -1,3 +1,4 @@
+import { log } from "../logger";
 import { controlWindow } from "../puppeteer";
 import { GameFarmTemplate } from "./gameFarmTemplate";
 
@@ -26,54 +27,69 @@ export class LOL extends GameFarmTemplate {
      * found. They are being found.
      */
     login() {
-        /**
-         * Create the checker window.
-         */
-        this.createFarmCheckingWindow();
+        return new Promise((resolve, reject) => {
+            log("INFO", `Started login process for farm \"${this.gameName}\"`);
 
-        /**
-         * Once the window is ready.
-         */
-        this.checkerWindow!.on("ready-to-show", async () => {
-            try {
-                /**
-                 * Control the checker window.
-                 */
-                const window = await controlWindow(this.checkerWindow!);
+            /**
+             * Create the checker window.
+             */
+            this.createFarmCheckingWindow();
 
-                /**
-                 * Click the "login" button on the top right.
-                 */
-                await window.click('#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a');
+            /**
+             * Once the window is ready.
+             */
+            this.checkerWindow!.on("ready-to-show", async () => {
+                try {
+                    /**
+                     * Control the checker window.
+                     */
+                    const window = await controlWindow(this.checkerWindow!);
 
-                /**
-                 * Wait until the page has navigated to the new route.
-                 */
-                // await window.waitForNavigation();
-                await window.waitForTimeout(2000);
+                    /**
+                     * Click the "login" button on the top right.
+                     */
+                    await window.click('#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a');
 
-                /**
-                 * Check if user needs to login by checking if the input element
-                 * for the username is found.
-                 */
-                let usernameInputSelector = await window.$("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input");
+                    /**
+                     * Wait until the page has navigated to the new route.
+                     */
+                    // TODO: Maybe make the timeout time configurable?
+                    await window.waitForTimeout(10000);
 
-                if (usernameInputSelector !== null) {
-                    console.log("needs to login");
-                } else {
-                    console.log("does not need to login");
+                    /**
+                     * Check if user needs to login by checking if the input element
+                     * for the username is found.
+                     */
+                    let usernameInputSelector = await window.$("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input");
+                    if (usernameInputSelector !== null) {
+                        log("INFO", `Login is needed by user for game \"${this.gameName}\"`);
 
+                        /**
+                         * Back at main page.
+                         */
+                        window.waitForSelector("div.HomeLiveBanner", { timeout: 0 })
+                            .then(() => {
+                                log("INFO", "Login complete");
+                                resolve(undefined);
+                            });
+                    } else {
+                        log("INFO", "User already logged in");
+                        resolve(undefined);
+                    }
+                } catch (error) {
+                    // ignore errors thrown by not finding the element.
                 }
-            } catch (error) {
-                // ignore errors thrown by not finding the element.
-            }
-        });
+            });
+        })
     }
 
     farmCheck(timeOfCheck: Date) {
         this.changeStatus("checking");
 
-        this.login();
+        this.login()
+            .then(() => {
+                log("WARN", "Finished login");
+            });
     }
 
     startFarming(): void {

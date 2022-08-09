@@ -2,6 +2,7 @@ import { createFile, readFile } from "./fileHandling";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
 import { LOL } from "./games/lol";
 import { log } from "./logger";
+import { destroyWindow } from "./windows";
 
 /**
  * The cache file name.
@@ -100,6 +101,7 @@ export function getFarms(): GameFarmTemplate[] {
  * Go through each farm and close all windows.
  */
 export function destroyAllWindows(): void {
+    log("INFO", "Destroying all windows");
     FARMS.forEach((farm: GameFarmTemplate) => {
         /**
          * Check if farm windows are available.
@@ -107,7 +109,7 @@ export function destroyAllWindows(): void {
          */
         if (farm.farmingWindows.length > 0) {
             farm.farmingWindows.forEach((window: Electron.BrowserWindow) => {
-                farm.destroyWindow(window);
+                destroyWindow(window);
             });
         }
 
@@ -115,6 +117,6 @@ export function destroyAllWindows(): void {
          * Destroy the checker window if available.
          */
         if (farm.checkerWindow)
-            farm.destroyWindow(farm.checkerWindow);
+            destroyWindow(farm.checkerWindow);
     });
 }

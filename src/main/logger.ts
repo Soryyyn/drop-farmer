@@ -50,8 +50,18 @@ function createLogEntry(type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", mes
 function createTerminalLogEntry(type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): string {
     let currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
 
-    let typeText = (type === "FATAL" || type === "ERROR") ? color.bold.red(`[${type}]`) : color.bold.blue(`[${type}]`);
-    let timeStampText = color.yellow(`${currentTimeStamp}`);
+    /**
+     * Decide type text color.
+     */
+    let typeText: string;
+    if (type === "FATAL" || type === "ERROR") {
+        typeText = color.bold.red(`[${type}]`)
+    } else if (type === "WARN") {
+        typeText = color.bold.yellow(`[${type}]`)
+    } else {
+        typeText = color.bold.blue(`[${type}]`);
+    }
+    let timeStampText = color.gray(`${currentTimeStamp}`);
     let messageText = color.white(`${message}`);
 
     return `${typeText} ${timeStampText} - ${messageText}`;

@@ -1,6 +1,7 @@
 import { schedule } from "node-cron";
 import { Channels } from "../common/channels";
 import { sendOneWay } from "../ipc";
+import { log } from "../logger";
 import { createFarmWindow, getMainWindow } from "../windows";
 
 export abstract class GameFarmTemplate {
@@ -141,6 +142,7 @@ export abstract class GameFarmTemplate {
      */
     scheduleCheckingFarm(): void {
         if (this._enabled) {
+            log("INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
             schedule(`*/${this.schedule} * * * *`, (now: Date) => {
                 this.farmCheck(now);
             });
@@ -169,14 +171,5 @@ export abstract class GameFarmTemplate {
         this.farmingWindows.forEach((window: Electron.BrowserWindow) => {
             window.hide();
         });
-    }
-
-    /**
-     * Destroy the wanted window.
-     *
-     * @param {Electron.BrowserWindow} window The window to destroy.
-     */
-    destroyWindow(window: Electron.BrowserWindow): void {
-        window.destroy();
     }
 }
