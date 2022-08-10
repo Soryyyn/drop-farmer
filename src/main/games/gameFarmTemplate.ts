@@ -1,6 +1,6 @@
 import { schedule } from "node-cron";
 import { Channels } from "../common/channels";
-import { getCurrentInternetConnection } from "../internet";
+import { checkInternetConnection, getCurrentInternetConnection } from "../internet";
 import { sendOneWay } from "../ipc";
 import { log } from "../logger";
 import { createFarmWindow, getMainWindow } from "../windows";
@@ -142,12 +142,15 @@ export abstract class GameFarmTemplate {
      * Schedule the checking if the farm is enabled and app has internet connection
      */
     scheduleCheckingFarm(): void {
-        if (this._enabled && getCurrentInternetConnection()) {
-            log("INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
-            schedule(`*/${this.schedule} * * * *`, (now: Date) => {
-                this.farmCheck(now);
+        checkInternetConnection()
+            .then((connection) => {
+                if (connection && this._enabled) {
+                    log("INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
+                    schedule(`*/${this.schedule} * * * *`, (now: Date) => {
+                        this.farmCheck(now);
+                    });
+                }
             });
-        }
     }
 
     /**

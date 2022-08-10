@@ -64,12 +64,15 @@ export class LOL extends GameFarmTemplate {
                     if (usernameInputSelector !== null) {
                         log("INFO", `Login is needed by user for game \"${this.gameName}\"`);
 
+                        this.checkerWindow!.show();
+
                         /**
                          * Back at main page.
                          */
                         window.waitForSelector("div.HomeLiveBanner", { timeout: 0 })
                             .then(() => {
                                 log("INFO", "Login complete");
+                                this.checkerWindow!.hide();
                                 resolve(undefined);
                             });
                     } else {

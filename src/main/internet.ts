@@ -9,13 +9,16 @@ let internetConnection: boolean = false;
 /**
  * Check the current internet connection.
  */
-export function checkInternetConnection(): void {
-    log("INFO", "Checking internet connection");
+export async function checkInternetConnection() {
+    return new Promise((resolve, reject) => {
+        log("INFO", "Checking internet connection");
 
-    isOnline()
-        .then((connection: boolean) => {
-            internetConnection = connection;
-        });
+        isOnline()
+            .then((connection: boolean) => {
+                resolve(connection);
+            });
+    })
+
 }
 
 /**

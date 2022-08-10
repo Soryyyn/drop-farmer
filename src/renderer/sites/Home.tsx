@@ -11,7 +11,7 @@ export default function Home() {
     useEffect(() => {
         window.api.sendAndWait(window.api.channels.getInternetConnection)
             .then((connection: any) => {
-                setInternetConnection(connection)
+                setInternetConnection(connection);
             })
             .catch((err) => {
                 console.log(err);

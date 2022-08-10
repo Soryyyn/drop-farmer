@@ -66,9 +66,8 @@ handleOneWay(Channels.farmWindowsVisibility, (event, value) => {
 /**
  * React when the current status of the internet connection is wanted.
  */
-handleAndReply(Channels.getInternetConnection, (event) => {
+handleAndReply(Channels.getInternetConnection, async (event) => {
     log("INFO", `Received one-way signal on channel \"${Channels.getInternetConnection}\"`);
 
-    checkInternetConnection();
-    return getCurrentInternetConnection();
+    return await checkInternetConnection()
 });
