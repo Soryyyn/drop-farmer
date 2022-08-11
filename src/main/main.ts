@@ -1,7 +1,6 @@
 import { app, session } from "electron";
-import * as eid from "electron-is-dev";
+import eid from "electron-is-dev";
 import { initFarms } from "./farms";
-import { checkInternetConnection, getCurrentInternetConnection } from "./internet";
 import { initLogger, log } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
 import { initSettings } from "./settings";

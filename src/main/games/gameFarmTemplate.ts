@@ -1,6 +1,7 @@
 import { schedule } from "node-cron";
+import { Page } from "puppeteer-core";
 import { Channels } from "../common/channels";
-import { checkInternetConnection, getCurrentInternetConnection } from "../internet";
+import { checkInternetConnection } from "../internet";
 import { sendOneWay } from "../ipc";
 import { log } from "../logger";
 import { createFarmWindow, getMainWindow } from "../windows";
@@ -118,15 +119,15 @@ export abstract class GameFarmTemplate {
      * Create the farm checking window.
      * Destroy window after checking is done.
      */
-    createFarmCheckingWindow(): void {
+    async createFarmCheckingWindow() {
         if (!this.checkerWindow)
-            this.checkerWindow = createFarmWindow(this);
+            this.checkerWindow = await createFarmWindow(this.checkerWebsite, this.gameName);
     }
 
     /**
      * Login the user on the website.
      */
-    abstract login(): void;
+    abstract login(window: any): void;
 
     /**
      * Check the "checkerWebsite" if application is able to start farming.
@@ -136,7 +137,7 @@ export abstract class GameFarmTemplate {
     /**
      * Commence the farming.
      */
-    abstract startFarming(): void;
+    abstract startFarming(window: Electron.BrowserWindow): void;
 
     /**
      * Schedule the checking if the farm is enabled and app has internet connection

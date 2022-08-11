@@ -1,11 +1,8 @@
+import { getPage } from "puppeteer-in-electron";
 import { log } from "../logger";
-import { controlWindow } from "../puppeteer";
+import { getBrowserConnection } from "../puppeteer";
+import { createFarmWindow, destroyWindow } from "../windows";
 import { GameFarmTemplate } from "./gameFarmTemplate";
-
-/**
- * Schedule link
- * https://lolesports.com/schedule?leagues=lec,european-masters,primeleague,cblol-brazil,lck,lcl,lco,lcs,ljl-japan,lla,lpl,pcs,turkiye-sampiyonluk-ligi,worlds,all-star,cblol_academy,college_championship,esports_balkan_league,elite_series,greek_legends,hitpoint_masters,lck_academy,lck_challengers_league,lcs-academy,proving_grounds,lfl,liga_portuguesa,nlc,pg_nationals,superliga,ultraliga,lcs_amateur,msi
- */
 
 /**
  * League of Legends game farm.
@@ -22,80 +19,201 @@ export class LOL extends GameFarmTemplate {
     /**
      * Create the checker window and login.
      * Check the lol schedule after loging in.
-     *
-     * NOTE: Multiple errors may be thrown here because the elements are not
-     * found. They are being found.
      */
-    login() {
-        return new Promise((resolve, reject) => {
-            log("INFO", `Started login process for farm \"${this.gameName}\"`);
+    login(window: Electron.BrowserWindow) {
+        return new Promise(async (resolve, reject) => {
+            log("INFO", `Took control of page for farm \"${this.gameName}\" and started login process `);
+            let connection = getBrowserConnection();
+            let page = await getPage(connection, window);
+
+            /**
+             * Check if the checker window is already logged in.
+             */
+            if (await page.$("div.riotbar-summoner-name") === null) {
+                /**
+                 * Click the "login" button on the top right.
+                 */
+                await page.click('#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a');
+
+                /**
+                 * Check if user has been moved to login or home route.
+                 */
+                try {
+                    await page.waitForSelector("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input");
+
+                    log("INFO", `Login is needed by user for game \"${this.gameName}\"`);
+
+                    /**
+                     * Open checker window for user login.
+                     */
+                    window.show();
+                    window.focus();
+
+                    /**
+                     * Back at main page.
+                     */
+                    page.waitForSelector("div.riotbar-summoner-name", { timeout: 0 })
+                        .then(() => {
+                            log("INFO", "Login complete");
+                            window.hide();
+                            resolve(undefined);
+                        });
+                } catch (e) {
+                    log("INFO", "Login complete");
+                    resolve(undefined);
+                }
+            } else {
+                log("INFO", "User already logged in; continuing");
+                resolve(undefined);
+            }
+        });
+    }
+
+    /**
+     * Move the checker window url to the schedule route.
+     */
+    moveToScheduleRoute(window: Electron.BrowserWindow) {
+        return new Promise(async (resolve, reject) => {
+            log("INFO", `Took control of page for farm \"${this.gameName}\" and moving it to schedule route`);
+            let connection = getBrowserConnection();
+            let page = await getPage(connection, window);
+
+            /**
+             * Schedule urls with all wanted farms.
+             */
+            let scheduleUrl: string = "https://lolesports.com/schedule?leagues=lec,european-masters,primeleague,cblol-brazil,lck,lcl,lco,lcs,ljl-japan,lla,lpl,pcs,turkiye-sampiyonluk-ligi,worlds,all-star,cblol_academy,college_championship,esports_balkan_league,elite_series,greek_legends,hitpoint_masters,lck_academy,lck_challengers_league,lcs-academy,proving_grounds,lfl,liga_portuguesa,nlc,pg_nationals,superliga,ultraliga,lcs_amateur,msi";
+
+            /**
+             * Move to the schedule url.
+             */
+            await page.goto(scheduleUrl);
+
+            /**
+             * Wait until moving is finished.
+             */
+            page.waitForSelector("div.events", { timeout: 0 })
+                .then(() => {
+                    log("INFO", "Moved checker window to schedule url");
+                    resolve(undefined);
+                });
+        });
+    }
+
+    /**
+     * Get all live matches from the schedule and start farming.
+     *
+     * @param {Electron.BrowserWindow} window The window to control
+     */
+    startFarming(window: Electron.BrowserWindow) {
+        return new Promise(async (resolve, reject) => {
+            log("INFO", `Took control of page for farm \"${this.gameName}\" and moving it to schedule route`);
+            let connection = getBrowserConnection();
+            let page = await getPage(connection, window);
+
+            /**
+             * The livestream urls to check, if the original href should
+             * redirect to one of these.
+             */
+            const livestreamRedirects: string[] = [
+                "https://lolesports.com/live/lpl/lpl",
+                "https://lolesports.com/live/lck/lck",
+                "https://lolesports.com/live/lec/lec",
+                "https://lolesports.com/live/lcs/lcs",
+                "https://lolesports.com/live/lco/lco",
+                "https://lolesports.com/live/cblol/cblol",
+                "https://lolesports.com/live/lla/lla",
+                "https://lolesports.com/live/lck_challengers_league/lckcl",
+                "https://lolesports.com/live/cblol_academy/cblol",
+            ];
+
+            /**
+             * Get all elements with with the specified classes; Get live livestreams.
+             */
+            let liveMatchesElements = await page.$$("a.live.event");
+
+            /**
+             * Check if there are live matches available.
+             */
+            if (liveMatchesElements.length > 0) {
+                /**
+                 * Go through each element and get the href url.
+                 */
+                liveMatchesElements.forEach(async (element) => {
+                    let propertyHandle = await element.getProperty("href");
+                    let href: string = await propertyHandle.jsonValue();
+
+                    /**
+                     * Go through each href and check if redirect is needed.
+                     */
+                    livestreamRedirects.forEach((redirectUrl: string) => {
+                        if (redirectUrl.includes(href)) {
+                            href = redirectUrl;
+                        }
+                    });
+
+                    /**
+                     * Add a new farming window with the url to the farming
+                     * windows array to manage.
+                     */
+                    // Promise.all([
+                    this.farmingWindows.push(await createFarmWindow(href, this.gameName));
+                    // ]);
+                });
+
+                /**
+                 * Change status to farming.
+                 */
+                log("INFO", `Now farming for farm \"${this.gameName}\" with \"${this.farmingWindows.length}\" windows`);
+                this.changeStatus("farming");
+
+                /**
+                 * Destroy the checker window and remove the reference.
+                 */
+                destroyWindow(this.checkerWindow!);
+                this.checkerWindow = null;
+
+                resolve(undefined);
+            } else {
+                /**
+                 * No live matches available.
+                 * Set app farm status back to idle.
+                 */
+                log("INFO", `No live matches available; returning back to idle`);
+                this.changeStatus("idle");
+
+                /**
+                 * Destroy the checker window and remove the reference.
+                 */
+                destroyWindow(this.checkerWindow!);
+                this.checkerWindow = null;
+
+                resolve(undefined);
+            }
+        });
+    }
+
+    /**
+     * Check the farm for lol.
+     */
+    farmCheck() {
+        if (this.status !== "checking") {
+            log("INFO", `Started checking the farm \"${this.gameName}\"`);
+            this.changeStatus("checking");
 
             /**
              * Create the checker window.
              */
-            this.createFarmCheckingWindow();
-
-            /**
-             * Once the window is ready.
-             */
-            this.checkerWindow!.on("ready-to-show", async () => {
-                try {
-                    /**
-                     * Control the checker window.
-                     */
-                    const window = await controlWindow(this.checkerWindow!);
-
-                    /**
-                     * Click the "login" button on the top right.
-                     */
-                    await window.click('#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a');
-
-                    /**
-                     * Wait until the page has navigated to the new route.
-                     */
-                    // TODO: Maybe make the timeout time configurable?
-                    await window.waitForTimeout(10000);
-
-                    /**
-                     * Check if user needs to login by checking if the input element
-                     * for the username is found.
-                     */
-                    let usernameInputSelector = await window.$("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input");
-                    if (usernameInputSelector !== null) {
-                        log("INFO", `Login is needed by user for game \"${this.gameName}\"`);
-
-                        this.checkerWindow!.show();
-
-                        /**
-                         * Back at main page.
-                         */
-                        window.waitForSelector("div.HomeLiveBanner", { timeout: 0 })
-                            .then(() => {
-                                log("INFO", "Login complete");
-                                this.checkerWindow!.hide();
-                                resolve(undefined);
-                            });
-                    } else {
-                        log("INFO", "User already logged in");
-                        resolve(undefined);
-                    }
-                } catch (error) {
-                    // ignore errors thrown by not finding the element.
-                }
-            });
-        })
+            this.createFarmCheckingWindow()
+                .then(async () => {
+                    await this.login(this.checkerWindow!);
+                })
+                .then(async () => {
+                    await this.moveToScheduleRoute(this.checkerWindow!);
+                })
+                .then(async () => {
+                    await this.startFarming(this.checkerWindow!);
+                });
+        }
     }
 
-    farmCheck(timeOfCheck: Date) {
-        this.changeStatus("checking");
-
-        this.login()
-            .then(() => {
-                log("WARN", "Finished login");
-            });
-    }
-
-    startFarming(): void {
-
-    }
 }

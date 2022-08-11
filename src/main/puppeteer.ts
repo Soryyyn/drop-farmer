@@ -1,8 +1,11 @@
 import { app } from "electron";
-import puppeteer from "puppeteer-core";
-import { connect, getPage, initialize } from "puppeteer-in-electron";
+import puppeteer, { Browser } from "puppeteer-core";
+import { connect, initialize } from "puppeteer-in-electron";
 import { log } from "./logger";
 
+/**
+ * The connection to the electron application.
+ */
 let browserConnection: puppeteer.Browser;
 
 /**
@@ -14,12 +17,9 @@ export async function initPuppeteerConnection() {
     log("INFO", "Connected puppeteer to electron application");
 }
 
-async function getBrowserConnection() {
+/**
+ * Returns the connection to the electron application.
+ */
+export function getBrowserConnection(): Browser {
     return browserConnection;
-}
-
-export async function controlWindow(window: Electron.BrowserWindow) {
-    const browserConnection = await getBrowserConnection();
-    log("INFO", `Connected to window`);
-    return await getPage(browserConnection, window);
 }

@@ -44,6 +44,7 @@ export function createMainWindow(): void {
     mainWindow.on("ready-to-show", () => {
         log("INFO", "Created main window; showing now");
         mainWindow.show();
+        mainWindow.focus();
     });
 
     /**
@@ -65,9 +66,10 @@ export function getMainWindow(): BrowserWindow {
 /**
  * Create the farm window.
  *
- * @param {Farm} farm The farm to create the window for.
+ * @param {string} url The url which should load on window creation.
+ * @param {string} gameName The name of the game to create the window for.
  */
-export function createFarmWindow(farm: GameFarmTemplate): BrowserWindow {
+export async function createFarmWindow(url: string, gameName: string) {
     const window = new BrowserWindow({
         height: 1080,
         width: 1920,
@@ -75,8 +77,14 @@ export function createFarmWindow(farm: GameFarmTemplate): BrowserWindow {
         closable: false,
     });
 
-    window.loadURL(farm.checkerWebsite);
-    log("INFO", `Created farm window for \"${farm.gameName}\"`);
+    await window.loadURL(url);
+
+    /**
+     * Mute window.
+     */
+    window.webContents.setAudioMuted(true);
+
+    log("INFO", `Created farm window for \"${gameName}\"`);
     return window;
 }
 
