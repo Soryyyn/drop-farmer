@@ -1,5 +1,4 @@
 import { schedule } from "node-cron";
-import { Page } from "puppeteer-core";
 import { Channels } from "../common/channels";
 import { checkInternetConnection } from "../internet";
 import { sendOneWay } from "../ipc";

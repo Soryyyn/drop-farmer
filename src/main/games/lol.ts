@@ -325,7 +325,7 @@ export class LOL extends GameFarmTemplate {
                     destroyWindow(this.checkerWindow!);
                     this.checkerWindow = null;
 
-                    log("WARN", "Destroyed checker window");
+                    log("INFO", "Destroyed checker window");
                 });
         }
     }
