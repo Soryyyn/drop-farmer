@@ -16,14 +16,86 @@ export class LOL extends GameFarmTemplate {
     }
 
     /**
+     * Check the given farming window, if the rewards icon exists.
+     *
+     * @param window The farming window to control.
+     */
+    checkDropsEnabled(window: Electron.BrowserWindow) {
+        return new Promise<boolean>(async (resolve) => {
+            let connection = getBrowserConnection();
+            let page = await getPage(connection, window);
+
+            /**
+             * Check if rewards icon exists
+             */
+            try {
+                await page.waitForSelector("body > div.de-DE > main > main > div > div.lower > div.nav-details > div > div.WatchMenu > div > div.status-summary > svg > g");
+                resolve(true);
+            } catch (e) {
+                resolve(false);
+            }
+        });
+    }
+
+    /**
      * Check all farm windows if the drops are still enabled or if they are
      * moved back to the schedule because the stream finished.
      */
     windowsStillFarming() {
-        return new Promise((resolve, reject) => {
-            log("INFO", `Checking farm window if the streams are still running and the drops are enabled for farm \"${this.gameName}\"`);
+        return new Promise(async (resolve, reject) => {
+            /**
+             * Resolve promise if there are no farming windows.
+             */
+            if (this.farmingWindows.length === 0)
+                resolve(undefined);
+            else {
+                log("INFO", `Checking farm window if the streams are still running and the drops are enabled for farm \"${this.gameName}\"`);
 
-            resolve(undefined);
+                /**
+                 * Farming windows which need to be destroyed;
+                 */
+                const markedForRemoval: number[] = [];
+
+                /**
+                 * Go through each window and check if reward are still enabled.
+                 * If it doesn't find the reward element, check if its back at the
+                 * schedule.
+                 * If yes, close the farm.
+                 */
+                for (const window of this.farmingWindows) {
+                    /**
+                     * Check if rewards icon exists
+                     */
+                    if (await this.checkDropsEnabled(window)) {
+                        resolve(undefined);
+                    } else {
+                        /**
+                         * Remove farm window from farm windows array.
+                         */
+                        let indexOfWindow = this.farmingWindows.indexOf(window);
+
+                        /**
+                         * If the item is found, remove it.
+                         */
+                        if (indexOfWindow > -1) {
+                            markedForRemoval.push(indexOfWindow);
+                        }
+                    }
+                }
+
+                /**
+                 * Destroy the marked for removal farming windows.
+                 */
+                for (let i = 0; i < markedForRemoval.length; i++) {
+                    /**
+                     * Destroy the farming window.
+                     */
+                    destroyWindow(this.farmingWindows[markedForRemoval[i]]);
+                    this.farmingWindows.splice(markedForRemoval[i], 1);
+
+                    log("INFO", `Destroyed farming window \"${markedForRemoval[i]}\"`);
+                }
+            }
         });
     }
 
@@ -228,6 +300,9 @@ export class LOL extends GameFarmTemplate {
             log("INFO", `Started checking the farm \"${this.gameName}\"`);
             this.changeStatus("checking");
 
+            /**
+             * Check if all the farming windows are still live and drops are available.
+             */
             await this.windowsStillFarming();
 
             /**
