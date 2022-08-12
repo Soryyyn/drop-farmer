@@ -19,12 +19,6 @@ export abstract class GameFarmTemplate {
     gameName: string;
 
     /**
-     * If the game farms with multiple windows.
-     * Ex. league of legends on lolesports farms all possible streams.
-     */
-    multiWindowFarm: boolean;
-
-    /**
      * The website to check for running stream.
      */
     checkerWebsite: string;
@@ -54,9 +48,8 @@ export abstract class GameFarmTemplate {
     /**
      * Set necessary class properties and load the cached farm data.
      */
-    constructor(gameName: string, multiWindowFarm: boolean, checkerWebsite: string) {
+    constructor(gameName: string, checkerWebsite: string) {
         this.gameName = gameName;
-        this.multiWindowFarm = multiWindowFarm;
         this.checkerWebsite = checkerWebsite;
     }
 
@@ -130,6 +123,12 @@ export abstract class GameFarmTemplate {
     abstract login(window: any): void;
 
     /**
+     * Check the farming windows if they are still farming or the stream ended
+     * or the drops are disabled.
+     */
+    abstract windowsStillFarming(): void;
+
+    /**
      * Check the "checkerWebsite" if application is able to start farming.
      */
     abstract farmCheck(timeOfCheck: Date): void;
@@ -158,8 +157,6 @@ export abstract class GameFarmTemplate {
      * Show the checker and all farming windows.
      */
     showWindows(): void {
-        // TODO: notify when no windows to show?
-
         this.checkerWindow?.show();
         this.farmingWindows.forEach((window: Electron.BrowserWindow) => {
             window.show();
@@ -170,8 +167,6 @@ export abstract class GameFarmTemplate {
      * Hide the checker and all farming windows.
      */
     hideWindows(): void {
-        // TODO: notify when no windows to show?
-
         this.checkerWindow?.hide();
         this.farmingWindows.forEach((window: Electron.BrowserWindow) => {
             window.hide();

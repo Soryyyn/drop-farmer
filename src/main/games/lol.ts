@@ -11,9 +11,20 @@ export class LOL extends GameFarmTemplate {
     constructor() {
         super(
             "league-of-legends",
-            true,
             "https://lolesports.com/"
         );
+    }
+
+    /**
+     * Check all farm windows if the drops are still enabled or if they are
+     * moved back to the schedule because the stream finished.
+     */
+    windowsStillFarming() {
+        return new Promise((resolve, reject) => {
+            log("INFO", `Checking farm window if the streams are still running and the drops are enabled for farm \"${this.gameName}\"`);
+
+            resolve(undefined);
+        });
     }
 
     /**
@@ -22,7 +33,7 @@ export class LOL extends GameFarmTemplate {
      */
     login(window: Electron.BrowserWindow) {
         return new Promise(async (resolve, reject) => {
-            log("INFO", `Took control of page for farm \"${this.gameName}\" and started login process `);
+            log("INFO", `Took control of page for farm \"${this.gameName}\" and started login process`);
             let connection = getBrowserConnection();
             let page = await getPage(connection, window);
 
@@ -33,7 +44,7 @@ export class LOL extends GameFarmTemplate {
                 /**
                  * Click the "login" button on the top right.
                  */
-                await page.click('#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a');
+                await page.click("#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a");
 
                 /**
                  * Check if user has been moved to login or home route.
@@ -212,10 +223,12 @@ export class LOL extends GameFarmTemplate {
     /**
      * Check the farm for lol.
      */
-    farmCheck() {
+    async farmCheck() {
         if (this.status !== "checking") {
             log("INFO", `Started checking the farm \"${this.gameName}\"`);
             this.changeStatus("checking");
+
+            await this.windowsStillFarming();
 
             /**
              * Create the checker window.
