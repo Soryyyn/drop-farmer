@@ -160,7 +160,7 @@ export abstract class GameFarmTemplate {
     showWindows(): void {
         // TODO: notify when no windows to show?
 
-        this.checkerWindow!.show();
+        this.checkerWindow?.show();
         this.farmingWindows.forEach((window: Electron.BrowserWindow) => {
             window.show();
         });
@@ -172,7 +172,7 @@ export abstract class GameFarmTemplate {
     hideWindows(): void {
         // TODO: notify when no windows to show?
 
-        this.checkerWindow!.hide();
+        this.checkerWindow?.hide();
         this.farmingWindows.forEach((window: Electron.BrowserWindow) => {
             window.hide();
         });

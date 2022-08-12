@@ -136,9 +136,14 @@ export class LOL extends GameFarmTemplate {
              */
             if (liveMatchesElements.length > 0) {
                 /**
+                 * All hrefs with checking for duplicates.
+                 */
+                let hrefs: string[] = [];
+
+                /**
                  * Go through each element and get the href url.
                  */
-                liveMatchesElements.forEach(async (element) => {
+                for (const element of liveMatchesElements) {
                     let propertyHandle = await element.getProperty("href");
                     let href: string = await propertyHandle.jsonValue();
 
@@ -152,26 +157,44 @@ export class LOL extends GameFarmTemplate {
                     });
 
                     /**
-                     * Add a new farming window with the url to the farming
-                     * windows array to manage.
+                     * Check if the window needs to be created or if it already
+                     * exists and is currently farming.
                      */
-                    // Promise.all([
-                    this.farmingWindows.push(await createFarmWindow(href, this.gameName));
-                    // ]);
-                });
+                    if (this.farmingWindows.length > 0) {
+                        let duplicate = false;
+
+                        for (let i = 0; i < this.farmingWindows.length; i++) {
+                            if (!this.farmingWindows[i].webContents.getURL().includes(href)) {
+                                duplicate = true;
+                            }
+                        }
+
+                        if (!duplicate)
+                            hrefs.push(href);
+                    } else {
+                        hrefs.push(href);
+                    }
+                }
+
+                /**
+                 * Create the farm windows for all hrefs.
+                 */
+                for (const href of hrefs) {
+                    let window = await createFarmWindow(href, this.gameName);
+                    this.farmingWindows.push(window);
+                }
+
+                /**
+                 * Clear hrefs array.
+                 */
+                hrefs = [];
 
                 /**
                  * Change status to farming.
                  */
                 log("INFO", `Now farming for farm \"${this.gameName}\" with \"${this.farmingWindows.length}\" windows`);
+
                 this.changeStatus("farming");
-
-                /**
-                 * Destroy the checker window and remove the reference.
-                 */
-                destroyWindow(this.checkerWindow!);
-                this.checkerWindow = null;
-
                 resolve(undefined);
             } else {
                 /**
@@ -180,12 +203,6 @@ export class LOL extends GameFarmTemplate {
                  */
                 log("INFO", `No live matches available; returning back to idle`);
                 this.changeStatus("idle");
-
-                /**
-                 * Destroy the checker window and remove the reference.
-                 */
-                destroyWindow(this.checkerWindow!);
-                this.checkerWindow = null;
 
                 resolve(undefined);
             }
@@ -212,6 +229,15 @@ export class LOL extends GameFarmTemplate {
                 })
                 .then(async () => {
                     await this.startFarming(this.checkerWindow!);
+                })
+                .then(() => {
+                    /**
+                     * Destroy the checker window and remove the reference.
+                     */
+                    destroyWindow(this.checkerWindow!);
+                    this.checkerWindow = null;
+
+                    log("WARN", "Destroyed checker window");
                 });
         }
     }

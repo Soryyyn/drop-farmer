@@ -84,7 +84,7 @@ export async function createFarmWindow(url: string, gameName: string) {
      */
     window.webContents.setAudioMuted(true);
 
-    log("INFO", `Created farm window for \"${gameName}\"`);
+    log("INFO", `Created window for \"${gameName}\"`);
     return window;
 }
 
