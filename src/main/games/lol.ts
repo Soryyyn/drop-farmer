@@ -247,7 +247,7 @@ export class LOL extends GameFarmTemplate {
                         let duplicate = false;
 
                         for (let i = 0; i < this.farmingWindows.length; i++) {
-                            if (!this.farmingWindows[i].webContents.getURL().includes(href)) {
+                            if (this.farmingWindows[i].webContents.getURL().includes(href) || this.farmingWindows[i].webContents.getURL() === href) {
                                 duplicate = true;
                             }
                         }
@@ -277,6 +277,19 @@ export class LOL extends GameFarmTemplate {
                  */
                 log("INFO", `Now farming for farm \"${this.gameName}\" with \"${this.farmingWindows.length}\" windows`);
 
+                /**
+                 * Start the uptime timer if not running.
+                 * If already running, resume.
+                 */
+                if (this.timer.isPaused()) {
+                    this.timer.resume();
+                    log("INFO", `Resumed timer of farm \"${this.gameName}\"`);
+                }
+                else if (!this.timer.isStarted()) {
+                    this.timer.start();
+                    log("INFO", `Started timer of farm \"${this.gameName}\"`);
+                }
+
                 this.changeStatus("farming");
                 resolve(undefined);
             } else {
@@ -299,6 +312,15 @@ export class LOL extends GameFarmTemplate {
         if (this.status !== "checking") {
             log("INFO", `Started checking the farm \"${this.gameName}\"`);
             this.changeStatus("checking");
+
+            /**
+             * Pause the timer while checking.
+             */
+            if (this.timer.isRunning()) {
+                this.timer.pause();
+                this.uptime += this.timer.ms();
+                log("INFO", `Paused timer of farm \"${this.gameName}\"`);
+            }
 
             /**
              * Check if all the farming windows are still live and drops are available.

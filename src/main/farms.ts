@@ -1,4 +1,4 @@
-import { createFile, readFile } from "./fileHandling";
+import { createFile, readFile, writeToFile } from "./fileHandling";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
 import { LOL } from "./games/lol";
 import { log } from "./logger";
@@ -26,9 +26,9 @@ export function initFarms(): void {
     createCacheFile();
     readCacheFile();
 
-    FARMS.forEach((farm: GameFarmTemplate) => {
+    for (const farm of FARMS) {
         farm.scheduleCheckingFarm();
-    });
+    }
 }
 
 /**
@@ -43,12 +43,11 @@ function createCacheFile(): void {
         };
 
         FARMS.forEach((farm: GameFarmTemplate) => {
-            cache.farms.push(farm.getCacheDataData());
+            cache.farms.push(farm.getCacheData());
         });
 
         createFile(CACHE_FILE_NAME, JSON.stringify(cache, null, 4));
     } catch (err) {
-        // TODO: send event for error?
         log("FATAL", `Failed creating farms cache file. Drop-farmer will only use the default configurations without the cache file and wont track progress. Error message:\n\t"${err}"`);
     }
 }
@@ -71,8 +70,42 @@ function readCacheFile(): void {
             });
         });
     } catch (err) {
-        // TODO: send event for error?
         log("ERROR", `Failed reading farms cache file. Error message:\n\t"${err}"`);
+    }
+}
+
+/**
+ * Save all farm data to the cache file.
+ */
+export function saveDataToCache(): void {
+    try {
+        let cacheData: FarmsCacheFile = JSON.parse(readFile(CACHE_FILE_NAME));
+
+        /**
+         * Go through each farm and get the new cache data.
+         */
+        for (const farm of getFarms()) {
+            /**
+             * Stop the timer and save it to the uptime.
+             */
+            farm.uptime += farm.timer.ms();
+            farm.timer.stop();
+
+            /**
+             * Set the cache data if they are the same farm.
+             */
+            for (let i = 0; i < cacheData.farms.length; i++) {
+                if (farm.gameName === cacheData.farms[i].gameName)
+                    cacheData.farms[i] = farm.getCacheData();
+            }
+        }
+
+        /**
+         * Write the new cache.
+         */
+        writeToFile(CACHE_FILE_NAME, JSON.stringify(cacheData, null, 4), "w");
+    } catch (err) {
+        log("ERROR", `Failed writing new cache data to file. Error message:\n\t"${err}"`);
     }
 }
 

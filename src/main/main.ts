@@ -1,6 +1,6 @@
 import { app, session } from "electron";
 import eid from "electron-is-dev";
-import { initFarms } from "./farms";
+import { initFarms, saveDataToCache } from "./farms";
 import { initLogger, log } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
 import { initSettings } from "./settings";
@@ -55,5 +55,11 @@ app.whenReady()
  * Close all farm windows when app quits.
  */
 app.on("before-quit", () => {
+    /**
+     * Save the cache of each farm.
+     */
+    log("INFO", "Saving cache for each farm");
+    saveDataToCache();
+
     log("INFO", "Quitting application");
 });

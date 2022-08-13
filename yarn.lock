@@ -5838,6 +5838,11 @@ thunky@^1.0.2:
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.1.0.tgz#5abaf714a9405db0504732bbccd2cedd9ef9537d"
   integrity sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==
 
+timer-node@^5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/timer-node/-/timer-node-5.0.6.tgz#d286ffc5ee67c8699f9027d3bb0f93974ae43cd8"
+  integrity sha512-s07CY6r6so7NH6ErSLkA5NsaQ8DoNQpwW7kqvFvnAnV8nv99qpN5DYdaUh9GTM8z83LrBVx2s6El9sJHbaQ4PA==
+
 tiny-each-async@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/tiny-each-async/-/tiny-each-async-2.0.3.tgz#8ebbbfd6d6295f1370003fbb37162afe5a0a51d1"

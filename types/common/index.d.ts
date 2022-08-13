@@ -17,6 +17,7 @@ type Farm = {
     checkerWebsite: string;
     enabled: boolean;
     schedule: number;
+    uptime: number;
 }
 
 type FarmsCacheFile = {

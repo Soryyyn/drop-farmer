@@ -1,4 +1,5 @@
 import { schedule } from "node-cron";
+import { Timer } from "timer-node";
 import { Channels } from "../common/channels";
 import { checkInternetConnection } from "../internet";
 import { sendOneWay } from "../ipc";
@@ -26,6 +27,17 @@ export abstract class GameFarmTemplate {
      * The schedule on what the checking should happen.
      */
     schedule: number = 30;
+
+    /**
+     * The uptime of the farm in ms.
+     * Gets loaded on app start from cache.
+     */
+    uptime: number = 0;
+
+    /**
+     * The timer of the farm track the uptime.
+     */
+    timer: Timer = new Timer();
 
     /**
      * The window on which the checking should happen.
@@ -80,12 +92,13 @@ export abstract class GameFarmTemplate {
      * Cache the data of the farm to the farms file.
      * Gets executed on application close or on changing of the settings.
      */
-    getCacheDataData(): Farm {
+    getCacheData(): Farm {
         return {
             gameName: this.gameName,
             checkerWebsite: this.checkerWebsite,
             enabled: this._enabled,
-            schedule: this.schedule
+            schedule: this.schedule,
+            uptime: this.uptime
         };
     }
 
@@ -100,6 +113,7 @@ export abstract class GameFarmTemplate {
         this._enabled = cachedData.enabled;
         this.checkerWebsite = cachedData.checkerWebsite;
         this.schedule = cachedData.schedule;
+        this.uptime = cachedData.uptime;
 
         /**
          * Set the status to idle if the farm is enabled.
