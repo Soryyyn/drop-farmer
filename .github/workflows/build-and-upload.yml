@@ -28,7 +28,9 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-windows-x64
-                path: out/make/squirrel.windows/x64/drop-farmer-*Setup.exe
+                path: |
+                    out/make/squirrel.windows/x64/drop-farmer-*Setup.exe
+                    out/make/zip/**/drop-farmer*.zip
     build-squirrel-x32:
         name: Build application (Windows x32)
         runs-on: windows-latest
@@ -51,7 +53,9 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-windows-x32
-                path: out/make/squirrel.windows/ia32/drop-farmer-*Setup.exe
+                path: |
+                    out/make/squirrel.windows/ia32/drop-farmer-*Setup.exe
+                    out/make/zip/**/drop-farmer*.zip
     build-debian-x64:
         name: Build application (Debian x64)
         runs-on: ubuntu-latest
@@ -74,4 +78,6 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-debian-x64
-                path: out/make/deb/x64/drop-farmer_*_amd64.deb
+                path: |
+                    out/make/deb/x64/drop-farmer_*_amd64.deb
+                    out/make/zip/**/drop-farmer*.zip
