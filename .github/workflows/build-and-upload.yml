@@ -52,7 +52,7 @@ jobs:
             with:
                 name: drop-farmer-windows-x32
                 path: out/make/squirrel.windows/ia32/drop-farmer-*Setup.exe
-    build-debian-x32:
+    build-debian-x64:
         name: Build application (Debian x64)
         runs-on: ubuntu-latest
         steps:
@@ -74,4 +74,4 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-debian-x64
-                path: out/make/
+                path: out/make/deb/x64/drop-farmer_*_amd64.deb
