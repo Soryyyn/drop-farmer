@@ -6,7 +6,7 @@ on:
 name: Build application and upload artifacts
 
 jobs:
-    build-windows-x64:
+    build-squirrel-x64:
         name: Build application (Windows x64)
         runs-on: windows-latest
         steps:
@@ -16,7 +16,6 @@ jobs:
           - name: Install Nodejs
             uses: actions/setup-node@v3
             with:
-                # current version of node im using
                 node-version: 18.6.0
                 cache: 'yarn'
           - name: Install dependencies
@@ -29,5 +28,27 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-windows-x64
-                # export every folder and artifact from build folder
-                path: out/make/
+                path: out/make/squirrel.windows/x64/drop-farmer-*Setup.exe
+    build-squirrel-x32:
+        name: Build application (Windows x32)
+        runs-on: windows-latest
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v3
+
+          - name: Install Nodejs
+            uses: actions/setup-node@v3
+            with:
+                node-version: 18.6.0
+                cache: 'yarn'
+          - name: Install dependencies
+            run: yarn
+
+          - name: Build application
+            run: yarn run make --arch=ia32
+
+          - name: Upload build artifacts
+            uses: actions/upload-artifact@v3
+            with:
+                name: drop-farmer-windows-x32
+                path: out/make/squirrel.windows/ia32/drop-farmer-*Setup.exe

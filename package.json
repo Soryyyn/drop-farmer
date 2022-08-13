@@ -22,12 +22,16 @@
             "makers": [
                 {
                     "name": "@electron-forge/maker-squirrel",
+                    "platforms": [
+                        "win64",
+                        "win32"
+                    ],
                     "config": {
                         "name": "drop-farmer"
                     }
                 },
                 {
-                    "name": "@electron-forge/maker-zip"
+                    "name": "@electron-forge/maker-deb"
                 }
             ],
             "plugins": [
