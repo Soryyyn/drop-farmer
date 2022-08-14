@@ -57,7 +57,7 @@ jobs:
                     out/make/squirrel.windows/ia32/drop-farmer-*Setup.exe
                     out/make/zip/**/drop-farmer*.zip
     build-debian-x64:
-        name: Build application (Debian x64)
+        name: Build application (Debian x64 ARM64)
         runs-on: ubuntu-latest
         steps:
           - name: Checkout

@@ -31,7 +31,10 @@
                     }
                 },
                 {
-                    "name": "@electron-forge/maker-deb"
+                    "name": "@electron-forge/maker-deb",
+                    "config": {
+                        "debianArch": "arm64"
+                    }
                 },
                 {
                     "name": "@electron-forge/maker-zip"
