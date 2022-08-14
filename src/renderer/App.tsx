@@ -2,6 +2,7 @@ import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Dragbar from "./components/Dragbar";
 import Home from "./sites/Home";
+import Settings from "./sites/Settings";
 
 export default function App() {
     return (
@@ -11,6 +12,7 @@ export default function App() {
                 <HashRouter>
                     <Routes>
                         <Route path="/" element={<Home />} />
+                        <Route path="/settings" element={<Settings />} />
                     </Routes>
                 </HashRouter>
             </div>

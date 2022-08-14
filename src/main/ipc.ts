@@ -1,9 +1,10 @@
 import { ipcMain, shell } from "electron";
 import { Channels } from "./common/channels";
-import { getFarms, getFarmsForRenderer } from "./farms";
+import { getFarms, getFarmsForRenderer, getFarmsSettings } from "./farms";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
 import { checkInternetConnection, getCurrentInternetConnection } from "./internet";
 import { log } from "./logger";
+import { getCurrentSettings } from "./settings";
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -70,4 +71,24 @@ handleAndReply(Channels.getInternetConnection, async (event) => {
     log("INFO", `Received one-way signal on channel \"${Channels.getInternetConnection}\"`);
 
     return await checkInternetConnection()
+});
+
+/**
+ * React to error signals from the renderer process.
+ */
+handleOneWay(Channels.rendererError, (event, error) => {
+    log("ERROR", `Error from renderer process. \"${error}\"`);
+});
+
+/**
+ * Reacts when the home site is loaded and the farms need to be displayed.
+ * Also sends the status of all farms to handle.
+ */
+handleAndReply(Channels.getSettings, () => {
+    log("INFO", `Received signal with needed reply on channel \"${Channels.getSettings}"`);
+    // return getCurrentSettings();
+    return {
+        appSettings: getCurrentSettings(),
+        farmsSettings: getFarmsSettings()
+    }
 });

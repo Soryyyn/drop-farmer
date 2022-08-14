@@ -1,5 +1,4 @@
 on:
-    # only activate on master branch commits
     push:
         branches:
           - 'master'
@@ -28,9 +27,7 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-windows-x64
-                path: |
-                    out/make/squirrel.windows/x64/drop-farmer-*Setup.exe
-                    out/make/zip/**/drop-farmer*.zip
+                path: out/make/squirrel.windows/x64/drop-farmer-*Setup.exe
     build-squirrel-x32:
         name: Build application (Windows x32)
         runs-on: windows-latest
@@ -53,11 +50,9 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-windows-x32
-                path: |
-                    out/make/squirrel.windows/ia32/drop-farmer-*Setup.exe
-                    out/make/zip/**/drop-farmer*.zip
-    build-debian-x64:
-        name: Build application (Debian x64 ARM64)
+                path: out/make/squirrel.windows/ia32/drop-farmer-*Setup.exe
+    build-debian-arm64:
+        name: Build application (Debian ARM64)
         runs-on: ubuntu-latest
         steps:
           - name: Checkout
@@ -77,7 +72,5 @@ jobs:
           - name: Upload build artifacts
             uses: actions/upload-artifact@v3
             with:
-                name: drop-farmer-debian-x64
-                path: |
-                    out/make/deb/arm64/drop-farmer*.deb
-                    out/make/zip/**/drop-farmer*.zip
+                name: drop-farmer-debian-arm64
+                path: out/make/deb/arm64/drop-farmer*.deb

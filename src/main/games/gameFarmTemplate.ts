@@ -16,12 +16,12 @@ export abstract class GameFarmTemplate {
      * The game name.
      * Ex. "league-of-legends"
      */
-    gameName: string;
+    gameName: string = "league-of-legends";
 
     /**
      * The website to check for running stream.
      */
-    checkerWebsite: string;
+    checkerWebsite: string = "https://lolesports.com/";
 
     /**
      * The schedule on what the checking should happen.
@@ -57,14 +57,6 @@ export abstract class GameFarmTemplate {
     status: FarmStatus = "disabled";
 
     /**
-     * Set necessary class properties and load the cached farm data.
-     */
-    constructor(gameName: string, checkerWebsite: string) {
-        this.gameName = gameName;
-        this.checkerWebsite = checkerWebsite;
-    }
-
-    /**
      * Change the status of the farm.
      * Also notify the main windows / renderer process of the farm status change.
      *
@@ -86,6 +78,13 @@ export abstract class GameFarmTemplate {
     setEnabled(enabled: boolean): void {
         this._enabled = enabled;
         this.status = (this._enabled) ? "idle" : "disabled";
+    }
+
+    /**
+     * Return the state if the farm is enabled or disabled.
+     */
+    getEnabled(): boolean {
+        return this._enabled;
     }
 
     /**

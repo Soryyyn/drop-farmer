@@ -17,6 +17,11 @@ const FARMS: GameFarmTemplate[] = [
 ];
 
 /**
+ * The app uptime calculated from all farms.
+ */
+let appUptime: number = 0;
+
+/**
  * Initizalize all farms and create the cache file for the farms to use if it
  * doesn't exist already.
  *
@@ -59,6 +64,7 @@ function createCacheFile(): void {
 function readCacheFile(): void {
     try {
         const cacheData: FarmsCacheFile = JSON.parse(readFile(CACHE_FILE_NAME));
+        let tempUptime: number = 0;
 
         /**
          * Go through each farm cache and load each one respectively into each farm.
@@ -68,7 +74,14 @@ function readCacheFile(): void {
                 if (cache.gameName === farm.gameName)
                     farm.setCachedFarmData(cache);
             });
+
+            tempUptime += cache.uptime;
         });
+
+        /**
+         * Add up app uptime;
+         */
+        appUptime = tempUptime;
     } catch (err) {
         log("ERROR", `Failed reading farms cache file. Error message:\n\t"${err}"`);
     }
@@ -89,6 +102,7 @@ export function saveDataToCache(): void {
              * Stop the timer and save it to the uptime.
              */
             farm.uptime += farm.timer.ms();
+            appUptime += farm.timer.ms();
             farm.timer.stop();
 
             /**
@@ -99,6 +113,11 @@ export function saveDataToCache(): void {
                     cacheData.farms[i] = farm.getCacheData();
             }
         }
+
+        /**
+         * Cache app uptime.
+         */
+        cacheData.uptime = appUptime;
 
         /**
          * Write the new cache.
@@ -152,4 +171,23 @@ export function destroyAllWindows(): void {
         if (farm.checkerWindow)
             destroyWindow(farm.checkerWindow);
     });
+}
+
+/**
+ * Go through each farm and get the settings for the renderer process.
+ */
+export function getFarmsSettings(): Farm[] {
+    const farmsSettings: Farm[] = [];
+
+    for (const farm of FARMS) {
+        farmsSettings.push({
+            gameName: farm.gameName,
+            checkerWebsite: farm.checkerWebsite,
+            enabled: farm.getEnabled(),
+            schedule: farm.schedule,
+            uptime: farm.uptime,
+        });
+    }
+
+    return farmsSettings;
 }

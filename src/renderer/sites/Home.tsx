@@ -1,9 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ExtraButton from "../components/ExtraButton";
 import Sidebar from "../components/Sidebar";
 
+/**
+ * The route for the main page of the application.
+ */
 export default function Home() {
+    /**
+     * If the applicatio has a internet connection.
+     */
     const [internetConnection, setInternetConnection] = useState<boolean>(true);
+
+    /**
+     * Get the navigation from react router
+     * to make navigation on button click possible.
+     */
+    const navigation = useNavigate();
 
     /**
      * On site load, get internet connection
@@ -14,7 +27,7 @@ export default function Home() {
                 setInternetConnection(connection);
             })
             .catch((err) => {
-                console.log(err);
+                window.api.sendOneWay(window.api.channels.rendererError, err);
             });
 
         return () => {
@@ -40,7 +53,9 @@ export default function Home() {
                             window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://soryn.dev");
                         }} />
                         <ExtraButton imgPath="../assets/statistics.svg" onClick={() => { }} />
-                        <ExtraButton imgPath="../assets/gear.svg" onClick={() => { }} />
+                        <ExtraButton imgPath="../assets/gear.svg" onClick={() => {
+                            navigation("/settings");
+                        }} />
                     </div>
                     <p id="made-by">Copyright © Soryn</p>
                     <p id="internet-connection">Internet connection: {(internetConnection) ? "Connected" : "No internet"}</p>

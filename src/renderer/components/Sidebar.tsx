@@ -5,6 +5,9 @@ import FarmStatus from "./FarmStatus";
  * The sidebar component which displays all farms and their status.
  */
 export default function Sidebar() {
+    /**
+     * The current farms from main process.
+     */
     const [farms, setFarms] = useState<FarmRendererObject[]>([]);
 
     /**
@@ -16,7 +19,7 @@ export default function Sidebar() {
                 setFarms(data);
             })
             .catch((err) => {
-                console.log(err);
+                window.api.sendOneWay(window.api.channels.rendererError, err);
             });
 
         return () => {

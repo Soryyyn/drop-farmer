@@ -9,10 +9,7 @@ import { GameFarmTemplate } from "./gameFarmTemplate";
  */
 export class LOL extends GameFarmTemplate {
     constructor() {
-        super(
-            "league-of-legends",
-            "https://lolesports.com/"
-        );
+        super();
     }
 
     /**

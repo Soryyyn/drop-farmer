@@ -6,10 +6,8 @@ type Player = {
 type FarmStatus = "farming" | "idle" | "checking" | "disabled"
 
 type SettingsFile = {
-    headless: boolean;
     launchOnStartup: boolean;
-    checkingRate: number;
-    players: Player[];
+    defaultSchedule: number;
 }
 
 type Farm = {

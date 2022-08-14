@@ -288,3 +288,13 @@ body {
         }
     }
 }
+
+// Settings site
+#settings-container {
+    @include default-dark-shadow;
+    @include darker-with-border;
+
+    height: 100%;
+    width: 100%;
+    padding: 2rem;
+}

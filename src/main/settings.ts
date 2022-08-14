@@ -4,10 +4,8 @@ import { log } from "./logger";
 let currentSettings: any | undefined = {};
 const FILE_NAME: string = "settings.json";
 const DEFAULT_SETTINGS: SettingsFile = {
-    headless: false,
     launchOnStartup: false,
-    checkingRate: 30,
-    players: [],
+    defaultSchedule: 30
 };
 
 
