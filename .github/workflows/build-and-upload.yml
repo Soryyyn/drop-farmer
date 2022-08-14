@@ -72,12 +72,12 @@ jobs:
             run: yarn
 
           - name: Build application
-            run: yarn run make --arch=x64
+            run: yarn run make --arch=arm64
 
           - name: Upload build artifacts
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-debian-x64
                 path: |
-                    out/make/deb/x64/drop-farmer_*_amd64.deb
+                    out/make/deb/arm64/drop-farmer*.deb
                     out/make/zip/**/drop-farmer*.zip
