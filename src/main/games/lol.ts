@@ -18,7 +18,7 @@ export class LOL extends GameFarmTemplate {
     /**
      * Check the given farming window, if the rewards icon exists.
      *
-     * @param window The farming window to control.
+     * @param {Electron.BrowserWindow} window The farming window to control.
      */
     checkDropsEnabled(window: Electron.BrowserWindow) {
         return new Promise<boolean>(async (resolve) => {
@@ -30,6 +30,28 @@ export class LOL extends GameFarmTemplate {
              */
             try {
                 await page.waitForSelector("body > div.de-DE > main > main > div > div.lower > div.nav-details > div > div.WatchMenu > div > div.status-summary > svg > g");
+                resolve(true);
+            } catch (e) {
+                resolve(false);
+            }
+        });
+    }
+
+    /**
+     * Check if stream is stuck in youtube replay menu.
+     *
+     * @param {Electron.BrowserWindow} window The farming window to control.
+     */
+    checkForYoutubeReplay(window: Electron.BrowserWindow) {
+        return new Promise<boolean>(async (resolve) => {
+            let connection = getBrowserConnection();
+            let page = await getPage(connection, window);
+
+            /**
+             * Check replay icon is present
+             */
+            try {
+                await page.waitForSelector("path#ytp-id-270");
                 resolve(true);
             } catch (e) {
                 resolve(false);
@@ -67,6 +89,8 @@ export class LOL extends GameFarmTemplate {
                      * Check if rewards icon exists
                      */
                     if (await this.checkDropsEnabled(window)) {
+                        resolve(undefined);
+                    } else if (await this.checkForYoutubeReplay(window)) {
                         resolve(undefined);
                     } else {
                         /**
