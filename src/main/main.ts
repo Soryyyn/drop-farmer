@@ -1,10 +1,10 @@
 import { app, session } from "electron";
 import eid from "electron-is-dev";
-import { initFarms, saveDataToCache } from "./farms";
+import { destroyAllWindows, initFarms, saveDataToCache } from "./farms";
 import { initLogger, log } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
 import { initSettings } from "./settings";
-import { createTray } from "./tray";
+import { createTray, destroyTray } from "./tray";
 import { createMainWindow } from "./windows";
 
 /**
@@ -66,6 +66,16 @@ app.on("before-quit", () => {
      */
     log("INFO", "Saving cache for each farm");
     saveDataToCache();
+
+    /**
+     * Destroy tray.
+     */
+    destroyTray();
+
+    /**
+     * Destroy all windows.
+     */
+    destroyAllWindows();
 
     log("INFO", "Quitting application");
 });

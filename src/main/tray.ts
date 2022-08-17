@@ -54,5 +54,10 @@ export function isQuitting(): boolean {
 }
 
 export function destroyTray(): void {
-    tray.destroy();
+    try {
+        tray.destroy();
+        log("INFO", "Destroyed tray");
+    } catch (err) {
+        log("ERROR", `Failed destroying tray. \"${err}\"`);
+    }
 }

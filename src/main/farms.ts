@@ -64,7 +64,6 @@ function createCacheFile(): void {
 function readCacheFile(): void {
     try {
         const cacheData: FarmsCacheFile = JSON.parse(readFile(CACHE_FILE_NAME));
-        let tempUptime: number = 0;
 
         /**
          * Go through each farm cache and load each one respectively into each farm.
@@ -74,14 +73,12 @@ function readCacheFile(): void {
                 if (cache.gameName === farm.gameName)
                     farm.setCachedFarmData(cache);
             });
-
-            tempUptime += cache.uptime;
         });
 
         /**
-         * Add up app uptime;
+         * Set app uptime;
          */
-        appUptime = tempUptime;
+        appUptime = cacheData.uptime;
     } catch (err) {
         log("ERROR", `Failed reading farms cache file. Error message:\n\t"${err}"`);
     }
@@ -102,22 +99,20 @@ export function saveDataToCache(): void {
              * Stop the timer and save it to the uptime.
              */
             farm.uptime += farm.timer.ms();
-            appUptime += farm.timer.ms();
             farm.timer.stop();
 
             /**
              * Set the cache data if they are the same farm.
              */
             for (let i = 0; i < cacheData.farms.length; i++) {
-                if (farm.gameName === cacheData.farms[i].gameName)
+                if (farm.gameName === cacheData.farms[i].gameName) {
+                    let tempUptime = cacheData.farms[i].uptime;
                     cacheData.farms[i] = farm.getCacheData();
+                    cacheData.uptime += cacheData.farms[i].uptime;
+                    cacheData.farms[i].uptime += tempUptime;
+                }
             }
         }
-
-        /**
-         * Cache app uptime.
-         */
-        cacheData.uptime = appUptime;
 
         /**
          * Write the new cache.
