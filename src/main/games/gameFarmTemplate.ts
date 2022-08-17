@@ -113,6 +113,7 @@ export abstract class GameFarmTemplate {
         this._enabled = cachedData.enabled;
         this.checkerWebsite = cachedData.checkerWebsite;
         this.schedule = cachedData.schedule;
+        // this.uptime = cachedData.uptime;
 
         /**
          * Set the status to idle if the farm is enabled.

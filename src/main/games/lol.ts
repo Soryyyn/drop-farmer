@@ -48,7 +48,29 @@ export class LOL extends GameFarmTemplate {
             let page = await getPage(connection, window);
 
             /**
-             * Check replay icon is present
+             * Check replay icon is present.
+             */
+            try {
+                await page.waitForSelector("div.offline-embeds");
+                resolve(true);
+            } catch (e) {
+                resolve(false);
+            }
+        });
+    }
+
+    /**
+     * Check if twitch stream ended and is stuck at "stream ended" screen.
+     *
+     * @param {Electron.BrowserWindow} window The farming window to control.
+     */
+    checkForTwitchEnd(window: Electron.BrowserWindow) {
+        return new Promise<boolean>(async (resolve) => {
+            let connection = getBrowserConnection();
+            let page = await getPage(connection, window);
+
+            /**
+             * Check if end container is present.
              */
             try {
                 await page.waitForSelector("path#ytp-id-270");
@@ -88,9 +110,7 @@ export class LOL extends GameFarmTemplate {
                     /**
                      * Check if rewards icon exists
                      */
-                    if (await this.checkDropsEnabled(window)) {
-                        resolve(undefined);
-                    } else if (await this.checkForYoutubeReplay(window)) {
+                    if (await this.checkDropsEnabled(window) || !await this.checkForYoutubeReplay(window) || !await this.checkForTwitchEnd(window)) {
                         resolve(undefined);
                     } else {
                         /**

@@ -4,6 +4,7 @@ import { initFarms, saveDataToCache } from "./farms";
 import { initLogger, log } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
 import { initSettings } from "./settings";
+import { createTray } from "./tray";
 import { createMainWindow } from "./windows";
 
 /**
@@ -38,6 +39,11 @@ app.whenReady()
             log("INFO", "Cleared application session data");
             session.defaultSession.clearStorageData();
         }
+
+        /**
+         * Create the system tray.
+         */
+        createTray();
 
         /**
          * Create the actual application window and show it when it has

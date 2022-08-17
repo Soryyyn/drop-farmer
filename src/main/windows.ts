@@ -2,6 +2,7 @@ import { BrowserWindow } from "electron";
 import { destroyAllWindows } from "./farms";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
 import { log } from "./logger";
+import { isQuitting } from "./tray";
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -18,6 +19,7 @@ let mainWindow: BrowserWindow;
  */
 export function createMainWindow(): void {
     mainWindow = new BrowserWindow({
+        icon: "./resources/icon.ico",
         height: 800,
         width: 1200,
         center: true,
@@ -42,17 +44,20 @@ export function createMainWindow(): void {
      * Show when the window is ready.
      */
     mainWindow.on("ready-to-show", () => {
-        log("INFO", "Created main window; showing now");
-        mainWindow.show();
-        mainWindow.focus();
+        log("INFO", "Created main window (hidden)");
     });
 
     /**
      * When close button on main windows is clicked.
+     * Prevent default electron action from close.
      */
-    // TODO: Change to "close to tray" when functionality is added.
-    mainWindow.on("close", () => {
-        destroyAllWindows();
+    mainWindow.on("close", (event) => {
+        event.preventDefault();
+        if (!isQuitting()) {
+            hideMainWindow();
+        } else {
+            destroyWindow(mainWindow);
+        }
     });
 }
 
@@ -96,4 +101,21 @@ export async function createFarmWindow(url: string, gameName: string) {
  */
 export function destroyWindow(window: Electron.BrowserWindow): void {
     window.destroy();
+}
+
+/**
+ * Show the main window.
+ */
+export function showMainWindow(): void {
+    log("INFO", "Showing main window");
+    mainWindow.show();
+    mainWindow.focus();
+}
+
+/**
+ * Show the main window.
+ */
+export function hideMainWindow(): void {
+    log("INFO", "Hiding main window");
+    mainWindow.hide();
 }
