@@ -132,7 +132,7 @@ export abstract class GameFarmTemplate {
     /**
      * Login the user on the website.
      */
-    abstract login(window: any): void;
+    abstract login(window: Electron.BrowserWindow): void;
 
     /**
      * Check the farming windows if they are still farming or the stream ended

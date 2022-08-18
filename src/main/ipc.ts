@@ -86,7 +86,6 @@ handleOneWay(Channels.rendererError, (event, error) => {
  */
 handleAndReply(Channels.getSettings, () => {
     log("INFO", `Received signal with needed reply on channel \"${Channels.getSettings}"`);
-    // return getCurrentSettings();
     return {
         appSettings: getCurrentSettings(),
         farmsSettings: getFarmsSettings()

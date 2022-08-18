@@ -1,4 +1,5 @@
 import { app, Menu, Tray } from "electron";
+import { resolve } from "path";
 import { log } from "./logger";
 import { showMainWindow } from "./windows";
 
@@ -9,7 +10,7 @@ let tray: Tray;
  * Create the tray on app start.
  */
 export function createTray(): void {
-    tray = new Tray("./resources/icon.ico");
+    tray = new Tray(resolve(__dirname, "resources/icon.ico"));
 
     const contextMenu = Menu.buildFromTemplate([
         {
@@ -26,6 +27,9 @@ export function createTray(): void {
             click: () => {
                 showMainWindow();
             }
+        },
+        {
+            type: "separator"
         },
         {
             label: "Quit drop-farmer",

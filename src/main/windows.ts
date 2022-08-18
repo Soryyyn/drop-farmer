@@ -1,8 +1,9 @@
 import { BrowserWindow } from "electron";
-import { destroyAllWindows } from "./farms";
-import { GameFarmTemplate } from "./games/gameFarmTemplate";
+import { resolve } from "path";
+import { getFarms } from "./farms";
 import { log } from "./logger";
 import { isQuitting } from "./tray";
+
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -19,7 +20,7 @@ let mainWindow: BrowserWindow;
  */
 export function createMainWindow(): void {
     mainWindow = new BrowserWindow({
-        icon: "./resources/icon.ico",
+        icon: resolve(__dirname, "resources/icon.ico"),
         height: 800,
         width: 1200,
         center: true,
@@ -55,6 +56,13 @@ export function createMainWindow(): void {
         event.preventDefault();
         if (!isQuitting()) {
             hideMainWindow();
+
+            /**
+             * Hide all farm windows as well.
+             */
+            getFarms().forEach((farm) => {
+                farm.hideWindows();
+            });
         } else {
             destroyWindow(mainWindow);
         }
@@ -76,6 +84,7 @@ export function getMainWindow(): BrowserWindow {
  */
 export async function createFarmWindow(url: string, gameName: string) {
     const window = new BrowserWindow({
+        icon: resolve(__dirname, "resources/icon.ico"),
         height: 1080,
         width: 1920,
         show: false,

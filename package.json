@@ -37,9 +37,6 @@
                     "config": {
                         "debianArch": "arm64"
                     }
-                },
-                {
-                    "name": "@electron-forge/maker-zip"
                 }
             ],
             "plugins": [
