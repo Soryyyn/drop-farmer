@@ -111,9 +111,7 @@ export class LOL extends GameFarmTemplate {
                     let stuckOnYTReplay = await this.checkForYoutubeReplay(window);
                     let stuckOnTwitchReplay = await this.checkForTwitchEnd(window);
 
-                    if (dropsEnabled && !stuckOnYTReplay && !stuckOnTwitchReplay) {
-                        resolve(undefined);
-                    } else {
+                    if (!dropsEnabled || stuckOnYTReplay || stuckOnTwitchReplay) {
                         /**
                          * Remove farm window from farm windows array.
                          */
@@ -140,6 +138,8 @@ export class LOL extends GameFarmTemplate {
 
                     log("INFO", `Destroyed farming window \"${markedForRemoval[i]}\"`);
                 }
+
+                resolve(undefined);
             }
         });
     }
