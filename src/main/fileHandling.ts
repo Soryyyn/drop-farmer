@@ -18,14 +18,13 @@ export const APP_PATH: string = (process.env.NODE_ENV === "production") ? app.ge
 export function createFile(fileName: string, data: string | Buffer): void {
     if (existsSync(join(APP_PATH, fileName))) {
         log("INFO", `File \"${fileName}\" already exists; skipping creation`);
-        return;
-    }
-
-    try {
-        log("INFO", `Creating file \"${fileName}\"`);
-        writeFileSync(join(APP_PATH, fileName), data);
-    } catch (err) {
-        throw new Error(`Could not create file \"${fileName}\" at \"${APP_PATH}\". Reason: \"${err}\"`);
+    } else {
+        try {
+            log("INFO", `Creating file \"${fileName}\"`);
+            writeFileSync(join(APP_PATH, fileName), data);
+        } catch (err) {
+            throw new Error(`Could not create file \"${fileName}\" at \"${APP_PATH}\". Reason: \"${err}\"`);
+        }
     }
 }
 
@@ -40,14 +39,14 @@ export function readFile(fileName: string): string {
     if (!existsSync(join(APP_PATH, fileName))) {
         log("ERROR", `Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
         throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
-    }
-
-    try {
-        log("INFO", `Reading file \"${fileName}\" at \"${APP_PATH}\"`);
-        return readFileSync(join(APP_PATH, fileName)).toString();
-    } catch (err) {
-        log("ERROR", `Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
-        throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+    } else {
+        try {
+            log("INFO", `Reading file \"${fileName}\" at \"${APP_PATH}\"`);
+            return readFileSync(join(APP_PATH, fileName)).toString();
+        } catch (err) {
+            log("ERROR", `Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+            throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+        }
     }
 }
 
@@ -62,11 +61,11 @@ export function readFile(fileName: string): string {
 export function writeToFile(fileName: string, data: string, flag: "a" | "w"): void {
     if (!existsSync(join(APP_PATH, fileName))) {
         throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
-    }
-
-    try {
-        writeFileSync(join(APP_PATH, fileName), data, { flag: flag })
-    } catch (err) {
-        throw new Error(`Could not write to file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+    } else {
+        try {
+            writeFileSync(join(APP_PATH, fileName), data, { flag: flag })
+        } catch (err) {
+            throw new Error(`Could not write to file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+        }
     }
 }
