@@ -27,10 +27,10 @@ export class LOL extends GameFarmTemplate {
              */
             try {
                 await page.waitForSelector("body > div.de-DE > main > main > div > div.lower > div.nav-details > div > div.WatchMenu > div > div.status-summary > svg > g", { timeout: 1000 });
-                log("MAIN", "INFO", `\"${this.gameName}\": Drops on window enabled`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window(${window.id}) drops enabled`);
                 resolve(true);
             } catch (e) {
-                log("MAIN", "INFO", `\"${this.gameName}\": Drops on window disabled`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window(${window.id}) drops disabled`);
                 resolve(false);
             }
         });
@@ -51,10 +51,10 @@ export class LOL extends GameFarmTemplate {
              */
             try {
                 await page.waitForSelector("div.offline-embeds", { timeout: 1000 });
-                log("MAIN", "INFO", `\"${this.gameName}\": Window stuck on youtube stream replay`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window(${window.id}) stuck on youtube stream replay`);
                 resolve(true);
             } catch (e) {
-                log("MAIN", "INFO", `\"${this.gameName}\": Window not stuck on youtube stream replay`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window(${window.id}) not stuck on youtube stream replay`);
                 resolve(false);
             }
         });
@@ -75,10 +75,10 @@ export class LOL extends GameFarmTemplate {
              */
             try {
                 await page.waitForSelector("path#ytp-id-270", { timeout: 1000 });
-                log("MAIN", "INFO", `\"${this.gameName}\": Window stuck on twitch stream replay`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window(${window.id}) stuck on twitch stream replay`);
                 resolve(true);
             } catch (e) {
-                log("MAIN", "INFO", `\"${this.gameName}\": Window not stuck on twitch stream replay`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window(${window.id}) not stuck on twitch stream replay`);
                 resolve(false);
             }
         });
