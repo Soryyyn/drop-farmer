@@ -25,7 +25,7 @@ export default function Settings() {
      * Get the settings file data from main process.
      */
     useEffect(() => {
-        window.api.log("INFO", "Rendering settings page")
+        window.api.log("INFO", "Rendering settings page");
         window.api.sendAndWait(window.api.channels.getSettings)
             .then((data: any) => {
                 setSettings(data.appSettings);
@@ -48,6 +48,7 @@ export default function Settings() {
                         <button
                             onClick={() => {
                                 navigation("/");
+                                window.api.log("INFO", "Pressed home button on settings page");
                             }}
                         >
                             <img src="../assets/home.svg" />
@@ -56,7 +57,8 @@ export default function Settings() {
                         <h1>Settings</h1>
                         <button
                             onClick={() => {
-                                console.log("saved")
+                                console.log("saved");
+                                window.api.log("INFO", "Pressed save button on settings page");
                             }}
                         >
                             <img src="../assets/save.svg" />

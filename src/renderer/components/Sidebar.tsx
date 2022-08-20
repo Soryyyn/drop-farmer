@@ -60,6 +60,8 @@ export default function Sidebar() {
              * Set the state after going through each farm.
              */
             setFarms(tempCopy);
+
+            window.api.log("INFO", "Set new farms status");
         });
 
         return () => {

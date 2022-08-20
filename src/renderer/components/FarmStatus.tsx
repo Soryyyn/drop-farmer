@@ -36,7 +36,9 @@ export default function FarmStatus({ farm, status }: {
                      * Only react if there are actual windows.
                      */
                     if (status === "checking" || status === "farming") {
+                        window.api.log("INFO", `Clicked \"eye\"-icon on \"${farm.gameName}\", setting to \"${!showingWindows}\"`);
                         setShowingWindows(!showingWindows);
+
                         /**
                          * When the eye symbol is pressed and the windows should be showed or hidden.
                          */
