@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require("electron");
 import { Channels } from "./common/channels";
+import { log } from "./logger";
 
 /**
  * Expose functionality from main to renderer process.
@@ -43,5 +44,11 @@ contextBridge.exposeInMainWorld("api", {
      *
      * @param {Channels} channel The channel to remove all the listeners of.
      */
-    removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel)
+    removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
+    /**
+     * Log with the process "RENDERER" to the console and logfile.
+     *
+     * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
+     */
+    log: (type, message) => ipcRenderer.send(Channels.log, { type: type, message: message })
 });

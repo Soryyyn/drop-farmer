@@ -36,7 +36,7 @@ app.whenReady()
          * Check if app is running as fresh/dev mode.
          */
         if (eid) {
-            log("INFO", "Cleared application session data");
+            log("MAIN", "INFO", "Cleared application session data");
             session.defaultSession.clearStorageData();
         }
 
@@ -64,7 +64,7 @@ app.on("before-quit", () => {
     /**
      * Save the cache of each farm.
      */
-    log("INFO", "Saving cache for each farm");
+    log("MAIN", "INFO", "Saving cache for each farm");
     saveDataToCache();
 
     /**
@@ -77,5 +77,5 @@ app.on("before-quit", () => {
      */
     destroyAllWindows();
 
-    log("INFO", "Quitting application");
+    log("MAIN", "INFO", "Quitting application");
 });

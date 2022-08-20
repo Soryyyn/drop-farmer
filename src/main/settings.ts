@@ -25,7 +25,7 @@ function createSettingsFile(): void {
     try {
         createFile(FILE_NAME, JSON.stringify(DEFAULT_SETTINGS, null, 4));
     } catch (err) {
-        log("FATAL", `Failed creating settings file. Exiting drop-farmer. Error message:\n\t"${err}"`);
+        log("MAIN", "FATAL", `Failed creating settings file. Exiting drop-farmer. Error message:\n\t"${err}"`);
     }
 }
 
@@ -38,7 +38,7 @@ function readSettingsFile(): SettingsFile | undefined {
     try {
         return JSON.parse(readFile(FILE_NAME));
     } catch (err) {
-        log("ERROR", `Failed reading settings file. Using default settings. App functions may not work properly. Error message:\n\t"${err}"`);
+        log("MAIN", "ERROR", `Failed reading settings file. Using default settings. App functions may not work properly. Error message:\n\t"${err}"`);
         return DEFAULT_SETTINGS;
     }
 }

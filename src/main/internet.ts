@@ -11,7 +11,7 @@ let internetConnection: boolean = false;
  */
 export async function checkInternetConnection() {
     return new Promise((resolve, reject) => {
-        log("INFO", "Checking internet connection");
+        log("MAIN", "INFO", "Checking internet connection");
 
         isOnline()
             .then((connection: boolean) => {

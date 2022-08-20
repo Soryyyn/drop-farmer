@@ -53,7 +53,7 @@ function createCacheFile(): void {
 
         createFile(CACHE_FILE_NAME, JSON.stringify(cache, null, 4));
     } catch (err) {
-        log("FATAL", `Failed creating farms cache file. Drop-farmer will only use the default configurations without the cache file and wont track progress. Error message:\n\t"${err}"`);
+        log("MAIN", "FATAL", `Failed creating farms cache file. Drop-farmer will only use the default configurations without the cache file and wont track progress. Error message:\n\t"${err}"`);
     }
 }
 
@@ -80,7 +80,7 @@ function readCacheFile(): void {
          */
         appUptime = cacheData.uptime;
     } catch (err) {
-        log("ERROR", `Failed reading farms cache file. Error message:\n\t"${err}"`);
+        log("MAIN", "ERROR", `Failed reading farms cache file. Error message:\n\t"${err}"`);
     }
 }
 
@@ -119,7 +119,7 @@ export function saveDataToCache(): void {
          */
         writeToFile(CACHE_FILE_NAME, JSON.stringify(cacheData, null, 4), "w");
     } catch (err) {
-        log("ERROR", `Failed writing new cache data to file. Error message:\n\t"${err}"`);
+        log("MAIN", "ERROR", `Failed writing new cache data to file. Error message:\n\t"${err}"`);
     }
 }
 
@@ -148,7 +148,7 @@ export function getFarms(): GameFarmTemplate[] {
  * Go through each farm and close all windows.
  */
 export function destroyAllWindows(): void {
-    log("INFO", "Destroying all windows");
+    log("MAIN", "INFO", "Destroying all windows");
     FARMS.forEach((farm: GameFarmTemplate) => {
         /**
          * Check if farm windows are available.

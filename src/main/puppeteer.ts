@@ -14,7 +14,7 @@ let browserConnection: puppeteer.Browser;
 export async function initPuppeteerConnection() {
     await initialize(app);
     browserConnection = await connect(app, puppeteer);
-    log("INFO", "Connected puppeteer to electron application");
+    log("MAIN", "INFO", "Connected puppeteer to electron application");
 }
 
 /**

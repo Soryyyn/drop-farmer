@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 /**
  * The route for the settings page.
@@ -15,16 +16,23 @@ export default function Settings() {
     const [farmSettings, setFarmSettings] = useState<Farm[]>([]);
 
     /**
+     * Get the navigation from react router
+     * to make navigation on button click possible.
+     */
+    const navigation = useNavigate();
+
+    /**
      * Get the settings file data from main process.
      */
     useEffect(() => {
+        window.api.log("INFO", "Rendering settings page")
         window.api.sendAndWait(window.api.channels.getSettings)
             .then((data: any) => {
                 setSettings(data.appSettings);
                 setFarmSettings(data.farmsSettings);
             })
             .catch((err) => {
-                window.api.sendOneWay(window.api.channels.rendererError, err);
+                window.api.log("ERROR", `Error when setting settings for farms and app. ${err}`);
             });
 
         return () => {
@@ -35,9 +43,28 @@ export default function Settings() {
     return (
         <div id="settings-container">
             {settings && farmSettings &&
-                <div>
-                    {settings.toString()}
-                    {farmSettings.toString()}
+                <div id="settings-content">
+                    <div id="settings-topbar">
+                        <button
+                            onClick={() => {
+                                navigation("/");
+                            }}
+                        >
+                            <img src="../assets/home.svg" />
+                            <p>Home</p>
+                        </button>
+                        <h1>Settings</h1>
+                        <button
+                            onClick={() => {
+                                console.log("saved")
+                            }}
+                        >
+                            <img src="../assets/save.svg" />
+                            <p>Save</p>
+                        </button>
+                    </div>
+
+                    <div id="settings-main-content"></div>
                 </div>
             }
         </div>

@@ -45,7 +45,7 @@ export function createMainWindow(): void {
      * Show when the window is ready.
      */
     mainWindow.on("ready-to-show", () => {
-        log("INFO", "Created main window (hidden)");
+        log("MAIN", "INFO", "Created main window (hidden)");
     });
 
     /**
@@ -98,7 +98,7 @@ export async function createFarmWindow(url: string, gameName: string) {
      */
     window.webContents.setAudioMuted(true);
 
-    log("INFO", `Created window for \"${gameName}\"`);
+    log("MAIN", "INFO", `Created window for \"${gameName}\"`);
     return window;
 }
 
@@ -116,7 +116,7 @@ export function destroyWindow(window: Electron.BrowserWindow): void {
  * Show the main window.
  */
 export function showMainWindow(): void {
-    log("INFO", "Showing main window");
+    log("MAIN", "INFO", "Showing main window");
     mainWindow.show();
     mainWindow.focus();
 }
@@ -125,6 +125,6 @@ export function showMainWindow(): void {
  * Show the main window.
  */
 export function hideMainWindow(): void {
-    log("INFO", "Hiding main window");
+    log("MAIN", "INFO", "Hiding main window");
     mainWindow.hide();
 }

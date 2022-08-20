@@ -157,7 +157,7 @@ export abstract class GameFarmTemplate {
         checkInternetConnection()
             .then((connection) => {
                 if (connection && this._enabled) {
-                    log("INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
+                    log("MAIN", "INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
                     schedule(`*/${this.schedule} * * * *`, (now: Date) => {
                         this.farmCheck(now);
                     });

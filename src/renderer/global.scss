@@ -31,10 +31,25 @@ Main Colors:
     }
 }
 
+@mixin secondary-button {
+    @include darker-with-border;
+    background: rgba(59, 62, 97, 0.4);
+    transition: 0.1s;
+
+    &:hover {
+        transition: 0.1s;
+        background: rgba(59, 62, 97, 0.5) !important;
+    }
+}
+
 @mixin hover-cursor {
     &:hover {
         cursor: pointer;
     }
+}
+
+@mixin bg-blur {
+    backdrop-filter: blur(12px);
 }
 
 // Global stylings
@@ -291,10 +306,75 @@ body {
 
 // Settings site
 #settings-container {
-    @include default-dark-shadow;
-    @include darker-with-border;
+    z-index: 99;
+    position: absolute;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
 
-    height: 100%;
-    width: 100%;
-    padding: 2rem;
+    display: flex;
+    flex-direction: row;
+
+    height: calc(100% - 4rem);
+    width: calc(100% - 4rem);
+
+    #settings-content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        #settings-topbar {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 2rem;
+            align-items: baseline;
+            justify-content: space-between;
+
+            button {
+                @include default-dark-shadow;
+                @include secondary-button;
+                @include hover-cursor;
+
+                padding: 1rem;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+
+                &:active {
+                    transform: scale(0.95);
+                    transition: 0.1s;
+                }
+
+                img {
+                    height: 20px;
+                    filter: invert(4%) sepia(9%) saturate(3216%) hue-rotate(191deg) brightness(97%) contrast(96%);
+                }
+
+                p {
+                    font-size: 1rem;
+                    font-family: "Rubik";
+                    margin-left: 0.5rem;
+                    color: #0c0e16;
+                }
+            }
+
+            h1 {
+                font-size: 2rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #0c0e16;
+            }
+        }
+
+        #settings-main-content {
+            @include default-dark-shadow;
+            @include darker-with-border;
+            height: 100%;
+            width: 100;
+            display: flex;
+            flex-direction: column;
+        }
+    }
 }

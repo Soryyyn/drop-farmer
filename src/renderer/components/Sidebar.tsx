@@ -19,7 +19,7 @@ export default function Sidebar() {
                 setFarms(data);
             })
             .catch((err) => {
-                window.api.sendOneWay(window.api.channels.rendererError, err);
+                window.api.log("ERROR", `Error when setting farms. ${err}`);
             });
 
         return () => {

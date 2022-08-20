@@ -22,12 +22,13 @@ export default function Home() {
      * On site load, get internet connection
      */
     useEffect(() => {
+        window.api.log("INFO", "Rendering home page")
         window.api.sendAndWait(window.api.channels.getInternetConnection)
             .then((connection: any) => {
                 setInternetConnection(connection);
             })
             .catch((err) => {
-                window.api.sendOneWay(window.api.channels.rendererError, err);
+                window.api.log("ERROR", `Error when setting internet connection. ${err}`);
             });
 
         return () => {
@@ -36,6 +37,7 @@ export default function Home() {
     }, []);
 
     return (
+
         <div id="home-divider">
             <Sidebar />
             <div id="home-container">
@@ -62,5 +64,6 @@ export default function Home() {
                 </div>
             </div>
         </div>
+
     );
 }

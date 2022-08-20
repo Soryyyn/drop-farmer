@@ -9,6 +9,10 @@ export default function FarmStatus({ farm, status }: {
     farm: FarmRendererObject,
     status: FarmStatus
 }) {
+    /**
+     * If the farming windows are being shown.
+     * Show open eye when showing else strikedthrough eye.
+     */
     const [showingWindows, setShowingWindows] = useState<boolean>(false);
 
     return (

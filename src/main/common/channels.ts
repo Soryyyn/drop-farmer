@@ -7,6 +7,6 @@ export enum Channels {
     farmStatusChange = "farm-status-change",
     farmWindowsVisibility = "farm-windows-visibility",
     getInternetConnection = "get-internet-connection",
-    rendererError = "renderer-error",
     getSettings = "get-settings",
+    log = "log",
 }

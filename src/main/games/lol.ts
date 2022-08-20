@@ -27,10 +27,10 @@ export class LOL extends GameFarmTemplate {
              */
             try {
                 await page.waitForSelector("body > div.de-DE > main > main > div > div.lower > div.nav-details > div > div.WatchMenu > div > div.status-summary > svg > g", { timeout: 1000 });
-                log("INFO", `\"${this.gameName}\": Drops on window enabled`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Drops on window enabled`);
                 resolve(true);
             } catch (e) {
-                log("INFO", `\"${this.gameName}\": Drops on window disabled`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Drops on window disabled`);
                 resolve(false);
             }
         });
@@ -51,10 +51,10 @@ export class LOL extends GameFarmTemplate {
              */
             try {
                 await page.waitForSelector("div.offline-embeds", { timeout: 1000 });
-                log("INFO", `\"${this.gameName}\": Window stuck on youtube stream replay`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window stuck on youtube stream replay`);
                 resolve(true);
             } catch (e) {
-                log("INFO", `\"${this.gameName}\": Window not stuck on youtube stream replay`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window not stuck on youtube stream replay`);
                 resolve(false);
             }
         });
@@ -75,10 +75,10 @@ export class LOL extends GameFarmTemplate {
              */
             try {
                 await page.waitForSelector("path#ytp-id-270", { timeout: 1000 });
-                log("INFO", `\"${this.gameName}\": Window stuck on twitch stream replay`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window stuck on twitch stream replay`);
                 resolve(true);
             } catch (e) {
-                log("INFO", `\"${this.gameName}\": Window not stuck on twitch stream replay`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Window not stuck on twitch stream replay`);
                 resolve(false);
             }
         });
@@ -96,7 +96,7 @@ export class LOL extends GameFarmTemplate {
             if (this.farmingWindows.length === 0)
                 resolve(undefined);
             else {
-                log("INFO", `\"${this.gameName}\": Checking farm windows if the streams are still running`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Checking farm windows if the streams are still running`);
 
                 /**
                  * Farming windows which need to be destroyed;
@@ -136,7 +136,7 @@ export class LOL extends GameFarmTemplate {
                     destroyWindow(this.farmingWindows[markedForRemoval[i]]);
                     this.farmingWindows.splice(markedForRemoval[i], 1);
 
-                    log("INFO", `Destroyed farming window \"${markedForRemoval[i]}\"`);
+                    log("MAIN", "INFO", `Destroyed farming window \"${markedForRemoval[i]}\"`);
                 }
 
                 resolve(undefined);
@@ -150,7 +150,7 @@ export class LOL extends GameFarmTemplate {
      */
     login(window: Electron.BrowserWindow) {
         return new Promise(async (resolve, reject) => {
-            log("INFO", `\"${this.gameName}\": Login process started`);
+            log("MAIN", "INFO", `\"${this.gameName}\": Login process started`);
             let connection = getBrowserConnection();
             let page = await getPage(connection, window);
 
@@ -169,7 +169,7 @@ export class LOL extends GameFarmTemplate {
                 try {
                     await page.waitForSelector("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input");
 
-                    log("INFO", `\"${this.gameName}\": Login is needed by user`);
+                    log("MAIN", "INFO", `\"${this.gameName}\": Login is needed by user`);
 
                     /**
                      * Open checker window for user login.
@@ -182,16 +182,16 @@ export class LOL extends GameFarmTemplate {
                      */
                     page.waitForSelector("div.riotbar-summoner-name", { timeout: 0 })
                         .then(() => {
-                            log("INFO", `\"${this.gameName}\": Login completed`);
+                            log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
                             window.hide();
                             resolve(undefined);
                         });
                 } catch (e) {
-                    log("INFO", `\"${this.gameName}\": Login completed`);
+                    log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
                     resolve(undefined);
                 }
             } else {
-                log("INFO", `\"${this.gameName}\": User already logged in, continuing`);
+                log("MAIN", "INFO", `\"${this.gameName}\": User already logged in, continuing`);
                 resolve(undefined);
             }
         });
@@ -220,7 +220,7 @@ export class LOL extends GameFarmTemplate {
              */
             page.waitForSelector("div.events", { timeout: 0 })
                 .then(() => {
-                    log("INFO", `\"${this.gameName}\": Moved window to schedule`);
+                    log("MAIN", "INFO", `\"${this.gameName}\": Moved window to schedule`);
                     resolve(undefined);
                 });
         });
@@ -318,7 +318,7 @@ export class LOL extends GameFarmTemplate {
                 /**
                  * Change status to farming.
                  */
-                log("INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
 
                 /**
                  * Start the uptime timer if not running.
@@ -326,11 +326,11 @@ export class LOL extends GameFarmTemplate {
                  */
                 if (this.timer.isPaused()) {
                     this.timer.resume();
-                    log("INFO", `\"${this.gameName}\": Resumed timer`);
+                    log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
                 }
                 else if (!this.timer.isStarted()) {
                     this.timer.start();
-                    log("INFO", `\"${this.gameName}\": Started timer`);
+                    log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
                 }
 
                 this.changeStatus("farming");
@@ -340,7 +340,7 @@ export class LOL extends GameFarmTemplate {
                  * No live matches available.
                  * Set app farm status back to idle.
                  */
-                log("INFO", `\"${this.gameName}\": No live matches available, returning status back to idle`);
+                log("MAIN", "INFO", `\"${this.gameName}\": No live matches available, returning status back to idle`);
                 this.changeStatus("idle");
 
                 resolve(undefined);
@@ -353,7 +353,7 @@ export class LOL extends GameFarmTemplate {
      */
     async farmCheck() {
         if (this.status !== "checking") {
-            log("INFO", `\"${this.gameName}\": Started checking the farm`);
+            log("MAIN", "INFO", `\"${this.gameName}\": Started checking the farm`);
             this.changeStatus("checking");
 
             /**
@@ -362,7 +362,7 @@ export class LOL extends GameFarmTemplate {
             if (this.timer.isRunning()) {
                 this.timer.pause();
                 this.uptime += this.timer.ms();
-                log("INFO", `\"${this.gameName}\": Paused timer`);
+                log("MAIN", "INFO", `\"${this.gameName}\": Paused timer`);
             }
 
             /**
@@ -388,7 +388,7 @@ export class LOL extends GameFarmTemplate {
                     destroyWindow(this.checkerWindow!);
                     this.checkerWindow = null;
 
-                    log("INFO", `\"${this.gameName}\": Destroyed checker window`);
+                    log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
                 });
         }
     }

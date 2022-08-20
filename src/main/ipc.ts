@@ -35,7 +35,7 @@ export function sendOneWay(window: Electron.BrowserWindow, channel: string, ...a
  * open a link in a external browser window.
  */
 handleOneWay(Channels.openLinkInExternal, (event, link: string) => {
-    log("INFO", `Received one-way signal on channel \"${Channels.openLinkInExternal}\"`);
+    log("MAIN", "INFO", `Received one-way signal on channel \"${Channels.openLinkInExternal}\"`);
     shell.openExternal(link);
 });
 
@@ -44,7 +44,7 @@ handleOneWay(Channels.openLinkInExternal, (event, link: string) => {
  * Also sends the status of all farms to handle.
  */
 handleAndReply(Channels.getFarms, () => {
-    log("INFO", `Received signal with needed reply on channel \"${Channels.getFarms}"`);
+    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.getFarms}"`);
     return getFarmsForRenderer();
 });
 
@@ -52,7 +52,7 @@ handleAndReply(Channels.getFarms, () => {
  * React when the eye symbol is pressed on the renderer to hide or show all farm windows.
  */
 handleOneWay(Channels.farmWindowsVisibility, (event, value) => {
-    log("INFO", `Received one-way signal on channel \"${Channels.farmWindowsVisibility}\"`);
+    log("MAIN", "INFO", `Received one-way signal on channel \"${Channels.farmWindowsVisibility}\"`);
     getFarms().forEach((farm: GameFarmTemplate) => {
         if (farm.gameName === value.farm.gameName) {
             if (value.show) {
@@ -68,7 +68,7 @@ handleOneWay(Channels.farmWindowsVisibility, (event, value) => {
  * React when the current status of the internet connection is wanted.
  */
 handleAndReply(Channels.getInternetConnection, async (event) => {
-    log("INFO", `Received one-way signal on channel \"${Channels.getInternetConnection}\"`);
+    log("MAIN", "INFO", `Received one-way signal on channel \"${Channels.getInternetConnection}\"`);
 
     return await checkInternetConnection()
 });
@@ -76,8 +76,9 @@ handleAndReply(Channels.getInternetConnection, async (event) => {
 /**
  * React to error signals from the renderer process.
  */
-handleOneWay(Channels.rendererError, (event, error) => {
-    log("ERROR", `Error from renderer process. \"${error}\"`);
+handleOneWay(Channels.log, (event, { type, message }) => {
+    // log("MAIN", "ERROR", `Error from renderer process. \"${error}\"`);
+    log("RENDERER", type, message);
 });
 
 /**
@@ -85,7 +86,7 @@ handleOneWay(Channels.rendererError, (event, error) => {
  * Also sends the status of all farms to handle.
  */
 handleAndReply(Channels.getSettings, () => {
-    log("INFO", `Received signal with needed reply on channel \"${Channels.getSettings}"`);
+    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.getSettings}"`);
     return {
         appSettings: getCurrentSettings(),
         farmsSettings: getFarmsSettings()

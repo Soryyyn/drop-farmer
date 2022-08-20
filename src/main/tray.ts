@@ -47,7 +47,7 @@ export function createTray(): void {
     tray.setToolTip("drop-farmer");
     tray.setContextMenu(contextMenu);
 
-    log("INFO", "Created system tray");
+    log("MAIN", "INFO", "Created system tray");
 }
 
 /**
@@ -60,8 +60,8 @@ export function isQuitting(): boolean {
 export function destroyTray(): void {
     try {
         tray.destroy();
-        log("INFO", "Destroyed tray");
+        log("MAIN", "INFO", "Destroyed tray");
     } catch (err) {
-        log("ERROR", `Failed destroying tray. \"${err}\"`);
+        log("MAIN", "ERROR", `Failed destroying tray. \"${err}\"`);
     }
 }
