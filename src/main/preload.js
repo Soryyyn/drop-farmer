@@ -1,6 +1,5 @@
 const { contextBridge, ipcRenderer } = require("electron");
 import { Channels } from "./common/channels";
-import { log } from "./logger";
 
 /**
  * Expose functionality from main to renderer process.
