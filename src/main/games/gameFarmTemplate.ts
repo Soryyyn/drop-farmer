@@ -135,10 +135,10 @@ export abstract class GameFarmTemplate {
     abstract login(window: Electron.BrowserWindow): void;
 
     /**
-     * Check the farming windows if they are still farming or the stream ended
+     * Check the farming window(s) if they are still farming or the stream ended
      * or the drops are disabled.
      */
-    abstract windowsStillFarming(): void;
+    abstract windowsStillFarming(window?: Electron.BrowserWindow): void;
 
     /**
      * Check the "checkerWebsite" if application is able to start farming.

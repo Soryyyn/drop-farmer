@@ -1,3 +1,5 @@
+import { takeHeapSnapshot } from "process";
+import { ElementHandle } from "puppeteer-core";
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../logger";
 import { getBrowserConnection } from "../puppeteer";
@@ -85,60 +87,115 @@ export class LOL extends GameFarmTemplate {
     }
 
     /**
-     * Check all farm windows if the drops are still enabled or if they are
-     * moved back to the schedule because the stream finished.
+     * Get the current live matches from the schedule route.
+     *
+     * @param {Electron.BrowserWindow} window The checker window to get the
+     * matches from
      */
-    windowsStillFarming() {
+    getCurrentLiveMatches(window: Electron.BrowserWindow) {
+        return new Promise(async (resolve: (urls: string[]) => void) => {
+            let connection = getBrowserConnection();
+            let page = await getPage(connection, window);
+
+            /**
+             * Get all elements with with the specified classes; Get live livestreams.
+             */
+            let liveMatchesElements = await page.$$("a.live.event");
+
+            /**
+             * Check if there are live matches available.
+             */
+            if (liveMatchesElements.length > 0) {
+                const hrefs: string[] = [];
+
+                /**
+                 * Get all href properties from the elements.
+                 */
+                for (const element of liveMatchesElements) {
+                    hrefs.push(await (await element.getProperty("href")).jsonValue());
+                }
+
+                log("MAIN", "INFO", `\"${this.gameName}\": Got current live matches`)
+                resolve(hrefs);
+            } else {
+                /**
+                 * Resolve with empty array if there are no live matches.
+                 */
+                log("MAIN", "INFO", `\"${this.gameName}\": Not live matches found`)
+                resolve([]);
+            }
+        });
+    }
+
+    /**
+     * Check if the current farming windows are still live.
+     *
+     * @param {Electron.BrowserWindow} window The checker window to control.
+     */
+    windowsStillFarming(window: Electron.BrowserWindow) {
         return new Promise(async (resolve, reject) => {
             /**
-             * Resolve promise if there are no farming windows.
+             * Check if there are farming windows or if it needs to skip.
              */
-            if (this.farmingWindows.length === 0)
+            if (this.farmingWindows.length === 0) {
+                log("MAIN", "INFO", `\"${this.gameName}\": No farming windows, skipping checking step`);
                 resolve(undefined);
-            else {
-                log("MAIN", "INFO", `\"${this.gameName}\": Checking farm windows if the streams are still running`);
+            } else {
+                log("MAIN", "INFO", `\"${this.gameName}\": Farming windows found, checking if still live`);
 
                 /**
-                 * Farming windows which need to be destroyed;
+                 * Get the current live matches.
                  */
-                const markedForRemoval: number[] = [];
+                const currentLiveMatches = await this.getCurrentLiveMatches(window)
 
                 /**
-                 * Go through each window and check if the stream is still running.
+                 * The amount of windows destroyed.
                  */
-                for (const window of this.farmingWindows) {
-                    let dropsEnabled = await this.checkDropsEnabled(window);
-                    let stuckOnYTReplay = await this.checkForYoutubeReplay(window);
-                    let stuckOnTwitchReplay = await this.checkForTwitchEnd(window);
+                let destroyedAmount: number = 0;
 
-                    if (!dropsEnabled || stuckOnYTReplay || stuckOnTwitchReplay) {
-                        /**
-                         * Remove farm window from farm windows array.
-                         */
-                        let indexOfWindow = this.farmingWindows.indexOf(window);
+                /**
+                 * Go through each farming window and check if all farming
+                 * window urls have an entry in the current live matches.
+                 * If it is not found, then destroy the farming window.
+                 */
+                for (const farmWindow of this.farmingWindows) {
 
+                    /**
+                     * If the match has been found in the farming window.
+                     */
+                    let found: boolean = false
+
+                    for (const liveMatch of currentLiveMatches) {
                         /**
-                         * If the item is found, remove it.
+                         * URL of current farm window.
                          */
-                        if (indexOfWindow > -1) {
-                            markedForRemoval.push(indexOfWindow);
+                        let url: string = farmWindow.webContents.getURL();
+
+                        if (url.includes(liveMatch)) {
+                            found = true;
                         }
+                    }
+
+                    /**
+                     * If no window with the url has been found.
+                     */
+                    if (!found) {
+                        /**
+                         * Get the index of the window.
+                         */
+                        let index = this.farmingWindows.indexOf(farmWindow);
+
+                        /**
+                         * Destroy the farming window.
+                         */
+                        destroyWindow(this.farmingWindows[index]);
+                        this.farmingWindows.splice(index, 1);
+
+                        destroyedAmount++;
                     }
                 }
 
-                /**
-                 * Destroy the marked for removal farming windows.
-                 */
-                for (let i = 0; i < markedForRemoval.length; i++) {
-                    /**
-                     * Destroy the farming window.
-                     */
-                    destroyWindow(this.farmingWindows[markedForRemoval[i]]);
-                    this.farmingWindows.splice(markedForRemoval[i], 1);
-
-                    log("MAIN", "INFO", `Destroyed farming window \"${markedForRemoval[i]}\"`);
-                }
-
+                log("MAIN", "INFO", `\"${this.gameName}\": Destroyed ${destroyedAmount} windows`);
                 resolve(undefined);
             }
         });
@@ -233,9 +290,6 @@ export class LOL extends GameFarmTemplate {
      */
     startFarming(window: Electron.BrowserWindow) {
         return new Promise(async (resolve, reject) => {
-            let connection = getBrowserConnection();
-            let page = await getPage(connection, window);
-
             /**
              * The livestream urls to check, if the original href should
              * redirect to one of these.
@@ -253,31 +307,27 @@ export class LOL extends GameFarmTemplate {
             ];
 
             /**
-             * Get all elements with with the specified classes; Get live livestreams.
+             * The current live matches urls.
              */
-            let liveMatchesElements = await page.$$("a.live.event");
+            const currentLiveMatches: string[] = await this.getCurrentLiveMatches(window);
 
-            /**
-             * Check if there are live matches available.
-             */
-            if (liveMatchesElements.length > 0) {
+            if (currentLiveMatches.length > 0) {
                 /**
                  * All hrefs with checking for duplicates.
                  */
                 let hrefs: string[] = [];
 
                 /**
-                 * Go through each element and get the href url.
+                 * Go through each url and redirect it to the correct one.
                  */
-                for (const element of liveMatchesElements) {
-                    let propertyHandle = await element.getProperty("href");
-                    let href: string = await propertyHandle.jsonValue();
+                for (const liveMatch of currentLiveMatches) {
+                    let href: string = liveMatch;
 
                     /**
-                     * Go through each href and check if redirect is needed.
+                     * Redirect if same link found.
                      */
                     livestreamRedirects.forEach((redirectUrl: string) => {
-                        if (redirectUrl.includes(href)) {
+                        if (redirectUrl.includes(liveMatch)) {
                             href = redirectUrl;
                         }
                     });
@@ -376,7 +426,7 @@ export class LOL extends GameFarmTemplate {
                     await this.moveToScheduleRoute(this.checkerWindow!);
                 })
                 .then(async () => {
-                    await this.windowsStillFarming();
+                    await this.windowsStillFarming(this.checkerWindow!);
                 })
                 .then(async () => {
                     await this.startFarming(this.checkerWindow!);
