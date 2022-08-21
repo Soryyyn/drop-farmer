@@ -4,8 +4,7 @@ import { log } from "./logger";
 let currentSettings: any | undefined = {};
 const FILE_NAME: string = "settings.json";
 const DEFAULT_SETTINGS: SettingsFile = {
-    launchOnStartup: false,
-    defaultSchedule: 30
+    launchOnStartup: false
 };
 
 

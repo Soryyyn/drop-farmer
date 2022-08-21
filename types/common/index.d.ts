@@ -7,7 +7,6 @@ type FarmStatus = "farming" | "idle" | "checking" | "disabled"
 
 type SettingsFile = {
     launchOnStartup: boolean;
-    defaultSchedule: number;
 }
 
 type Farm = {
