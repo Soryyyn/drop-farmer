@@ -33,12 +33,12 @@ Main Colors:
 
 @mixin secondary-button {
     @include darker-with-border;
-    background: rgba(59, 62, 97, 0.4);
+    background: rgba(59, 62, 97, 0.3);
     transition: 0.1s;
 
     &:hover {
         transition: 0.1s;
-        background: rgba(59, 62, 97, 0.5) !important;
+        background: rgba(59, 62, 97, 0.4) !important;
     }
 }
 
@@ -102,7 +102,7 @@ body {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        width: 50%;
+        width: 575px;
 
         ul {
             display: flex;
@@ -369,12 +369,53 @@ body {
         }
 
         #settings-main-content {
-            @include default-dark-shadow;
-            @include darker-with-border;
             height: 100%;
-            width: 100;
+            width: 100%;
+
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            column-gap: 2rem;
+
+            #settings-selectors {
+                display: flex;
+                flex-direction: column;
+                row-gap: 1rem;
+                width: 427px;
+
+                #settings-selector {
+                    @include container-with-hover;
+                    @include hover-cursor;
+                    @include default-dark-shadow;
+
+                    padding: 1.5rem 1rem;
+
+                    color: #0c0e16;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-weight: bold;
+
+                    &:active {
+                        transform: scale(0.98);
+                        transition: 0.1s;
+                    }
+                }
+
+                #settings-selector-seperator {
+                    height: 2px;
+                    background: rgba(59, 62, 97, 0.1);
+                    border-radius: 5px;
+                }
+            }
+
+            #farm-settings {
+                @include darker-with-border;
+                @include default-dark-shadow;
+
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                padding: 2rem;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FarmSelector from "../components/FarmSelector";
 
 /**
  * The route for the settings page.
@@ -14,6 +15,11 @@ export default function Settings() {
      * Farm settings.
      */
     const [farmSettings, setFarmSettings] = useState<Farm[]>([]);
+
+    /**
+     * Set the currently selected settings selector.
+     */
+    const [selected, setSelected] = useState<string>("application");
 
     /**
      * Get the navigation from react router
@@ -40,6 +46,13 @@ export default function Settings() {
         };
     }, []);
 
+    /**
+     * Load settings of either application or farm when a specific selector is pressed.
+     */
+    useEffect(() => {
+        console.log(selected)
+    }, [selected]);
+
     return (
         <div id="settings-container">
             {settings && farmSettings &&
@@ -65,8 +78,32 @@ export default function Settings() {
                             <p>Save</p>
                         </button>
                     </div>
-
-                    <div id="settings-main-content"></div>
+                    <div id="settings-main-content">
+                        <div id="settings-selectors">
+                            <FarmSelector
+                                selectorName="application"
+                                handleClick={() => {
+                                    setSelected("application");
+                                }} />
+                            <div id="settings-selector-seperator"></div>
+                            {
+                                farmSettings.map((farm: Farm) => {
+                                    return (
+                                        <FarmSelector
+                                            selectorName={farm.gameName}
+                                            key={farm.gameName}
+                                            handleClick={() => {
+                                                setSelected(farm.gameName);
+                                            }}
+                                        />
+                                    );
+                                })
+                            }
+                        </div>
+                        <div id="farm-settings">
+                            {selected}
+                        </div>
+                    </div>
                 </div>
             }
         </div>
