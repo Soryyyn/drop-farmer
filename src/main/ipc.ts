@@ -1,10 +1,10 @@
 import { ipcMain, shell } from "electron";
 import { Channels } from "./common/channels";
-import { getFarms, getFarmsForRenderer, getFarmsSettings } from "./farms";
+import { cacheNewUserFarmsSettings, getFarms, getFarmsForRenderer, getFarmsSettings } from "./farms";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
 import { checkInternetConnection, getCurrentInternetConnection } from "./internet";
 import { log } from "./logger";
-import { getCurrentSettings } from "./settings";
+import { cacheNewUserSettings, getCurrentSettings } from "./settings";
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -77,7 +77,6 @@ handleAndReply(Channels.getInternetConnection, async (event) => {
  * React to error signals from the renderer process.
  */
 handleOneWay(Channels.log, (event, { type, message }) => {
-    // log("MAIN", "ERROR", `Error from renderer process. \"${error}\"`);
     log("RENDERER", type, message);
 });
 
@@ -91,4 +90,17 @@ handleAndReply(Channels.getSettings, () => {
         appSettings: getCurrentSettings(),
         farmsSettings: getFarmsSettings()
     }
+});
+
+/**
+ * Reacts when the save button is pressed on the settings page.
+ */
+handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
+    appSettings: SettingsFile,
+    farmsSettings: Farm[]
+}) => {
+    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.saveNewSettings}"`);
+
+    cacheNewUserSettings(settingsToSave.appSettings);
+    cacheNewUserFarmsSettings(settingsToSave.farmsSettings);
 });

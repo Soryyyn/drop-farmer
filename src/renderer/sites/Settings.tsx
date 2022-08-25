@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Switch from "react-switch";
 import FarmSelector from "../components/FarmSelector";
+import SettingsItemInput from "../components/SettingsItemInput";
+import SettingsItemToggle from "../components/SettingsItemToggle";
 
 /**
  * The route for the settings page.
@@ -20,6 +23,17 @@ export default function Settings() {
      * Set the currently selected settings selector.
      */
     const [selected, setSelected] = useState<string>("application");
+
+    /**
+     * The current farm settings to show.
+     */
+    const [showedSettings, setShowedSettings] = useState<Farm>({
+        gameName: "undefined",
+        checkerWebsite: "...",
+        enabled: false,
+        schedule: 30,
+        uptime: 0
+    });
 
     /**
      * Get the navigation from react router
@@ -50,7 +64,9 @@ export default function Settings() {
      * Load settings of either application or farm when a specific selector is pressed.
      */
     useEffect(() => {
-        console.log(selected)
+        if (selected !== "application") {
+            setShowedSettings(farmSettings.filter((farm) => farm.gameName === selected)[0])
+        }
     }, [selected]);
 
     return (
@@ -70,7 +86,10 @@ export default function Settings() {
                         <h1>Settings</h1>
                         <button
                             onClick={() => {
-                                console.log("saved");
+                                window.api.sendOneWay(window.api.channels.saveNewSettings, {
+                                    appSettings: settings,
+                                    farmsSettings: farmSettings
+                                })
                                 window.api.log("INFO", "Pressed save button on settings page");
                             }}
                         >
@@ -84,7 +103,9 @@ export default function Settings() {
                                 selectorName="application"
                                 handleClick={() => {
                                     setSelected("application");
-                                }} />
+                                }}
+                                currentlySelected={selected}
+                            />
                             <div id="settings-selector-seperator"></div>
                             {
                                 farmSettings.map((farm: Farm) => {
@@ -95,13 +116,104 @@ export default function Settings() {
                                             handleClick={() => {
                                                 setSelected(farm.gameName);
                                             }}
+                                            currentlySelected={selected}
                                         />
                                     );
                                 })
                             }
                         </div>
                         <div id="farm-settings">
-                            {selected}
+                            {
+                                /**
+                                 * If the current selected settings to display
+                                 * are the application settings.
+                                 */
+                                selected && selected === "application" &&
+                                <>
+                                    <SettingsItemToggle
+                                        label="Launch drop-farmer on startup"
+                                        checked={settings?.launchOnStartup}
+                                        disabled={false}
+                                        onClick={(checked: boolean) => {
+                                            let tempSettings = { ...settings };
+                                            tempSettings.launchOnStartup = checked;
+                                            setSettings(tempSettings);
+                                        }}
+                                        description="Enable or disable if drop-farmer should be starten when your PC has finished booting."
+                                    />
+                                </>
+                            }
+                            {
+                                /**
+                                 * If the current selected settings to display
+                                 * is a farm.
+                                 */
+                                selected && selected !== "application" &&
+                                <>
+                                    <SettingsItemToggle
+                                        label="Farm enabled"
+                                        checked={showedSettings.enabled}
+                                        disabled={false}
+                                        onClick={(checked: boolean) => {
+                                            let tempFarmSettings: Farm = { ...showedSettings };
+                                            let changesToApply: Farm[] = [...farmSettings];
+
+                                            for (let i = 0; i < changesToApply.length; i++) {
+                                                if (changesToApply[i].gameName === tempFarmSettings.gameName) {
+                                                    tempFarmSettings.enabled = checked;
+                                                    changesToApply[i] = tempFarmSettings;
+                                                }
+                                            }
+
+                                            setShowedSettings(tempFarmSettings);
+                                            setFarmSettings(changesToApply);
+                                        }}
+                                        description={`Enable or disable the ${showedSettings!.gameName} farm.`}
+                                    />
+
+                                    <SettingsItemInput
+                                        label="Checker website"
+                                        disabled={false}
+                                        description="The website drop-farmer checks for the schedule, live matches, etc. to start farming."
+                                        value={showedSettings.checkerWebsite}
+                                        onInput={(newValue: string) => {
+                                            let tempFarmSettings: Farm = { ...showedSettings };
+                                            let changesToApply: Farm[] = [...farmSettings];
+
+                                            for (let i = 0; i < changesToApply.length; i++) {
+                                                if (changesToApply[i].gameName === tempFarmSettings.gameName) {
+                                                    tempFarmSettings.checkerWebsite = newValue;
+                                                    changesToApply[i] = tempFarmSettings;
+                                                }
+                                            }
+
+                                            setShowedSettings(tempFarmSettings);
+                                            setFarmSettings(changesToApply);
+                                        }}
+                                    />
+
+                                    <SettingsItemInput
+                                        label="Checking schedule"
+                                        disabled={false}
+                                        description="The schedule (in minutes) on which drop-farmer will check if farming is possible."
+                                        value={showedSettings.schedule.toString()}
+                                        onInput={(newValue: string) => {
+                                            let tempFarmSettings: Farm = { ...showedSettings };
+                                            let changesToApply: Farm[] = [...farmSettings];
+
+                                            for (let i = 0; i < changesToApply.length; i++) {
+                                                if (changesToApply[i].gameName === tempFarmSettings.gameName) {
+                                                    tempFarmSettings.schedule = parseInt(newValue);
+                                                    changesToApply[i] = tempFarmSettings;
+                                                }
+                                            }
+
+                                            setShowedSettings(tempFarmSettings);
+                                            setFarmSettings(changesToApply);
+                                        }}
+                                    />
+                                </>
+                            }
                         </div>
                     </div>
                 </div>

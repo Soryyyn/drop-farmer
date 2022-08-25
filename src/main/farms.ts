@@ -25,7 +25,7 @@ let appUptime: number = 0;
  * Initizalize all farms and create the cache file for the farms to use if it
  * doesn't exist already.
  *
- * Go through each farm and start the schedule to farm.
+ * Go through each farm and check if it can start the schedule to farm.
  */
 export function initFarms(): void {
     createCacheFile();
@@ -152,19 +152,22 @@ export function destroyAllWindows(): void {
     FARMS.forEach((farm: GameFarmTemplate) => {
         /**
          * Check if farm windows are available.
-         * If yes, destroy them.
+         * If yes, destroy them and remove the references.
          */
         if (farm.farmingWindows.length > 0) {
             farm.farmingWindows.forEach((window: Electron.BrowserWindow) => {
                 destroyWindow(window);
             });
+            farm.farmingWindows = [];
         }
 
         /**
-         * Destroy the checker window if available.
+         * Destroy the checker window if available and remove the reference.
          */
-        if (farm.checkerWindow)
+        if (farm.checkerWindow !== null) {
             destroyWindow(farm.checkerWindow);
+            farm.checkerWindow = null;
+        }
     });
 }
 
@@ -185,4 +188,25 @@ export function getFarmsSettings(): Farm[] {
     }
 
     return farmsSettings;
+}
+
+/**
+ * Cache the new user made changes to the farm settings.
+ *
+ * @param {Farm[]} changes The user made changes to the farms.
+ */
+export function cacheNewUserFarmsSettings(changes: Farm[]): void {
+    log("MAIN", "INFO", "Writing changed farm settings from user to file");
+
+    /**
+     * Set the data of the farm.
+     */
+    FARMS.forEach((farm: GameFarmTemplate) => {
+        for (const change of changes) {
+            if (change.gameName === farm.gameName)
+                farm.setCachedFarmData(change);
+        }
+    });
+
+    saveDataToCache();
 }

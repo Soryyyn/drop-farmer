@@ -1,10 +1,10 @@
-import { schedule } from "node-cron";
+import CrontabManager from "cron-job-manager";
 import { Timer } from "timer-node";
 import { Channels } from "../common/channels";
 import { checkInternetConnection } from "../internet";
 import { sendOneWay } from "../ipc";
 import { log } from "../logger";
-import { createFarmWindow, getMainWindow } from "../windows";
+import { createFarmWindow, destroyWindow, getMainWindow } from "../windows";
 
 export abstract class GameFarmTemplate {
     /**
@@ -55,6 +55,11 @@ export abstract class GameFarmTemplate {
      * The current status of the farm.
      */
     status: FarmStatus = "disabled";
+
+    /**
+     * The manager which handles the cron schedule task.
+     */
+    taskManager: CrontabManager = new CrontabManager();
 
     /**
      * Change the status of the farm.
@@ -112,12 +117,46 @@ export abstract class GameFarmTemplate {
         this._enabled = cachedData.enabled;
         this.checkerWebsite = cachedData.checkerWebsite;
         this.schedule = cachedData.schedule;
-        // this.uptime = cachedData.uptime;
 
         /**
          * Set the status to idle if the farm is enabled.
          */
         this.status = (this._enabled) ? "idle" : "disabled";
+
+        /**
+         * Add the schedule task to the task manager.
+         */
+        if (!this.taskManager.exists("scheduleChecking")) {
+            this.taskManager.add("scheduleChecking", `*/${this.schedule} * * * *`, () => {
+                this.farmCheck();
+            });
+        } else {
+            this.taskManager.update("scheduleChecking", `*/${this.schedule} * * * *`);
+        }
+
+        /**
+         * Enable or disable the schedule checking task after change.
+         */
+        if (this._enabled) {
+            log("MAIN", "INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
+            this.taskManager.start("scheduleChecking");
+        } else {
+            log("MAIN", "INFO", `Stopped schedule checking for farm \"${this.gameName}\"`);
+            this.taskManager.stop("scheduleChecking");
+
+            /**
+             * Destroy farm and checker windows.
+             */
+            if (this.checkerWindow !== null) {
+                destroyWindow(this.checkerWindow);
+                this.checkerWindow = null;
+            }
+
+            for (const farmWindow of this.farmingWindows) {
+                destroyWindow(farmWindow);
+                this.farmingWindows = [];
+            }
+        }
     }
 
     /**
@@ -143,7 +182,7 @@ export abstract class GameFarmTemplate {
     /**
      * Check the "checkerWebsite" if application is able to start farming.
      */
-    abstract farmCheck(timeOfCheck: Date): void;
+    abstract farmCheck(): void;
 
     /**
      * Commence the farming.
@@ -156,11 +195,11 @@ export abstract class GameFarmTemplate {
     scheduleCheckingFarm(): void {
         checkInternetConnection()
             .then((connection) => {
-                if (connection && this._enabled) {
-                    log("MAIN", "INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
-                    schedule(`*/${this.schedule} * * * *`, (now: Date) => {
-                        this.farmCheck(now);
-                    });
+                if (connection) {
+                    if (this._enabled) {
+                        log("MAIN", "INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
+                        this.taskManager.start("scheduleChecking");
+                    }
                 }
             });
     }

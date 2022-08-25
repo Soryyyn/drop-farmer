@@ -9,4 +9,5 @@ export enum Channels {
     getInternetConnection = "get-internet-connection",
     getSettings = "get-settings",
     log = "log",
+    saveNewSettings = "save-new-settings"
 }

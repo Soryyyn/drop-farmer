@@ -1,7 +1,7 @@
-import { createFile, readFile } from "./fileHandling";
+import { createFile, readFile, writeToFile } from "./fileHandling";
 import { log } from "./logger";
 
-let currentSettings: any | undefined = {};
+let currentSettings: SettingsFile | undefined;
 const FILE_NAME: string = "settings.json";
 const DEFAULT_SETTINGS: SettingsFile = {
     launchOnStartup: false
@@ -50,4 +50,27 @@ function readSettingsFile(): SettingsFile | undefined {
 export function getCurrentSettings(): SettingsFile {
     currentSettings = readSettingsFile();
     return currentSettings! as SettingsFile;
+}
+
+/**
+ * Cache the new user made changes to the app settings.
+ *
+ * @param {SettingsFile} changes The user made changes.
+ */
+export function cacheNewUserSettings(changes: SettingsFile): void {
+    try {
+        log("MAIN", "INFO", "Writing changed app settings from user to file");
+
+        /**
+         * Set the new changes.
+         */
+        currentSettings = changes;
+
+        /**
+         * Save the changes to the settings file.
+         */
+        writeToFile(FILE_NAME, JSON.stringify(currentSettings, null, 4), "w");
+    } catch (err) {
+        log("MAIN", "ERROR", `Failed writing new settings data to file. Error message:\n\t"${err}"`);
+    }
 }
