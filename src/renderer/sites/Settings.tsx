@@ -153,6 +153,18 @@ export default function Settings() {
                                         }}
                                         description="If the main window should be shown when drop-farmer starts."
                                     />
+
+                                    <SettingsItemToggle
+                                        label="Disable 3D model animations"
+                                        checked={settings?.disable3DModuleAnimation}
+                                        disabled={false}
+                                        onClick={(checked: boolean) => {
+                                            let tempSettings = { ...settings };
+                                            tempSettings.disable3DModuleAnimation = checked;
+                                            setSettings(tempSettings);
+                                        }}
+                                        description="Disable the 3D models animation on various pages (Home, etc.)."
+                                    />
                                 </>
                             }
                             {

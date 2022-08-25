@@ -6,6 +6,7 @@ const FILE_NAME: string = "settings.json";
 const DEFAULT_SETTINGS: SettingsFile = {
     launchOnStartup: false,
     showMainWindowOnLaunch: true,
+    disable3DModuleAnimation: false,
 };
 
 

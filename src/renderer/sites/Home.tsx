@@ -8,9 +8,14 @@ import Sidebar from "../components/Sidebar";
  */
 export default function Home() {
     /**
-     * If the applicatio has a internet connection.
+     * If the application has a internet connection.
      */
     const [internetConnection, setInternetConnection] = useState<boolean>(true);
+
+    /**
+     * If the 3d-animations are disabled or not.
+     */
+    const [animationsDisabled, setAnimationsDisabled] = useState<boolean>(false);
 
     /**
      * Get the navigation from react router
@@ -23,6 +28,7 @@ export default function Home() {
      */
     useEffect(() => {
         window.api.log("INFO", "Rendering home page")
+
         window.api.sendAndWait(window.api.channels.getInternetConnection)
             .then((connection: any) => {
                 setInternetConnection(connection);
@@ -31,20 +37,33 @@ export default function Home() {
                 window.api.log("ERROR", `Error when setting internet connection. ${err}`);
             });
 
+        window.api.sendAndWait(window.api.channels.get3DAnimationsDisabled)
+            .then((disabled: any) => {
+                setAnimationsDisabled(disabled);
+            })
+            .catch((err) => {
+                window.api.log("ERROR", `Error when setting animations status. ${err}`);
+            });
+
         return () => {
-            window.api.removeAllListeners(window.api.channels.getInternetConnection)
+            window.api.removeAllListeners(window.api.channels.getInternetConnection);
+            window.api.removeAllListeners(window.api.channels.get3DAnimationsEnabled);
         };
     }, []);
 
     return (
-
         <div id="home-divider">
             <Sidebar />
             <div id="home-container">
                 <div id="home-content">
-                    <video autoPlay loop>
-                        <source src="../assets/crate-falling.webm" type="video/webm" />
-                    </video>
+                    {(animationsDisabled)
+                        ? <video loop>
+                            <source src="../assets/crate-falling.webm" type="video/webm" />
+                        </video>
+                        : <video autoPlay loop>
+                            <source src="../assets/crate-falling.webm" type="video/webm" />
+                        </video>
+                    }
                     <h1 id="home-title">DROP-FARMER</h1>
                     <p id="home-desc">Stream drops farmer application</p>
                     <div id="home-extra">

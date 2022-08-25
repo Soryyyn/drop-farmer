@@ -8,6 +8,7 @@ type FarmStatus = "farming" | "idle" | "checking" | "disabled";
 type SettingsFile = {
     launchOnStartup: boolean;
     showMainWindowOnLaunch: boolean;
+    disable3DModuleAnimation: boolean;
 }
 
 type Farm = {

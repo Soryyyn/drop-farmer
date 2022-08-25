@@ -23,7 +23,7 @@ export default function SettingsItemToggle({ label, checked, onClick, disabled, 
             {disabled &&
                 <SettingsItemDisabledBanner />
             }
-            <label>{label}:</label>
+            <label>{label}</label>
             <Switch
                 onChange={(checked: boolean) => {
                     onClick(checked);

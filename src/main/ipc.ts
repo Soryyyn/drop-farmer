@@ -104,3 +104,11 @@ handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
     cacheNewUserSettings(settingsToSave.appSettings);
     cacheNewUserFarmsSettings(settingsToSave.farmsSettings);
 });
+
+/**
+ * React when the user wants to know if the 3d-animations are enabled or not.
+ */
+handleAndReply(Channels.get3DAnimationsDisabled, () => {
+    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.get3DAnimationsDisabled}"`);
+    return getCurrentSettings().disable3DModuleAnimation;
+});

@@ -9,5 +9,6 @@ export enum Channels {
     getInternetConnection = "get-internet-connection",
     getSettings = "get-settings",
     log = "log",
-    saveNewSettings = "save-new-settings"
+    saveNewSettings = "save-new-settings",
+    get3DAnimationsDisabled = "get-3D-animations-disabled",
 }

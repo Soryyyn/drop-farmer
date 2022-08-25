@@ -20,7 +20,7 @@ export default function SettingsItemInput({ label, disabled, description, value,
             {disabled &&
                 <SettingsItemDisabledBanner />
             }
-            <label>{label}:</label>
+            <label>{label}</label>
             <input
                 value={value}
                 onInput={(event) => {
