@@ -173,7 +173,7 @@ export default function Settings() {
 
                                     <SettingsItemInput
                                         label="Checker website"
-                                        disabled={false}
+                                        disabled={true}
                                         description="The website drop-farmer checks for the schedule, live matches, etc. to start farming."
                                         value={showedSettings.checkerWebsite}
                                         onInput={(newValue: string) => {

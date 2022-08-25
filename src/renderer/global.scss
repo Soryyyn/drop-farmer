@@ -431,6 +431,20 @@ body {
                     padding: 1rem;
                     flex-wrap: wrap;
 
+                    #settings-item-disabled-banner {
+                        color: #0c0e16;
+                        background: rgba(48, 50, 80, 0.5);
+                        width: 100%;
+                        font-family: "Rubik";
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 1rem;
+                        padding-block: 0.25rem;
+                        padding-inline: 0.5rem;
+                        border-radius: 5px;
+                        text-align: center;
+                    }
+
                     label {
                         color: #0c0e16;
                         font-size: 1.2rem;

@@ -1,5 +1,6 @@
 import React from "react";
 import Switch from "react-switch";
+import SettingsItemDisabledBanner from "./SettingsItemDisabledBanner";
 
 /**
  * A settings item component to display a setting for a farm or application.
@@ -19,6 +20,9 @@ export default function SettingsItemToggle({ label, checked, onClick, disabled, 
 }) {
     return (
         <div className="settings-item" id="settings-item-toggle">
+            {disabled &&
+                <SettingsItemDisabledBanner />
+            }
             <label>{label}:</label>
             <Switch
                 onChange={(checked: boolean) => {

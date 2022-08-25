@@ -1,4 +1,5 @@
 import React from "react";
+import SettingsItemDisabledBanner from "./SettingsItemDisabledBanner";
 
 /**
  * A settings item component to display a setting for a farm or application.
@@ -16,12 +17,16 @@ export default function SettingsItemInput({ label, disabled, description, value,
 }) {
     return (
         <div className="settings-item" id="settings-item-input">
+            {disabled &&
+                <SettingsItemDisabledBanner />
+            }
             <label>{label}:</label>
             <input
                 value={value}
                 onInput={(event) => {
                     onInput(event.currentTarget.value);
                 }}
+                disabled={disabled}
             />
             <p id="settings-item-desc">{description}</p>
         </div>
