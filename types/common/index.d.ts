@@ -3,10 +3,11 @@ type Player = {
     qualityToSet: string;
 }
 
-type FarmStatus = "farming" | "idle" | "checking" | "disabled"
+type FarmStatus = "farming" | "idle" | "checking" | "disabled";
 
 type SettingsFile = {
     launchOnStartup: boolean;
+    showMainWindowOnLaunch: boolean;
 }
 
 type Farm = {

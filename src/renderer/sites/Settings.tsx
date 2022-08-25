@@ -141,6 +141,18 @@ export default function Settings() {
                                         }}
                                         description="Enable or disable if drop-farmer should be starten when your PC has finished booting."
                                     />
+
+                                    <SettingsItemToggle
+                                        label="Show main window on launch"
+                                        checked={settings?.showMainWindowOnLaunch}
+                                        disabled={false}
+                                        onClick={(checked: boolean) => {
+                                            let tempSettings = { ...settings };
+                                            tempSettings.showMainWindowOnLaunch = checked;
+                                            setSettings(tempSettings);
+                                        }}
+                                        description="If the main window should be shown when drop-farmer starts."
+                                    />
                                 </>
                             }
                             {

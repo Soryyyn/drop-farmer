@@ -2,6 +2,7 @@ import { BrowserWindow } from "electron";
 import { resolve } from "path";
 import { getFarms } from "./farms";
 import { log } from "./logger";
+import { getCurrentSettings } from "./settings";
 import { isQuitting } from "./tray";
 
 
@@ -45,7 +46,14 @@ export function createMainWindow(): void {
      * Show when the window is ready.
      */
     mainWindow.on("ready-to-show", () => {
-        log("MAIN", "INFO", "Created main window (hidden)");
+        let showOnLaunch = getCurrentSettings().showMainWindowOnLaunch;
+        if (showOnLaunch) {
+            log("MAIN", "INFO", "Created main window (shown)");
+            mainWindow.show();
+            mainWindow.focus();
+        } else {
+            log("MAIN", "INFO", "Created main window (hidden)");
+        }
     });
 
     /**
