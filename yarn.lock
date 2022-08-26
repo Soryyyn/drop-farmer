@@ -681,6 +681,11 @@
   dependencies:
     "@types/retry" "*"
 
+"@types/auto-launch@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@types/auto-launch/-/auto-launch-5.0.2.tgz#4970f01e5dd27572489b7fe77590204a19f86bd0"
+  integrity sha512-b03X09+GCM9t6AUECpwA2gUPYs8s5tJHFJw92sK8EiJ7G4QNbsHmXV7nfCfP6G6ivtm230vi4oNfe8AzRgzxMQ==
+
 "@types/body-parser@*":
   version "1.19.2"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.19.2.tgz#aea2059e28b7658639081347ac4fab3de166e6f0"
@@ -824,11 +829,6 @@
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.5.tgz#1001cc5e6a3704b83c236027e77f2f58ea010f40"
   integrity sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==
-
-"@types/node-cron@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@types/node-cron/-/node-cron-3.0.2.tgz#1a95877680f828817e395789ac2bf8d72a5df6af"
-  integrity sha512-SK/4GYWiWvGLPl/yv+Tm5oLYbzMx1V3y7CsNTvOb3vF8O9oXH11U6/zckISHnBl4YH8MvXHFIUXbYoBONSdmzw==
 
 "@types/node-fetch@^2.5.4":
   version "2.6.2"
@@ -1240,6 +1240,11 @@ anymatch@~3.1.2:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
+applescript@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/applescript/-/applescript-1.0.0.tgz#bb87af568cad034a4e48c4bdaf6067a3a2701317"
+  integrity sha512-yvtNHdWvtbYEiIazXAdp/NY+BBb65/DAseqlNiJQjOx9DynuzOYDbVLBJvuc0ve0VL9x6B3OHF6eH52y9hCBtQ==
+
 "aproba@^1.0.3 || ^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-2.0.0.tgz#52520b8ae5b569215b354efc0caa3fe1e45a8adc"
@@ -1323,6 +1328,17 @@ author-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/author-regex/-/author-regex-1.0.0.tgz#d08885be6b9bbf9439fe087c76287245f0a81450"
   integrity sha512-KbWgR8wOYRAPekEmMXrYYdc7BRyhn2Ftk7KWfMUnQ43hFdojWEFRxhhRUm3/OFEdPa1r0KAvTTg9YQK57xTe0g==
+
+auto-launch@^5.0.5:
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/auto-launch/-/auto-launch-5.0.5.tgz#d14bd002b1ef642f85e991a6195ff5300c8ad3c0"
+  integrity sha512-ppdF4mihhYzMYLuCcx9H/c5TUOCev8uM7en53zWVQhyYAJrurd2bFZx3qQVeJKF2jrc7rsPRNN5cD+i23l6PdA==
+  dependencies:
+    applescript "^1.0.0"
+    mkdirp "^0.5.1"
+    path-is-absolute "^1.0.0"
+    untildify "^3.0.2"
+    winreg "1.2.4"
 
 aws-sign2@~0.7.0:
   version "0.7.0"
@@ -4279,11 +4295,6 @@ node-api-version@^0.1.4:
   dependencies:
     semver "^7.3.5"
 
-node-cron@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/node-cron/-/node-cron-3.0.1.tgz#6a9d5a71513c7ee1eb9e64a673f6730084561d87"
-  integrity sha512-RAWZTNn2M5KDIUV/389UX0EXsqvdFAwc9QwHQceh0Ga56dygqSRthqIjwpgZsoDspHGt2rkHdk9Z4RgfPMdALw==
-
 node-fetch@2.6.7, node-fetch@^2.6.0, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
@@ -6070,6 +6081,11 @@ unpipe@1.0.0, unpipe@~1.0.0:
   resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
   integrity sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==
 
+untildify@^3.0.2:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/untildify/-/untildify-3.0.3.tgz#1e7b42b140bcfd922b22e70ca1265bfe3634c7c9"
+  integrity sha512-iSk/J8efr8uPT/Z4eSUywnqyrQU7DSdMfdqK4iWEaUVVmcP5JcnpRqmVMwcwcnmI1ATFNgC5V90u09tBynNFKA==
+
 update-browserslist-db@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/update-browserslist-db/-/update-browserslist-db-1.0.5.tgz#be06a5eedd62f107b7c19eb5bcefb194411abf38"
@@ -6091,11 +6107,6 @@ url-parse-lax@^3.0.0:
   integrity sha512-NjFKA0DidqPa5ciFcSrXnAltTtzz84ogy+NebPvfEgAck0+TNg4UJ4IN+fB7zRZfbgUf0syOo9MDxFkDSMuFaQ==
   dependencies:
     prepend-http "^2.0.0"
-
-use-debounce@^8.0.3:
-  version "8.0.3"
-  resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-8.0.3.tgz#2b4d7d7307a9397acb6520b7a1dea14c2c3d108c"
-  integrity sha512-BV7xuVy4LS0HtzHb23sDwAjfNjdBWlc4oyjJLcdCoVAjPv1+hroZYsCXX4VfRJT+8sLaqCftBOO8l7CMQtn9Gw==
 
 username@^5.1.0:
   version "5.1.0"
@@ -6320,6 +6331,11 @@ wildcard@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/wildcard/-/wildcard-2.0.0.tgz#a77d20e5200c6faaac979e4b3aadc7b3dd7f8fec"
   integrity sha512-JcKqAHLPxcdb9KM49dufGXn2x3ssnfjbcaQdLlfZsL9rH9wgDQjUtDxbo8NE0F6SFvydeu1VhZe7hZuHsB2/pw==
+
+winreg@1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/winreg/-/winreg-1.2.4.tgz#ba065629b7a925130e15779108cf540990e98d1b"
+  integrity sha512-IHpzORub7kYlb8A43Iig3reOvlcBJGX9gZ0WycHhghHtA65X0LYnMRuJs+aH1abVnMJztQkvQNlltnbPi5aGIA==
 
 word-wrap@^1.2.3:
   version "1.2.3"

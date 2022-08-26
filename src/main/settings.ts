@@ -1,3 +1,4 @@
+import AutoLaunch from "auto-launch";
 import { createFile, readFile, writeToFile } from "./fileHandling";
 import { log } from "./logger";
 
@@ -8,6 +9,9 @@ const DEFAULT_SETTINGS: SettingsFile = {
     showMainWindowOnLaunch: true,
     disable3DModuleAnimation: false,
 };
+const autoLauncher = new AutoLaunch({
+    name: "drop-farmer"
+});
 
 
 /**
@@ -16,6 +20,11 @@ const DEFAULT_SETTINGS: SettingsFile = {
 export function initSettings(): void {
     createSettingsFile();
     currentSettings = readSettingsFile();
+
+    /**
+     * Enable or disable the launch on startup.
+     */
+    launchOnStartup(currentSettings!.launchOnStartup);
 }
 
 /**
@@ -69,10 +78,45 @@ export function cacheNewUserSettings(changes: SettingsFile): void {
         currentSettings = changes;
 
         /**
+         * Check if launch on startup has been enabled or disabled.
+         */
+        launchOnStartup(changes.launchOnStartup);
+
+        /**
          * Save the changes to the settings file.
          */
         writeToFile(FILE_NAME, JSON.stringify(currentSettings, null, 4), "w");
     } catch (err) {
         log("MAIN", "ERROR", `Failed writing new settings data to file. Error message:\n\t"${err}"`);
     }
+}
+
+/**
+ * Enable or disable the app launch on system startup.
+ *
+ * @param launchOnStartup The launchOnStartup setting to set.
+ */
+function launchOnStartup(launchOnStartup: boolean): void {
+    autoLauncher.isEnabled()
+        .then((isEnabled: boolean) => {
+            if (launchOnStartup) {
+                if (isEnabled) {
+                    log("MAIN", "INFO", "Launch on startup is already enabled");
+                } else {
+                    autoLauncher.enable();
+                    log("MAIN", "INFO", "Enabled launch on startup");
+                }
+            } else {
+                if (isEnabled) {
+                    autoLauncher.disable();
+                    log("MAIN", "INFO", "Disabled launch on startup");
+                } else {
+                    log("MAIN", "INFO", "Launch on startup is disabled");
+                }
+            }
+        })
+        .catch((err) => {
+            log("MAIN", "ERROR", `Failed to change the launch on startup setting. ${err}`);
+        });
+
 }
