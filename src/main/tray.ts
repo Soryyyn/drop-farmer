@@ -47,6 +47,13 @@ export function createTray(): void {
     tray.setToolTip("drop-farmer");
     tray.setContextMenu(contextMenu);
 
+    /**
+     * On double click, show the main window.
+     */
+    tray.on("double-click", () => {
+        showMainWindow();
+    });
+
     log("MAIN", "INFO", "Created system tray");
 }
 
