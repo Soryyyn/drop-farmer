@@ -36,7 +36,8 @@ export function createMainWindow(): void {
             symbolColor: "#000000",
         },
         webPreferences: {
-            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
+            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+            devTools: !(process.env.NODE_ENV === "production")
         },
     });
 
@@ -97,6 +98,9 @@ export async function createFarmWindow(url: string, gameName: string) {
         width: 1920,
         show: false,
         closable: false,
+        webPreferences: {
+            devTools: !(process.env.NODE_ENV === "production")
+        }
     });
 
     await window.loadURL(url);
