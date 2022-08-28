@@ -1,15 +1,17 @@
 import { app, Menu, Tray } from "electron";
 import { resolve } from "path";
 import { log } from "./logger";
-import { showMainWindow } from "./windows";
+import { getMainWindow, showWindow } from "./windows";
 
 let quittingApp: boolean = false;
 let tray: Tray;
 
 /**
  * Create the tray on app start.
+ *
+ * @param {boolean} isProd If the app is run in production environment.
  */
-export function createTray(): void {
+export function createTray(isProd: boolean): void {
     tray = new Tray(resolve(__dirname, "resources/icon.ico"));
 
     const contextMenu = Menu.buildFromTemplate([
@@ -25,7 +27,7 @@ export function createTray(): void {
             label: "Show Window",
             type: "normal",
             click: () => {
-                showMainWindow();
+                showWindow(getMainWindow(), true);
             }
         },
         {
@@ -44,26 +46,29 @@ export function createTray(): void {
     /**
      * Set tooltip and context menu.
      */
-    tray.setToolTip("drop-farmer");
+    tray.setToolTip(`drop-farmer ${!isProd ? "(dev environment)" : ""}`);
     tray.setContextMenu(contextMenu);
 
     /**
      * On double click, show the main window.
      */
     tray.on("double-click", () => {
-        showMainWindow();
+        showWindow(getMainWindow(), true);
     });
 
     log("MAIN", "INFO", "Created system tray");
 }
 
 /**
- * To make sure if the main window is closing or app is quiting.
+ * To make sure if the main window is closing or app is quitting.
  */
 export function isQuitting(): boolean {
     return quittingApp;
 }
 
+/**
+ * Destroy the tray.
+ */
 export function destroyTray(): void {
     try {
         tray.destroy();

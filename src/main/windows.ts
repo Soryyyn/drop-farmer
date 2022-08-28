@@ -5,7 +5,6 @@ import { log } from "./logger";
 import { getCurrentSettings } from "./settings";
 import { isQuitting } from "./tray";
 
-
 /**
  * Pick up constant from electron-forge for the main window entry and the
  * preload file entry.
@@ -14,12 +13,17 @@ import { isQuitting } from "./tray";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
+/**
+ * The main window reference.
+ */
 let mainWindow: BrowserWindow;
 
 /**
  * Creates the main react window.
+ *
+ * @param {boolean} isProd If the app is run in production environment.
  */
-export function createMainWindow(): void {
+export function createMainWindow(isProd: boolean): void {
     mainWindow = new BrowserWindow({
         icon: resolve(__dirname, "resources/icon.ico"),
         height: 800,
@@ -37,23 +41,25 @@ export function createMainWindow(): void {
         },
         webPreferences: {
             preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-            devTools: !(process.env.NODE_ENV === "production")
+            devTools: !isProd
         },
     });
 
+    /**
+     * Load the react app into the main window.
+     */
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
     /**
      * Show when the window is ready.
      */
     mainWindow.on("ready-to-show", () => {
-        let showOnLaunch = getCurrentSettings().showMainWindowOnLaunch;
-        if (showOnLaunch) {
-            log("MAIN", "INFO", "Created main window (shown)");
+        if (getCurrentSettings().showMainWindowOnLaunch) {
+            log("MAIN", "INFO", `Created main window (shown) ${(!isProd ? "in dev mode" : "")}`);
             mainWindow.show();
             mainWindow.focus();
         } else {
-            log("MAIN", "INFO", "Created main window (hidden)");
+            log("MAIN", "INFO", `Created main window (hidden) ${(!isProd ? "in dev mode" : "")}`);
         }
     });
 
@@ -64,7 +70,7 @@ export function createMainWindow(): void {
     mainWindow.on("close", (event) => {
         event.preventDefault();
         if (!isQuitting()) {
-            hideMainWindow();
+            hideWindow(mainWindow, true);
 
             /**
              * Hide all farm windows as well.
@@ -108,7 +114,7 @@ export async function createFarmWindow(url: string, gameName: string) {
     /**
      * Mute window.
      */
-    window.webContents.setAudioMuted(true);
+    muteWindow(window);
 
     log("MAIN", "INFO", `Created window for \"${gameName}\"`);
     return window;
@@ -125,18 +131,33 @@ export function destroyWindow(window: Electron.BrowserWindow): void {
 }
 
 /**
- * Show the main window.
+ * Show the wanted window.
+ *
+ * @param {Electron.BrowserWindow} window The window to show.
+ * @param {boolean} isMainWindow If the window is the main application window.
  */
-export function showMainWindow(): void {
-    log("MAIN", "INFO", "Showing main window");
-    mainWindow.show();
-    mainWindow.focus();
+export function showWindow(window: Electron.BrowserWindow, isMainWindow: boolean): void {
+    log("MAIN", "INFO", `Showing window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`)
+    window.show();
+    window.focus();
 }
 
 /**
- * Show the main window.
+ * Hide the wanted window.
+ *
+ * @param {Electron.BrowserWindow} window The window to show.
+ * @param {boolean} isMainWindow If the window is the main application window.
  */
-export function hideMainWindow(): void {
-    log("MAIN", "INFO", "Hiding main window");
-    mainWindow.hide();
+export function hideWindow(window: Electron.BrowserWindow, isMainWindow: boolean): void {
+    log("MAIN", "INFO", `Hidding window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`)
+    window.hide();
+}
+
+/**
+ * Mute the wanted window.
+ *
+ * @param {Electron.BrowserWindow} window The window to mute.
+ */
+function muteWindow(window: Electron.BrowserWindow): void {
+    window.webContents.setAudioMuted(true);
 }
