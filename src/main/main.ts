@@ -1,5 +1,4 @@
 import { app, session } from "electron";
-import eid from "electron-is-dev";
 import { destroyAllWindows, initFarms, saveDataToCache } from "./farms";
 import { initLogger, log } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
@@ -33,23 +32,23 @@ initPuppeteerConnection();
 app.whenReady()
     .then(() => {
         /**
-         * Check if app is running as fresh/dev mode.
+         * Check if app needs to clear cache.
          */
-        if (eid) {
-            log("MAIN", "INFO", "Cleared application session data");
+        if (process.env.CLEAR_CACHE === "1") {
+            log("MAIN", "WARN", "Cleared application session data");
             session.defaultSession.clearStorageData();
         }
 
         /**
          * Create the system tray.
          */
-        createTray();
+        createTray((process.env.NODE_ENV === "production"));
 
         /**
          * Create the actual application window and show it when it has
          * been created.
          */
-        createMainWindow();
+        createMainWindow((process.env.NODE_ENV === "production"));
 
         /**
          * Load all ipc listeners when the app is ready.
