@@ -1,10 +1,16 @@
 import { app, session } from "electron";
+import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
 import { destroyAllWindows, initFarms, saveDataToCache } from "./farms";
 import { initLogger, log } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
 import { initSettings } from "./settings";
 import { createTray, destroyTray } from "./tray";
 import { createMainWindow } from "./windows";
+
+/**
+ * If application is in run in production environment.
+ */
+const inProd: boolean = (process.env.NODE_ENV === "production");
 
 /**
  * Handling the creating/deletion of shortcuts when installing/uninstalling via squirrel.
@@ -40,15 +46,28 @@ app.whenReady()
         }
 
         /**
+         * Install react devtools extension if in development mode.
+         */
+        if (!inProd) {
+            installExtension(REACT_DEVELOPER_TOOLS)
+                .then((extensionName: string) => {
+                    log("MAIN", "INFO", `Installed ${extensionName} extension`);
+                })
+                .catch((err) => {
+                    log("MAIN", "ERROR", `Failed adding extension. ${err}`);
+                });
+        }
+
+        /**
          * Create the system tray.
          */
-        createTray((process.env.NODE_ENV === "production"));
+        createTray(inProd);
 
         /**
          * Create the actual application window and show it when it has
          * been created.
          */
-        createMainWindow((process.env.NODE_ENV === "production"));
+        createMainWindow(inProd);
 
         /**
          * Load all ipc listeners when the app is ready.
