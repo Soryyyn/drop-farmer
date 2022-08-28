@@ -13,13 +13,12 @@ const autoLauncher = new AutoLaunch({
     name: "drop-farmer"
 });
 
-
 /**
  * Read the settings file and save it in the current settings object.
  */
 export function initSettings(): void {
     createSettingsFile();
-    currentSettings = readSettingsFile();
+    currentSettings = addNotFoundKeys(readSettingsFile(), DEFAULT_SETTINGS);
 
     /**
      * Enable or disable the launch on startup.
@@ -118,5 +117,30 @@ function launchOnStartup(launchOnStartup: boolean): void {
         .catch((err) => {
             log("MAIN", "ERROR", `Failed to change the launch on startup setting. ${err}`);
         });
+}
 
+/**
+ * Add not found keys to the settings file.
+ *
+ * @param readObject The newly read settings file.
+ * @param defaultObject The default settings object.
+ */
+function addNotFoundKeys(readObject: any, defaultObject: any): any {
+    let writtenAmount: number = 0;
+    let newObjectToWrite = { ...readObject };
+
+    for (const [keys, value] of Object.entries(defaultObject)) {
+        if (!Object.keys(readObject).includes(keys)) {
+            newObjectToWrite[keys] = value;
+            writtenAmount++;
+        }
+    }
+
+    if (writtenAmount > 0) {
+        writeToFile(FILE_NAME, JSON.stringify(newObjectToWrite, null, 4), "w");
+        log("MAIN", "INFO", `Written ${writtenAmount} properties to settings file`);
+        return readSettingsFile();
+    } else {
+        return readObject;
+    }
 }

@@ -26,7 +26,7 @@ export abstract class GameFarmTemplate {
     /**
      * The schedule on what the checking should happen.
      */
-    schedule: number = 30;
+    schedule: number = 15;
 
     /**
      * The uptime of the farm in ms.
@@ -109,14 +109,15 @@ export abstract class GameFarmTemplate {
     /**
      * Load the cached farm data into the object.
      * Firstly re-cache the current data if necessary.
-     *
      * Re-cache after load.
+     *
+     * If the wanted settings are not found in the cache file, use the defaults.
      */
     setCachedFarmData(cachedData: Farm): void {
-        this.gameName = cachedData.gameName;
-        this._enabled = cachedData.enabled;
-        this.checkerWebsite = cachedData.checkerWebsite;
-        this.schedule = cachedData.schedule;
+        this.gameName = cachedData.gameName || "league-of-legends";
+        this._enabled = cachedData.enabled || false;
+        this.checkerWebsite = cachedData.checkerWebsite || "https://lolesports.com/";
+        this.schedule = cachedData.schedule || 15;
 
         /**
          * Set the status to idle if the farm is enabled.
