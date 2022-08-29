@@ -139,7 +139,7 @@ export default function Settings() {
                                             tempSettings.launchOnStartup = checked;
                                             setSettings(tempSettings);
                                         }}
-                                        description="Enable or disable if drop-farmer should be starten when your PC has finished booting."
+                                        description="Enable or disable if drop-farmer should be started when your PC has finished booting."
                                     />
 
                                     <SettingsItemToggle
