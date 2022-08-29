@@ -15,12 +15,11 @@ const FILE_NAME: string = ".log";
  */
 export function initLogger(): void {
     if (existsSync(join(join(APP_PATH), FILE_NAME))) {
-        // File already exists, skipping creation.
         return;
     }
 
     try {
-        writeFileSync(join(join(APP_PATH), FILE_NAME), "");
+        writeFileSync(join(APP_PATH, FILE_NAME), "");
     } catch (err) {
         throw new Error(`Could not create file \"${FILE_NAME}\" at \"${join(APP_PATH)}\". Reason: ${err}`);
     }
