@@ -11,4 +11,5 @@ export enum Channels {
     log = "log",
     saveNewSettings = "save-new-settings",
     get3DAnimationsDisabled = "get-3D-animations-disabled",
+    getApplicationVersion = "get-application-version",
 }

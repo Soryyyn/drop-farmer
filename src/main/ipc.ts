@@ -1,4 +1,4 @@
-import { ipcMain, shell } from "electron";
+import { app, ipcMain, shell } from "electron";
 import { Channels } from "./common/channels";
 import { cacheNewUserFarmsSettings, getFarms, getFarmsForRenderer, getFarmsSettings } from "./farms";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
@@ -111,4 +111,12 @@ handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
 handleAndReply(Channels.get3DAnimationsDisabled, () => {
     log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.get3DAnimationsDisabled}"`);
     return getCurrentSettings().disable3DModuleAnimation;
+});
+
+/**
+ * Reacts when renderer wants the application version.
+ */
+handleAndReply(Channels.getApplicationVersion, () => {
+    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.getApplicationVersion}"`);
+    return app.getVersion();
 });
