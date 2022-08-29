@@ -1,6 +1,7 @@
 import { createFile, readFile, writeToFile } from "./fileHandling";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
 import { LOL } from "./games/lol";
+import { OverwatchContenders } from "./games/overwatchContenders";
 import { log } from "./logger";
 import { destroyWindow } from "./windows";
 
@@ -14,6 +15,7 @@ const CACHE_FILE_NAME: string = "farms_cache.json";
  */
 const FARMS: GameFarmTemplate[] = [
     new LOL(),
+    new OverwatchContenders(),
 ];
 
 /**
@@ -104,13 +106,20 @@ export function saveDataToCache(): void {
             /**
              * Set the cache data if they are the same farm.
              */
+            let found: boolean = false;
             for (let i = 0; i < cacheData.farms.length; i++) {
                 if (farm.gameName === cacheData.farms[i].gameName) {
+                    found = true;
+
                     let tempUptime = cacheData.farms[i].uptime;
                     cacheData.farms[i] = farm.getCacheData();
                     cacheData.uptime += cacheData.farms[i].uptime;
                     cacheData.farms[i].uptime += tempUptime;
                 }
+            }
+
+            if (!found) {
+                cacheData.farms.push(farm.getCacheData());
             }
         }
 

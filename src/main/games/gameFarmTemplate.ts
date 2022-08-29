@@ -16,17 +16,17 @@ export abstract class GameFarmTemplate {
      * The game name.
      * Ex. "league-of-legends"
      */
-    gameName: string = "league-of-legends";
+    gameName: string = "";
 
     /**
      * The website to check for running stream.
      */
-    checkerWebsite: string = "https://lolesports.com/";
+    checkerWebsite: string = "";
 
     /**
      * The schedule on what the checking should happen.
      */
-    schedule: number = 15;
+    schedule: number = 30;
 
     /**
      * The uptime of the farm in ms.
@@ -114,10 +114,10 @@ export abstract class GameFarmTemplate {
      * If the wanted settings are not found in the cache file, use the defaults.
      */
     setCachedFarmData(cachedData: Farm): void {
-        this.gameName = cachedData.gameName || "league-of-legends";
-        this._enabled = cachedData.enabled || false;
-        this.checkerWebsite = cachedData.checkerWebsite || "https://lolesports.com/";
-        this.schedule = cachedData.schedule || 15;
+        this.gameName = cachedData.gameName || this.gameName;
+        this._enabled = cachedData.enabled || this._enabled;
+        this.checkerWebsite = cachedData.checkerWebsite || this.checkerWebsite;
+        this.schedule = cachedData.schedule || this.schedule;
 
         /**
          * Set the status to idle if the farm is enabled.

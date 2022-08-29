@@ -1,5 +1,3 @@
-import { takeHeapSnapshot } from "process";
-import { ElementHandle } from "puppeteer-core";
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../logger";
 import { getBrowserConnection } from "../puppeteer";
@@ -10,6 +8,10 @@ import { GameFarmTemplate } from "./gameFarmTemplate";
  * League of Legends game farm.
  */
 export class LOL extends GameFarmTemplate {
+    gameName: string = "league-of-legends";
+    checkerWebsite: string = "https://lolesports.com/";
+    schedule: number = 15;
+
     constructor() {
         super();
     }
@@ -377,8 +379,7 @@ export class LOL extends GameFarmTemplate {
                 if (this.timer.isPaused()) {
                     this.timer.resume();
                     log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
-                }
-                else if (!this.timer.isStarted()) {
+                } else if (!this.timer.isStarted()) {
                     this.timer.start();
                     log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
                 }
