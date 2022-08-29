@@ -71,6 +71,7 @@
         "@electron-forge/plugin-webpack": "6.0.0-beta.63",
         "@types/auto-launch": "^5.0.2",
         "@types/node": "^18.6.1",
+        "@types/styled-components": "^5.1.26",
         "@vercel/webpack-asset-relocator-loader": "1.7.0",
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.0.0",
@@ -99,6 +100,7 @@
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.3.0",
         "react-switch": "^7.0.0",
+        "styled-components": "^5.3.5",
         "timer-node": "^5.0.6",
         "uuid": "^8.3.2"
     }
