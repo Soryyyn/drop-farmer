@@ -115,7 +115,7 @@ export abstract class GameFarmTemplate {
      */
     setCachedFarmData(cachedData: Farm): void {
         this.gameName = cachedData.gameName || this.gameName;
-        this._enabled = cachedData.enabled || this._enabled;
+        this._enabled = cachedData.enabled;
         this.checkerWebsite = cachedData.checkerWebsite || this.checkerWebsite;
         this.schedule = cachedData.schedule || this.schedule;
 

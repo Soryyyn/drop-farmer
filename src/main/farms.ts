@@ -2,6 +2,7 @@ import { createFile, readFile, writeToFile } from "./fileHandling";
 import { GameFarmTemplate } from "./games/gameFarmTemplate";
 import { LOL } from "./games/lol";
 import { OverwatchContenders } from "./games/overwatchContenders";
+import { OverwatchLeague } from "./games/overwatchLeague";
 import { log } from "./logger";
 import { destroyWindow } from "./windows";
 
@@ -15,6 +16,7 @@ const CACHE_FILE_NAME: string = "farms_cache.json";
  */
 const FARMS: GameFarmTemplate[] = [
     new LOL(),
+    new OverwatchLeague(),
     new OverwatchContenders(),
 ];
 
@@ -212,8 +214,9 @@ export function cacheNewUserFarmsSettings(changes: Farm[]): void {
      */
     FARMS.forEach((farm: GameFarmTemplate) => {
         for (const change of changes) {
-            if (change.gameName === farm.gameName)
+            if (change.gameName === farm.gameName) {
                 farm.setCachedFarmData(change);
+            }
         }
     });
 
