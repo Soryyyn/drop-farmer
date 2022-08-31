@@ -22,6 +22,9 @@ export class LOL extends GameFarmTemplate {
      */
     getCurrentLiveMatches(window: Electron.BrowserWindow) {
         return new Promise(async (resolve: (urls: string[]) => void) => {
+            if (window !== undefined || window === null)
+                resolve([]);
+
             let connection = getBrowserConnection();
             let page = await getPage(connection, window);
 
@@ -62,6 +65,9 @@ export class LOL extends GameFarmTemplate {
      */
     windowsStillFarming(window: Electron.BrowserWindow) {
         return new Promise(async (resolve, reject) => {
+            if (window !== undefined || window === null)
+                resolve(undefined);
+
             /**
              * If an error occurs in any step, reject the promise.
              */
@@ -142,6 +148,9 @@ export class LOL extends GameFarmTemplate {
      */
     login(window: Electron.BrowserWindow) {
         return new Promise(async (resolve, reject) => {
+            if (window !== undefined || window === null)
+                resolve(undefined);
+
             log("MAIN", "INFO", `\"${this.gameName}\": Login process started`);
             let connection = getBrowserConnection();
             let page = await getPage(connection, window);
@@ -201,6 +210,9 @@ export class LOL extends GameFarmTemplate {
      */
     moveToScheduleRoute(window: Electron.BrowserWindow) {
         return new Promise(async (resolve, reject) => {
+            if (window !== undefined || window === null)
+                resolve(undefined);
+
             let connection = getBrowserConnection();
             let page = await getPage(connection, window);
 
@@ -239,6 +251,8 @@ export class LOL extends GameFarmTemplate {
      */
     startFarming(window: Electron.BrowserWindow) {
         return new Promise(async (resolve, reject) => {
+            if (window !== undefined || window === null)
+                resolve(undefined);
 
             /**
              * If an error occurs in any step, reject the promise.
