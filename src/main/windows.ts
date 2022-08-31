@@ -161,3 +161,12 @@ export function hideWindow(window: Electron.BrowserWindow, isMainWindow: boolean
 function muteWindow(window: Electron.BrowserWindow): void {
     window.webContents.setAudioMuted(true);
 }
+
+/**
+ * Reload the given window.
+ *
+ * @param {Electron.BrowserWindow} window The window to reload.
+ */
+export function reloadWindow(window: Electron.BrowserWindow): void {
+    window.reload();
+}

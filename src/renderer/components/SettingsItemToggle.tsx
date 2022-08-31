@@ -1,6 +1,15 @@
 import React from "react";
 import Switch from "react-switch";
+import styles from "../styles/SettingsItemToggle.module.scss";
 import SettingsItemDisabledBanner from "./SettingsItemDisabledBanner";
+
+interface Props {
+    label: string,
+    checked: boolean,
+    onClick: (checked: boolean) => void,
+    disabled: boolean,
+    description: string
+}
 
 /**
  * A settings item component to display a setting for a farm or application.
@@ -11,15 +20,9 @@ import SettingsItemDisabledBanner from "./SettingsItemDisabledBanner";
  * @param {boolean} disabled If the setting is disabled or not.
  * @param {string} description The description of the settings item.
  */
-export default function SettingsItemToggle({ label, checked, onClick, disabled, description }: {
-    label: string,
-    checked: boolean,
-    onClick: (checked: boolean) => void,
-    disabled: boolean,
-    description: string
-}) {
+export default function SettingsItemToggle({ label, checked, onClick, disabled, description }: Props) {
     return (
-        <div className="settings-item" id="settings-item-toggle">
+        <div className={styles.container}>
             {disabled &&
                 <SettingsItemDisabledBanner />
             }
@@ -40,7 +43,7 @@ export default function SettingsItemToggle({ label, checked, onClick, disabled, 
                 className="toggle-item"
                 borderRadius={6}
             />
-            <p id="settings-item-desc">{description}</p>
+            <p className={styles.desc}>{description}</p>
         </div>
     );
 }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Switch from "react-switch";
+import ButtonLabel from "../components/ButtonLabel";
 import FarmSelector from "../components/FarmSelector";
 import SettingsItemInput from "../components/SettingsItemInput";
 import SettingsItemToggle from "../components/SettingsItemToggle";
+import styles from "../styles/Settings.module.scss";
 
 /**
  * The route for the settings page.
@@ -70,59 +71,61 @@ export default function Settings() {
     }, [selected]);
 
     return (
-        <div id="settings-container">
+        <>
             {settings && farmSettings &&
-                <div id="settings-content">
-                    <div id="settings-topbar">
-                        <button
-                            onClick={() => {
-                                navigation("/");
+                <>
+                    <div className={styles.topBar}>
+                        <ButtonLabel
+                            imgPath="../assets/home.svg"
+                            primary={false}
+                            label="Home"
+                            onClickAction={() => {
                                 window.api.log("INFO", "Pressed home button on settings page");
+                                navigation("/");
                             }}
-                        >
-                            <img src="../assets/home.svg" />
-                            <p>Home</p>
-                        </button>
+                        />
                         <h1>Settings</h1>
-                        <button
-                            onClick={() => {
+                        <ButtonLabel
+                            imgPath="../assets/save.svg"
+                            primary={false}
+                            label="Save"
+                            onClickAction={() => {
                                 window.api.sendOneWay(window.api.channels.saveNewSettings, {
                                     appSettings: settings,
                                     farmsSettings: farmSettings
                                 })
                                 window.api.log("INFO", "Pressed save button on settings page");
                             }}
-                        >
-                            <img src="../assets/save.svg" />
-                            <p>Save</p>
-                        </button>
+                        />
                     </div>
-                    <div id="settings-main-content">
-                        <div id="settings-selectors">
-                            <FarmSelector
-                                selectorName="application"
-                                handleClick={() => {
-                                    setSelected("application");
-                                }}
-                                currentlySelected={selected}
-                            />
-                            <div id="settings-selector-seperator"></div>
-                            {
-                                farmSettings.map((farm: Farm) => {
-                                    return (
-                                        <FarmSelector
-                                            selectorName={farm.gameName}
-                                            key={farm.gameName}
-                                            handleClick={() => {
-                                                setSelected(farm.gameName);
-                                            }}
-                                            currentlySelected={selected}
-                                        />
-                                    );
-                                })
-                            }
+                    <div className={styles.container}>
+                        <div className={styles.left}>
+                            <div className={styles.selectors}>
+                                <FarmSelector
+                                    selectorName="application"
+                                    handleClick={() => {
+                                        setSelected("application");
+                                    }}
+                                    currentlySelected={selected}
+                                />
+                                <div className={styles.seperator}></div>
+                                {
+                                    farmSettings.map((farm: Farm) => {
+                                        return (
+                                            <FarmSelector
+                                                selectorName={farm.gameName}
+                                                key={farm.gameName}
+                                                handleClick={() => {
+                                                    setSelected(farm.gameName);
+                                                }}
+                                                currentlySelected={selected}
+                                            />
+                                        );
+                                    })
+                                }
+                            </div>
                         </div>
-                        <div id="farm-settings">
+                        <div className={styles.right}>
                             {
                                 /**
                                  * If the current selected settings to display
@@ -240,8 +243,8 @@ export default function Settings() {
                             }
                         </div>
                     </div>
-                </div>
+                </>
             }
-        </div>
+        </>
     );
 }

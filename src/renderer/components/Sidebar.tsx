@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import FarmStatus from "./FarmStatus";
+import styles from "../styles/Sidebar.module.scss";
+import FarmItem from "./FarmItem";
 
 /**
  * The sidebar component which displays all farms and their status.
@@ -70,11 +71,11 @@ export default function Sidebar() {
     }, [farms])
 
     return (
-        <div id="sidebar">
-            <ul>
+        <div className={styles.container}>
+            <ul className={styles.items}>
                 {
                     farms && farms.map((farm: FarmRendererObject) => {
-                        return <FarmStatus
+                        return <FarmItem
                             key={farm.gameName}
                             farm={farm}
                             status={farm.status}

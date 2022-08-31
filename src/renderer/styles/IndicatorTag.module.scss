@@ -1,0 +1,34 @@
+.container {
+    width: fit-content;
+    padding: 0.15rem 1rem;
+    margin-top: 0.5rem;
+    border-radius: 5px;
+    color: rgba(24, 26, 41, 1);
+
+    border: 1px solid rgba(24, 26, 41, 0.4);
+}
+
+.attention-required {
+    background: rgb(52, 123, 255);
+    box-shadow: 0 0 10px rgba(52, 123, 255, 0.5);
+}
+
+.disabled {
+    background: rgb(231, 75, 101);
+    box-shadow: 0 0 10px rgba(231, 75, 101, 0.5);
+}
+
+.idle {
+    background: rgba(241, 133, 31, 1);
+    box-shadow: 0 0 10px rgba(241, 133, 31, 0.5);
+}
+
+.checking {
+    background: rgba(248, 224, 89, 0.9);
+    box-shadow: 0 0 10px rgba(248, 224, 89, 0.5);
+}
+
+.farming {
+    background: rgba(33, 219, 135, 0.9);
+    box-shadow: 0 0 10px rgba(33, 219, 135, 0.5);
+}
