@@ -419,3 +419,5 @@ export class LOL extends GameFarmTemplate {
                 });
         }
     }
+
+}

@@ -22,28 +22,38 @@ export class OverwatchContenders extends GameFarmTemplate {
      * @param window The farming window to press play on.
      */
     pressPlay(window: Electron.BrowserWindow) {
-        return new Promise(async (resolve) => {
+        return new Promise(async (resolve, reject) => {
+            if (window !== undefined || window === null)
+                resolve(undefined);
+
             let connection = getBrowserConnection();
             let page = await getPage(connection, window);
 
             /**
-             * Scroll to the video element.
+             * If an error occurs in any step, reject the promise.
              */
-            await page.evaluate("window.scrollTo(0, 1050)");
+            try {
+                /**
+                 * Scroll to the video element.
+                 */
+                await page.evaluate("window.scrollTo(0, 1050)");
 
-            /**
-             * Enter the iframe element and play the video.
-             */
-            page.waitForSelector("iframe")
-                .then(async (iframeHandle) => {
-                    return await iframeHandle!.contentFrame();
-                })
-                .then(async (frame) => {
-                    await frame!.waitForTimeout(2000);
-                    await frame!.click("button.ytp-large-play-button");
+                /**
+                 * Enter the iframe element and play the video.
+                 */
+                page.waitForSelector("iframe")
+                    .then(async (iframeHandle) => {
+                        return await iframeHandle!.contentFrame();
+                    })
+                    .then(async (frame) => {
+                        await frame!.waitForTimeout(2000);
+                        await frame!.click("button.ytp-large-play-button");
 
-                    resolve(undefined);
-                });
+                        resolve(undefined);
+                    });
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
@@ -55,52 +65,62 @@ export class OverwatchContenders extends GameFarmTemplate {
      * @param {Electron.BrowserWindow} window The window to control.
      */
     login(window: Electron.BrowserWindow) {
-        return new Promise(async (resolve) => {
+        return new Promise(async (resolve, reject) => {
+            if (window !== undefined || window === null)
+                resolve(undefined);
+
             log("MAIN", "INFO", `\"${this.gameName}\": Login process started`);
             let connection = getBrowserConnection();
             let page = await getPage(connection, window);
 
-            await page.waitForNetworkIdle();
-
             /**
-             * If sign in button under video has been found (user *not* logged in).
+             * If an error occurs in any step, reject the promise.
              */
-            if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a") !== null) {
-                /**
-                 * Click the sign in button.
-                 */
-                await page.click("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a");
+            try {
+                await page.waitForNetworkIdle();
 
                 /**
-                 * Check if user has been moved to the login page.
+                 * If sign in button under video has been found (user *not* logged in).
                  */
-                try {
-                    await page.waitForSelector("#accountName");
-
-                    log("MAIN", "INFO", `\"${this.gameName}\": Login is needed by user`);
+                if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a") !== null) {
+                    /**
+                     * Click the sign in button.
+                     */
+                    await page.click("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a");
 
                     /**
-                     * Open checker window for user login.
+                     * Check if user has been moved to the login page.
                      */
-                    window.show();
-                    window.focus();
+                    try {
+                        await page.waitForSelector("#accountName");
 
-                    /**
-                     * Wait until user is back at main page with video element.
-                     */
-                    page.waitForSelector("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp", { timeout: 0 })
-                        .then(() => {
-                            log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
-                            window.hide();
-                            resolve(undefined);
-                        });
-                } catch (err) {
-                    log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
+                        log("MAIN", "INFO", `\"${this.gameName}\": Login is needed by user`);
+
+                        /**
+                         * Open checker window for user login.
+                         */
+                        window.show();
+                        window.focus();
+
+                        /**
+                         * Wait until user is back at main page with video element.
+                         */
+                        page.waitForSelector("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp", { timeout: 0 })
+                            .then(() => {
+                                log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
+                                window.hide();
+                                resolve(undefined);
+                            });
+                    } catch (err) {
+                        log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
+                        resolve(undefined);
+                    }
+                } else {
+                    log("MAIN", "INFO", `\"${this.gameName}\": User already logged in, continuing`);
                     resolve(undefined);
                 }
-            } else {
-                log("MAIN", "INFO", `\"${this.gameName}\": User already logged in, continuing`);
-                resolve(undefined);
+            } catch (error) {
+                reject(error);
             }
         });
     }
@@ -109,31 +129,41 @@ export class OverwatchContenders extends GameFarmTemplate {
      * Check if the farming window is still live/farming.
      */
     windowsStillFarming() {
-        return new Promise(async (resolve) => {
-            if (this.farmingWindows.length === 0) {
-                log("MAIN", "INFO", `\"${this.gameName}\": No farming windows, skipping checking step`);
+        return new Promise(async (resolve, reject) => {
+            if (window !== undefined || window === null)
                 resolve(undefined);
-            } else {
-                let connection = getBrowserConnection();
-                let page = await getPage(connection, this.farmingWindows[0]);
 
-                /**
-                 * Check for *LIVE NOW* element.
-                 */
-                if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                    log("MAIN", "INFO", `\"${this.gameName}\": Stream still live, continue farming`);
+            /**
+             * If an error occurs in any step, reject the promise.
+             */
+            try {
+                if (this.farmingWindows.length === 0) {
+                    log("MAIN", "INFO", `\"${this.gameName}\": No farming windows, skipping checking step`);
                     resolve(undefined);
                 } else {
+                    let connection = getBrowserConnection();
+                    let page = await getPage(connection, this.farmingWindows[0]);
+
                     /**
-                     * Destroy the farming window.
+                     * Check for *LIVE NOW* element.
                      */
-                    destroyWindow(this.farmingWindows[0]);
-                    this.farmingWindows.splice(0, 1);
+                    if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
+                        log("MAIN", "INFO", `\"${this.gameName}\": Stream still live, continue farming`);
+                        resolve(undefined);
+                    } else {
+                        /**
+                         * Destroy the farming window.
+                         */
+                        destroyWindow(this.farmingWindows[0]);
+                        this.farmingWindows.splice(0, 1);
 
-                    log("MAIN", "INFO", `\"${this.gameName}\": Stream not live anymore, stopping farming`);
+                        log("MAIN", "INFO", `\"${this.gameName}\": Stream not live anymore, stopping farming`);
 
-                    resolve(undefined);
+                        resolve(undefined);
+                    }
                 }
+            } catch (error) {
+                reject(error);
             }
         });
     }
@@ -145,56 +175,66 @@ export class OverwatchContenders extends GameFarmTemplate {
      * @param {Electron.BrowserWindow} window The window to control.
      */
     startFarming(window: Electron.BrowserWindow) {
-        return new Promise(async (resolve) => {
+        return new Promise(async (resolve, reject) => {
+            if (window !== undefined || window === null)
+                resolve(undefined);
+
             let connection = getBrowserConnection();
             let page = await getPage(connection, window);
 
             /**
-             * Check if farming windows exist, if yes don't try to check for new stream.
+             * If an error occurs in any step, reject the promise.
              */
-            if (this.farmingWindows.length > 0) {
-                log("MAIN", "INFO", `\"${this.gameName}\": Already farming, no need to start again`);
-
-                this.changeStatus("farming");
-                resolve(undefined);
-            } else {
-                await page.waitForTimeout(2000);
-
+            try {
                 /**
-                 * Check for *LIVE NOW* element.
+                 * Check if farming windows exist, if yes don't try to check for new stream.
                  */
-                if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                    let window = await createFarmWindow(this.checkerWebsite, this.gameName);
-                    this.farmingWindows.push(window);
-
-                    await this.pressPlay(this.farmingWindows[0]);
-
-                    log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
-
-                    /**
-                     * Start the uptime timer if not running.
-                     * If already running, resume.
-                     */
-                    if (this.timer.isPaused()) {
-                        this.timer.resume();
-                        log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
-                    } else if (!this.timer.isStarted()) {
-                        this.timer.start();
-                        log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
-                    }
+                if (this.farmingWindows.length > 0) {
+                    log("MAIN", "INFO", `\"${this.gameName}\": Already farming, no need to start again`);
 
                     this.changeStatus("farming");
                     resolve(undefined);
                 } else {
-                    /**
-                     * No live match right now.
-                     * Set the status back to idle.
-                     */
-                    log("MAIN", "INFO", `\"${this.gameName}\": No live matches available, returning status back to idle`);
-                    this.changeStatus("idle");
+                    await page.waitForTimeout(2000);
 
-                    resolve(undefined);
+                    /**
+                     * Check for *LIVE NOW* element.
+                     */
+                    if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
+                        let window = await createFarmWindow(this.checkerWebsite, this.gameName);
+                        this.farmingWindows.push(window);
+
+                        await this.pressPlay(this.farmingWindows[0]);
+
+                        log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
+
+                        /**
+                         * Start the uptime timer if not running.
+                         * If already running, resume.
+                         */
+                        if (this.timer.isPaused()) {
+                            this.timer.resume();
+                            log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
+                        } else if (!this.timer.isStarted()) {
+                            this.timer.start();
+                            log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
+                        }
+
+                        this.changeStatus("farming");
+                        resolve(undefined);
+                    } else {
+                        /**
+                         * No live match right now.
+                         * Set the status back to idle.
+                         */
+                        log("MAIN", "INFO", `\"${this.gameName}\": No live matches available, returning status back to idle`);
+                        this.changeStatus("idle");
+
+                        resolve(undefined);
+                    }
                 }
+            } catch (error) {
+                reject(error);
             }
         });
     }
@@ -237,6 +277,10 @@ export class OverwatchContenders extends GameFarmTemplate {
                     this.checkerWindow = null;
 
                     log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
+                })
+                .catch((err) => {
+                    log("MAIN", "ERROR", `\"${this.gameName}\": Error occurred while checking the farm. ${err}`);
+                    this.changeStatus("attention-required");
                 });
         }
     }
