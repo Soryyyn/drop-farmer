@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonNolabel from "../components/ButtonNoLabel";
-import ExtraButton from "../components/ExtraButton";
+import ModelAnimation from "../components/ModelAnimation";
 import Sidebar from "../components/Sidebar";
+import styles from "../styles/Home.module.scss";
 
 /**
  * The route for the main page of the application.
@@ -71,25 +72,22 @@ export default function Home() {
         return () => {
             window.api.removeAllListeners(window.api.channels.getInternetConnection);
             window.api.removeAllListeners(window.api.channels.get3DAnimationsEnabled);
+            window.api.removeAllListeners(window.api.channels.getApplicationVersion);
         };
     }, []);
 
     return (
-        <div id="home-divider">
+        <div className={styles.divider}>
             <Sidebar />
-            <div id="home-container">
-                <div id="home-content">
-                    {(animationsDisabled)
-                        ? <video loop>
-                            <source src="../assets/crate-falling.webm" type="video/webm" />
-                        </video>
-                        : <video autoPlay loop>
-                            <source src="../assets/crate-falling.webm" type="video/webm" />
-                        </video>
-                    }
-                    <h1 id="home-title">DROP-FARMER</h1>
-                    <p id="home-desc">Stream drops farmer application</p>
-                    <div id="home-extra">
+            <div className={styles.mainContainer}>
+                <div className={styles.content}>
+                    <ModelAnimation
+                        animationDisabled={animationsDisabled}
+                        animationSrc="../assets/crate-falling.webm"
+                    />
+                    <h1 className={styles.title}>DROP-FARMER</h1>
+                    <p className={styles.desc}>Stream drops farmer application</p>
+                    <div className={styles.buttonsContainer}>
                         <ButtonNolabel
                             imgPath="../assets/github.svg"
                             primary={true}
@@ -117,9 +115,11 @@ export default function Home() {
                             }}
                         />
                     </div>
-                    <p id="application-version">Version: {applicationVersion}</p>
-                    <p id="made-by">Copyright © Soryn</p>
-                    <p id="internet-connection">Internet connection: {(internetConnection) ? "Connected" : "No internet"}</p>
+                    <div className={styles.additionalData}>
+                        <p>Version: {applicationVersion}</p>
+                        <p>Copyright © Soryn</p>
+                        <p>Internet connection: {(internetConnection) ? "Connected" : "No internet"}</p>
+                    </div>
                 </div>
             </div>
         </div>
