@@ -413,6 +413,25 @@ export class LOL extends GameFarmTemplate {
 
                     log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
                 })
+                .then(() => {
+                    /**
+                     * Destroy the windows if the status has been set to disabled.
+                     */
+                    if (!this.getEnabled()) {
+                        log("MAIN", "INFO", `\"${this.gameName}\": Destroying all windows because farm has been disabled`);
+                        if (this.checkerWindow !== null) {
+                            destroyWindow(this.checkerWindow);
+                            this.checkerWindow = null;
+                        }
+
+                        for (const farmWindow of this.farmingWindows) {
+                            destroyWindow(farmWindow);
+                            this.farmingWindows = [];
+                        }
+
+                        this.changeStatus("disabled");
+                    }
+                })
                 .catch((err) => {
                     log("MAIN", "ERROR", `\"${this.gameName}\": Error occurred while checking the farm. ${err}`);
                     this.changeStatus("attention-required");

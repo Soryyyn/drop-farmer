@@ -144,19 +144,6 @@ export abstract class GameFarmTemplate {
         } else {
             log("MAIN", "INFO", `Stopped schedule checking for farm \"${this.gameName}\"`);
             this.taskManager.stop("scheduleChecking");
-
-            /**
-             * Destroy farm and checker windows.
-             */
-            if (this.checkerWindow !== null) {
-                destroyWindow(this.checkerWindow);
-                this.checkerWindow = null;
-            }
-
-            for (const farmWindow of this.farmingWindows) {
-                destroyWindow(farmWindow);
-                this.farmingWindows = [];
-            }
         }
     }
 
