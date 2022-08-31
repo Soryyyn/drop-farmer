@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ButtonNolabel from "../components/ButtonNoLabel";
 import ExtraButton from "../components/ExtraButton";
 import Sidebar from "../components/Sidebar";
 
@@ -89,16 +90,32 @@ export default function Home() {
                     <h1 id="home-title">DROP-FARMER</h1>
                     <p id="home-desc">Stream drops farmer application</p>
                     <div id="home-extra">
-                        <ExtraButton imgPath="../assets/github.svg" onClick={() => {
-                            window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn/drop-farmer");
-                        }} />
-                        <ExtraButton imgPath="../assets/web.svg" onClick={() => {
-                            window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://soryn.dev");
-                        }} />
-                        <ExtraButton imgPath="../assets/statistics.svg" onClick={() => { }} />
-                        <ExtraButton imgPath="../assets/gear.svg" onClick={() => {
-                            navigation("/settings");
-                        }} />
+                        <ButtonNolabel
+                            imgPath="../assets/github.svg"
+                            primary={true}
+                            onClickAction={() => {
+                                window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn/drop-farmer");
+                            }}
+                        />
+                        <ButtonNolabel
+                            imgPath="../assets/web.svg"
+                            primary={true}
+                            onClickAction={() => {
+                                window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://soryn.dev");
+                            }}
+                        />
+                        <ButtonNolabel
+                            imgPath="../assets/statistics.svg"
+                            primary={true}
+                            onClickAction={() => { }}
+                        />
+                        <ButtonNolabel
+                            imgPath="../assets/gear.svg"
+                            primary={true}
+                            onClickAction={() => {
+                                navigation("/settings");
+                            }}
+                        />
                     </div>
                     <p id="application-version">Version: {applicationVersion}</p>
                     <p id="made-by">Copyright © Soryn</p>

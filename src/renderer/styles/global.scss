@@ -6,7 +6,7 @@ Main Colors:
 
 @font-face {
     font-family: "Rubik";
-    src: url("assets/fonts/Rubik-VariableFont_wght.ttf");
+    src: url("../assets/fonts/Rubik-VariableFont_wght.ttf");
 }
 
 @mixin default-dark-shadow {
@@ -125,7 +125,6 @@ body {
                     flex-direction: column;
                     row-gap: 0.25rem;
                     flex-grow: 1;
-
 
                     .farm-status {
                         display: flex;
@@ -264,29 +263,29 @@ body {
                 align-items: center;
                 justify-content: center;
 
-                div {
-                    @include default-dark-shadow;
-                    @include container-with-hover;
-                    @include hover-cursor;
+                // div {
+                //     @include default-dark-shadow;
+                //     @include container-with-hover;
+                //     @include hover-cursor;
 
-                    color: #0c0e16;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    aspect-ratio: 1 / 1;
-                    margin-inline: 0.5rem;
-                    width: 7%;
+                //     color: #0c0e16;
+                //     display: flex;
+                //     align-items: center;
+                //     justify-content: center;
+                //     aspect-ratio: 1 / 1;
+                //     margin-inline: 0.5rem;
+                //     width: 7%;
 
-                    img {
-                        filter: invert(4%) sepia(9%) saturate(3216%) hue-rotate(191deg) brightness(97%) contrast(96%);
-                        height: 22px;
-                    }
+                //     img {
+                //         filter: invert(4%) sepia(9%) saturate(3216%) hue-rotate(191deg) brightness(97%) contrast(96%);
+                //         height: 22px;
+                //     }
 
-                    &:active {
-                        transform: scale(0.95);
-                        transition: 0.1s;
-                    }
-                }
+                //     &:active {
+                //         transform: scale(0.95);
+                //         transition: 0.1s;
+                //     }
+                // }
             }
 
             #application-version {
