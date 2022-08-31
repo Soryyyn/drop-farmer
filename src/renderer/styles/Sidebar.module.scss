@@ -3,7 +3,7 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    width: 40%;
+    min-width: 40% !important;
 
     box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
     background: rgba(59, 62, 97, 0.5);

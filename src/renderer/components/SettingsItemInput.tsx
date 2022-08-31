@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "../styles/SettingsItemInput.module.scss";
 import SettingsItemDisabledBanner from "./SettingsItemDisabledBanner";
 
 interface Props {
@@ -18,7 +19,7 @@ interface Props {
  */
 export default function SettingsItemInput({ label, disabled, description, value, onInput }: Props) {
     return (
-        <div className="settings-item" id="settings-item-input">
+        <div className={styles.container}>
             {disabled &&
                 <SettingsItemDisabledBanner />
             }
@@ -30,7 +31,7 @@ export default function SettingsItemInput({ label, disabled, description, value,
                 }}
                 disabled={disabled}
             />
-            <p id="settings-item-desc">{description}</p>
+            <p className={styles.desc}>{description}</p>
         </div>
     );
 }

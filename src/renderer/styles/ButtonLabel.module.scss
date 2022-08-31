@@ -9,9 +9,11 @@
     transition: 0.1s;
     user-select: none;
     width: 120px;
+    height: 58px !important;
+    padding-block: 1rem;
 
     &:active {
-        // transform: scale(0.95);
+        transform: scale(0.97);
         transition: 0.1s;
     }
 
@@ -51,7 +53,7 @@
     color: #0c0e16;
     box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
     background: rgba(59, 62, 97, 0.3);
-    border: 2px solid rgba(59, 62, 97, 0.1);
+    border: 1px solid rgba(59, 62, 97, 0.1);
 
     &:hover {
         background: rgba(59, 62, 97, 0.4) !important;

@@ -1,19 +1,22 @@
+import clsx from "clsx";
 import React from "react";
+import styles from "../styles/FarmSelector.module.scss";
+
+interface Props {
+    selectorName: string,
+    handleClick: () => void,
+    currentlySelected: string
+}
 
 /**
  * The settings selector on the settings page.
  *
  * @param props The selector name and the click event handler  for the component;
  */
-export default function FarmSelector({ selectorName, handleClick, currentlySelected }: {
-    selectorName: string,
-    handleClick: () => void,
-    currentlySelected: string
-}) {
+export default function FarmSelector({ selectorName, handleClick, currentlySelected }: Props) {
     return (
         <div
-            id="settings-selector"
-            className={(currentlySelected === selectorName) ? "settings-selector-selected" : ""}
+            className={clsx(styles.container, ((currentlySelected === selectorName) ? styles.selected : null))}
             onClick={handleClick}
         >
             {selectorName}

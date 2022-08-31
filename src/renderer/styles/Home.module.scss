@@ -10,7 +10,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 60%;
+    min-width: 60% !important;
 
     .content {
         display: flex;
