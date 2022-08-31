@@ -1,9 +1,7 @@
-import { takeHeapSnapshot } from "process";
-import { ElementHandle } from "puppeteer-core";
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../logger";
 import { getBrowserConnection } from "../puppeteer";
-import { createFarmWindow, destroyWindow, reloadWindow } from "../windows";
+import { createFarmWindow, destroyWindow } from "../windows";
 import { GameFarmTemplate } from "./gameFarmTemplate";
 
 /**
