@@ -1,7 +1,7 @@
 /**
  * Statuses for the farms.
  */
-type FarmStatus = "farming" | "idle" | "checking" | "disabled";
+type FarmStatus = "farming" | "idle" | "checking" | "disabled" | "attention-required";
 
 /**
  * The settingsfile (`settings.json`) configuration.

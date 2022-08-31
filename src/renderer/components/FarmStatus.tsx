@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import IndicatorTag from "./IndicatorTag";
 
 /**
  * Farms status display for the home page to inform the user of all enabled farms.
@@ -21,13 +22,7 @@ export default function FarmStatus({ farm, status }: {
                 <div className="farm-status" id={`farm-${farm.gameName}`}>
                     <p>{farm.gameName}</p>
                 </div>
-                <div id="indicator-container">
-                    <div
-                        className="farm-status-indicator"
-                        id={`indicator-${status}`}
-                    ></div>
-                    <p>{status}</p>
-                </div>
+                <IndicatorTag status={status} />
             </div>
             <div
                 id="farms-status-side"
