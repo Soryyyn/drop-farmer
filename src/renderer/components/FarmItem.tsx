@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "../styles/FarmItem.module.scss";
 import DisplayWindowsButton from "./DisplayWindowsButton";
+import FarmActionButton from "./FarmActionButton";
 import IndicatorTag from "./IndicatorTag";
 
 interface Props {
@@ -33,7 +34,7 @@ export default function FarmItem({ farm, status }: Props) {
                         /**
                          * Only react if there are actual windows.
                          */
-                        if (status === "checking" || status === "farming") {
+                        if (status === "checking" || status === "farming" || status === "attention-required") {
                             window.api.log("INFO", `Clicked \"eye\"-icon on \"${farm.gameName}\", setting to \"${showing}\"`);
                             setShowingWindows(showing);
 
@@ -48,6 +49,25 @@ export default function FarmItem({ farm, status }: Props) {
                     }}
                 />
             </div>
+            {
+                (status === "attention-required") &&
+                <div className={styles.secondRow}>
+                    <FarmActionButton
+                        label="Clear cache"
+                        handleClick={() => {
+                            window.api.log("INFO", `Clicked button to reset clear cache on \"${farm.gameName}\"`);
+                            window.api.sendOneWay(window.api.channels.clearCache, (farm.gameName));
+                        }}
+                    />
+                    <FarmActionButton
+                        label="Restart Farm"
+                        handleClick={() => {
+                            window.api.log("INFO", `Clicked restart farm button on \"${farm.gameName}\"`);
+                            window.api.sendOneWay(window.api.channels.restartScheduler, (farm.gameName));
+                        }}
+                    />
+                </div>
+            }
         </div>
     );
 }

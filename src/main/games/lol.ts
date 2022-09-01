@@ -1,7 +1,7 @@
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../logger";
 import { getBrowserConnection } from "../puppeteer";
-import { createFarmWindow, destroyWindow } from "../windows";
+import { createWindow, destroyWindow } from "../windows";
 import { GameFarmTemplate } from "./gameFarmTemplate";
 
 /**
@@ -22,13 +22,10 @@ export class LOL extends GameFarmTemplate {
      * @param {Electron.BrowserWindow} window The checker window to get the
      * matches from
      */
-    getCurrentLiveMatches(window: Electron.BrowserWindow) {
+    getCurrentLiveMatches() {
         return new Promise(async (resolve: (urls: string[]) => void) => {
-            if (window !== undefined || window === null)
-                resolve([]);
-
             let connection = getBrowserConnection();
-            let page = await getPage(connection, window);
+            let page = await getPage(connection, this.checkerWindow!);
 
             /**
              * Get all elements with with the specified classes; Get live livestreams.
@@ -65,81 +62,71 @@ export class LOL extends GameFarmTemplate {
      *
      * @param {Electron.BrowserWindow} window The checker window to control.
      */
-    windowsStillFarming(window: Electron.BrowserWindow) {
+    windowsStillFarming() {
         return new Promise(async (resolve, reject) => {
-            if (window !== undefined || window === null)
-                resolve(undefined);
-
             /**
-             * If an error occurs in any step, reject the promise.
+             * Check if there are farming windows or if it needs to skip.
              */
-            try {
+            if (this.farmingWindows.length === 0) {
+                log("MAIN", "INFO", `\"${this.gameName}\": No farming windows, skipping checking step`);
+                resolve(undefined);
+            } else {
+                log("MAIN", "INFO", `\"${this.gameName}\": Farming windows found, checking if still live`);
+
                 /**
-                 * Check if there are farming windows or if it needs to skip.
+                 * Get the current live matches.
                  */
-                if (this.farmingWindows.length === 0) {
-                    log("MAIN", "INFO", `\"${this.gameName}\": No farming windows, skipping checking step`);
-                    resolve(undefined);
-                } else {
-                    log("MAIN", "INFO", `\"${this.gameName}\": Farming windows found, checking if still live`);
+                const currentLiveMatches = await this.getCurrentLiveMatches()
+
+                /**
+                 * The amount of windows destroyed.
+                 */
+                let destroyedAmount: number = 0;
+
+                /**
+                 * Go through each farming window and check if all farming
+                 * window urls have an entry in the current live matches.
+                 * If it is not found, then destroy the farming window.
+                 */
+                for (const farmWindow of this.farmingWindows) {
 
                     /**
-                     * Get the current live matches.
+                     * If the match has been found in the farming window.
                      */
-                    const currentLiveMatches = await this.getCurrentLiveMatches(window)
+                    let found: boolean = false
 
-                    /**
-                     * The amount of windows destroyed.
-                     */
-                    let destroyedAmount: number = 0;
-
-                    /**
-                     * Go through each farming window and check if all farming
-                     * window urls have an entry in the current live matches.
-                     * If it is not found, then destroy the farming window.
-                     */
-                    for (const farmWindow of this.farmingWindows) {
-
+                    for (const liveMatch of currentLiveMatches) {
                         /**
-                         * If the match has been found in the farming window.
+                         * URL of current farm window.
                          */
-                        let found: boolean = false
+                        let url: string = farmWindow.webContents.getURL();
 
-                        for (const liveMatch of currentLiveMatches) {
-                            /**
-                             * URL of current farm window.
-                             */
-                            let url: string = farmWindow.webContents.getURL();
-
-                            if (url.includes(liveMatch)) {
-                                found = true;
-                            }
-                        }
-
-                        /**
-                         * If no window with the url has been found.
-                         */
-                        if (!found) {
-                            /**
-                             * Get the index of the window.
-                             */
-                            let index = this.farmingWindows.indexOf(farmWindow);
-
-                            /**
-                             * Destroy the farming window.
-                             */
-                            destroyWindow(this.farmingWindows[index]);
-                            this.farmingWindows.splice(index, 1);
-
-                            destroyedAmount++;
+                        if (url.includes(liveMatch)) {
+                            found = true;
                         }
                     }
 
-                    log("MAIN", "INFO", `\"${this.gameName}\": Destroyed ${destroyedAmount} windows`);
-                    resolve(undefined);
+                    /**
+                     * If no window with the url has been found.
+                     */
+                    if (!found) {
+                        /**
+                         * Get the index of the window.
+                         */
+                        let index = this.farmingWindows.indexOf(farmWindow);
+
+                        /**
+                         * Destroy the farming window.
+                         */
+                        destroyWindow(this.farmingWindows[index]);
+                        this.farmingWindows.splice(index, 1);
+
+                        destroyedAmount++;
+                    }
                 }
-            } catch (error) {
-                reject(error);
+
+                log("MAIN", "INFO", `\"${this.gameName}\": Destroyed ${destroyedAmount} windows`);
+                resolve(undefined);
             }
         });
     }
@@ -148,61 +135,51 @@ export class LOL extends GameFarmTemplate {
      * Create the checker window and login.
      * Check the lol schedule after loging in.
      */
-    login(window: Electron.BrowserWindow) {
+    login() {
         return new Promise(async (resolve, reject) => {
-            if (window !== undefined || window === null)
-                resolve(undefined);
-
             log("MAIN", "INFO", `\"${this.gameName}\": Login process started`);
             let connection = getBrowserConnection();
-            let page = await getPage(connection, window);
+            let page = await getPage(connection, this.checkerWindow!);
 
             /**
-             * If an error occurs in any step, reject the promise.
-             */
-            try {
+            * Check if the checker window is already logged in.
+            */
+            if (await page.$("div.riotbar-summoner-name") === null) {
                 /**
-                * Check if the checker window is already logged in.
-                */
-                if (await page.$("div.riotbar-summoner-name") === null) {
-                    /**
-                     * Click the "login" button on the top right.
-                     */
-                    await page.click("#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a");
+                 * Click the "login" button on the top right.
+                 */
+                await page.click("#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a");
+
+                /**
+                 * Check if user has been moved to login or home route.
+                 */
+                try {
+                    await page.waitForSelector("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input");
+
+                    log("MAIN", "INFO", `\"${this.gameName}\": Login is needed by user`);
 
                     /**
-                     * Check if user has been moved to login or home route.
+                     * Open checker window for user login.
                      */
-                    try {
-                        await page.waitForSelector("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input");
+                    this.checkerWindow!.show();
+                    this.checkerWindow!.focus();
 
-                        log("MAIN", "INFO", `\"${this.gameName}\": Login is needed by user`);
-
-                        /**
-                         * Open checker window for user login.
-                         */
-                        window.show();
-                        window.focus();
-
-                        /**
-                         * Back at main page.
-                         */
-                        page.waitForSelector("div.riotbar-summoner-name", { timeout: 0 })
-                            .then(() => {
-                                log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
-                                window.hide();
-                                resolve(undefined);
-                            });
-                    } catch (e) {
-                        log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
-                        resolve(undefined);
-                    }
-                } else {
-                    log("MAIN", "INFO", `\"${this.gameName}\": User already logged in, continuing`);
+                    /**
+                     * Back at main page.
+                     */
+                    page.waitForSelector("div.riotbar-summoner-name", { timeout: 0 })
+                        .then(() => {
+                            log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
+                            this.checkerWindow!.hide();
+                            resolve(undefined);
+                        });
+                } catch (e) {
+                    log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
                     resolve(undefined);
                 }
-            } catch (error) {
-                reject(error);
+            } else {
+                log("MAIN", "INFO", `\"${this.gameName}\": User already logged in, continuing`);
+                resolve(undefined);
             }
         });
     }
@@ -210,39 +187,29 @@ export class LOL extends GameFarmTemplate {
     /**
      * Move the checker window url to the schedule route.
      */
-    moveToScheduleRoute(window: Electron.BrowserWindow) {
+    moveToScheduleRoute() {
         return new Promise(async (resolve, reject) => {
-            if (window !== undefined || window === null)
-                resolve(undefined);
-
             let connection = getBrowserConnection();
-            let page = await getPage(connection, window);
+            let page = await getPage(connection, this.checkerWindow!);
 
             /**
-             * If an error occurs in any step, reject the promise.
+             * Schedule urls with all wanted farms.
              */
-            try {
-                /**
-                 * Schedule urls with all wanted farms.
-                 */
-                let scheduleUrl: string = "https://lolesports.com/schedule?leagues=lec,european-masters,primeleague,cblol-brazil,lck,lcl,lco,lcs,ljl-japan,lla,lpl,pcs,turkiye-sampiyonluk-ligi,worlds,all-star,cblol_academy,college_championship,esports_balkan_league,elite_series,greek_legends,hitpoint_masters,lck_academy,lck_challengers_league,lcs-academy,proving_grounds,lfl,liga_portuguesa,nlc,pg_nationals,superliga,ultraliga,lcs_amateur,msi";
+            let scheduleUrl: string = "https://lolesports.com/schedule?leagues=lec,european-masters,primeleague,cblol-brazil,lck,lcl,lco,lcs,ljl-japan,lla,lpl,pcs,turkiye-sampiyonluk-ligi,worlds,all-star,cblol_academy,college_championship,esports_balkan_league,elite_series,greek_legends,hitpoint_masters,lck_academy,lck_challengers_league,lcs-academy,proving_grounds,lfl,liga_portuguesa,nlc,pg_nationals,superliga,ultraliga,lcs_amateur,msi";
 
-                /**
-                 * Move to the schedule url.
-                 */
-                await page.goto(scheduleUrl);
+            /**
+             * Move to the schedule url.
+             */
+            await page.goto(scheduleUrl);
 
-                /**
-                 * Wait until moving is finished.
-                 */
-                page.waitForSelector("div.events", { timeout: 0 })
-                    .then(() => {
-                        log("MAIN", "INFO", `\"${this.gameName}\": Moved window to schedule`);
-                        resolve(undefined);
-                    });
-            } catch (error) {
-                reject(error);
-            }
+            /**
+             * Wait until moving is finished.
+             */
+            page.waitForSelector("div.events", { timeout: 0 })
+                .then(() => {
+                    log("MAIN", "INFO", `\"${this.gameName}\": Moved window to schedule`);
+                    resolve(undefined);
+                });
         });
     }
 
@@ -251,122 +218,120 @@ export class LOL extends GameFarmTemplate {
      *
      * @param {Electron.BrowserWindow} window The window to control
      */
-    startFarming(window: Electron.BrowserWindow) {
+    startFarming() {
         return new Promise(async (resolve, reject) => {
-            if (window !== undefined || window === null)
-                resolve(undefined);
+            /**
+             * The livestream urls to check, if the original href should
+             * redirect to one of these.
+             */
+            const livestreamRedirects: string[] = [
+                "https://lolesports.com/live/lpl/lpl",
+                "https://lolesports.com/live/lck/lck",
+                "https://lolesports.com/live/lec/lec",
+                "https://lolesports.com/live/lcs/lcs",
+                "https://lolesports.com/live/lco/lco",
+                "https://lolesports.com/live/cblol/cblol",
+                "https://lolesports.com/live/lla/lla",
+                "https://lolesports.com/live/lck_challengers_league/lckcl",
+                "https://lolesports.com/live/cblol_academy/cblol",
+            ];
 
             /**
-             * If an error occurs in any step, reject the promise.
+             * The current live matches urls.
              */
-            try {
+            const currentLiveMatches: string[] = await this.getCurrentLiveMatches();
+
+            if (currentLiveMatches.length > 0) {
                 /**
-                 * The livestream urls to check, if the original href should
-                 * redirect to one of these.
+                 * All hrefs with checking for duplicates.
                  */
-                const livestreamRedirects: string[] = [
-                    "https://lolesports.com/live/lpl/lpl",
-                    "https://lolesports.com/live/lck/lck",
-                    "https://lolesports.com/live/lec/lec",
-                    "https://lolesports.com/live/lcs/lcs",
-                    "https://lolesports.com/live/lco/lco",
-                    "https://lolesports.com/live/cblol/cblol",
-                    "https://lolesports.com/live/lla/lla",
-                    "https://lolesports.com/live/lck_challengers_league/lckcl",
-                    "https://lolesports.com/live/cblol_academy/cblol",
-                ];
+                let hrefs: string[] = [];
 
                 /**
-                 * The current live matches urls.
+                 * Go through each url and redirect it to the correct one.
                  */
-                const currentLiveMatches: string[] = await this.getCurrentLiveMatches(window);
-
-                if (currentLiveMatches.length > 0) {
-                    /**
-                     * All hrefs with checking for duplicates.
-                     */
-                    let hrefs: string[] = [];
+                for (const liveMatch of currentLiveMatches) {
+                    let href: string = liveMatch;
 
                     /**
-                     * Go through each url and redirect it to the correct one.
+                     * Redirect if same link found.
                      */
-                    for (const liveMatch of currentLiveMatches) {
-                        let href: string = liveMatch;
-
-                        /**
-                         * Redirect if same link found.
-                         */
-                        livestreamRedirects.forEach((redirectUrl: string) => {
-                            if (redirectUrl.includes(liveMatch)) {
-                                href = redirectUrl;
-                            }
-                        });
-
-                        /**
-                         * Check if the window needs to be created or if it already
-                         * exists and is currently farming.
-                         */
-                        if (this.farmingWindows.length > 0) {
-                            let duplicate = false;
-
-                            for (let i = 0; i < this.farmingWindows.length; i++) {
-                                if (this.farmingWindows[i].webContents.getURL().includes(href) || this.farmingWindows[i].webContents.getURL() === href) {
-                                    duplicate = true;
-                                }
-                            }
-
-                            if (!duplicate)
-                                hrefs.push(href);
-                        } else {
-                            hrefs.push(href);
+                    livestreamRedirects.forEach((redirectUrl: string) => {
+                        if (redirectUrl.includes(liveMatch)) {
+                            href = redirectUrl;
                         }
+                    });
+
+                    /**
+                     * Check if the window needs to be created or if it already
+                     * exists and is currently farming.
+                     */
+                    if (this.farmingWindows.length > 0) {
+                        let duplicate = false;
+
+                        for (let i = 0; i < this.farmingWindows.length; i++) {
+                            if (this.farmingWindows[i].webContents.getURL().includes(href) || this.farmingWindows[i].webContents.getURL() === href) {
+                                duplicate = true;
+                            }
+                        }
+
+                        if (!duplicate)
+                            hrefs.push(href);
+                    } else {
+                        hrefs.push(href);
                     }
-
-                    /**
-                     * Create the farm windows for all hrefs.
-                     */
-                    for (const href of hrefs) {
-                        let window = await createFarmWindow(href, this.gameName);
-                        this.farmingWindows.push(window);
-                    }
-
-                    /**
-                     * Clear hrefs array.
-                     */
-                    hrefs = [];
-
-                    /**
-                     * Change status to farming.
-                     */
-                    log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
-
-                    /**
-                     * Start the uptime timer if not running.
-                     * If already running, resume.
-                     */
-                    if (this.timer.isPaused()) {
-                        this.timer.resume();
-                        log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
-                    }
-                    else if (!this.timer.isStarted()) {
-                        this.timer.start();
-                        log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
-                    }
-
-                    this.changeStatus("farming");
-                    resolve(undefined);
-                } else {
-                    /**
-                     * No live matches available.
-                     * Set app farm status back to idle.
-                     */
-                    log("MAIN", "INFO", `\"${this.gameName}\": No live matches available, returning status back to idle`);
-                    this.changeStatus("idle");
-
-                    resolve(undefined);
                 }
-            } catch (error) {
-                reject(error);
+
+                /**
+                 * Create the farm windows for all hrefs.
+                 */
+                for (const href of hrefs) {
+                    let window = await createWindow(href, this.gameName);
+                    this.farmingWindows.push(window);
+                }
+
+                /**
+                 * Clear hrefs array.
+                 */
+                hrefs = [];
+
+                /**
+                 * Change status to farming.
+                 */
+                log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
+
+                /**
+                 * Start the uptime timer if not running.
+                 * If already running, resume.
+                 */
+                if (this.timer.isPaused()) {
+                    this.timer.resume();
+                    log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
+                }
+                else if (!this.timer.isStarted()) {
+                    this.timer.start();
+                    log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
+                }
+
+                /**
+                 * Destroy the checker window and remove the reference.
+                 */
+                destroyWindow(this.checkerWindow!);
+                this.checkerWindow = null;
+
+                log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
+
+                this.changeStatus("farming");
+                resolve(undefined);
+            } else {
+                /**
+                 * No live matches available.
+                 * Set app farm status back to idle.
+                 */
+                log("MAIN", "INFO", `\"${this.gameName}\": No live matches available, returning status back to idle`);
+                this.changeStatus("idle");
+
+                resolve(undefined);
             }
         });
     }
@@ -388,39 +353,23 @@ export class LOL extends GameFarmTemplate {
                 log("MAIN", "INFO", `\"${this.gameName}\": Paused timer`);
             }
 
-            /**
-             * Create the checker window.
-             */
-            this.createFarmCheckingWindow()
-                .then(async () => {
-                    await this.login(this.checkerWindow!);
-                })
-                .then(async () => {
-                    await this.moveToScheduleRoute(this.checkerWindow!);
-                })
-                .then(async () => {
-                    await this.windowsStillFarming(this.checkerWindow!);
-                })
-                .then(async () => {
-                    await this.startFarming(this.checkerWindow!);
-                })
-                .then(() => {
-                    /**
-                     * Destroy the checker window and remove the reference.
-                     */
-                    destroyWindow(this.checkerWindow!);
-                    this.checkerWindow = null;
+            await this.createFarmCheckingWindow();
 
-                    log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
-                })
-                .then(() => {
+            if (this.checkerWindow) {
+                try {
+                    await this.login();
+                    await this.moveToScheduleRoute();
+                    await this.windowsStillFarming();
+                    await this.startFarming();
+
                     /**
                      * Destroy the windows if the status has been set to disabled.
                      */
                     if (!this.getEnabled()) {
                         log("MAIN", "INFO", `\"${this.gameName}\": Destroying all windows because farm has been disabled`);
+
                         if (this.checkerWindow !== null) {
-                            destroyWindow(this.checkerWindow);
+                            destroyWindow(this.checkerWindow!);
                             this.checkerWindow = null;
                         }
 
@@ -431,11 +380,12 @@ export class LOL extends GameFarmTemplate {
 
                         this.changeStatus("disabled");
                     }
-                })
-                .catch((err) => {
-                    log("MAIN", "ERROR", `\"${this.gameName}\": Error occurred while checking the farm. ${err}`);
+                } catch (error) {
+                    log("MAIN", "ERROR", `\"${this.gameName}\": Error occurred while checking the farm. ${error}`);
                     this.changeStatus("attention-required");
-                });
+                }
+
+            }
         }
     }
 

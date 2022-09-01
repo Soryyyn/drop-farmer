@@ -4,7 +4,7 @@ import { Channels } from "../common/channels";
 import { checkInternetConnection } from "../internet";
 import { sendOneWay } from "../ipc";
 import { log } from "../logger";
-import { createFarmWindow, destroyWindow, getMainWindow } from "../windows";
+import { createWindow, destroyWindow, getMainWindow } from "../windows";
 
 export abstract class GameFarmTemplate {
     /**
@@ -153,13 +153,13 @@ export abstract class GameFarmTemplate {
      */
     async createFarmCheckingWindow() {
         if (!this.checkerWindow)
-            this.checkerWindow = await createFarmWindow(this.checkerWebsite, this.gameName);
+            this.checkerWindow = await createWindow(this.checkerWebsite, this.gameName);
     }
 
     /**
      * Login the user on the website.
      */
-    abstract login(window: Electron.BrowserWindow): void;
+    abstract login(page: any, window: Electron.BrowserWindow): void;
 
     /**
      * Check the farming window(s) if they are still farming or the stream ended
@@ -187,6 +187,10 @@ export abstract class GameFarmTemplate {
                     if (this._enabled) {
                         log("MAIN", "INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
                         this.taskManager.start("scheduleChecking");
+
+                        this.checkerWindow?.on("closed", () => {
+                            this.taskManager.stop("scheduleChecking");
+                        });
                     }
                 }
             });
@@ -210,5 +214,35 @@ export abstract class GameFarmTemplate {
         this.farmingWindows.forEach((window: Electron.BrowserWindow) => {
             window.hide();
         });
+    }
+
+    /**
+     * Clear the cache of the farm.
+     */
+    clearCache(): void {
+        createWindow(this.checkerWebsite)
+            .then(async (window: Electron.BrowserWindow) => {
+                await window.webContents.session.clearStorageData();
+                log("MAIN", "INFO", `\"${this.gameName}\": Cleared cache`);
+                destroyWindow(window);
+            })
+            .catch((err) => {
+                log("MAIN", "ERROR", `\"${this.gameName}\": Failed clearing cache. ${err}`);
+            });
+    }
+
+    /**
+     * Restart the schedule of the farm with the specified steps between.
+     *
+     * @param {() => void} stepsBetweenRestart The callback to execute between restart.
+     */
+    restartScheduler(stepsBetweenRestart?: () => void): void {
+        log("MAIN", "INFO", `\"${this.gameName}\": Restarted scheduler`);
+        this.taskManager.stopAll();
+
+        if (stepsBetweenRestart)
+            stepsBetweenRestart();
+
+        this.taskManager.startAll();
     }
 }

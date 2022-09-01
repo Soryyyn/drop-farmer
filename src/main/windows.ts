@@ -97,7 +97,7 @@ export function getMainWindow(): BrowserWindow {
  * @param {string} url The url which should load on window creation.
  * @param {string} gameName The name of the game to create the window for.
  */
-export async function createFarmWindow(url: string, gameName: string) {
+export async function createWindow(url: string, gameName?: string) {
     const window = new BrowserWindow({
         icon: resolve(__dirname, "resources/icon.ico"),
         height: 1080,
@@ -116,7 +116,13 @@ export async function createFarmWindow(url: string, gameName: string) {
      */
     muteWindow(window);
 
-    log("MAIN", "INFO", `Created window for \"${gameName}\"`);
+    /**
+     * Decide if the windows is for a farm or just a general window.
+     */
+    if (gameName)
+        log("MAIN", "INFO", `Created window for \"${gameName}\"`);
+    else
+        log("MAIN", "INFO", "Created general window");
     return window;
 }
 

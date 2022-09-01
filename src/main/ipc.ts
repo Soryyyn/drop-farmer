@@ -5,6 +5,7 @@ import { GameFarmTemplate } from "./games/gameFarmTemplate";
 import { checkInternetConnection, getCurrentInternetConnection } from "./internet";
 import { log } from "./logger";
 import { cacheNewUserSettings, getCurrentSettings } from "./settings";
+import { destroyWindow } from "./windows";
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -119,4 +120,63 @@ handleAndReply(Channels.get3DAnimationsDisabled, () => {
 handleAndReply(Channels.getApplicationVersion, () => {
     log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.getApplicationVersion}"`);
     return app.getVersion();
+});
+
+/**
+ * React when user wants to reset the session of a farm.
+ */
+handleOneWay(Channels.clearCache, (event, farmName) => {
+    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.clearCache}"`);
+
+    getFarms().forEach((farm: GameFarmTemplate) => {
+        if (farm.gameName === farmName) {
+            farm.clearCache();
+
+            farm.restartScheduler(() => {
+                /**
+                 * Destroy all farm windows.
+                 */
+                if (farm.checkerWindow) {
+                    destroyWindow(farm.checkerWindow);
+                }
+
+                for (const farmWindow of farm.farmingWindows) {
+                    destroyWindow(farmWindow);
+                }
+                farm.farmingWindows = [];
+
+                /**
+                 * Set the status back to idle.
+                 */
+                farm.changeStatus("idle");
+            });
+        }
+    });
+});
+
+/**
+ * Reacts when the user wants to restart the scheduler for the specified farm.
+ */
+handleOneWay(Channels.restartScheduler, (event, farmName) => {
+    getFarms().forEach((farm: GameFarmTemplate) => {
+        if (farm.gameName === farmName) {
+            farm.restartScheduler(() => {
+                /**
+                 * Destroy all farm windows.
+                 */
+                if (farm.checkerWindow) {
+                    destroyWindow(farm.checkerWindow);
+                }
+                for (const farmWindow of farm.farmingWindows) {
+                    destroyWindow(farmWindow);
+                }
+                farm.farmingWindows = [];
+
+                /**
+                 * Set the status back to idle.
+                 */
+                farm.changeStatus("idle");
+            });
+        }
+    });
 });

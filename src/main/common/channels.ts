@@ -12,4 +12,6 @@ export enum Channels {
     saveNewSettings = "save-new-settings",
     get3DAnimationsDisabled = "get-3D-animations-disabled",
     getApplicationVersion = "get-application-version",
+    clearCache = "clear-cache",
+    restartScheduler = "restart-scheduler",
 }
