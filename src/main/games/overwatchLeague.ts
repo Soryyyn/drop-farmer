@@ -1,7 +1,7 @@
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../logger";
 import { getBrowserConnection } from "../puppeteer";
-import { createFarmWindow, destroyWindow } from "../windows";
+import { createWindow, destroyWindow } from "../windows";
 import { GameFarmTemplate } from "./gameFarmTemplate";
 
 /**
@@ -19,12 +19,13 @@ export class OverwatchLeague extends GameFarmTemplate {
     /**
      * Press play on the farming window to start farming.
      *
-     * @param window The farming window to press play on.
+     * @param {Electron.BrowserWindow} farmingWindow The farming window to press
+     * play on.
      */
-    pressPlay(window: Electron.BrowserWindow) {
+    pressPlay(farmingWindow: Electron.BrowserWindow) {
         return new Promise(async (resolve, reject) => {
             let connection = getBrowserConnection();
-            let page = await getPage(connection, window);
+            let page = await getPage(connection, farmingWindow);
 
             /**
              * Scroll to the video element.
@@ -51,14 +52,12 @@ export class OverwatchLeague extends GameFarmTemplate {
      * Check if the user needs to login.
      * If yes, wait until user finished logging in.
      * If no, check if at main screen.
-     *
-     * @param {Electron.BrowserWindow} window The window to control.
      */
-    login(window: Electron.BrowserWindow) {
+    login() {
         return new Promise(async (resolve, reject) => {
             log("MAIN", "INFO", `\"${this.gameName}\": Login process started`);
             let connection = getBrowserConnection();
-            let page = await getPage(connection, window);
+            let page = await getPage(connection, this.checkerWindow!);
 
             await page.waitForNetworkIdle();
 
@@ -82,8 +81,8 @@ export class OverwatchLeague extends GameFarmTemplate {
                     /**
                      * Open checker window for user login.
                      */
-                    window.show();
-                    window.focus();
+                    this.checkerWindow!.show();
+                    this.checkerWindow!.focus();
 
                     /**
                      * Wait until user is back at main page with video element.
@@ -91,7 +90,7 @@ export class OverwatchLeague extends GameFarmTemplate {
                     page.waitForSelector("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp", { timeout: 0 })
                         .then(() => {
                             log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
-                            window.hide();
+                            this.checkerWindow!.hide();
                             resolve(undefined);
                         });
                 } catch (err) {
@@ -141,13 +140,11 @@ export class OverwatchLeague extends GameFarmTemplate {
     /**
      * Check for the *LIVE NOW* element and open the window as a farming window
      * and press play.
-     *
-     * @param {Electron.BrowserWindow} window The window to control.
      */
-    startFarming(window: Electron.BrowserWindow) {
+    startFarming() {
         return new Promise(async (resolve, reject) => {
             let connection = getBrowserConnection();
-            let page = await getPage(connection, window);
+            let page = await getPage(connection, this.checkerWindow!);
 
             /**
              * Check if farming windows exist, if yes don't try to check for new stream.
@@ -164,7 +161,7 @@ export class OverwatchLeague extends GameFarmTemplate {
                  * Check for *LIVE NOW* element.
                  */
                 if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                    let window = await createFarmWindow(this.checkerWebsite, this.gameName);
+                    let window = await createWindow(this.checkerWebsite, this.gameName);
                     this.farmingWindows.push(window);
 
                     await this.pressPlay(this.farmingWindows[0]);
@@ -182,6 +179,14 @@ export class OverwatchLeague extends GameFarmTemplate {
                         this.timer.start();
                         log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
                     }
+
+                    /**
+                     * Destroy the checker window and remove the reference.
+                     */
+                    destroyWindow(this.checkerWindow!);
+                    this.checkerWindow = null;
+
+                    log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
 
                     this.changeStatus("farming");
                     resolve(undefined);
@@ -202,7 +207,7 @@ export class OverwatchLeague extends GameFarmTemplate {
     /**
      * Check the overwatch-contenders farm.
      */
-    farmCheck(): void {
+    async farmCheck() {
         if (this.status !== "checking") {
             log("MAIN", "INFO", `\"${this.gameName}\": Started checking the farm`);
             this.changeStatus("checking");
@@ -219,26 +224,14 @@ export class OverwatchLeague extends GameFarmTemplate {
             /**
              * Create the checker window.
              */
-            this.createFarmCheckingWindow()
-                .then(async () => {
-                    await this.login(this.checkerWindow!);
-                })
-                .then(async () => {
-                    await this.windowsStillFarming();
-                })
-                .then(async () => {
-                    await this.startFarming(this.checkerWindow!);
-                })
-                .then(() => {
-                    /**
-                     * Destroy the checker window and remove the reference.
-                     */
-                    destroyWindow(this.checkerWindow!);
-                    this.checkerWindow = null;
+            await this.createFarmCheckingWindow();
 
-                    log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
-                })
-                .then(() => {
+            if (this.checkerWindow) {
+                try {
+                    await this.login();
+                    await this.windowsStillFarming();
+                    await this.startFarming();
+
                     /**
                      * Destroy the windows if the status has been set to disabled.
                      */
@@ -256,11 +249,11 @@ export class OverwatchLeague extends GameFarmTemplate {
 
                         this.changeStatus("disabled");
                     }
-                })
-                .catch((err) => {
-                    log("MAIN", "ERROR", `\"${this.gameName}\": Error occurred while checking the farm. ${err}`);
+                } catch (error) {
+                    log("MAIN", "ERROR", `\"${this.gameName}\": Error occurred while checking the farm. ${error}`);
                     this.changeStatus("attention-required");
-                });
+                }
+            }
         }
     }
 }

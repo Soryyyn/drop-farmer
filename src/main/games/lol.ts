@@ -307,8 +307,7 @@ export class LOL extends GameFarmTemplate {
                 if (this.timer.isPaused()) {
                     this.timer.resume();
                     log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
-                }
-                else if (!this.timer.isStarted()) {
+                } else if (!this.timer.isStarted()) {
                     this.timer.start();
                     log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
                 }
@@ -353,6 +352,9 @@ export class LOL extends GameFarmTemplate {
                 log("MAIN", "INFO", `\"${this.gameName}\": Paused timer`);
             }
 
+            /**
+             * Create the checker window.
+             */
             await this.createFarmCheckingWindow();
 
             if (this.checkerWindow) {
@@ -384,7 +386,6 @@ export class LOL extends GameFarmTemplate {
                     log("MAIN", "ERROR", `\"${this.gameName}\": Error occurred while checking the farm. ${error}`);
                     this.changeStatus("attention-required");
                 }
-
             }
         }
     }

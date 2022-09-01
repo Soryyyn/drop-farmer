@@ -159,13 +159,13 @@ export abstract class GameFarmTemplate {
     /**
      * Login the user on the website.
      */
-    abstract login(page: any, window: Electron.BrowserWindow): void;
+    abstract login(): void;
 
     /**
      * Check the farming window(s) if they are still farming or the stream ended
      * or the drops are disabled.
      */
-    abstract windowsStillFarming(window?: Electron.BrowserWindow): void;
+    abstract windowsStillFarming(): void;
 
     /**
      * Check the "checkerWebsite" if application is able to start farming.
@@ -175,7 +175,7 @@ export abstract class GameFarmTemplate {
     /**
      * Commence the farming.
      */
-    abstract startFarming(window: Electron.BrowserWindow): void;
+    abstract startFarming(): void;
 
     /**
      * Schedule the checking if the farm is enabled and app has internet connection
