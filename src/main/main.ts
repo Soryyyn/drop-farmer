@@ -40,7 +40,7 @@ app.whenReady()
         /**
          * Check if app needs to clear cache.
          */
-        if (process.env.CLEAR_CACHE!.trim() == "1") {
+        if (process.env.CLEAR_CACHE && process.env.CLEAR_CACHE!.trim() == "1") {
             log("MAIN", "WARN", "Cleared application session data");
             session.defaultSession.clearStorageData();
         }
