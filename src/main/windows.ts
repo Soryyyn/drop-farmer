@@ -133,6 +133,7 @@ export async function createWindow(url: string, gameName?: string) {
  * @param {Electron.BrowserWindow} window The window to destroy.
  */
 export function destroyWindow(window: Electron.BrowserWindow): void {
+    log("MAIN", "INFO", `Destroyed window(${window.id})`);
     window.destroy();
 }
 
@@ -165,6 +166,7 @@ export function hideWindow(window: Electron.BrowserWindow, isMainWindow: boolean
  * @param {Electron.BrowserWindow} window The window to mute.
  */
 function muteWindow(window: Electron.BrowserWindow): void {
+    log("MAIN", "INFO", `Muted window(${window.id})`);
     window.webContents.setAudioMuted(true);
 }
 
@@ -174,5 +176,6 @@ function muteWindow(window: Electron.BrowserWindow): void {
  * @param {Electron.BrowserWindow} window The window to reload.
  */
 export function reloadWindow(window: Electron.BrowserWindow): void {
+    log("MAIN", "INFO", `Reloaded window(${window.id})`);
     window.reload();
 }
