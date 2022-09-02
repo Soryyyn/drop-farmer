@@ -14,4 +14,5 @@ export enum Channels {
     getApplicationVersion = "get-application-version",
     clearCache = "clear-cache",
     restartScheduler = "restart-scheduler",
+    shutdown = "shutdown",
 }

@@ -3,7 +3,6 @@ import { resolve } from "path";
 import { getFarms } from "./farms";
 import { log } from "./logger";
 import { getCurrentSettings } from "./settings";
-import { isQuitting } from "./tray";
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -17,6 +16,11 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
  * The main window reference.
  */
 let mainWindow: BrowserWindow;
+
+/**
+ * To control wether the app is quitting or just the "closing" the main window.
+ */
+let appQuitting: boolean = false;
 
 /**
  * Creates the main react window.
@@ -69,7 +73,7 @@ export function createMainWindow(isProd: boolean): void {
      */
     mainWindow.on("close", (event) => {
         event.preventDefault();
-        if (!isQuitting()) {
+        if (!appQuitting) {
             hideWindow(mainWindow, true);
 
             /**
@@ -178,4 +182,13 @@ function muteWindow(window: Electron.BrowserWindow): void {
 export function reloadWindow(window: Electron.BrowserWindow): void {
     log("MAIN", "INFO", `Reloaded window(${window.id})`);
     window.reload();
+}
+
+/**
+ * Determine wether the app is quitting or just closing.
+ *
+ * @param {boolean} quitting The new quitting status.
+ */
+export function setAppQuitting(quitting: boolean): void {
+    appQuitting = quitting;
 }

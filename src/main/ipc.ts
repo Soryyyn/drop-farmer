@@ -5,7 +5,7 @@ import { GameFarmTemplate } from "./games/gameFarmTemplate";
 import { checkInternetConnection, getCurrentInternetConnection } from "./internet";
 import { log } from "./logger";
 import { cacheNewUserSettings, getCurrentSettings } from "./settings";
-import { destroyWindow } from "./windows";
+import { destroyWindow, setAppQuitting } from "./windows";
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -158,6 +158,8 @@ handleOneWay(Channels.clearCache, (event, farmName) => {
  * Reacts when the user wants to restart the scheduler for the specified farm.
  */
 handleOneWay(Channels.restartScheduler, (event, farmName) => {
+    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.restartScheduler}"`);
+
     getFarms().forEach((farm: GameFarmTemplate) => {
         if (farm.gameName === farmName) {
             farm.restartScheduler(() => {
@@ -179,4 +181,13 @@ handleOneWay(Channels.restartScheduler, (event, farmName) => {
             });
         }
     });
+});
+
+/**
+ * React when the user wants to quit the app from the main window.
+ */
+handleOneWay(Channels.shutdown, () => {
+    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.shutdown}"`);
+    setAppQuitting(true);
+    app.quit();
 });

@@ -1,9 +1,11 @@
 import { app, Menu, Tray } from "electron";
 import { resolve } from "path";
 import { log } from "./logger";
-import { getMainWindow, showWindow } from "./windows";
+import { getMainWindow, setAppQuitting, showWindow } from "./windows";
 
-let quittingApp: boolean = false;
+/**
+ * The tray object reference.
+ */
 let tray: Tray;
 
 /**
@@ -37,7 +39,7 @@ export function createTray(isProd: boolean): void {
             label: "Quit drop-farmer",
             type: "normal",
             click: () => {
-                quittingApp = true;
+                setAppQuitting(true);
                 app.quit();
             }
         }
@@ -57,13 +59,6 @@ export function createTray(isProd: boolean): void {
     });
 
     log("MAIN", "INFO", "Created system tray");
-}
-
-/**
- * To make sure if the main window is closing or app is quitting.
- */
-export function isQuitting(): boolean {
-    return quittingApp;
 }
 
 /**

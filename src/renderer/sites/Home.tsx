@@ -114,6 +114,13 @@ export default function Home() {
                                 navigation("/settings");
                             }}
                         />
+                        <ButtonNolabel
+                            imgPath="../assets/power-off.svg"
+                            primary={true}
+                            onClickAction={() => {
+                                window.api.sendOneWay(window.api.channels.shutdown);
+                            }}
+                        />
                     </div>
                     <div className={styles.additionalData}>
                         <p>Version: {applicationVersion}</p>
