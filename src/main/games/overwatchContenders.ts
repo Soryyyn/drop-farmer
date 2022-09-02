@@ -188,10 +188,34 @@ export class OverwatchContenders extends GameFarmTemplate {
                     let element = await page.$("#__next > div > div > div.renderblocksstyles__DesktopBlock-sc-3odw2o-0.gpjAVR > a");
                     let href: string = await (await element!.getProperty("href")).jsonValue();
 
-                    let window = await this.createFarmingWindow(href);
-                    this.farmingWindows.push(window);
+                    if (href === this.checkerWebsite) {
+                        log("MAIN", "INFO", `\"${this.gameName}\": Found banner, but game has not started yet.`)
 
-                    await this.pressPlay(this.farmingWindows[0], 1050);
+                        this.changeStatus("idle");
+                        resolve(undefined);
+                    } else {
+                        let window = await this.createFarmingWindow(href);
+                        this.farmingWindows.push(window);
+
+                        await this.pressPlay(this.farmingWindows[0], 1050);
+
+                        log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
+
+                        /**
+                         * Start the uptime timer if not running.
+                         * If already running, resume.
+                         */
+                        if (this.timer.isPaused()) {
+                            this.timer.resume();
+                            log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
+                        } else if (!this.timer.isStarted()) {
+                            this.timer.start();
+                            log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
+                        }
+
+                        this.changeStatus("farming");
+                        resolve(undefined);
+                    }
                 } else {
                     /**
                      * No live match right now.
