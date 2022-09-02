@@ -21,16 +21,20 @@ export class OverwatchContenders extends GameFarmTemplate {
      *
      * @param {Electron.BrowserWindow} farmingWindow The farming window to press
      * play on.
+     * @param {number} scrollY The Y-scroll position.
      */
-    pressPlay(farmingWindow: Electron.BrowserWindow) {
+    pressPlay(farmingWindow: Electron.BrowserWindow, scrollY: number) {
         return new Promise(async (resolve, reject) => {
             let connection = getBrowserConnection();
             let page = await getPage(connection, farmingWindow);
 
+            await page.waitForNetworkIdle();
+            await page.waitForTimeout(2000);
+
             /**
              * Scroll to the video element.
              */
-            await page.evaluate("window.scrollTo(0, 1050)");
+            await page.evaluate(`window.scrollTo(0, ${scrollY})`);
 
             /**
              * Enter the iframe element and play the video.
@@ -40,9 +44,7 @@ export class OverwatchContenders extends GameFarmTemplate {
                     return await iframeHandle!.contentFrame();
                 })
                 .then(async (frame) => {
-                    await frame!.waitForTimeout(2000);
                     await frame!.click("button.ytp-large-play-button");
-
                     resolve(undefined);
                 });
         });
@@ -161,11 +163,10 @@ export class OverwatchContenders extends GameFarmTemplate {
                  * Check for *LIVE NOW* element.
                  */
                 if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                    // let window = await createWindow(this.checkerWebsite, this.gameName);
-                    // this.farmingWindows.push(window);
-                    this.farmingWindows.push(await this.createFarmingWindow(this.checkerWebsite));
+                    let window = await this.createFarmingWindow(this.checkerWebsite);
+                    this.farmingWindows.push(window);
 
-                    await this.pressPlay(this.farmingWindows[0]);
+                    await this.pressPlay(this.farmingWindows[0], 200);
 
                     log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
 
@@ -181,16 +182,16 @@ export class OverwatchContenders extends GameFarmTemplate {
                         log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
                     }
 
-                    /**
-                     * Destroy the checker window and remove the reference.
-                     */
-                    destroyWindow(this.checkerWindow!);
-                    this.checkerWindow = null;
-
-                    log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
-
                     this.changeStatus("farming");
                     resolve(undefined);
+                } else if (await page.$("#__next > div > div > div.renderblocksstyles__DesktopBlock-sc-3odw2o-0.gpjAVR > a") !== null) {
+                    let element = await page.$("#__next > div > div > div.renderblocksstyles__DesktopBlock-sc-3odw2o-0.gpjAVR > a");
+                    let href: string = await (await element!.getProperty("href")).jsonValue();
+
+                    let window = await this.createFarmingWindow(href);
+                    this.farmingWindows.push(window);
+
+                    await this.pressPlay(this.farmingWindows[0], 1050);
                 } else {
                     /**
                      * No live match right now.
@@ -202,6 +203,14 @@ export class OverwatchContenders extends GameFarmTemplate {
                     resolve(undefined);
                 }
             }
+
+            /**
+             * Destroy the checker window and remove the reference.
+             */
+            destroyWindow(this.checkerWindow!);
+            this.checkerWindow = null;
+
+            log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
         });
     }
 
