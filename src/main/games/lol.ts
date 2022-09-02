@@ -221,22 +221,6 @@ export class LOL extends GameFarmTemplate {
     startFarming() {
         return new Promise(async (resolve, reject) => {
             /**
-             * The livestream urls to check, if the original href should
-             * redirect to one of these.
-             */
-            const livestreamRedirects: string[] = [
-                "https://lolesports.com/live/lpl/lpl",
-                "https://lolesports.com/live/lck/lck",
-                "https://lolesports.com/live/lec/lec",
-                "https://lolesports.com/live/lcs/lcs",
-                "https://lolesports.com/live/lco/lco",
-                "https://lolesports.com/live/cblol/cblol",
-                "https://lolesports.com/live/lla/lla",
-                "https://lolesports.com/live/lck_challengers_league/lckcl",
-                "https://lolesports.com/live/cblol_academy/cblol",
-            ];
-
-            /**
              * The current live matches urls.
              */
             const currentLiveMatches: string[] = await this.getCurrentLiveMatches();
@@ -252,15 +236,6 @@ export class LOL extends GameFarmTemplate {
                  */
                 for (const liveMatch of currentLiveMatches) {
                     let href: string = liveMatch;
-
-                    /**
-                     * Redirect if same link found.
-                     */
-                    livestreamRedirects.forEach((redirectUrl: string) => {
-                        if (redirectUrl.includes(liveMatch)) {
-                            href = redirectUrl;
-                        }
-                    });
 
                     /**
                      * Check if the window needs to be created or if it already
@@ -286,9 +261,8 @@ export class LOL extends GameFarmTemplate {
                  * Create the farm windows for all hrefs.
                  */
                 for (const href of hrefs) {
-                    // let window = await createWindow(href, this.gameName);
-                    // this.farmingWindows.push(window);
-                    this.farmingWindows.push(await this.createFarmingWindow(href));
+                    let window = await this.createFarmingWindow(href);
+                    this.farmingWindows.push(window);
                 }
 
                 /**
