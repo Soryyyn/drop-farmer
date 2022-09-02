@@ -15,7 +15,7 @@ export default function ButtonLabel({ imgPath, primary, label, onClickAction }: 
             className={clsx(styles.buttonContainer, (primary) ? styles.primary : styles.secondary)}
             onClick={onClickAction}
         >
-            <img src={imgPath} />
+            <img src={imgPath} draggable={false} />
             <p>{label}</p>
         </div>
     );

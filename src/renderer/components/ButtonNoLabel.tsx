@@ -14,7 +14,7 @@ export default function ButtonNolabel({ imgPath, primary, onClickAction }: Props
             className={clsx(styles.buttonContainer, (primary) ? styles.primary : styles.secondary)}
             onClick={onClickAction}
         >
-            <img src={imgPath} />
+            <img src={imgPath} draggable={false} />
         </div>
     );
 }

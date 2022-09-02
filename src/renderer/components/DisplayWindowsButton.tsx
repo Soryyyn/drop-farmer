@@ -17,8 +17,8 @@ export default function DisplayWindowsButton({ showing, handleChange }: Props) {
             >
                 {
                     (showing)
-                        ? <img src="../assets/visible.svg" />
-                        : <img src="../assets/invisible.svg" />
+                        ? <img src="../assets/visible.svg" draggable={false} />
+                        : <img src="../assets/invisible.svg" draggable={false} />
                 }
             </div>
         </div>
