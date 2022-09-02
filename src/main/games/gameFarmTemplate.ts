@@ -152,8 +152,43 @@ export abstract class GameFarmTemplate {
      * Destroy window after checking is done.
      */
     async createFarmCheckingWindow() {
-        if (!this.checkerWindow)
+        if (!this.checkerWindow) {
             this.checkerWindow = await createWindow(this.checkerWebsite, this.gameName);
+
+            /**
+             * Prevent errors from happening from closing the window (from tray,
+             * etc.) by removing removing the reference.
+             */
+            this.checkerWindow.on("close", () => {
+                this.checkerWindow = null;
+            });
+        }
+    }
+
+    /**
+     * Create a farming window.
+     *
+     * @param {string} url The URL to load on the farming window.
+     */
+    async createFarmingWindow(url: string) {
+        const window = await createWindow(url, this.gameName);
+
+        /**
+         * Prevent errors from happening from closing the window (from tray,
+         * etc.) by removing removing the reference.
+         */
+        window.on("close", () => {
+            let index = this.farmingWindows.indexOf(window);
+            this.farmingWindows.splice(index, 1);
+
+            /**
+             * If all farming windows are closed, change the status to idle.
+             */
+            if (this.farmingWindows.length === 0)
+                this.changeStatus("idle");
+        });
+
+        return window;
     }
 
     /**

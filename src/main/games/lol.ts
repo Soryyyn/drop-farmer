@@ -286,8 +286,9 @@ export class LOL extends GameFarmTemplate {
                  * Create the farm windows for all hrefs.
                  */
                 for (const href of hrefs) {
-                    let window = await createWindow(href, this.gameName);
-                    this.farmingWindows.push(window);
+                    // let window = await createWindow(href, this.gameName);
+                    // this.farmingWindows.push(window);
+                    this.farmingWindows.push(await this.createFarmingWindow(href));
                 }
 
                 /**
