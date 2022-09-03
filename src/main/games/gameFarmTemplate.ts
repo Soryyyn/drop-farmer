@@ -274,13 +274,4 @@ export abstract class GameFarmTemplate {
 
         this.taskManager.startAll();
     }
-
-    /**
-     * To start or stop the scheduler.
-     *
-     * @param {boolean} start If the schedule should be started or stopped.
-     */
-    private startOrStopSchedule(start: boolean): void {
-
-    }
 }
