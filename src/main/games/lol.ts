@@ -151,11 +151,23 @@ export class LOL extends GameFarmTemplate {
                 await page.click("#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a");
 
                 /**
-                 * Check if user has been moved to login or home route.
+                 * Wait for either the user has been redirected to the main page
+                 * logged in *or* redirected to the login page.
                  */
-                try {
-                    await page.waitForSelector("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input");
+                const finishedSelector = await (Promise.race([
+                    page.waitForSelector("div.riotbar-summoner-name"),
+                    page.waitForSelector("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input")
+                ]));
 
+                /**
+                 * Returns either `DIV` if at home route or `INPUT` if at login.
+                 */
+                const element = await page.evaluate(element => element!.tagName, finishedSelector);
+
+                if (element === "DIV") {
+                    log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
+                    resolve(undefined);
+                } else if (element === "INPUT") {
                     log("MAIN", "INFO", `\"${this.gameName}\": Login is needed by user`);
 
                     /**
@@ -173,10 +185,36 @@ export class LOL extends GameFarmTemplate {
                             this.checkerWindow!.hide();
                             resolve(undefined);
                         });
-                } catch (e) {
-                    log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
-                    resolve(undefined);
                 }
+
+
+                // /**
+                //  * Check if user has been moved to login or home route.
+                //  */
+                // try {
+                //     await page.waitForSelector("body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input");
+
+                //     log("MAIN", "INFO", `\"${this.gameName}\": Login is needed by user`);
+
+                //     /**
+                //      * Open checker window for user login.
+                //      */
+                //     this.checkerWindow!.show();
+                //     this.checkerWindow!.focus();
+
+                //     /**
+                //      * Back at main page.
+                //      */
+                //     page.waitForSelector("div.riotbar-summoner-name", { timeout: 0 })
+                //         .then(() => {
+                //             log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
+                //             this.checkerWindow!.hide();
+                //             resolve(undefined);
+                //         });
+                // } catch (e) {
+                //     log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
+                //     resolve(undefined);
+                // }
             } else {
                 log("MAIN", "INFO", `\"${this.gameName}\": User already logged in, continuing`);
                 resolve(undefined);
