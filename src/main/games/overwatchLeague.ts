@@ -41,7 +41,12 @@ export class OverwatchLeague extends GameFarmTemplate {
              */
             page.waitForSelector("iframe")
                 .then(async (iframeHandle) => {
+                    await page.waitForNetworkIdle();
                     return await iframeHandle!.contentFrame();
+                })
+                .then(async (frame) => {
+                    await page.waitForNetworkIdle();
+                    return frame;
                 })
                 .then(async (frame) => {
                     await frame!.click("button.ytp-large-play-button");
@@ -166,7 +171,7 @@ export class OverwatchLeague extends GameFarmTemplate {
                     let window = await this.createFarmingWindow(this.checkerWebsite);
                     this.farmingWindows.push(window);
 
-                    await this.pressPlay(this.farmingWindows[0], 200);
+                    await this.pressPlay(this.farmingWindows[0], 100);
 
                     log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
 

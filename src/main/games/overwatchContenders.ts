@@ -41,7 +41,12 @@ export class OverwatchContenders extends GameFarmTemplate {
              */
             page.waitForSelector("iframe")
                 .then(async (iframeHandle) => {
+                    await page.waitForNetworkIdle();
                     return await iframeHandle!.contentFrame();
+                })
+                .then(async (frame) => {
+                    await page.waitForNetworkIdle();
+                    return frame;
                 })
                 .then(async (frame) => {
                     await frame!.click("button.ytp-large-play-button");
