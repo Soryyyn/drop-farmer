@@ -76,16 +76,6 @@ export abstract class GameFarmTemplate {
     }
 
     /**
-     * Enable or disable the farm.
-     *
-     * @param enabled Boolean for enabling or disabling the farm.
-     */
-    setEnabled(enabled: boolean): void {
-        this._enabled = enabled;
-        this.status = (this._enabled) ? "idle" : "disabled";
-    }
-
-    /**
      * Return the state if the farm is enabled or disabled.
      */
     getEnabled(): boolean {
@@ -120,9 +110,16 @@ export abstract class GameFarmTemplate {
         this.schedule = cachedData.schedule || this.schedule;
 
         /**
-         * Set the status to idle if the farm is enabled.
+         * Change the status depending if the farm gets disabled, was disabled, etc.
          */
-        this.status = (this._enabled) ? "idle" : "disabled";
+        let lastStatus = this.status;
+        if (this.status === "disabled" && this._enabled) {
+            this.status = "idle";
+        } else if (!cachedData.enabled) {
+            this.status = "disabled";
+        } else {
+            this.status = lastStatus;
+        }
 
         /**
          * Add the schedule task to the task manager.
@@ -222,10 +219,6 @@ export abstract class GameFarmTemplate {
                     if (this._enabled) {
                         log("MAIN", "INFO", `Starting schedule checking for farm \"${this.gameName}\"`);
                         this.taskManager.start("scheduleChecking");
-
-                        this.checkerWindow?.on("closed", () => {
-                            this.taskManager.stop("scheduleChecking");
-                        });
                     }
                 }
             });
@@ -272,12 +265,22 @@ export abstract class GameFarmTemplate {
      * @param {() => void} stepsBetweenRestart The callback to execute between restart.
      */
     restartScheduler(stepsBetweenRestart?: () => void): void {
-        log("MAIN", "INFO", `\"${this.gameName}\": Restarted scheduler`);
+        log("MAIN", "INFO", `\"${this.gameName
+            }\": Restarted scheduler`);
         this.taskManager.stopAll();
 
         if (stepsBetweenRestart)
             stepsBetweenRestart();
 
         this.taskManager.startAll();
+    }
+
+    /**
+     * To start or stop the scheduler.
+     *
+     * @param {boolean} start If the schedule should be started or stopped.
+     */
+    private startOrStopSchedule(start: boolean): void {
+
     }
 }
