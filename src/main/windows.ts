@@ -107,7 +107,7 @@ export async function createWindow(url: string, gameName?: string) {
         icon: resolve(__dirname, "resources/icon.ico"),
         height: 1080,
         width: 1920,
-        show: true,
+        show: false,
         closable: false,
         webPreferences: {
             devTools: !(process.env.NODE_ENV === "production")
