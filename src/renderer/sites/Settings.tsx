@@ -13,12 +13,12 @@ export default function Settings() {
     /**
      * The current settings state.
      */
-    const [settings, setSettings] = useState<SettingsFile>();
+    const [applicationSettings, setApplicationSettings] = useState<ApplicationSettings>();
 
     /**
      * Farm settings.
      */
-    const [farmSettings, setFarmSettings] = useState<Farm[]>([]);
+    const [farmSettings, setFarmSettings] = useState<FarmSaveData[]>([]);
 
     /**
      * Set the currently selected settings selector.
@@ -28,12 +28,12 @@ export default function Settings() {
     /**
      * The current farm settings to show.
      */
-    const [showedSettings, setShowedSettings] = useState<Farm>({
-        gameName: "undefined",
-        checkerWebsite: "...",
+    const [showedSettings, setShowedSettings] = useState<FarmSaveData>({
         enabled: false,
-        schedule: 30,
-        uptime: 0
+        name: "undefined",
+        checkerWebsite: "undefined",
+        checkingSchedule: 0,
+        uptime: 0,
     });
 
     /**
@@ -49,15 +49,15 @@ export default function Settings() {
         window.api.log("INFO", "Rendering settings page");
         window.api.sendAndWait(window.api.channels.getSettings)
             .then((data: any) => {
-                setSettings(data.appSettings);
-                setFarmSettings(data.farmsSettings);
+                setApplicationSettings(data.applicationSettings);
+                setFarmSettings(data.farmSettings);
             })
             .catch((err) => {
                 window.api.log("ERROR", `Error when setting settings for farms and app. ${err}`);
             });
 
         return () => {
-            window.api.removeAllListeners(window.api.channels.getSettings)
+            window.api.removeAllListeners(window.api.channels.getSettings);
         };
     }, []);
 
@@ -66,13 +66,13 @@ export default function Settings() {
      */
     useEffect(() => {
         if (selected !== "application") {
-            setShowedSettings(farmSettings.filter((farm) => farm.gameName === selected)[0])
+            setShowedSettings(farmSettings.filter((farm) => farm.name === selected)[0])
         }
     }, [selected]);
 
     return (
         <>
-            {settings && farmSettings &&
+            {applicationSettings && farmSettings &&
                 <>
                     <div className={styles.topBar}>
                         <ButtonLabel
@@ -91,8 +91,8 @@ export default function Settings() {
                             label="Save"
                             onClickAction={() => {
                                 window.api.sendOneWay(window.api.channels.saveNewSettings, {
-                                    appSettings: settings,
-                                    farmsSettings: farmSettings
+                                    applicationSettings: applicationSettings,
+                                    farmSettings: farmSettings
                                 })
                                 window.api.log("INFO", "Pressed save button on settings page");
                             }}
@@ -110,13 +110,13 @@ export default function Settings() {
                                 />
                                 <div className={styles.seperator}></div>
                                 {
-                                    farmSettings.map((farm: Farm) => {
+                                    farmSettings.map((farm: FarmSaveData) => {
                                         return (
                                             <FarmSelector
-                                                selectorName={farm.gameName}
-                                                key={farm.gameName}
+                                                selectorName={farm.name}
+                                                key={farm.name}
                                                 handleClick={() => {
-                                                    setSelected(farm.gameName);
+                                                    setSelected(farm.name);
                                                 }}
                                                 currentlySelected={selected}
                                             />
@@ -135,36 +135,36 @@ export default function Settings() {
                                 <>
                                     <SettingsItemToggle
                                         label="Launch drop-farmer on startup"
-                                        checked={settings?.launchOnStartup}
+                                        checked={applicationSettings?.launchOnStartup}
                                         disabled={false}
                                         onClick={(checked: boolean) => {
-                                            let tempSettings = { ...settings };
+                                            let tempSettings = { ...applicationSettings };
                                             tempSettings.launchOnStartup = checked;
-                                            setSettings(tempSettings);
+                                            setApplicationSettings(tempSettings);
                                         }}
                                         description="Enable or disable if drop-farmer should be started when your PC has finished booting."
                                     />
 
                                     <SettingsItemToggle
                                         label="Show main window on launch"
-                                        checked={settings?.showMainWindowOnLaunch}
+                                        checked={applicationSettings?.showMainWindowOnLaunch}
                                         disabled={false}
                                         onClick={(checked: boolean) => {
-                                            let tempSettings = { ...settings };
+                                            let tempSettings = { ...applicationSettings };
                                             tempSettings.showMainWindowOnLaunch = checked;
-                                            setSettings(tempSettings);
+                                            setApplicationSettings(tempSettings);
                                         }}
                                         description="If the main window should be shown when drop-farmer starts."
                                     />
 
                                     <SettingsItemToggle
                                         label="Disable 3D model animations"
-                                        checked={settings?.disable3DModuleAnimation}
+                                        checked={applicationSettings?.disable3DModuleAnimation}
                                         disabled={false}
                                         onClick={(checked: boolean) => {
-                                            let tempSettings = { ...settings };
+                                            let tempSettings = { ...applicationSettings };
                                             tempSettings.disable3DModuleAnimation = checked;
-                                            setSettings(tempSettings);
+                                            setApplicationSettings(tempSettings);
                                         }}
                                         description="Disable the 3D models animation on various pages (Home, etc.)."
                                     />
@@ -182,11 +182,11 @@ export default function Settings() {
                                         checked={showedSettings.enabled}
                                         disabled={false}
                                         onClick={(checked: boolean) => {
-                                            let tempFarmSettings: Farm = { ...showedSettings };
-                                            let changesToApply: Farm[] = [...farmSettings];
+                                            let tempFarmSettings: FarmSaveData = { ...showedSettings };
+                                            let changesToApply: FarmSaveData[] = [...farmSettings];
 
                                             for (let i = 0; i < changesToApply.length; i++) {
-                                                if (changesToApply[i].gameName === tempFarmSettings.gameName) {
+                                                if (changesToApply[i].name === tempFarmSettings.name) {
                                                     tempFarmSettings.enabled = checked;
                                                     changesToApply[i] = tempFarmSettings;
                                                 }
@@ -195,7 +195,7 @@ export default function Settings() {
                                             setShowedSettings(tempFarmSettings);
                                             setFarmSettings(changesToApply);
                                         }}
-                                        description={`Enable or disable the ${showedSettings!.gameName} farm.`}
+                                        description={`Enable or disable the ${showedSettings!.name} farm.`}
                                     />
 
                                     <SettingsItemInput
@@ -204,11 +204,11 @@ export default function Settings() {
                                         description="The website drop-farmer checks for the schedule, live matches, etc. to start farming."
                                         value={showedSettings.checkerWebsite}
                                         onInput={(newValue: string) => {
-                                            let tempFarmSettings: Farm = { ...showedSettings };
-                                            let changesToApply: Farm[] = [...farmSettings];
+                                            let tempFarmSettings: FarmSaveData = { ...showedSettings };
+                                            let changesToApply: FarmSaveData[] = [...farmSettings];
 
                                             for (let i = 0; i < changesToApply.length; i++) {
-                                                if (changesToApply[i].gameName === tempFarmSettings.gameName) {
+                                                if (changesToApply[i].name === tempFarmSettings.name) {
                                                     tempFarmSettings.checkerWebsite = newValue;
                                                     changesToApply[i] = tempFarmSettings;
                                                 }
@@ -223,14 +223,14 @@ export default function Settings() {
                                         label="Checking schedule"
                                         disabled={false}
                                         description="The schedule (in minutes) on which drop-farmer will check if farming is possible."
-                                        value={showedSettings.schedule.toString()}
+                                        value={showedSettings.checkingSchedule.toString()}
                                         onInput={(newValue: string) => {
-                                            let tempFarmSettings: Farm = { ...showedSettings };
-                                            let changesToApply: Farm[] = [...farmSettings];
+                                            let tempFarmSettings: FarmSaveData = { ...showedSettings };
+                                            let changesToApply: FarmSaveData[] = [...farmSettings];
 
                                             for (let i = 0; i < changesToApply.length; i++) {
-                                                if (changesToApply[i].gameName === tempFarmSettings.gameName) {
-                                                    tempFarmSettings.schedule = parseInt(newValue);
+                                                if (changesToApply[i].name === tempFarmSettings.name) {
+                                                    tempFarmSettings.checkingSchedule = parseInt(newValue);
                                                     changesToApply[i] = tempFarmSettings;
                                                 }
                                             }

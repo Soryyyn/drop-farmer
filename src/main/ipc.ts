@@ -1,193 +1,125 @@
 import { app, ipcMain, shell } from "electron";
 import { Channels } from "./common/channels";
-import { cacheNewUserFarmsSettings, getFarms, getFarmsForRenderer, getFarmsSettings } from "./farms";
-import { GameFarmTemplate } from "./games/gameFarmTemplate";
-import { checkInternetConnection, getCurrentInternetConnection } from "./internet";
+import { getApplicationSettings, getFarmsData, updateApplicationSettings, updateFarmsData } from "./config";
+import { getFarmRendererData, getFarms } from "./farmsManagement";
+import FarmTemplate from "./games/farmTemplate";
+import { checkInternetConnection } from "./internet";
 import { log } from "./logger";
-import { cacheNewUserSettings, getCurrentSettings } from "./settings";
-import { destroyWindow, setAppQuitting } from "./windows";
+import { setAppQuitting } from "./windows";
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
  *
- * @param channel IPC channel to listen on.
- * @param listener Callback when event has been received.
+ * @param {Channels} channel IPC channel to listen on.
+ * @param {(event: IpcMainEvent, ...args: any[]) => void} listener Callback when event has been received.
  */
-function handleOneWay(channel: string, listener: (event: Electron.IpcMainEvent, ...args: any[]) => void) {
+export function handleOneWay(channel: Channels, listener: (event: Electron.IpcMainEvent, ...args: any[]) => void) {
+    log("MAIN", "INFO", `Handling one-way signal on ${channel}`);
     ipcMain.on(channel, listener);
 }
 
 /**
  * Function for handling a signal coming from the renderer process and return a response.
  *
- * @param channel IPC channel to listen on.
- * @param listener Callback to execute when event has been received.
+ * @param {Channels} channel IPC channel to listen on.
+ * @param {(event: IpcMainEvent, ...args: any[]) => void} listener Callback to execute when event has been received.
  */
-function handleAndReply(channel: string, listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any) {
+export function handleAndReply(channel: string, listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any) {
+    log("MAIN", "INFO", `Handling two-way signal on ${channel}`);
     ipcMain.handle(channel, listener);
 }
 
+/**
+ * Send a one-way signal to the wanted window.
+ *
+ * @param {Electron.BrowserWindow} window The window to send the ipc signal too.
+ * @param {Channels} channel The ipc channel to send the signal too.
+ * @param {...any[]} args The data to send with the signal.
+ */
 export function sendOneWay(window: Electron.BrowserWindow, channel: string, ...args: any[]) {
+    log("MAIN", "INFO", `Sending one-way signal on ${channel}`);
     window.webContents.send(channel, ...args);
 }
 
-/**
- * Reacts when a social link or something different is pressed, where it should
- * open a link in a external browser window.
- */
-handleOneWay(Channels.openLinkInExternal, (event, link: string) => {
-    log("MAIN", "INFO", `Received one-way signal on channel \"${Channels.openLinkInExternal}\"`);
-    shell.openExternal(link);
-});
-
-/**
- * Reacts when the home site is loaded and the farms need to be displayed.
- * Also sends the status of all farms to handle.
- */
-handleAndReply(Channels.getFarms, () => {
-    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.getFarms}"`);
-    return getFarmsForRenderer();
-});
-
-/**
- * React when the eye symbol is pressed on the renderer to hide or show all farm windows.
- */
-handleOneWay(Channels.farmWindowsVisibility, (event, value) => {
-    log("MAIN", "INFO", `Received one-way signal on channel \"${Channels.farmWindowsVisibility}\"`);
-    getFarms().forEach((farm: GameFarmTemplate) => {
-        if (farm.gameName === value.farm.gameName) {
-            if (value.show) {
-                farm.showWindows()
-            } else {
-                farm.hideWindows()
-            }
-        }
-    });
-});
-
-/**
- * React when the current status of the internet connection is wanted.
- */
-handleAndReply(Channels.getInternetConnection, async (event) => {
-    log("MAIN", "INFO", `Received one-way signal on channel \"${Channels.getInternetConnection}\"`);
-
-    return await checkInternetConnection()
-});
-
-/**
- * React to error signals from the renderer process.
- */
 handleOneWay(Channels.log, (event, { type, message }) => {
     log("RENDERER", type, message);
 });
 
-/**
- * Reacts when the home site is loaded and the farms need to be displayed.
- * Also sends the status of all farms to handle.
- */
+handleAndReply(Channels.getFarms, () => {
+    return getFarmRendererData();
+});
+
+handleOneWay(Channels.farmWindowsVisibility, (event, { name, showing }) => {
+    for (const farm of getFarms())
+        if (farm.getName() === name) {
+            if (showing) {
+                farm.showAllWindows();
+            } else {
+                farm.hideAllWindows();
+            }
+        }
+});
+
+handleOneWay(Channels.openLinkInExternal, (event, link: string) => {
+    shell.openExternal(link);
+});
+
+handleOneWay(Channels.shutdown, () => {
+    setAppQuitting(true);
+    app.quit();
+});
+
 handleAndReply(Channels.getSettings, () => {
-    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.getSettings}"`);
     return {
-        appSettings: getCurrentSettings(),
-        farmsSettings: getFarmsSettings()
+        applicationSettings: getApplicationSettings(),
+        farmSettings: getFarmsData(),
     }
 });
 
-/**
- * Reacts when the save button is pressed on the settings page.
- */
 handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
-    appSettings: SettingsFile,
-    farmsSettings: Farm[]
+    applicationSettings: ApplicationSettings,
+    farmSettings: FarmSaveData[]
 }) => {
-    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.saveNewSettings}"`);
-
-    cacheNewUserSettings(settingsToSave.appSettings);
-    cacheNewUserFarmsSettings(settingsToSave.farmsSettings);
+    updateApplicationSettings(settingsToSave.applicationSettings);
+    updateFarmsData(settingsToSave.farmSettings);
 });
 
-/**
- * React when the user wants to know if the 3d-animations are enabled or not.
- */
 handleAndReply(Channels.get3DAnimationsDisabled, () => {
-    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.get3DAnimationsDisabled}"`);
-    return getCurrentSettings().disable3DModuleAnimation;
+    return getApplicationSettings().disable3DModuleAnimation;
 });
 
-/**
- * Reacts when renderer wants the application version.
- */
 handleAndReply(Channels.getApplicationVersion, () => {
-    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.getApplicationVersion}"`);
     return app.getVersion();
 });
 
-/**
- * React when user wants to reset the session of a farm.
- */
-handleOneWay(Channels.clearCache, (event, farmName) => {
-    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.clearCache}"`);
+handleAndReply(Channels.getInternetConnection, async (event) => {
+    return await checkInternetConnection()
+});
 
-    getFarms().forEach((farm: GameFarmTemplate) => {
-        if (farm.gameName === farmName) {
-            farm.clearCache();
+handleOneWay(Channels.clearCache, (event, name) => {
+    getFarms().forEach((farm: FarmTemplate) => {
+        if (farm.getName() === name) {
+            farm.clearFarmCache();
 
             farm.restartScheduler(() => {
-                /**
-                 * Destroy all farm windows.
-                 */
-                if (farm.checkerWindow) {
-                    destroyWindow(farm.checkerWindow);
-                }
-
-                for (const farmWindow of farm.farmingWindows) {
-                    destroyWindow(farmWindow);
-                }
-                farm.farmingWindows = [];
-
-                /**
-                 * Set the status back to idle.
-                 */
-                farm.changeStatus("idle");
+                farm.destroyCheckerWindow();
+                farm.destroyAllFarmingWindows();
             });
+
+            farm.updateStatus("idle");
         }
     });
 });
 
-/**
- * Reacts when the user wants to restart the scheduler for the specified farm.
- */
-handleOneWay(Channels.restartScheduler, (event, farmName) => {
-    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.restartScheduler}"`);
-
-    getFarms().forEach((farm: GameFarmTemplate) => {
-        if (farm.gameName === farmName) {
+handleOneWay(Channels.restartScheduler, (event, name) => {
+    getFarms().forEach((farm: FarmTemplate) => {
+        if (farm.getName() === name) {
             farm.restartScheduler(() => {
-                /**
-                 * Destroy all farm windows.
-                 */
-                if (farm.checkerWindow) {
-                    destroyWindow(farm.checkerWindow);
-                }
-                for (const farmWindow of farm.farmingWindows) {
-                    destroyWindow(farmWindow);
-                }
-                farm.farmingWindows = [];
-
-                /**
-                 * Set the status back to idle.
-                 */
-                farm.changeStatus("idle");
+                farm.destroyCheckerWindow();
+                farm.destroyAllFarmingWindows();
             });
+
+            farm.updateStatus("idle");
         }
     });
-});
-
-/**
- * React when the user wants to quit the app from the main window.
- */
-handleOneWay(Channels.shutdown, () => {
-    log("MAIN", "INFO", `Received signal with needed reply on channel \"${Channels.shutdown}"`);
-    setAppQuitting(true);
-    app.quit();
 });

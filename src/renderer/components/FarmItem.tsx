@@ -4,17 +4,12 @@ import DisplayWindowsButton from "./DisplayWindowsButton";
 import FarmActionButton from "./FarmActionButton";
 import IndicatorTag from "./IndicatorTag";
 
-interface Props {
-    farm: FarmRendererObject,
-    status: FarmStatus
-}
-
 /**
  * Farms status display for the home page to inform the user of all enabled farms.
  *
  * @param {Object} props Farm to show the status of.
  */
-export default function FarmItem({ farm, status }: Props) {
+export default function FarmItem({ name, status }: newFarmRendererObject) {
     /**
      * If the farming windows are being shown.
      * Show open eye when showing else strikedthrough eye.
@@ -25,7 +20,7 @@ export default function FarmItem({ farm, status }: Props) {
         <div className={styles.container}>
             <div className={styles.firstRow}>
                 <div className={styles.left}>
-                    <p>{farm.gameName}</p>
+                    <p>{name}</p>
                     <IndicatorTag status={status} />
                 </div>
                 <DisplayWindowsButton
@@ -35,14 +30,14 @@ export default function FarmItem({ farm, status }: Props) {
                          * Only react if there are actual windows.
                          */
                         if (status === "checking" || status === "farming" || status === "attention-required") {
-                            window.api.log("INFO", `Clicked \"eye\"-icon on \"${farm.gameName}\", setting to \"${showing}\"`);
+                            window.api.log("INFO", `Clicked \"eye\"-icon on \"${name}\", setting to \"${showing}\"`);
                             setShowingWindows(showing);
 
                             /**
                              * When the eye symbol is pressed and the windows should be showed or hidden.
                              */
                             window.api.sendOneWay(window.api.channels.farmWindowsVisibility, {
-                                farm: farm,
+                                name: name,
                                 show: showing
                             });
                         }
@@ -55,15 +50,15 @@ export default function FarmItem({ farm, status }: Props) {
                     <FarmActionButton
                         label="Clear cache"
                         handleClick={() => {
-                            window.api.log("INFO", `Clicked button to reset clear cache on \"${farm.gameName}\"`);
-                            window.api.sendOneWay(window.api.channels.clearCache, (farm.gameName));
+                            window.api.log("INFO", `Clicked button to reset clear cache on \"${name}\"`);
+                            window.api.sendOneWay(window.api.channels.clearCache, (name));
                         }}
                     />
                     <FarmActionButton
                         label="Restart Farm"
                         handleClick={() => {
-                            window.api.log("INFO", `Clicked restart farm button on \"${farm.gameName}\"`);
-                            window.api.sendOneWay(window.api.channels.restartScheduler, (farm.gameName));
+                            window.api.log("INFO", `Clicked restart farm button on \"${name}\"`);
+                            window.api.sendOneWay(window.api.channels.restartScheduler, (name));
                         }}
                     />
                 </div>

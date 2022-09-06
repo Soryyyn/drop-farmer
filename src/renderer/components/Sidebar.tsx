@@ -9,7 +9,7 @@ export default function Sidebar() {
     /**
      * The current farms from main process.
      */
-    const [farms, setFarms] = useState<FarmRendererObject[]>([]);
+    const [farms, setFarms] = useState<newFarmRendererObject[]>([]);
 
     /**
      * On site load, get all farms from main process and display the enabled ones.
@@ -24,7 +24,7 @@ export default function Sidebar() {
             });
 
         return () => {
-            window.api.removeAllListeners(window.api.channels.getFarms)
+            window.api.removeAllListeners(window.api.channels.getFarms);
         };
     }, []);
 
@@ -35,19 +35,18 @@ export default function Sidebar() {
      * - If it is this one, then change the status.
      */
     useEffect(() => {
-        window.api.handleOneWay(window.api.channels.farmStatusChange, (event: Electron.IpcRendererEvent, changedStatus: FarmRendererObject) => {
-
+        window.api.handleOneWay(window.api.channels.farmStatusChange, (event, changedStatus: newFarmRendererObject) => {
             /**
              * Create empty array for the state.
              */
-            let tempCopy: FarmRendererObject[] = [];
+            let tempCopy: newFarmRendererObject[] = [];
 
             /**
              * Check which farm had a status change.
              */
             for (let i = 0; i < farms.length; i++) {
 
-                if (farms[i].gameName === changedStatus.gameName) {
+                if (farms[i].name === changedStatus.name) {
                     /**
                      * Clear the temporary state to apply latest changes to states.
                      */
@@ -66,7 +65,7 @@ export default function Sidebar() {
         });
 
         return () => {
-            window.api.removeAllListeners(window.api.channels.farmStatusChange)
+            window.api.removeAllListeners(window.api.channels.farmStatusChange);
         };
     }, [farms])
 
@@ -74,10 +73,10 @@ export default function Sidebar() {
         <div className={styles.container}>
             <ul className={styles.items}>
                 {
-                    farms && farms.map((farm: FarmRendererObject) => {
+                    farms && farms.map((farm: newFarmRendererObject) => {
                         return <FarmItem
-                            key={farm.gameName}
-                            farm={farm}
+                            key={farm.name}
+                            name={farm.name}
                             status={farm.status}
                         />
                     })

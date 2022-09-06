@@ -1,41 +1,38 @@
-/**
- * Statuses for the farms.
- */
 type FarmStatus = "farming" | "idle" | "checking" | "disabled" | "attention-required";
 
-/**
- * The settingsfile (`settings.json`) configuration.
- */
-type SettingsFile = {
+type FarmingWindowObject = {
+    window: Electron.BrowserWindow;
+    createdAt: number;
+}
+
+type FarmSaveData = {
+    enabled: boolean;
+    name: string;
+    checkerWebsite: string;
+    checkingSchedule: number;
+    uptime: number;
+}
+
+type newFarmRendererObject = {
+    name: string;
+    status: FarmStatus;
+}
+
+type FarmSettings = {
+    name: string;
+    enabled: boolean;
+    checkerWebsite: string;
+    checkingSchedule: number;
+}
+
+type ApplicationSettings = {
     launchOnStartup: boolean;
     showMainWindowOnLaunch: boolean;
     disable3DModuleAnimation: boolean;
 }
 
-/**
- * All game farm properties.
- * Properties from `GameFarmTemplate` class.
- */
-type Farm = {
-    gameName: string;
-    checkerWebsite: string;
-    enabled: boolean;
-    schedule: number;
-    uptime: number;
-}
-
-/**
- * The cachefile (`farms_cache.json`) for the files.
- */
-type FarmsCacheFile = {
-    uptime: number;
-    farms: Farm[];
-}
-
-/**
- * The object which is given to the `FarmStatus` component.
- */
-type FarmRendererObject = {
-    gameName: string;
-    status: FarmStatus;
+type ConfigFile = {
+    appUptime: number;
+    applicationSettings: ApplicationSettings;
+    farms: FarmSaveData[];
 }

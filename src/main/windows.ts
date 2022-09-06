@@ -1,8 +1,9 @@
 import { BrowserWindow } from "electron";
 import { resolve } from "path";
-import { getFarms } from "./farms";
+import { getApplicationSettings } from "./config";
+import { getFarms } from "./farmsManagement";
+import FarmTemplate from "./games/farmTemplate";
 import { log } from "./logger";
-import { getCurrentSettings } from "./settings";
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -58,7 +59,7 @@ export function createMainWindow(isProd: boolean): void {
      * Show when the window is ready.
      */
     mainWindow.on("ready-to-show", () => {
-        if (getCurrentSettings().showMainWindowOnLaunch) {
+        if (getApplicationSettings().showMainWindowOnLaunch) {
             log("MAIN", "INFO", `Created main window (shown) ${(!isProd ? "in dev mode" : "")}`);
             mainWindow.show();
             mainWindow.focus();
@@ -79,9 +80,9 @@ export function createMainWindow(isProd: boolean): void {
             /**
              * Hide all farm windows as well.
              */
-            getFarms().forEach((farm) => {
-                farm.hideWindows();
-            });
+            getFarms().forEach((farm: FarmTemplate) => {
+                farm.hideAllWindows();
+            })
         } else {
             destroyWindow(mainWindow);
         }
@@ -106,7 +107,7 @@ export async function createWindow(url: string, gameName?: string) {
         icon: resolve(__dirname, "resources/icon.ico"),
         height: 1080,
         width: 1920,
-        show: false,
+        show: true,
         closable: false,
         webPreferences: {
             devTools: !(process.env.NODE_ENV === "production")

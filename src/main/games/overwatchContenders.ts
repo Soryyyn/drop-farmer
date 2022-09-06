@@ -1,19 +1,15 @@
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../logger";
 import { getBrowserConnection } from "../puppeteer";
-import { createWindow, destroyWindow } from "../windows";
-import { GameFarmTemplate } from "./gameFarmTemplate";
+import FarmTemplate from "./farmTemplate";
 
-/**
- * Overwatch Contenders farm.
- */
-export class OverwatchContenders extends GameFarmTemplate {
-    gameName: string = "overwatch-contenders";
-    checkerWebsite: string = "https://overwatchleague.com/en-us/contenders";
-    schedule: number = 30;
+export default class OverwatchContenders extends FarmTemplate {
 
     constructor() {
-        super();
+        super(
+            "overwatch-contenders",
+            "https://overwatchleague.com/en-us/contenders"
+        );
     }
 
     /**
@@ -25,33 +21,75 @@ export class OverwatchContenders extends GameFarmTemplate {
      */
     pressPlay(farmingWindow: Electron.BrowserWindow, scrollY: number) {
         return new Promise(async (resolve, reject) => {
-            let connection = getBrowserConnection();
-            let page = await getPage(connection, farmingWindow);
+            try {
+                let page = await getPage(getBrowserConnection(), farmingWindow);
 
-            await page.waitForNetworkIdle();
-            await page.waitForTimeout(2000);
+                await page.waitForNetworkIdle();
 
-            /**
-             * Scroll to the video element.
-             */
-            await page.evaluate(`window.scrollTo(0, ${scrollY})`);
+                /**
+                 * Scroll to the video element.
+                 */
+                await page.evaluate(`window.scrollTo(0, ${scrollY})`);
 
-            /**
-             * Enter the iframe element and play the video.
-             */
-            page.waitForSelector("iframe")
-                .then(async (iframeHandle) => {
-                    await page.waitForNetworkIdle();
-                    return await iframeHandle!.contentFrame();
-                })
-                .then(async (frame) => {
-                    await page.waitForNetworkIdle();
-                    return frame;
-                })
-                .then(async (frame) => {
-                    await frame!.click("button.ytp-large-play-button");
+                /**
+                 * Enter the iframe element and play the video.
+                 */
+                page.waitForSelector("iframe")
+                    .then(async (iframeHandle) => {
+                        await page.waitForNetworkIdle();
+                        return await iframeHandle!.contentFrame();
+                    })
+                    .then(async (frame) => {
+                        await page.waitForNetworkIdle();
+                        return frame;
+                    })
+                    .then(async (frame) => {
+                        /**
+                         * Double click to make sure the video is playing.
+                         */
+                        await frame!.click("button.ytp-large-play-button");
+                        await frame!.click("button.ytp-large-play-button");
+
+                        log("MAIN", "INFO", `${this.getName()}: Pressed play on stream`);
+                        resolve(undefined);
+                    });
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
+    /**
+     * Check if the farming window is still live/farming.
+     *
+     * @param {Electron.BrowserWindow} window The window to control.
+     */
+    windowsStillFarming(window: Electron.BrowserWindow): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                if (this.getFarmingWindows().length === 0) {
+                    log("MAIN", "INFO", `${this.getName()}: No farming windows, skipping checking step`);
                     resolve(undefined);
-                });
+                } else {
+                    let page = await getPage(getBrowserConnection(), this.getFarmingWindow(0).window);
+
+                    /**
+                     * Check for *LIVE NOW* element.
+                     */
+                    if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
+                        log("MAIN", "INFO", `${this.getName()}: Stream still live, continue farming`);
+                        resolve(undefined);
+                    } else {
+                        this.removeFarmingWindowFromArray(0);
+
+                        log("MAIN", "INFO", `${this.getName()}: Stream not live anymore, stopping farming`);
+
+                        resolve(undefined);
+                    }
+                }
+            } catch (err) {
+                reject(err);
+            }
         });
     }
 
@@ -59,87 +97,59 @@ export class OverwatchContenders extends GameFarmTemplate {
      * Check if the user needs to login.
      * If yes, wait until user finished logging in.
      * If no, check if at main screen.
+     *
+     * @param {Electron.BrowserWindow} window The window to control.
      */
-    login() {
-        return new Promise(async (resolve, reject) => {
-            log("MAIN", "INFO", `\"${this.gameName}\": Login process started`);
-            let connection = getBrowserConnection();
-            let page = await getPage(connection, this.checkerWindow!);
+    login(window: Electron.BrowserWindow): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                log("MAIN", "INFO", `${this.getName()}: Login process started`);
+                let page = await getPage(getBrowserConnection(), window);
 
-            await page.waitForNetworkIdle();
-
-            /**
-             * If sign in button under video has been found (user *not* logged in).
-             */
-            if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a") !== null) {
-                /**
-                 * Click the sign in button.
-                 */
-                await page.click("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a");
+                await page.waitForNetworkIdle();
 
                 /**
-                 * Check if user has been moved to the login page.
+                 * If sign in button under video has been found (user *not* logged in).
                  */
-                try {
-                    await page.waitForSelector("#accountName");
-
-                    log("MAIN", "INFO", `\"${this.gameName}\": Login is needed by user`);
+                if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a") !== null) {
+                    /**
+                     * Click the sign in button.
+                     */
+                    await page.click("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a");
 
                     /**
-                     * Open checker window for user login.
+                     * Check if user has been moved to the login page.
                      */
-                    this.checkerWindow!.show();
-                    this.checkerWindow!.focus();
+                    try {
+                        await page.waitForSelector("#accountName");
 
-                    /**
-                     * Wait until user is back at main page with video element.
-                     */
-                    page.waitForSelector("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp", { timeout: 0 })
-                        .then(() => {
-                            log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
-                            this.checkerWindow!.hide();
-                            resolve(undefined);
-                        });
-                } catch (err) {
-                    log("MAIN", "INFO", `\"${this.gameName}\": Login completed`);
-                    resolve(undefined);
-                }
-            } else {
-                log("MAIN", "INFO", `\"${this.gameName}\": User already logged in, continuing`);
-                resolve(undefined);
-            }
-        });
-    }
+                        log("MAIN", "INFO", `${this.getName()}: Login is needed by user`);
 
-    /**
-     * Check if the farming window is still live/farming.
-     */
-    windowsStillFarming() {
-        return new Promise(async (resolve, reject) => {
-            if (this.farmingWindows.length === 0) {
-                log("MAIN", "INFO", `\"${this.gameName}\": No farming windows, skipping checking step`);
-                resolve(undefined);
-            } else {
-                let connection = getBrowserConnection();
-                let page = await getPage(connection, this.farmingWindows[0]);
+                        /**
+                         * Open checker window for user login.
+                         */
+                        window.show();
+                        window.focus();
 
-                /**
-                 * Check for *LIVE NOW* element.
-                 */
-                if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr") !== null) {
-                    log("MAIN", "INFO", `\"${this.gameName}\": Stream still live, continue farming`);
-                    resolve(undefined);
+                        /**
+                         * Wait until user is back at main page with video element.
+                         */
+                        page.waitForSelector("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp", { timeout: 0 })
+                            .then(() => {
+                                log("MAIN", "INFO", `${this.getName()}: Login completed`);
+                                window.hide();
+                                resolve(undefined);
+                            });
+                    } catch (err) {
+                        log("MAIN", "INFO", `${this.getName()}: Login completed`);
+                        resolve(undefined);
+                    }
                 } else {
-                    /**
-                     * Destroy the farming window.
-                     */
-                    destroyWindow(this.farmingWindows[0]);
-                    this.farmingWindows.splice(0, 1);
-
-                    log("MAIN", "INFO", `\"${this.gameName}\": Stream not live anymore, stopping farming`);
-
+                    log("MAIN", "INFO", `${this.getName()}: User already logged in, continuing`);
                     resolve(undefined);
                 }
+            } catch (err) {
+                reject(err);
             }
         });
     }
@@ -147,152 +157,76 @@ export class OverwatchContenders extends GameFarmTemplate {
     /**
      * Check for the *LIVE NOW* element and open the window as a farming window
      * and press play.
+     *
+     * @param {Electron.BrowserWindow} window The window to control.
      */
-    startFarming() {
-        return new Promise(async (resolve, reject) => {
-            let connection = getBrowserConnection();
-            let page = await getPage(connection, this.checkerWindow!);
-
-            /**
-             * Check if farming windows exist, if yes don't try to check for new stream.
-             */
-            if (this.farmingWindows.length > 0) {
-                log("MAIN", "INFO", `\"${this.gameName}\": Already farming, no need to start again`);
-
-                this.changeStatus("farming");
-                resolve(undefined);
-            } else {
-                await page.waitForTimeout(2000);
+    startFarming(window: Electron.BrowserWindow): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                let page = await getPage(getBrowserConnection(), window);
 
                 /**
-                 * Check for *LIVE NOW* element.
+                 * Check if farming windows exist, if yes don't try to check for new stream.
                  */
-                if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                    let window = await this.createFarmingWindow(this.checkerWebsite);
-                    this.farmingWindows.push(window);
+                if (this.getFarmingWindows().length > 0) {
+                    log("MAIN", "INFO", `${this.getName()}: Already farming, no need to start again`);
 
-                    await this.pressPlay(this.farmingWindows[0], 200);
-
-                    log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
-
-                    /**
-                     * Start the uptime timer if not running.
-                     * If already running, resume.
-                     */
-                    if (this.timer.isPaused()) {
-                        this.timer.resume();
-                        log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
-                    } else if (!this.timer.isStarted()) {
-                        this.timer.start();
-                        log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
-                    }
-
-                    this.changeStatus("farming");
+                    this.updateStatus("farming");
                     resolve(undefined);
-                } else if (await page.$("#__next > div > div > div.renderblocksstyles__DesktopBlock-sc-3odw2o-0.gpjAVR > a") !== null) {
-                    let element = await page.$("#__next > div > div > div.renderblocksstyles__DesktopBlock-sc-3odw2o-0.gpjAVR > a");
-                    let href: string = await (await element!.getProperty("href")).jsonValue();
-
-                    if (href === this.checkerWebsite) {
-                        log("MAIN", "INFO", `\"${this.gameName}\": Found banner, but game has not started yet.`)
-
-                        this.changeStatus("idle");
-                        resolve(undefined);
-                    } else {
-                        let window = await this.createFarmingWindow(href);
-                        this.farmingWindows.push(window);
-
-                        await this.pressPlay(this.farmingWindows[0], 1050);
-
-                        log("MAIN", "INFO", `\"${this.gameName}\": Farming with \"${this.farmingWindows.length}\" windows`);
-
-                        /**
-                         * Start the uptime timer if not running.
-                         * If already running, resume.
-                         */
-                        if (this.timer.isPaused()) {
-                            this.timer.resume();
-                            log("MAIN", "INFO", `\"${this.gameName}\": Resumed timer`);
-                        } else if (!this.timer.isStarted()) {
-                            this.timer.start();
-                            log("MAIN", "INFO", `\"${this.gameName}\": Started timer`);
-                        }
-
-                        this.changeStatus("farming");
-                        resolve(undefined);
-                    }
                 } else {
-                    /**
-                     * No live match right now.
-                     * Set the status back to idle.
-                     */
-                    log("MAIN", "INFO", `\"${this.gameName}\": No live matches available, returning status back to idle`);
-                    this.changeStatus("idle");
-
-                    resolve(undefined);
-                }
-            }
-
-            /**
-             * Destroy the checker window and remove the reference.
-             */
-            destroyWindow(this.checkerWindow!);
-            this.checkerWindow = null;
-
-            log("MAIN", "INFO", `\"${this.gameName}\": Destroyed checker window`);
-        });
-    }
-
-    /**
-     * Check the overwatch-contenders farm.
-     */
-    async farmCheck() {
-        if (this.status !== "checking") {
-            log("MAIN", "INFO", `\"${this.gameName}\": Started checking the farm`);
-            this.changeStatus("checking");
-
-            /**
-             * Pause the timer while checking.
-             */
-            if (this.timer.isRunning()) {
-                this.timer.pause();
-                this.uptime += this.timer.ms();
-                log("MAIN", "INFO", `\"${this.gameName}\": Paused timer`);
-            }
-
-            /**
-             * Create the checker window.
-             */
-            await this.createFarmCheckingWindow();
-
-            if (this.checkerWindow) {
-                try {
-                    await this.login();
-                    await this.windowsStillFarming();
-                    await this.startFarming();
+                    await page.waitForTimeout(2000);
 
                     /**
-                     * Destroy the windows if the status has been set to disabled.
+                     * Check for *LIVE NOW* element.
                      */
-                    if (!this.getEnabled()) {
-                        log("MAIN", "INFO", `\"${this.gameName}\": Destroying all windows because farm has been disabled`);
-                        if (this.checkerWindow !== null) {
-                            destroyWindow(this.checkerWindow);
-                            this.checkerWindow = null;
-                        }
+                    if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
+                        this.createFarmingWindow(this.getCheckerWebsite())
+                            .then(async (farmingWindow: Electron.BrowserWindow) => {
+                                await this.pressPlay(farmingWindow, 200);
 
-                        for (const farmWindow of this.farmingWindows) {
-                            destroyWindow(farmWindow);
-                            this.farmingWindows = [];
-                        }
+                                log("MAIN", "INFO", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
 
-                        this.changeStatus("disabled");
+                                this.timerAction("start");
+
+                                this.updateStatus("farming");
+                                resolve(undefined);
+                            });
+                    } else if (await page.$("#__next > div > div > div.renderblocksstyles__DesktopBlock-sc-3odw2o-0.gpjAVR > a") !== null) {
+                        let element = await page.$("#__next > div > div > div.renderblocksstyles__DesktopBlock-sc-3odw2o-0.gpjAVR > a");
+                        let href: string = await (await element!.getProperty("href")).jsonValue();
+
+                        if (href === this.getCheckerWebsite()) {
+                            log("MAIN", "INFO", `${this.getName()}: Found banner, but game has not started yet.`)
+
+                            this.updateStatus("idle");
+                            resolve(undefined);
+                        } else {
+                            this.createFarmingWindow(this.getCheckerWebsite())
+                                .then(async (farmingWindow: Electron.BrowserWindow) => {
+                                    await this.pressPlay(farmingWindow, 1050);
+
+                                    log("MAIN", "INFO", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
+
+                                    this.timerAction("start");
+
+                                    this.updateStatus("farming");
+                                    resolve(undefined);
+                                });
+                        }
+                    } else {
+                        /**
+                         * No live match right now.
+                         * Set the status back to idle.
+                         */
+                        log("MAIN", "INFO", `${this.getName()}: No live matches available, returning status back to idle`);
+                        this.updateStatus("idle");
+
+                        resolve(undefined);
                     }
-                } catch (error) {
-                    log("MAIN", "ERROR", `\"${this.gameName}\": Error occurred while checking the farm. ${error}`);
-                    this.changeStatus("attention-required");
                 }
+            } catch (err) {
+                reject(err);
             }
-        }
+        });
     }
 }

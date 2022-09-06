@@ -1,9 +1,9 @@
 import { app, session } from "electron";
 import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
-import { destroyAllWindows, initFarms, saveDataToCache } from "./farms";
+import { initConfig, saveCurrentDataOnQuit } from "./config";
+import { destroyAllFarmWindows, initFarms } from "./farmsManagement";
 import { initLogger, log } from "./logger";
 import { initPuppeteerConnection } from "./puppeteer";
-import { initSettings } from "./settings";
 import { createTray, destroyTray } from "./tray";
 import { createMainWindow } from "./windows";
 
@@ -23,7 +23,7 @@ if (require("electron-squirrel-startup")) {
  * Initialize all drop-farmer background functions.
  */
 initLogger();
-initSettings();
+initConfig();
 initFarms();
 
 /**
@@ -82,8 +82,7 @@ app.on("before-quit", () => {
     /**
      * Save the cache of each farm.
      */
-    log("MAIN", "INFO", "Saving cache for each farm");
-    saveDataToCache();
+    saveCurrentDataOnQuit();
 
     /**
      * Destroy tray.
@@ -93,7 +92,7 @@ app.on("before-quit", () => {
     /**
      * Destroy all windows.
      */
-    destroyAllWindows();
+    destroyAllFarmWindows();
 
     log("MAIN", "INFO", "Quitting application");
 });
