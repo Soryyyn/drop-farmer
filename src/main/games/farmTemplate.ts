@@ -17,11 +17,12 @@ export default abstract class FarmTemplate {
     private _checkerWindow: Electron.BrowserWindow | undefined = undefined;
     private _farmingWindows: FarmingWindowObject[] = [];
     private _taskManager: CrontabManager = new CrontabManager();
-    private _uptimeTimer: UptimeTimer = new UptimeTimer();
+    private _uptimeTimer: UptimeTimer | undefined = undefined;
 
     constructor(name: string, checkerWebsite: string) {
         this._name = name;
         this._checkerWebsite = checkerWebsite;
+        this._uptimeTimer = new UptimeTimer(`${name} (timer)`);
     }
 
     /**
@@ -107,7 +108,7 @@ export default abstract class FarmTemplate {
             name: this._name,
             checkerWebsite: this._checkerWebsite,
             checkingSchedule: this._checkingSchedule,
-            uptime: this._uptimeTimer.getAmount()
+            uptime: this._uptimeTimer!.getAmount()
         }
     }
 
@@ -387,25 +388,19 @@ export default abstract class FarmTemplate {
      * Start or resume uptime timer.
      */
     timerAction(action: "start" | "stop" | "pause"): void {
-        switch (action) {
-            case "start":
-                this._uptimeTimer.startTimer();
-                break;
-            case "stop":
-                this._uptimeTimer.stopTimer();
-                break;
-            case "pause":
-                this._uptimeTimer.pauseTimer();
-                break;
-        }
-
+        if (action === "start")
+            this._uptimeTimer!.startTimer();
+        else if (action === "stop")
+            this._uptimeTimer!.stopTimer();
+        else if (action === "pause")
+            this._uptimeTimer!.pauseTimer();
     }
 
     /**
      * Get current farm uptime.
      */
     getCurrentUptime(): number {
-        return this._uptimeTimer.getAmount();
+        return this._uptimeTimer!.getAmount();
     }
 
     /**

@@ -124,6 +124,10 @@ function updateUptimes(): void {
     for (const farm of getFarms()) {
         for (let i = 0; i < currentConfigData.farms.length; i++) {
             if (farm.getName() === currentConfigData.farms[i].name) {
+                /**
+                 * Stop the timer and add up the times.
+                 */
+                farm.timerAction("stop");
                 currentConfigData.farms[i].uptime += farm.getCurrentUptime();
                 currentConfigData.appUptime += farm.getCurrentUptime();
             }

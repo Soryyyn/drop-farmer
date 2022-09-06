@@ -6,16 +6,11 @@ import { log } from "./logger";
  */
 export class UptimeTimer {
     private _timer = new Timer();
-    private _timerName: string = "";
+    private _timerName: string;
     private _amount: number = 0;
 
-    /**
-     * Set the timer name.
-     *
-     * @param {string} name The timer name.
-     */
-    setTimerName(name: string): void {
-        this._timerName = name;
+    constructor(timerName: string) {
+        this._timerName = timerName;
     }
 
     /**
@@ -23,8 +18,10 @@ export class UptimeTimer {
      */
     stopTimer(): void {
         if (this._timer.isRunning()) {
-            this._timer.stop();
             this._amount += this._timer.ms();
+            console.log(this._amount);
+
+            this._timer.stop();
             log("MAIN", "INFO", `${this._timerName}: stopped`);
         }
     }
@@ -46,7 +43,7 @@ export class UptimeTimer {
         if (this._timer.isPaused()) {
             this._timer.resume();
             log("MAIN", "INFO", `${this._timerName}: resumed`);
-        } else if (this._timer.isStopped()) {
+        } else if (this._timer.isStopped() || !this._timer.isStarted()) {
             this._timer.start();
             log("MAIN", "INFO", `${this._timerName}: started`);
         }
