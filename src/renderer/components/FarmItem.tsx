@@ -38,7 +38,7 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                              */
                             window.api.sendOneWay(window.api.channels.farmWindowsVisibility, {
                                 name: name,
-                                show: showing
+                                showing: showing
                             });
                         }
                     }}
