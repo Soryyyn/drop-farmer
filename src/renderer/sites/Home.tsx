@@ -1,3 +1,5 @@
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faGear, faGlobe, faPowerOff, faReceipt } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonNolabel from "../components/ButtonNoLabel";
@@ -89,33 +91,33 @@ export default function Home() {
                     <p className={styles.desc}>Stream drops farmer application</p>
                     <div className={styles.buttonsContainer}>
                         <ButtonNolabel
-                            imgPath="../assets/github.svg"
+                            icon={faGithub}
                             primary={true}
                             onClickAction={() => {
                                 window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn/drop-farmer");
                             }}
                         />
                         <ButtonNolabel
-                            imgPath="../assets/web.svg"
+                            icon={faGlobe}
                             primary={true}
                             onClickAction={() => {
                                 window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://soryn.dev");
                             }}
                         />
                         <ButtonNolabel
-                            imgPath="../assets/statistics.svg"
+                            icon={faReceipt}
                             primary={true}
                             onClickAction={() => { }}
                         />
                         <ButtonNolabel
-                            imgPath="../assets/gear.svg"
+                            icon={faGear}
                             primary={true}
                             onClickAction={() => {
                                 navigation("/settings");
                             }}
                         />
                         <ButtonNolabel
-                            imgPath="../assets/power-off.svg"
+                            icon={faPowerOff}
                             primary={true}
                             onClickAction={() => {
                                 window.api.sendOneWay(window.api.channels.shutdown);

@@ -1,5 +1,8 @@
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styles from "../styles/DisplayWindowsButton.module.scss";
+
 
 interface Props {
     showing: boolean;
@@ -17,8 +20,8 @@ export default function DisplayWindowsButton({ showing, handleChange }: Props) {
             >
                 {
                     (showing)
-                        ? <img src="../assets/visible.svg" draggable={false} />
-                        : <img src="../assets/invisible.svg" draggable={false} />
+                        ? <FontAwesomeIcon icon={faEye} size="xl" className={styles.icon} />
+                        : <FontAwesomeIcon icon={faEyeSlash} size="xl" className={styles.icon} />
                 }
             </div>
         </div>

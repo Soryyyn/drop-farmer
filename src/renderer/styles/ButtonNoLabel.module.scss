@@ -12,6 +12,10 @@
     transition: 0.1s;
     user-select: none;
 
+    .icon {
+        color: #0c0e16;
+    }
+
     &:active {
         transform: scale(0.95);
         transition: 0.1s;
@@ -21,15 +25,10 @@
         transition: 0.1s;
         cursor: pointer;
     }
-
-    img {
-        filter: invert(4%) sepia(9%) saturate(3216%) hue-rotate(191deg) brightness(97%) contrast(96%);
-        height: 22px;
-    }
 }
 
 .primary {
-    color: #0c0e16;
+    // color: #0c0e16;
     box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
     background: rgba(59, 62, 97, 0.5);
     border: 1px solid rgba(59, 62, 97, 0.1);
@@ -44,7 +43,7 @@
 }
 
 .secondary {
-    color: #0c0e16;
+    // color: #0c0e16;
     box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
     background: rgba(59, 62, 97, 0.3);
     border: 2px solid rgba(226, 59, 87, 0.1);

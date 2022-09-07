@@ -1,3 +1,4 @@
+import { faHome, faSave } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonLabel from "../components/ButtonLabel";
@@ -5,6 +6,7 @@ import FarmSelector from "../components/FarmSelector";
 import SettingsItemInput from "../components/SettingsItemInput";
 import SettingsItemToggle from "../components/SettingsItemToggle";
 import styles from "../styles/Settings.module.scss";
+
 
 /**
  * The route for the settings page.
@@ -76,7 +78,7 @@ export default function Settings() {
                 <>
                     <div className={styles.topBar}>
                         <ButtonLabel
-                            imgPath="../assets/home.svg"
+                            icon={faHome}
                             primary={false}
                             label="Home"
                             onClickAction={() => {
@@ -86,7 +88,7 @@ export default function Settings() {
                         />
                         <h1>Settings</h1>
                         <ButtonLabel
-                            imgPath="../assets/save.svg"
+                            icon={faSave}
                             primary={false}
                             label="Save"
                             onClickAction={() => {

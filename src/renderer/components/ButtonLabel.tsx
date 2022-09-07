@@ -1,21 +1,23 @@
+import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import React from "react";
 import styles from "../styles/ButtonLabel.module.scss";
 
 interface Props {
-    imgPath: string,
+    icon: IconDefinition,
     primary: boolean,
     label: string
     onClickAction: () => void
 }
 
-export default function ButtonLabel({ imgPath, primary, label, onClickAction }: Props) {
+export default function ButtonLabel({ icon, primary, label, onClickAction }: Props) {
     return (
         <div
             className={clsx(styles.buttonContainer, (primary) ? styles.primary : styles.secondary)}
             onClick={onClickAction}
         >
-            <img src={imgPath} draggable={false} />
+            <FontAwesomeIcon icon={icon} size="lg" className={styles.icon} />
             <p>{label}</p>
         </div>
     );

@@ -1,3 +1,5 @@
+import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import styles from "../styles/FarmItem.module.scss";
 import DisplayWindowsButton from "./DisplayWindowsButton";
@@ -15,6 +17,11 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
      * Show open eye when showing else strikedthrough eye.
      */
     const [showingWindows, setShowingWindows] = useState<boolean>(false);
+
+    /**
+     * If the farm action button should be shown.
+     */
+    const [showingActionButtons, setShowingActionButtons] = useState<boolean>(false);
 
     return (
         <div className={styles.container}>
@@ -45,7 +52,7 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                 />
             </div>
             {
-                (status === "attention-required") &&
+                (status === "attention-required" || showingActionButtons) &&
                 <div className={styles.secondRow}>
                     <FarmActionButton
                         label="Clear cache"
@@ -63,6 +70,12 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                     />
                 </div>
             }
+            <FontAwesomeIcon
+                icon={(showingActionButtons || status === "attention-required") ? faAngleUp : faAngleDown}
+                size="1x"
+                className={styles.arrowShowActionButton}
+                onClick={() => setShowingActionButtons(!showingActionButtons)}
+            />
         </div>
     );
 }
