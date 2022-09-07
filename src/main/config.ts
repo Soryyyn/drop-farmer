@@ -108,6 +108,8 @@ export function updateApplicationSettings(newApplicationSettings: ApplicationSet
 
             launchOnStartup(newApplicationSettings.launchOnStartup);
 
+            writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
+
             log("MAIN", "INFO", `Updated application settings in config`);
             resolve(undefined);
         } catch (err) {
@@ -157,6 +159,8 @@ export function updateFarmsData(newFarmsData: FarmSaveData[]): Promise<void> {
              * Set the uptime of the farm.
              */
             updateUptimes();
+
+            writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
 
             log("MAIN", "INFO", `Updated farms data in config`);
             resolve(undefined);
