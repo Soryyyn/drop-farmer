@@ -8,11 +8,13 @@
     width: 50%;
 
     &:active {
+        background: rgba(59, 62, 97, 0.9);
         transform: scale(0.97);
         transition: 0.1s;
     }
 
     &:hover {
+        background: rgba(59, 62, 97, 0.9);
         cursor: pointer;
         transition: 0.1s;
     }
