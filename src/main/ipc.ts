@@ -80,7 +80,7 @@ handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
     applicationSettings: ApplicationSettings,
     farmSettings: FarmSaveData[]
 }) => {
-    updateApplicationSettings(settingsToSave.applicationSettingsw);
+    updateApplicationSettings(settingsToSave.applicationSettings);
     updateFarmsData(settingsToSave.farmSettings);
 });
 

@@ -9,7 +9,6 @@
             "presentation": {
                 "showReuseMessage": false,
                 "clear": false,
-                "close": true
             }
         },
         {
@@ -20,7 +19,6 @@
             "presentation": {
                 "showReuseMessage": false,
                 "clear": false,
-                "close": true
             }
         },
         {
@@ -32,7 +30,6 @@
                 "reveal": "silent",
                 "showReuseMessage": false,
                 "clear": true,
-                "close": true
             }
         },
         {
@@ -44,7 +41,6 @@
                 "reveal": "silent",
                 "showReuseMessage": false,
                 "clear": true,
-                "close": true
             }
         },
     ]
