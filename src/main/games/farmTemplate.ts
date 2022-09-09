@@ -1,5 +1,7 @@
 import CrontabManager from "cron-job-manager";
+import { resolve } from "path";
 import { Channels } from "../common/channels";
+import { getCurrentInternetConnection } from "../internet";
 import { sendOneWay } from "../ipc";
 import { log } from "../logger";
 import { UptimeTimer } from "../timer";
@@ -312,7 +314,7 @@ export default abstract class FarmTemplate {
      * Destroy the checker window and set the attribute back to undefined.
      */
     destroyCheckerWindow(): void {
-        if (this._checkerWindow) {
+        if (this._checkerWindow != undefined) {
             destroyWindow(this._checkerWindow);
             this._checkerWindow = undefined;
         }
@@ -359,6 +361,9 @@ export default abstract class FarmTemplate {
      * @param {() => void} stepsBetweenRestart The callback to execute between restart.
      */
     restartScheduler(stepsBetweenRestart?: () => void): void {
+        this.destroyCheckerWindow();
+        this.destroyAllFarmingWindows();
+
         this._taskManager.stop("checking-schedule");
 
         if (stepsBetweenRestart)
@@ -437,26 +442,25 @@ export default abstract class FarmTemplate {
              */
             this.timerAction("pause");
 
-            try {
-                this.createCheckerWindow()
-                    .then(async (checkerWindow) => {
-                        await this.login(checkerWindow);
-                        await this.windowsStillFarming(checkerWindow);
-                        await this.startFarming(checkerWindow);
+            this.createCheckerWindow()
+                .then(async (checkerWindow) => {
+                    await this.login(checkerWindow);
+                    await this.windowsStillFarming(checkerWindow);
+                    await this.startFarming(checkerWindow);
 
-                        /**
-                         * Destroy the checker window.
-                         */
-                        this.destroyCheckerWindow();
+                    /**
+                     * Destroy the checker window.
+                     */
+                    this.destroyCheckerWindow();
 
-                        if (!this._enabled) {
-                            this.updateStatus("disabled");
-                        }
-                    })
-            } catch (err) {
-                log("MAIN", "ERROR", `${this._name}: Error occurred while checking the farm. ${err}`);
-                this.updateStatus("attention-required");
-            }
+                    if (!this._enabled) {
+                        this.updateStatus("disabled");
+                    }
+                })
+                .catch((err) => {
+                    log("MAIN", "ERROR", `${this._name}: Error occurred while checking the farm. ${err}`);
+                    this.updateStatus("attention-required");
+                });
         }
     }
 

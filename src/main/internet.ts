@@ -26,6 +26,7 @@ export async function checkInternetConnection() {
 /**
  * Returns the current internet connection.
  */
-export function getCurrentInternetConnection(): boolean {
+export async function getCurrentInternetConnection(): Promise<boolean> {
+    await checkInternetConnection();
     return internetConnection;
 }

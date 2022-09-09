@@ -80,7 +80,7 @@ handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
     applicationSettings: ApplicationSettings,
     farmSettings: FarmSaveData[]
 }) => {
-    updateApplicationSettings(settingsToSave.applicationSettings);
+    updateApplicationSettings(settingsToSave.applicationSettingsw);
     updateFarmsData(settingsToSave.farmSettings);
 });
 
@@ -99,11 +99,8 @@ handleAndReply(Channels.getInternetConnection, async (event) => {
 handleOneWay(Channels.clearCache, (event, name) => {
     getFarms().forEach((farm: FarmTemplate) => {
         if (farm.getName() === name) {
-            farm.clearFarmCache();
-
             farm.restartScheduler(() => {
-                farm.destroyCheckerWindow();
-                farm.destroyAllFarmingWindows();
+                farm.clearFarmCache();
             });
 
             farm.updateStatus("idle");
@@ -114,11 +111,7 @@ handleOneWay(Channels.clearCache, (event, name) => {
 handleOneWay(Channels.restartScheduler, (event, name) => {
     getFarms().forEach((farm: FarmTemplate) => {
         if (farm.getName() === name) {
-            farm.restartScheduler(() => {
-                farm.destroyCheckerWindow();
-                farm.destroyAllFarmingWindows();
-            });
-
+            farm.restartScheduler();
             farm.updateStatus("idle");
         }
     });
