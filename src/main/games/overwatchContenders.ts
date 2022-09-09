@@ -48,7 +48,8 @@ export default class OverwatchContenders extends FarmTemplate {
                          * Double click to make sure the video is playing.
                          */
                         await frame!.click("button.ytp-large-play-button");
-                        await frame!.click("button.ytp-large-play-button");
+                        if (await page.$("button.ytp-play-button") != null)
+                            await frame!.click("button.ytp-large-play-button");
 
                         log("MAIN", "INFO", `${this.getName()}: Pressed play on stream`);
                         resolve(undefined);
