@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import styles from "../styles/IndicatorTag.module.scss";
+import Tooltip from "./Tooltip";
 
 interface Props {
     status: FarmStatus
@@ -27,11 +28,32 @@ export default function IndicatorTag({ status }: Props) {
             return styles["attention-required"];
     }, [status]);
 
+    /**
+     *
+     */
+    const getTooltipText: (status: FarmStatus) => any = useCallback((status: FarmStatus) => {
+        if (status === "disabled")
+            return "This farm is currently disabled and won't farm. Enable it in the settings.";
+        else if (status === "idle")
+            return "This farm is currently idle and will wait until the next scheduled check should be performed.";
+        else if (status === "checking")
+            return "This farm is currently checking if it is possible to farm. The farm may require you to log in if needed.";
+        else if (status === "farming")
+            return "This farm is currently farming. The currently farming windows may be shown via the \"eye-icon\" on the right.";
+        else if (status === "attention-required")
+            return "This farm has encountered an error and requires user attention. If needed please, clear the farm cache or restart the farming schedule.";
+    }, [status]);
+
     return (
-        <div
-            className={clsx(styles.container, getIndicatorClass(status))}
+        <Tooltip
+            placement="bottom"
+            tooltipText={getTooltipText(status)}
         >
-            {status}
-        </div>
+            <div
+                className={clsx(styles.container, getIndicatorClass(status))}
+            >
+                {status}
+            </div>
+        </Tooltip>
     );
 }

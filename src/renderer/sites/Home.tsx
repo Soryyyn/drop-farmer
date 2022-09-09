@@ -93,6 +93,7 @@ export default function Home() {
                         <ButtonNolabel
                             icon={faGithub}
                             primary={true}
+                            tooltipText="GitHub page for drop-farmer"
                             onClickAction={() => {
                                 window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn/drop-farmer");
                             }}
@@ -100,6 +101,7 @@ export default function Home() {
                         <ButtonNolabel
                             icon={faGlobe}
                             primary={true}
+                            tooltipText="Developer website"
                             onClickAction={() => {
                                 window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://soryn.dev");
                             }}
@@ -107,11 +109,13 @@ export default function Home() {
                         <ButtonNolabel
                             icon={faReceipt}
                             primary={true}
+                            tooltipText="Statistics"
                             onClickAction={() => { }}
                         />
                         <ButtonNolabel
                             icon={faGear}
                             primary={true}
+                            tooltipText="Settings"
                             onClickAction={() => {
                                 navigation("/settings");
                             }}
@@ -119,6 +123,7 @@ export default function Home() {
                         <ButtonNolabel
                             icon={faPowerOff}
                             primary={true}
+                            tooltipText="Quit application"
                             onClickAction={() => {
                                 window.api.sendOneWay(window.api.channels.shutdown);
                             }}

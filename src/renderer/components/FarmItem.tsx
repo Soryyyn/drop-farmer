@@ -1,9 +1,9 @@
-import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faAngleUp, faRotate, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import styles from "../styles/FarmItem.module.scss";
 import DisplayWindowsButton from "./DisplayWindowsButton";
-import FarmActionButton from "./FarmActionButton";
+import ExtraButton from "./ExtraButton";
 import IndicatorTag from "./IndicatorTag";
 
 /**
@@ -18,17 +18,35 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
      */
     const [showingWindows, setShowingWindows] = useState<boolean>(false);
 
-    /**
-     * If the farm action button should be shown.
-     */
-    const [showingActionButtons, setShowingActionButtons] = useState<boolean>(false);
-
     return (
         <div className={styles.container}>
             <div className={styles.firstRow}>
                 <div className={styles.left}>
-                    <p>{name}</p>
-                    <IndicatorTag status={status} />
+                    <p className={styles.title}>{name}</p>
+                    <div className={styles.details}>
+                        <IndicatorTag status={status} />
+                        {
+                            (status !== "disabled") &&
+                            <div className={styles.extraButtons}>
+                                <ExtraButton
+                                    icon={faRotate}
+                                    tooltipText="Restart farm"
+                                    onClickAction={() => {
+                                        window.api.log("INFO", `Clicked restart farm button on \"${name}\"`);
+                                        window.api.sendOneWay(window.api.channels.restartScheduler, (name));
+                                    }}
+                                />
+                                <ExtraButton
+                                    icon={faTrash}
+                                    tooltipText="Clear cache"
+                                    onClickAction={() => {
+                                        window.api.log("INFO", `Clicked button to clear cache on \"${name}\"`);
+                                        window.api.sendOneWay(window.api.channels.clearCache, (name));
+                                    }}
+                                />
+                            </div>
+                        }
+                    </div>
                 </div>
                 <DisplayWindowsButton
                     showing={showingWindows}
@@ -51,7 +69,7 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                     }}
                 />
             </div>
-            {
+            {/* {
                 (status === "attention-required" || showingActionButtons) &&
                 <div className={styles.secondRow}>
                     <FarmActionButton
@@ -75,7 +93,7 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                 size="1x"
                 className={styles.arrowShowActionButton}
                 onClick={() => setShowingActionButtons(!showingActionButtons)}
-            />
+            /> */}
         </div>
     );
 }

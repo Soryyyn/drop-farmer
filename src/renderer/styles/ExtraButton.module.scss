@@ -1,0 +1,30 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1 / 1;
+    background: rgba(59, 62, 97, 0.5);
+    border: 1px solid rgba(59, 62, 97, 0.4);
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px rgba(45, 42, 75, 0.05);
+
+    .label {
+        display: none;
+    }
+
+    .icon {
+        color: #0c0e16;
+    }
+
+    &:active,
+    &:hover {
+        cursor: pointer;
+        background: rgba(59, 62, 97, 0.8);
+    }
+
+    &:active {
+        .icon {
+            color: rgb(200, 222, 245);
+        }
+    }
+}

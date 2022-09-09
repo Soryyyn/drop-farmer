@@ -69,3 +69,19 @@ body {
     background-image: linear-gradient(rgb(200, 222, 245) 5%, rgb(71, 78, 136) 125%);
     font-family: "Rubik";
 }
+
+// Tooltip styling.
+.tippy-box[data-theme~="dark"] {
+    background: rgb(34, 37, 54);
+    box-shadow: 5px 5px 15px rgba(34, 37, 54, 0.4);
+    color: rgb(200, 222, 245);
+    padding: 0.5rem;
+    border-radius: 8px;
+    font-family: "Rubik";
+    font-size: 0.9rem;
+    text-align: center;
+
+    .tippy-arrow::before {
+        border-bottom-color: rgb(34, 37, 54);
+    }
+}
