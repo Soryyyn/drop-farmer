@@ -9,21 +9,18 @@
     width: 48px;
     box-sizing: border-box;
 
-    transition: 0.1s;
     user-select: none;
+    transition: all 0.1s;
 
     .icon {
         color: #0c0e16;
     }
 
-    &:active {
-        transform: scale(0.95);
-        transition: 0.1s;
-    }
-
+    &:active,
     &:hover {
-        transition: 0.1s;
         cursor: pointer;
+        outline: 2px solid rgba(200, 222, 245, 0.2);
+        outline-offset: 2px;
     }
 }
 
@@ -31,10 +28,17 @@
     box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
     background: rgba(59, 62, 97, 0.5);
     border: 1px solid rgba(59, 62, 97, 0.1);
+    transition: all 0.1s;
 
     &:hover,
     &:active {
         background: rgba(59, 62, 97, 0.7) !important;
+    }
+
+    &:active {
+        .icon {
+            color: rgb(200, 222, 245);
+        }
     }
 }
 
@@ -42,9 +46,16 @@
     box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
     background: rgba(59, 62, 97, 0.3);
     border: 2px solid rgba(226, 59, 87, 0.1);
+    transition: all 0.1s;
 
     &:hover,
     &:active {
-        background: rgba(59, 62, 97, 0.4) !important;
+        background: rgba(59, 62, 97, 0.7) !important;
+    }
+
+    &:active {
+        .icon {
+            color: rgb(200, 222, 245);
+        }
     }
 }

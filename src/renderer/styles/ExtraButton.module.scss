@@ -7,6 +7,7 @@
     border: 1px solid rgba(59, 62, 97, 0.4);
     border-radius: 5px;
     box-shadow: 2px 2px 8px rgba(45, 42, 75, 0.05);
+    transition: all 0.1s;
 
     .label {
         display: none;
@@ -20,6 +21,8 @@
     &:hover {
         cursor: pointer;
         background: rgba(59, 62, 97, 0.8);
+        outline: 2px solid rgba(200, 222, 245, 0.2);
+        outline-offset: 2px;
     }
 
     &:active {
