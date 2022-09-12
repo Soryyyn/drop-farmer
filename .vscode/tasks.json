@@ -30,6 +30,8 @@
                 "reveal": "silent",
                 "showReuseMessage": false,
                 "clear": true,
+                "revealProblems": "onProblem",
+                "close": false
             }
         },
         {
@@ -41,6 +43,8 @@
                 "reveal": "silent",
                 "showReuseMessage": false,
                 "clear": true,
+                "revealProblems": "onProblem",
+                "close": false
             }
         },
     ]
