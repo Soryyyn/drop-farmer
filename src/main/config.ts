@@ -104,13 +104,19 @@ export function getFarmsData(): FarmSaveData[] {
 export function updateApplicationSettings(newApplicationSettings: ApplicationSettings): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         try {
-            currentConfigData.applicationSettings = newApplicationSettings;
+            /**
+             * If at least one change happened do the write call.
+             */
+            if (currentConfigData.applicationSettings.disable3DModuleAnimation != newApplicationSettings.disable3DModuleAnimation ||
+                currentConfigData.applicationSettings.launchOnStartup != newApplicationSettings.launchOnStartup ||
+                currentConfigData.applicationSettings.showMainWindowOnLaunch != newApplicationSettings.showMainWindowOnLaunch) {
+                currentConfigData.applicationSettings = newApplicationSettings;
 
-            launchOnStartup(newApplicationSettings.launchOnStartup);
+                launchOnStartup(newApplicationSettings.launchOnStartup);
+                writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
+                log("MAIN", "INFO", `Updated application settings in config`);
+            }
 
-            writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
-
-            log("MAIN", "INFO", `Updated application settings in config`);
             resolve(undefined);
         } catch (err) {
             log("MAIN", "ERROR", `Failed updating application settings. ${err}`);
@@ -145,24 +151,39 @@ function updateUptimes(): void {
 export function updateFarmsData(newFarmsData: FarmSaveData[]): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         try {
+            /**
+             * Prematurely set the new farm config data even if nothing changed.
+             */
             currentConfigData.farms = newFarmsData;
+
+            /**
+             * If at least one change happened do the write call.
+             */
+            let changed: boolean = false;
 
             for (const farm of getFarms()) {
                 for (const newFarmData of newFarmsData) {
                     if (farm.getName() === newFarmData.name) {
-                        farm.applyNewSettings(newFarmData);
+                        /**
+                         * Only apply new changes if the current settings
+                         * differentiate from the new changes.
+                         */
+                        if (newFarmData.checkerWebsite !== farm.getFarmData().checkerWebsite ||
+                            newFarmData.checkingSchedule !== farm.getFarmData().checkingSchedule ||
+                            newFarmData.enabled !== farm.getFarmData().enabled) {
+                            farm.applyNewSettings(newFarmData);
+                            changed = true;
+                        }
                     }
                 }
             }
 
-            /**
-             * Set the uptime of the farm.
-             */
-            updateUptimes();
+            if (changed) {
+                updateUptimes();
+                writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
+                log("MAIN", "INFO", `Updated farms data in config`);
+            }
 
-            writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
-
-            log("MAIN", "INFO", `Updated farms data in config`);
             resolve(undefined);
         } catch (err) {
             log("MAIN", "ERROR", `Failed updating farms data. ${err}`);
@@ -180,9 +201,7 @@ function launchOnStartup(launchOnStartup: boolean): void {
     autoLauncher.isEnabled()
         .then((isEnabled: boolean) => {
             if (launchOnStartup) {
-                if (isEnabled) {
-                    log("MAIN", "INFO", "Launch on startup is already enabled");
-                } else {
+                if (!isEnabled) {
                     autoLauncher.enable();
                     log("MAIN", "INFO", "Enabled launch on startup");
                 }
@@ -190,8 +209,6 @@ function launchOnStartup(launchOnStartup: boolean): void {
                 if (isEnabled) {
                     autoLauncher.disable();
                     log("MAIN", "INFO", "Disabled launch on startup");
-                } else {
-                    log("MAIN", "INFO", "Launch on startup is disabled");
                 }
             }
         })
