@@ -5,7 +5,6 @@ import { log } from "./logger";
 
 const FILE_NAME = "config.json";
 const DEFAULT_STRUCTURE: ConfigFile = {
-    appUptime: 0,
     applicationSettings: {
         launchOnStartup: false,
         showMainWindowOnLaunch: true,
@@ -85,7 +84,12 @@ export function getApplicationSettings(): ApplicationSettings {
  * Get the current app uptime.
  */
 export function getAppUptime(): number {
-    return currentConfigData.appUptime;
+    let tempUptime = 0;
+
+    for (const farm of currentConfigData.farms)
+        tempUptime += farm.uptime;
+
+    return tempUptime;
 }
 
 /**
@@ -137,7 +141,6 @@ function updateUptimes(): void {
                  */
                 farm.timerAction("stop");
                 currentConfigData.farms[i].uptime += farm.getCurrentUptime();
-                currentConfigData.appUptime += farm.getCurrentUptime();
             }
         }
     }

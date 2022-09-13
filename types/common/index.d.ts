@@ -32,7 +32,6 @@ type ApplicationSettings = {
 }
 
 type ConfigFile = {
-    appUptime: number;
     applicationSettings: ApplicationSettings;
     farms: FarmSaveData[];
 }
