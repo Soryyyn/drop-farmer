@@ -1,9 +1,11 @@
 import { BrowserWindow } from "electron";
 import { resolve } from "path";
+import { getPage } from "puppeteer-in-electron";
 import { getApplicationSettings } from "./config";
 import { getFarms } from "./farmsManagement";
 import FarmTemplate from "./games/farmTemplate";
 import { log } from "./logger";
+import { getBrowserConnection } from "./puppeteer";
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -114,7 +116,11 @@ export async function createWindow(url: string, gameName?: string) {
         }
     });
 
-    await window.loadURL(url);
+    /**
+     * Changed loading of url to puppeteer to hopefully prevent errors.
+     */
+    let page = await getPage(getBrowserConnection(), window, true);
+    await page.goto(url);
 
     /**
      * Mute window.
