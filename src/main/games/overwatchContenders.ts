@@ -19,8 +19,8 @@ export default class OverwatchContenders extends FarmTemplate {
      * play on.
      * @param {number} scrollY The Y-scroll position.
      */
-    pressPlay(farmingWindow: Electron.BrowserWindow, scrollY: number) {
-        return new Promise(async (resolve, reject) => {
+    pressPlay(farmingWindow: Electron.BrowserWindow, scrollY: number): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
             try {
                 let page = await getPage(getBrowserConnection(), farmingWindow);
 
@@ -38,6 +38,7 @@ export default class OverwatchContenders extends FarmTemplate {
                  * Scroll to the video element.
                  */
                 await page.evaluate(`window.scrollTo(0, ${scrollY})`);
+                log("MAIN", "INFO", `${this.getName()}: Scrolled to ${scrollY}`);
 
                 /**
                  * Enter the iframe element and play the video.
@@ -45,34 +46,34 @@ export default class OverwatchContenders extends FarmTemplate {
                 await page.waitForSelector("iframe")
                     .then(async (iframeHandle) => {
                         await page.waitForNetworkIdle();
+                        log("MAIN", "INFO", `${this.getName()}: Endered iframe element`);
                         return await iframeHandle!.contentFrame();
                     })
                     .then(async (frame) => {
-                        await page.waitForNetworkIdle();
-                        await frame!.waitForTimeout(2000);
-                        return frame;
-                    })
-                    .then(async (frame) => {
+
                         /**
-                         * Double click to make sure the video is playing.
+                         * Get the video element.
                          */
-                        await frame!.click("button.ytp-large-play-button");
-                        while (await frame!.$("button.ytp-play-button") == null) {
-                            try {
-                                log("MAIN", "INFO", `${this.getName()}: Stream didn't start playing, clicking again`);
-                                await frame!.click("button.ytp-large-play-button");
-                                await frame!.waitForTimeout(1000);
-                            } catch (err) {
-                                log("MAIN", "INFO", `${this.getName()}: Stream already started playing`);
-                            }
+                        const videoElement = await frame!.$("video");
+
+                        /**
+                         * Check if the video element has the "src" tag
+                         * applied to see, if the video is playing.
+                         *
+                         * If the src tag is not set, keep trying to
+                         * play the video until it is set.
+                         */
+                        while (await (await videoElement!.getProperty("src")).jsonValue() == null || await (await videoElement!.getProperty("src")).jsonValue() == "") {
+                            await frame!.click("button.ytp-large-play-button");
+                            await frame!.waitForTimeout(2000);
                         }
 
                         /**
-                         * Focus the video player.
+                         * Stream started playing, focus the video container.
                          */
                         await frame!.focus("div.html5-video-container");
 
-                        log("MAIN", "INFO", `${this.getName()}: Stream started`);
+                        log("MAIN", "INFO", `${this.getName()}: Successfully started the stream`);
                         resolve(undefined);
                     });
             } catch (err) {
