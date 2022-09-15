@@ -38,7 +38,7 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                                 />
                                 <ExtraButton
                                     icon={faTrash}
-                                    tooltipText="Clear cache"
+                                    tooltipText="Clear cache of the farm. User login is required again after clearing."
                                     onClickAction={() => {
                                         window.api.log("INFO", `Clicked button to clear cache on \"${name}\"`);
                                         window.api.sendOneWay(window.api.channels.clearCache, (name));
