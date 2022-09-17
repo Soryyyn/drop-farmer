@@ -8,7 +8,7 @@ export default class OverwatchContenders extends FarmTemplate {
     constructor() {
         super(
             "overwatch-contenders",
-            "https://www.youtube.com/c/LofiGirl"
+            "https://www.youtube.com/c/OverwatchContenders"
         );
     }
 
@@ -143,7 +143,7 @@ export default class OverwatchContenders extends FarmTemplate {
                          */
                         this.createFarmingWindow(this.getCheckerWebsite())
                             .then(async (farmingWindow) => {
-                                let farmingWindowPage = await getPage(getBrowserConnection(), farmingWindow.window);
+                                let farmingWindowPage = await getPage(getBrowserConnection(), farmingWindow);
 
                                 await farmingWindowPage.waitForNetworkIdle();
                                 await farmingWindowPage.waitForTimeout(2000);
