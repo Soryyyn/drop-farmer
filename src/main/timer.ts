@@ -19,7 +19,6 @@ export class UptimeTimer {
     stopTimer(): void {
         if (this._timer.isRunning()) {
             this._amount += this._timer.ms();
-            console.log(this._amount);
 
             this._timer.stop();
             log("MAIN", "INFO", `${this._timerName}: stopped`);
