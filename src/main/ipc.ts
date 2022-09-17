@@ -99,8 +99,8 @@ handleAndReply(Channels.getInternetConnection, async (event) => {
 handleOneWay(Channels.clearCache, (event, name) => {
     getFarms().forEach((farm: FarmTemplate) => {
         if (farm.getName() === name) {
-            farm.restartScheduler(() => {
-                farm.clearFarmCache();
+            farm.restartScheduler(async () => {
+                await farm.clearFarmCache();
             });
 
             farm.updateStatus("idle");

@@ -366,8 +366,11 @@ export default abstract class FarmTemplate {
 
         this._taskManager.stop("checking-schedule");
 
-        if (stepsBetweenRestart)
-            stepsBetweenRestart();
+        if (stepsBetweenRestart != undefined)
+            Promise.all([
+                stepsBetweenRestart()
+            ]);
+
 
         this._taskManager.start("checking-schedule");
 
@@ -377,10 +380,10 @@ export default abstract class FarmTemplate {
     /**
      * Clear the cache of the farm.
      */
-    clearFarmCache(): void {
+    async clearFarmCache(): Promise<void> {
         createWindow(this._checkerWebsite)
             .then(async (createdWindow: Electron.BrowserWindow) => {
-                await createdWindow.webContents.session.clearStorageData();
+                await createdWindow.webContents.session.clearCache();
                 destroyWindow(createdWindow);
                 log("MAIN", "INFO", `${this._name}: Cleared cache`);
             })
