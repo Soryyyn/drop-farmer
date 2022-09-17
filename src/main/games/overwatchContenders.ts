@@ -8,74 +8,68 @@ export default class OverwatchContenders extends FarmTemplate {
     constructor() {
         super(
             "overwatch-contenders",
-            "https://overwatchleague.com/en-us/contenders"
+            "https://www.youtube.com/c/LofiGirl"
         );
     }
 
     /**
-     * Press play on the farming window to start farming.
+     * Login on the yt website for drops.
      *
-     * @param {Electron.BrowserWindow} farmingWindow The farming window to press
-     * play on.
-     * @param {number} scrollY The Y-scroll position.
+     * @param {Electron.BrowserWindow} window The window to control.
      */
-    pressPlay(farmingWindow: Electron.BrowserWindow, scrollY: number): Promise<any> {
+    login(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                let page = await getPage(getBrowserConnection(), farmingWindow);
-
+                let page = await getPage(getBrowserConnection(), window);
                 await page.waitForNetworkIdle();
 
                 /**
-                 * Reload the page if the iframe is not found.
+                 * Check if user agreement acception is needed.
                  */
-                while (await page.$("iframe") == null) {
-                    log("MAIN", "INFO", `${this.getName()}: Page needs to reload because iframe is not loaded`);
-                    await page.reload();
+                if (await page.$("#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb") != null) {
+                    await page.click("#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb");
+                    log("MAIN", "INFO", `${this.getName()}: Accepted user agreement`);
+                    await page.waitForNavigation();
                 }
 
-                /**
-                 * Scroll to the video element.
-                 */
-                await page.evaluate(`window.scrollTo(0, ${scrollY})`);
-                log("MAIN", "INFO", `${this.getName()}: Scrolled to ${scrollY}`);
+                await page.waitForNetworkIdle();
+                await page.waitForTimeout(2000);
 
                 /**
-                 * Enter the iframe element and play the video.
+                 * Check if not logged in logged in.
                  */
-                await page.waitForSelector("iframe")
-                    .then(async (iframeHandle) => {
-                        await page.waitForNetworkIdle();
-                        log("MAIN", "INFO", `${this.getName()}: Endered iframe element`);
-                        return await iframeHandle!.contentFrame();
-                    })
-                    .then(async (frame) => {
+                if (await page.$("#buttons > ytd-button-renderer > a") != null) {
+                    /**
+                     * Login needed.
+                     */
+                    await page.click("#buttons > ytd-button-renderer > a");
+                    await page.waitForNetworkIdle();
 
-                        /**
-                         * Get the video element.
-                         */
-                        const videoElement = await frame!.$("video");
+                    log("MAIN", "INFO", `${this.getName()}: Login is needed by user`);
 
-                        /**
-                         * Check if the video element has the "src" tag
-                         * applied to see, if the video is playing.
-                         *
-                         * If the src tag is not set, keep trying to
-                         * play the video until it is set.
-                         */
-                        while (await (await videoElement!.getProperty("src")).jsonValue() == null || await (await videoElement!.getProperty("src")).jsonValue() == "") {
-                            await frame!.click("button.ytp-large-play-button");
-                            await frame!.waitForTimeout(2000);
-                        }
+                    /**
+                     * Open checker window for user login.
+                     */
+                    window.show();
+                    window.focus();
 
-                        /**
-                         * Stream started playing, focus the video container.
-                         */
-                        await frame!.focus("div.html5-video-container");
-
-                        log("MAIN", "INFO", `${this.getName()}: Successfully started the stream`);
-                        resolve(undefined);
-                    });
+                    /**
+                     * Wait until user is back at account page by waiting for
+                     * the yt banner.
+                     */
+                    page.waitForSelector("#contentContainer > div.banner-visible-area.style-scope.ytd-c4-tabbed-header-renderer", { timeout: 0 })
+                        .then(() => {
+                            log("MAIN", "INFO", `${this.getName()}: Login completed`);
+                            window.hide();
+                            resolve(undefined);
+                        });
+                } else {
+                    /**
+                     * Login not needed.
+                     */
+                    log("MAIN", "INFO", `${this.getName()}: User already logged in, continuing`);
+                    resolve(undefined);
+                }
             } catch (err) {
                 reject(err);
             }
@@ -83,7 +77,7 @@ export default class OverwatchContenders extends FarmTemplate {
     }
 
     /**
-     * Check if the farming window is still live/farming.
+     * Check if farm can still farm.
      *
      * @param {Electron.BrowserWindow} window The window to control.
      */
@@ -94,12 +88,14 @@ export default class OverwatchContenders extends FarmTemplate {
                     log("MAIN", "INFO", `${this.getName()}: No farming windows, skipping checking step`);
                     resolve(undefined);
                 } else {
-                    let page = await getPage(getBrowserConnection(), this.getFarmingWindow(0).window);
+                    let page = await getPage(getBrowserConnection(), window);
+                    await page.waitForNetworkIdle();
 
                     /**
-                     * Check for *LIVE NOW* element.
+                     * Check if there are any livestreams.
+                     * If there are none, close the farming window.
                      */
-                    if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
+                    if (await page.$("ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]") != null) {
                         log("MAIN", "INFO", `${this.getName()}: Stream still live, continue farming`);
                         resolve(undefined);
                     } else {
@@ -113,73 +109,11 @@ export default class OverwatchContenders extends FarmTemplate {
             } catch (err) {
                 reject(err);
             }
-        });
+        })
     }
 
     /**
-     * Check if the user needs to login.
-     * If yes, wait until user finished logging in.
-     * If no, check if at main screen.
-     *
-     * @param {Electron.BrowserWindow} window The window to control.
-     */
-    login(window: Electron.BrowserWindow): Promise<any> {
-        return new Promise<any>(async (resolve, reject) => {
-            try {
-                log("MAIN", "INFO", `${this.getName()}: Login process started`);
-                let page = await getPage(getBrowserConnection(), window);
-
-                await page.waitForNetworkIdle();
-
-                /**
-                 * If sign in button under video has been found (user *not* logged in).
-                 */
-                if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a") !== null) {
-                    /**
-                     * Click the sign in button.
-                     */
-                    await page.click("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a");
-
-                    /**
-                     * Check if user has been moved to the login page.
-                     */
-                    try {
-                        await page.waitForSelector("#accountName");
-
-                        log("MAIN", "INFO", `${this.getName()}: Login is needed by user`);
-
-                        /**
-                         * Open checker window for user login.
-                         */
-                        window.show();
-                        window.focus();
-
-                        /**
-                         * Wait until user is back at main page with video element.
-                         */
-                        page.waitForSelector("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp", { timeout: 0 })
-                            .then(() => {
-                                log("MAIN", "INFO", `${this.getName()}: Login completed`);
-                                window.hide();
-                                resolve(undefined);
-                            });
-                    } catch (err) {
-                        log("MAIN", "INFO", `${this.getName()}: Login completed`);
-                        resolve(undefined);
-                    }
-                } else {
-                    log("MAIN", "INFO", `${this.getName()}: User already logged in, continuing`);
-                    resolve(undefined);
-                }
-            } catch (err) {
-                reject(err);
-            }
-        });
-    }
-
-    /**
-     * Check for the *LIVE NOW* element and open the window as a farming window
-     * and press play.
+     * Start farming.
      *
      * @param {Electron.BrowserWindow} window The window to control.
      */
@@ -187,6 +121,7 @@ export default class OverwatchContenders extends FarmTemplate {
         return new Promise<any>(async (resolve, reject) => {
             try {
                 let page = await getPage(getBrowserConnection(), window);
+                await page.waitForNetworkIdle();
 
                 /**
                  * Check if farming windows exist, if yes don't try to check for new stream.
@@ -197,17 +132,28 @@ export default class OverwatchContenders extends FarmTemplate {
                     this.updateStatus("farming");
                     resolve(undefined);
                 } else {
-                    await page.waitForTimeout(2000);
-
                     /**
-                     * Check for *LIVE NOW* element.
+                     * Check if there is a "LIVE" element / current livestream.
                      */
-                    if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                        log("MAIN", "INFO", `${this.getName()}: Found stream on main site`);
+                    if (await page.$("ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]") != null) {
+                        log("MAIN", "INFO", `${this.getName()}: Found livestream`);
 
+                        /**
+                         * Create the farming window and open the livestream.
+                         */
                         this.createFarmingWindow(this.getCheckerWebsite())
-                            .then(async (farmingWindow: Electron.BrowserWindow) => {
-                                await this.pressPlay(farmingWindow, 200);
+                            .then(async (farmingWindow) => {
+                                let farmingWindowPage = await getPage(getBrowserConnection(), farmingWindow.window);
+
+                                await farmingWindowPage.waitForNetworkIdle();
+                                await farmingWindowPage.waitForTimeout(2000);
+
+                                /**
+                                 * Click on the first video element which is found.
+                                 * In case of a livestream it is always the
+                                 * first one.
+                                 */
+                                await farmingWindowPage.click("#contents > ytd-video-renderer");
 
                                 log("MAIN", "INFO", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
 
@@ -216,12 +162,9 @@ export default class OverwatchContenders extends FarmTemplate {
                                 this.updateStatus("farming");
                                 resolve(undefined);
                             });
+
                     } else {
-                        /**
-                         * No live match right now.
-                         * Set the status back to idle.
-                         */
-                        log("MAIN", "INFO", `${this.getName()}: No live matches available, returning status back to idle`);
+                        log("MAIN", "INFO", `${this.getName()}: No livestream found, no need to farm`);
                         this.updateStatus("idle");
 
                         resolve(undefined);
@@ -230,6 +173,6 @@ export default class OverwatchContenders extends FarmTemplate {
             } catch (err) {
                 reject(err);
             }
-        });
+        })
     }
 }
