@@ -30,7 +30,7 @@
                     ],
                     "config": {
                         "name": "drop-farmer",
-                        "iconURL": "./resources/icon.ico",
+                        "iconURL": "https://github.com/Soryyyn/drop-farmer/blob/master/resources/icon.ico",
                         "setupIcon": "./resources/icon.ico"
                     }
                 },
