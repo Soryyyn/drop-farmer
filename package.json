@@ -29,13 +29,16 @@
                         "win32"
                     ],
                     "config": {
-                        "name": "drop-farmer"
+                        "name": "drop-farmer",
+                        "iconURL": "./resources/icon.ico",
+                        "setupIcon": "./resources/icon.ico"
                     }
                 },
                 {
                     "name": "@electron-forge/maker-deb",
                     "config": {
-                        "debianArch": "arm64"
+                        "debianArch": "arm64",
+                        "icon": "./resources/icon.png"
                     }
                 }
             ],
