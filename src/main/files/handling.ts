@@ -1,7 +1,8 @@
 import { app } from "electron";
 import { existsSync, readFileSync, writeFileSync } from "fs";
+import { rmSync } from "original-fs";
 import { join } from "path";
-import { log } from "./logger";
+import { log } from "../util/logger";
 
 /**
  * The userData (roaming/drop-farmer) directory in production mode.
@@ -16,11 +17,8 @@ export const APP_PATH: string = (process.env.NODE_ENV === "production") ? app.ge
  * @param {string|Buffer} data Data which is written to the file on creation.
  */
 export function createFile(fileName: string, data: string | Buffer): void {
-    if (existsSync(join(APP_PATH, fileName))) {
-        log("MAIN", "INFO", `File \"${fileName}\" already exists; skipping creation`);
-    } else {
+    if (!existsSync(join(APP_PATH, fileName))) {
         try {
-            log("MAIN", "INFO", `Creating file \"${fileName}\"`);
             writeFileSync(join(APP_PATH, fileName), data);
         } catch (err) {
             throw new Error(`Could not create file \"${fileName}\" at \"${APP_PATH}\". Reason: \"${err}\"`);
@@ -37,14 +35,11 @@ export function createFile(fileName: string, data: string | Buffer): void {
  */
 export function readFile(fileName: string): string {
     if (!existsSync(join(APP_PATH, fileName))) {
-        log("MAIN", "ERROR", `Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
         throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
     } else {
         try {
-            log("MAIN", "INFO", `Reading file \"${fileName}\" at \"${APP_PATH}\"`);
             return readFileSync(join(APP_PATH, fileName)).toString();
         } catch (err) {
-            log("MAIN", "ERROR", `Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
             throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
         }
     }
@@ -66,6 +61,23 @@ export function writeToFile(fileName: string, data: string, flag: "a" | "w"): vo
             writeFileSync(join(APP_PATH, fileName), data, { flag: flag })
         } catch (err) {
             throw new Error(`Could not write to file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+        }
+    }
+}
+
+/**
+ * Delete the specified file.
+ *
+ * @param {string} fileName The file to delete.
+ */
+export function deleteFile(fileName: string): void {
+    if (!existsSync(join(APP_PATH, fileName))) {
+        log("MAIN", "WARN", "Can't delete file which doesn't exist");
+    } else {
+        try {
+            rmSync(join(APP_PATH, fileName));
+        } catch (err) {
+            throw new Error(`Could not delete file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
         }
     }
 }

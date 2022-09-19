@@ -1,6 +1,6 @@
 import { app, Menu, Tray } from "electron";
 import { resolve } from "path";
-import { log } from "./logger";
+import { log } from "../util/logger";
 import { getMainWindow, setAppQuitting, showWindow } from "./windows";
 
 /**

@@ -1,5 +1,5 @@
 import { Timer } from "timer-node";
-import { log } from "./logger";
+import { log } from "../util/logger";
 
 /**
  * The timer class which handles the uptime tracking of the app or farm.

@@ -1,9 +1,9 @@
-import { getFarmsData, updateFarmsData } from "./config";
-import FarmTemplate from "./games/farmTemplate";
-import LeagueOfLegends from "./games/leagueOfLegends";
-import OverwatchContenders from "./games/overwatchContenders";
-import OverwatchLeague from "./games/overwatchLeague";
-import { log } from "./logger";
+import { getFarmsData, updateFarmsData } from "../config";
+import { log } from "../util/logger";
+import LeagueOfLegends from "./leagueOfLegends";
+import OverwatchContenders from "./overwatchContenders";
+import OverwatchLeague from "./overwatchLeague";
+import FarmTemplate from "./template";
 
 /**
  * All farms.

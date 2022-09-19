@@ -1,10 +1,10 @@
 import { app, ipcMain, shell } from "electron";
-import { Channels } from "./common/channels";
-import { getApplicationSettings, getFarmsData, updateApplicationSettings, updateFarmsData } from "./config";
-import { getFarmRendererData, getFarms } from "./farmsManagement";
-import FarmTemplate from "./games/farmTemplate";
-import { checkInternetConnection } from "./internet";
-import { log } from "./logger";
+import { Channels } from "../common/channels";
+import { getApplicationSettings, getFarmsData, updateApplicationSettings, updateFarmsData } from "../config";
+import { getFarmRendererData, getFarms } from "../farms/management";
+import type FarmTemplate from "../farms/template";
+import { checkInternetConnection } from "../util/internet";
+import { log } from "../util/logger";
 import { setAppQuitting } from "./windows";
 
 /**

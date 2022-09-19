@@ -3,9 +3,11 @@ import dayjs from "dayjs";
 import { app } from "electron";
 import { existsSync, writeFileSync } from "fs";
 import { join } from "path";
-import { APP_PATH, writeToFile } from "./fileHandling";
+import { APP_PATH, createFile, deleteFile, writeToFile } from "../files/handling";
 
 const FILE_NAME: string = ".log";
+const CRASHLOG_FILE_NAME = "crash.log";
+const recentLogs: string[] = [];
 
 /**
  * Create the `.log` file.
@@ -14,14 +16,17 @@ const FILE_NAME: string = ".log";
  * because it *needs* to exist before something can be logged.
  */
 export function initLogger(): void {
-    if (existsSync(join(join(APP_PATH), FILE_NAME))) {
-        return;
-    }
+    createLogFile();
+}
 
+/**
+ * Create the logfile.
+ */
+function createLogFile(): void {
     try {
-        writeFileSync(join(APP_PATH, FILE_NAME), "");
+        createFile(FILE_NAME, createLogEntry("MAIN", "INFO", "Created logfile"));
     } catch (err) {
-        throw new Error(`Could not create file \"${FILE_NAME}\" at \"${join(APP_PATH)}\". Reason: ${err}`);
+        log("MAIN", "FATAL", `Failed creating logfile. ${err}`);
     }
 }
 
@@ -99,23 +104,47 @@ export function log(location: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WA
     let terminalEntry: string = createTerminalLogEntry(location, type, message);
 
     /**
+     * Add log to recent entries for crash log.
+     */
+    recentLogs.push(entry);
+
+    /**
      * If in production environment disable debug-type loggings.
      */
     if ((process.env.NODE_ENV === "production") && type === "DEBUG")
         return;
 
     try {
+        /**
+         * Only log to the file if it exists.
+         */
+        if (existsSync(join(APP_PATH, FILE_NAME)))
+            writeToFile(FILE_NAME, `${entry}`, "a");
+
         console.log(terminalEntry);
-        writeToFile(FILE_NAME, `${entry}`, "a");
 
         /**
          * After logging, check if the type is "FATAL".
          * If it is, then soft quit the application.
          */
         if (type === "FATAL") {
+            createCrashLog();
             app.quit();
         }
     } catch (err) {
         console.log(err);
     }
+}
+
+/**
+ * Create / clear the crash log file with all logs from the current run (recent logs).
+ */
+function createCrashLog(): void {
+    /**
+     * Delete the file if its exists.
+     */
+    if (existsSync(join(APP_PATH, CRASHLOG_FILE_NAME)))
+        deleteFile(CRASHLOG_FILE_NAME);
+
+    createFile(CRASHLOG_FILE_NAME, "".concat(...recentLogs));
 }

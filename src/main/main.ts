@@ -1,11 +1,11 @@
 import { app, session } from "electron";
 import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
 import { initConfig, saveCurrentDataOnQuit } from "./config";
-import { destroyAllFarmWindows, initFarms } from "./farmsManagement";
-import { initLogger, log } from "./logger";
-import { initPuppeteerConnection } from "./puppeteer";
-import { createTray, destroyTray } from "./tray";
-import { createMainWindow } from "./windows";
+import { createTray, destroyTray } from "./electron/tray";
+import { createMainWindow } from "./electron/windows";
+import { destroyAllFarmWindows, initFarms } from "./farms/management";
+import { initLogger, log } from "./util/logger";
+import { initPuppeteerConnection } from "./util/puppeteer";
 
 /**
  * If application is in run in production environment.
@@ -72,27 +72,21 @@ app.whenReady()
         /**
          * Load all ipc listeners when the app is ready.
          */
-        require("./ipc");
+        require("./electron/ipc");
     });
 
 /**
- * Close all farm windows when app quits.
+ * Quitting routine.
  */
 app.on("before-quit", () => {
-    /**
-     * Save the cache of each farm.
-     */
     saveCurrentDataOnQuit();
-
-    /**
-     * Destroy tray.
-     */
     destroyTray();
-
-    /**
-     * Destroy all windows.
-     */
     destroyAllFarmWindows();
+});
 
+/**
+ * When quitting routine has finished.
+ */
+app.on("quit", () => {
     log("MAIN", "INFO", "Quitting application");
 });

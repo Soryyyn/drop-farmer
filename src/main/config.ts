@@ -1,7 +1,7 @@
 import AutoLaunch from "auto-launch";
-import { getFarms } from "./farmsManagement";
-import { createFile, readFile, writeToFile } from "./fileHandling";
-import { log } from "./logger";
+import { getFarms } from "./farms/management";
+import { createFile, readFile, writeToFile } from "./files/handling";
+import { log } from "./util/logger";
 
 const FILE_NAME = "config.json";
 const DEFAULT_STRUCTURE: ConfigFile = {
