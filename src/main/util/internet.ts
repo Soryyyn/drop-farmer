@@ -1,4 +1,7 @@
 import isOnline from "is-online";
+import { Channels } from "../common/channels";
+import { sendOneWay } from "../electron/ipc";
+import { getMainWindow } from "../electron/windows";
 import { log } from "./logger";
 
 /**
@@ -7,26 +10,27 @@ import { log } from "./logger";
 let internetConnection: boolean = false;
 
 /**
- * Check the current internet connection.
+ * Repeatedly (every 5s) check the internet connection and notify via ipc.
  */
-export async function checkInternetConnection() {
-    return new Promise((resolve) => {
-        log("MAIN", "INFO", "Checking internet connection");
+export function internetConnectionChecker(): void {
+    isOnline()
+        .then((connection: boolean) => {
+            internetConnection = connection;
+            sendOneWay(getMainWindow(), Channels.internetChange, connection);
+        })
+        .catch((err) => {
+            log("MAIN", "FATAL", `Error checking internet connection. ${err}`);
+        });
 
-        isOnline()
-            .then((connection: boolean) => {
-                resolve(connection);
-            })
-            .catch((err) => {
-                log("MAIN", "FATAL", `Error checking internet connection. ${err}`);
-            });
-    });
+    /**
+     * Recursive calling.
+     */
+    setTimeout(internetConnectionChecker, 15000);
 }
 
 /**
  * Returns the current internet connection.
  */
 export async function getCurrentInternetConnection(): Promise<boolean> {
-    await checkInternetConnection();
     return internetConnection;
 }

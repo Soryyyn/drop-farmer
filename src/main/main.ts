@@ -4,6 +4,7 @@ import { initConfig, saveCurrentDataOnQuit } from "./config";
 import { createTray, destroyTray } from "./electron/tray";
 import { createMainWindow } from "./electron/windows";
 import { destroyAllFarmWindows, initFarms } from "./farms/management";
+import { internetConnectionChecker } from "./util/internet";
 import { initLogger, log } from "./util/logger";
 import { initPuppeteerConnection } from "./util/puppeteer";
 
@@ -30,6 +31,11 @@ initFarms();
  * Puppeteer connection to electron application must happen before the app is ready.
  */
 initPuppeteerConnection();
+
+/**
+ * Repeatedly check the internet connection.
+ */
+internetConnectionChecker();
 
 /**
  * Gets executed when electron has finished starting.

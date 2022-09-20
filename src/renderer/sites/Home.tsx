@@ -39,15 +39,11 @@ export default function Home() {
         window.api.log("INFO", "Rendering home page")
 
         /**
-         * Current internet connection.
+         * Current internet connection listener.
          */
-        window.api.sendAndWait(window.api.channels.getInternetConnection)
-            .then((connection: any) => {
-                setInternetConnection(connection);
-            })
-            .catch((err) => {
-                window.api.log("ERROR", `Error when setting internet connection. ${err}`);
-            });
+        window.api.handleOneWay(window.api.channels.internetChange, (event, connection) => {
+            setInternetConnection(connection);
+        });
 
         /**
          * 3D-Animations disabled?
@@ -72,7 +68,7 @@ export default function Home() {
             });
 
         return () => {
-            window.api.removeAllListeners(window.api.channels.getInternetConnection);
+            window.api.removeAllListeners(window.api.channels.internetChange);
             window.api.removeAllListeners(window.api.channels.get3DAnimationsEnabled);
             window.api.removeAllListeners(window.api.channels.getApplicationVersion);
         };

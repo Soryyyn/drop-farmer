@@ -3,7 +3,6 @@ import { Channels } from "../common/channels";
 import { getApplicationSettings, getFarmsData, updateApplicationSettings, updateFarmsData } from "../config";
 import { getFarmRendererData, getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
-import { checkInternetConnection } from "../util/internet";
 import { log } from "../util/logger";
 import { setAppQuitting } from "./windows";
 
@@ -14,7 +13,7 @@ import { setAppQuitting } from "./windows";
  * @param {(event: IpcMainEvent, ...args: any[]) => void} listener Callback when event has been received.
  */
 export function handleOneWay(channel: Channels, listener: (event: Electron.IpcMainEvent, ...args: any[]) => void) {
-    log("MAIN", "INFO", `Handling one-way signal on ${channel}`);
+    log("MAIN", "DEBUG", `Handling one-way signal on ${channel}`);
     ipcMain.on(channel, listener);
 }
 
@@ -25,7 +24,7 @@ export function handleOneWay(channel: Channels, listener: (event: Electron.IpcMa
  * @param {(event: IpcMainEvent, ...args: any[]) => void} listener Callback to execute when event has been received.
  */
 export function handleAndReply(channel: string, listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any) {
-    log("MAIN", "INFO", `Handling two-way signal on ${channel}`);
+    log("MAIN", "DEBUG", `Handling two-way signal on ${channel}`);
     ipcMain.handle(channel, listener);
 }
 
@@ -37,7 +36,7 @@ export function handleAndReply(channel: string, listener: (event: Electron.IpcMa
  * @param {...any[]} args The data to send with the signal.
  */
 export function sendOneWay(window: Electron.BrowserWindow, channel: string, ...args: any[]) {
-    log("MAIN", "INFO", `Sending one-way signal on ${channel}`);
+    log("MAIN", "DEBUG", `Sending one-way signal on ${channel}`);
     window.webContents.send(channel, ...args);
 }
 
@@ -90,10 +89,6 @@ handleAndReply(Channels.get3DAnimationsDisabled, () => {
 
 handleAndReply(Channels.getApplicationVersion, () => {
     return app.getVersion();
-});
-
-handleAndReply(Channels.getInternetConnection, async (event) => {
-    return await checkInternetConnection()
 });
 
 handleOneWay(Channels.clearCache, (event, name) => {
