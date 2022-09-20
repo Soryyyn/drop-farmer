@@ -170,6 +170,18 @@ export default function Settings() {
                                         }}
                                         description="Disable the 3D models animation on various pages (Home, etc.)."
                                     />
+
+                                    <SettingsItemToggle
+                                        label="Enable debug logging"
+                                        checked={applicationSettings?.debugLogs}
+                                        disabled={false}
+                                        onClick={(checked: boolean) => {
+                                            let tempSettings = { ...applicationSettings };
+                                            tempSettings.debugLogs = checked;
+                                            setApplicationSettings(tempSettings);
+                                        }}
+                                        description="Enable the debug logs. Use for debugging or reporting errors."
+                                    />
                                 </>
                             }
                             {

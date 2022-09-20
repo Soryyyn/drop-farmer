@@ -1,13 +1,14 @@
 import * as color from "ansi-colors";
 import dayjs from "dayjs";
 import { app } from "electron";
-import { existsSync, writeFileSync } from "fs";
+import { existsSync } from "fs";
 import { join } from "path";
 import { APP_PATH, createFile, deleteFile, writeToFile } from "../files/handling";
 
 const FILE_NAME: string = ".log";
 const CRASHLOG_FILE_NAME = "crash.log";
 const recentLogs: string[] = [];
+let debugLogsEnabled: boolean = false;
 
 /**
  * Create the `.log` file.
@@ -113,7 +114,7 @@ export function log(location: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WA
     /**
      * If in production environment disable debug-type loggings.
      */
-    if ((process.env.NODE_ENV === "production") && type === "DEBUG")
+    if ((process.env.NODE_ENV === "production") && type === "DEBUG" || !debugLogsEnabled && type === "DEBUG")
         return;
 
     try {
@@ -149,4 +150,13 @@ function createCrashLog(): void {
         deleteFile(CRASHLOG_FILE_NAME);
 
     createFile(CRASHLOG_FILE_NAME, "".concat(...recentLogs));
+}
+
+/**
+ * Enable or disable the debug logs.
+ *
+ * @param {boolean} enabled Value for the new debug logs.
+ */
+export function debugLogs(enabled: boolean): void {
+    debugLogsEnabled = enabled;
 }

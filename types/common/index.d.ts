@@ -29,6 +29,7 @@ type ApplicationSettings = {
     launchOnStartup: boolean;
     showMainWindowOnLaunch: boolean;
     disable3DModuleAnimation: boolean;
+    debugLogs: boolean;
 }
 
 type ConfigFile = {

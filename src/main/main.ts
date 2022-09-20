@@ -1,6 +1,6 @@
 import { app, session } from "electron";
 import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
-import { initConfig, saveCurrentDataOnQuit } from "./config";
+import { getApplicationSettings, initConfig, saveCurrentDataOnQuit } from "./config";
 import { createTray, destroyTray } from "./electron/tray";
 import { createMainWindow } from "./electron/windows";
 import { destroyAllFarmWindows, initFarms } from "./farms/management";

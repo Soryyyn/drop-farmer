@@ -1,7 +1,7 @@
 import AutoLaunch from "auto-launch";
 import { getFarms } from "./farms/management";
 import { createFile, readFile, writeToFile } from "./files/handling";
-import { log } from "./util/logger";
+import { debugLogs, log } from "./util/logger";
 
 const FILE_NAME = "config.json";
 const DEFAULT_STRUCTURE: ConfigFile = {
@@ -9,13 +9,14 @@ const DEFAULT_STRUCTURE: ConfigFile = {
         launchOnStartup: false,
         showMainWindowOnLaunch: true,
         disable3DModuleAnimation: false,
+        debugLogs: false
     },
     farms: [],
 }
 const autoLauncher = new AutoLaunch({
     name: "drop-farmer"
 });
-let currentConfigData: ConfigFile;
+let currentConfigData: ConfigFile = DEFAULT_STRUCTURE;
 
 /**
  * Initialize the config file.
@@ -23,6 +24,11 @@ let currentConfigData: ConfigFile;
 export function initConfig(): void {
     createConfigFile();
     currentConfigData = addNotFoundEntries(readConfigFile(), DEFAULT_STRUCTURE);
+
+    /**
+     * Enable or disable the debug logs.
+     */
+    debugLogs(currentConfigData.applicationSettings.debugLogs);
 }
 
 /**
@@ -113,9 +119,11 @@ export function updateApplicationSettings(newApplicationSettings: ApplicationSet
              */
             if (currentConfigData.applicationSettings.disable3DModuleAnimation != newApplicationSettings.disable3DModuleAnimation ||
                 currentConfigData.applicationSettings.launchOnStartup != newApplicationSettings.launchOnStartup ||
-                currentConfigData.applicationSettings.showMainWindowOnLaunch != newApplicationSettings.showMainWindowOnLaunch) {
+                currentConfigData.applicationSettings.showMainWindowOnLaunch != newApplicationSettings.showMainWindowOnLaunch ||
+                currentConfigData.applicationSettings.debugLogs != newApplicationSettings.debugLogs) {
                 currentConfigData.applicationSettings = newApplicationSettings;
 
+                debugLogs(newApplicationSettings.debugLogs);
                 launchOnStartup(newApplicationSettings.launchOnStartup);
                 writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
                 log("MAIN", "INFO", `Updated application settings in config`);
