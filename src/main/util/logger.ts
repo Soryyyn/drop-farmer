@@ -60,9 +60,11 @@ function createTerminalLogEntry(location: "MAIN" | "RENDERER", type: "FATAL" | "
      */
     let typeText: string;
     if (type === "FATAL" || type === "ERROR") {
-        typeText = color.bold.red(`[${type}]`)
+        typeText = color.bold.red(`[${type}]`);
     } else if (type === "WARN") {
-        typeText = color.bold.yellow(`[${type}]`)
+        typeText = color.bold.yellow(`[${type}]`);
+    } else if (type === "DEBUG") {
+        typeText = color.bold.cyan(`[${type}]`);
     } else {
         typeText = color.bold.blue(`[${type}]`);
     }

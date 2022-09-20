@@ -11,9 +11,7 @@ contextBridge.exposeInMainWorld("api", {
     /**
      * The channels for ipc communication.
      */
-    channels: {
-        ...Channels
-    },
+    channels: Channels,
     /**
      * Call the main process to execute functions on main process without
      * waiting for a response.

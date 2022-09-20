@@ -48,7 +48,7 @@ export default function Settings() {
      * Get the settings file data from main process.
      */
     useEffect(() => {
-        window.api.log("INFO", "Rendering settings page");
+        window.api.log("DEBUG", "Rendering settings page");
         window.api.sendAndWait(window.api.channels.getSettings)
             .then((data: any) => {
                 setApplicationSettings(data.applicationSettings);
@@ -82,7 +82,7 @@ export default function Settings() {
                             primary={false}
                             label="Home"
                             onClickAction={() => {
-                                window.api.log("INFO", "Pressed home button on settings page");
+                                window.api.log("DEBUG", "Pressed home button on settings page");
                                 navigation("/");
                             }}
                         />
@@ -96,7 +96,7 @@ export default function Settings() {
                                     applicationSettings: applicationSettings,
                                     farmSettings: farmSettings
                                 })
-                                window.api.log("INFO", "Pressed save button on settings page");
+                                window.api.log("DEBUG", "Pressed save button on settings page");
                             }}
                         />
                     </div>

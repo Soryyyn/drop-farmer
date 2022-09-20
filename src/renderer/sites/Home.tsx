@@ -36,7 +36,7 @@ export default function Home() {
      * On site load, get internet connection
      */
     useEffect(() => {
-        window.api.log("INFO", "Rendering home page")
+        window.api.log("DEBUG", "Rendering home page")
 
         /**
          * Current internet connection listener.
