@@ -205,6 +205,22 @@ export default class OverwatchLeague extends FarmTemplate {
                     if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
                         log("MAIN", "INFO", `${this.getName()}: Found stream on main site`);
 
+                        /**
+                         * Get the stream title.
+                         */
+                        const innerText = await page.$eval("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__SectionTitleStyled-sc-14q9if3-11.jFcduW.section-titlestyles__Container-sc-1wlp19u-0.gquVmG > div.section-titlestyles__NormalTitleContainer-sc-1wlp19u-2.bDbfSO > h2 > div", (el: any) => el.innerText);
+
+                        /**
+                         * Check if the stream title container the text
+                         * "Co-Stream" (case insensitive).
+                         * If yes don't farm.
+                         */
+                        if (innerText.match(/Co-Stream/i)) {
+                            log("MAIN", "INFO", `${this.getName()}: Co-Stream running, no need to farm`);
+                            this.updateStatus("idle");
+                            resolve(undefined);
+                        }
+
                         this.createFarmingWindow(this.getCheckerWebsite())
                             .then(async (farmingWindow: Electron.BrowserWindow) => {
                                 await this.pressPlay(farmingWindow, 200);
