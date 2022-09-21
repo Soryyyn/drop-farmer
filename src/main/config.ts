@@ -72,7 +72,7 @@ function addNotFoundEntries(readObject: any, defaultObject: any): any {
 
     if (writtenAmount > 0) {
         writeToFile(FILE_NAME, JSON.stringify(newObjectToWrite, null, 4), "w");
-        log("MAIN", "INFO", `Written ${writtenAmount} properties to settings file`);
+        log("MAIN", "DEBUG", `Written ${writtenAmount} properties to settings file`);
         return readConfigFile();
     } else {
         return readObject;
@@ -126,7 +126,7 @@ export function updateApplicationSettings(newApplicationSettings: ApplicationSet
                 debugLogs(newApplicationSettings.debugLogs);
                 launchOnStartup(newApplicationSettings.launchOnStartup);
                 writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
-                log("MAIN", "INFO", `Updated application settings in config`);
+                log("MAIN", "DEBUG", `Updated application settings in config`);
             }
 
             resolve(undefined);
@@ -192,7 +192,7 @@ export function updateFarmsData(newFarmsData: FarmSaveData[]): Promise<void> {
             if (changed) {
                 updateUptimes();
                 writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
-                log("MAIN", "INFO", `Updated farms data in config`);
+                log("MAIN", "DEBUG", `Updated farms data in config`);
             }
 
             resolve(undefined);
@@ -235,7 +235,7 @@ export function saveCurrentDataOnQuit(): void {
     updateUptimes();
     try {
         writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
-        log("MAIN", "INFO", "Wrote runtime config to file");
+        log("MAIN", "DEBUG", "Wrote runtime config to file");
     } catch (err) {
         log("MAIN", "ERROR", `Failed to write runtime config to file. ${err}`);
     }

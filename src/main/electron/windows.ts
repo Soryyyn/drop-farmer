@@ -62,11 +62,11 @@ export function createMainWindow(isProd: boolean): void {
      */
     mainWindow.on("ready-to-show", () => {
         if (getApplicationSettings().showMainWindowOnLaunch) {
-            log("MAIN", "INFO", `Created main window (shown) ${(!isProd ? "in dev mode" : "")}`);
+            log("MAIN", "DEBUG", `Created main window (shown) ${(!isProd ? "in dev mode" : "")}`);
             mainWindow.show();
             mainWindow.focus();
         } else {
-            log("MAIN", "INFO", `Created main window (hidden) ${(!isProd ? "in dev mode" : "")}`);
+            log("MAIN", "DEBUG", `Created main window (hidden) ${(!isProd ? "in dev mode" : "")}`);
         }
     });
 
@@ -131,9 +131,9 @@ export async function createWindow(url: string, gameName?: string) {
      * Decide if the windows is for a farm or just a general window.
      */
     if (gameName)
-        log("MAIN", "INFO", `Created window for \"${gameName}\"`);
+        log("MAIN", "DEBUG", `Created window for \"${gameName}\"`);
     else
-        log("MAIN", "INFO", "Created general window");
+        log("MAIN", "DEBUG", "Created general window");
     return window;
 }
 
@@ -144,7 +144,7 @@ export async function createWindow(url: string, gameName?: string) {
  * @param {Electron.BrowserWindow} window The window to destroy.
  */
 export function destroyWindow(window: Electron.BrowserWindow): void {
-    log("MAIN", "INFO", `Destroyed window(${window.id})`);
+    log("MAIN", "DEBUG", `Destroyed window(${window.id})`);
     window.destroy();
 }
 
@@ -155,7 +155,7 @@ export function destroyWindow(window: Electron.BrowserWindow): void {
  * @param {boolean} isMainWindow If the window is the main application window.
  */
 export function showWindow(window: Electron.BrowserWindow, isMainWindow: boolean): void {
-    log("MAIN", "INFO", `Showing window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`)
+    log("MAIN", "DEBUG", `Showing window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`)
     window.show();
     window.focus();
 }
@@ -167,7 +167,7 @@ export function showWindow(window: Electron.BrowserWindow, isMainWindow: boolean
  * @param {boolean} isMainWindow If the window is the main application window.
  */
 export function hideWindow(window: Electron.BrowserWindow, isMainWindow: boolean): void {
-    log("MAIN", "INFO", `Hidding window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`)
+    log("MAIN", "DEBUG", `Hidding window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`)
     window.hide();
 }
 
@@ -177,7 +177,7 @@ export function hideWindow(window: Electron.BrowserWindow, isMainWindow: boolean
  * @param {Electron.BrowserWindow} window The window to mute.
  */
 function muteWindow(window: Electron.BrowserWindow): void {
-    log("MAIN", "INFO", `Muted window(${window.id})`);
+    log("MAIN", "DEBUG", `Muted window(${window.id})`);
     window.webContents.setAudioMuted(true);
 }
 
@@ -187,7 +187,7 @@ function muteWindow(window: Electron.BrowserWindow): void {
  * @param {Electron.BrowserWindow} window The window to reload.
  */
 export function reloadWindow(window: Electron.BrowserWindow): void {
-    log("MAIN", "INFO", `Reloaded window(${window.id})`);
+    log("MAIN", "DEBUG", `Reloaded window(${window.id})`);
     window.reload();
 }
 

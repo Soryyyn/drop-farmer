@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useHandleOneWay } from "../hooks/useHandleOneWay";
+import { useSendAndWait } from "../hooks/useSendAndWait";
 import styles from "../styles/Sidebar.module.scss";
 import FarmItem from "./FarmItem";
 
@@ -11,22 +13,13 @@ export default function Sidebar() {
      */
     const [farms, setFarms] = useState<newFarmRendererObject[]>([]);
 
-    /**
-     * On site load, get all farms from main process and display the enabled ones.
-     */
-    useEffect(() => {
-        window.api.sendAndWait(window.api.channels.getFarms)
-            .then((data: any) => {
-                setFarms(data);
-            })
-            .catch((err) => {
-                window.api.log("ERROR", `Error when setting farms. ${err}`);
-            });
-
-        return () => {
-            window.api.removeAllListeners(window.api.channels.getFarms);
-        };
-    }, []);
+    useSendAndWait(window.api.channels.getFarms, null, (err, response) => {
+        if (err) {
+            window.api.log("ERROR", err);
+        } else {
+            setFarms(response);
+        }
+    });
 
     /**
      * Handle the call from main when the farms are being checked for farming.
@@ -34,40 +27,32 @@ export default function Sidebar() {
      * - Check if the changed status of farm is the current one, if not ignore.
      * - If it is this one, then change the status.
      */
-    useEffect(() => {
-        window.api.handleOneWay(window.api.channels.farmStatusChange, (event, changedStatus: newFarmRendererObject) => {
-            /**
-             * Create empty array for the state.
-             */
-            let tempCopy: newFarmRendererObject[] = [];
+    useHandleOneWay(window.api.channels.farmStatusChange, farms, (event, data) => {
+        /**
+         * Create empty array for the state.
+         */
+        let tempCopy: newFarmRendererObject[] = [];
 
-            /**
-             * Check which farm had a status change.
-             */
-            for (let i = 0; i < farms.length; i++) {
-
-                if (farms[i].name === changedStatus.name) {
-                    /**
-                     * Clear the temporary state to apply latest changes to states.
-                     */
-                    tempCopy = [];
-                    tempCopy = [...farms];
-                    tempCopy[i] = changedStatus;
-                }
+        /**
+         * Check which farm had a status change.
+         */
+        for (let i = 0; i < farms.length; i++) {
+            if (farms[i].name === data.name) {
+                /**
+                 * Clear the temporary state to apply latest changes to states.
+                 */
+                tempCopy = [];
+                tempCopy = [...farms];
+                tempCopy[i] = data;
             }
+        }
 
-            /**
-             * Set the state after going through each farm.
-             */
-            setFarms(tempCopy);
-
-            window.api.log("INFO", "Set new farms status");
-        });
-
-        return () => {
-            window.api.removeAllListeners(window.api.channels.farmStatusChange);
-        };
-    }, [farms])
+        /**
+         * Set the state after going through each farm.
+         */
+        setFarms(tempCopy);
+        window.api.log("DEBUG", "Set new farms status");
+    });
 
     return (
         <div className={styles.container}>

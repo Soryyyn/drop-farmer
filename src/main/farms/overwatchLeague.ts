@@ -30,7 +30,7 @@ export default class OverwatchLeague extends FarmTemplate {
                  * Reload the page if the iframe is not found.
                  */
                 while (await page.$("iframe") == null) {
-                    log("MAIN", "INFO", `${this.getName()}: Page needs to reload because iframe is not loaded`);
+                    log("MAIN", "DEBUG", `${this.getName()}: Page needs to reload because iframe is not loaded`);
                     await page.reload();
                 }
 
@@ -38,7 +38,7 @@ export default class OverwatchLeague extends FarmTemplate {
                  * Scroll to the video element.
                  */
                 await page.evaluate(`window.scrollTo(0, ${scrollY})`);
-                log("MAIN", "INFO", `${this.getName()}: Scrolled to ${scrollY}`);
+                log("MAIN", "DEBUG", `${this.getName()}: Scrolled to ${scrollY}`);
 
                 /**
                  * Enter the iframe element and play the video.
@@ -46,7 +46,7 @@ export default class OverwatchLeague extends FarmTemplate {
                 await page.waitForSelector("iframe")
                     .then(async (iframeHandle) => {
                         await page.waitForNetworkIdle();
-                        log("MAIN", "INFO", `${this.getName()}: Endered iframe element`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Endered iframe element`);
                         return await iframeHandle!.contentFrame();
                     })
                     .then(async (frame) => {
@@ -73,7 +73,7 @@ export default class OverwatchLeague extends FarmTemplate {
                          */
                         await frame!.focus("div.html5-video-container");
 
-                        log("MAIN", "INFO", `${this.getName()}: Successfully started the stream`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Successfully started the stream`);
                         resolve(undefined);
                     });
             } catch (err) {
@@ -91,7 +91,7 @@ export default class OverwatchLeague extends FarmTemplate {
         return new Promise<any>(async (resolve, reject) => {
             try {
                 if (this.getFarmingWindows().length === 0) {
-                    log("MAIN", "INFO", `${this.getName()}: No farming windows, skipping checking step`);
+                    log("MAIN", "DEBUG", `${this.getName()}: No farming windows, skipping checking step`);
                     resolve(undefined);
                 } else {
                     let page = await getPage(getBrowserConnection(), this.getFarmingWindow(0).window);
@@ -100,12 +100,12 @@ export default class OverwatchLeague extends FarmTemplate {
                      * Check for *LIVE NOW* element.
                      */
                     if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                        log("MAIN", "INFO", `${this.getName()}: Stream still live, continue farming`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Stream still live, continue farming`);
                         resolve(undefined);
                     } else {
                         this.removeFarmingWindowFromArray(0);
 
-                        log("MAIN", "INFO", `${this.getName()}: Stream not live anymore, stopping farming`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Stream not live anymore, stopping farming`);
 
                         resolve(undefined);
                     }
@@ -126,7 +126,7 @@ export default class OverwatchLeague extends FarmTemplate {
     login(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                log("MAIN", "INFO", `${this.getName()}: Login process started`);
+                log("MAIN", "DEBUG", `${this.getName()}: Login process started`);
                 let page = await getPage(getBrowserConnection(), window);
 
                 await page.waitForNetworkIdle();
@@ -146,7 +146,7 @@ export default class OverwatchLeague extends FarmTemplate {
                     try {
                         await page.waitForSelector("#accountName");
 
-                        log("MAIN", "INFO", `${this.getName()}: Login is needed by user`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Login is needed by user`);
 
                         /**
                          * Open checker window for user login.
@@ -159,16 +159,16 @@ export default class OverwatchLeague extends FarmTemplate {
                          */
                         page.waitForSelector("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp", { timeout: 0 })
                             .then(() => {
-                                log("MAIN", "INFO", `${this.getName()}: Login completed`);
+                                log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
                                 window.hide();
                                 resolve(undefined);
                             });
                     } catch (err) {
-                        log("MAIN", "INFO", `${this.getName()}: Login completed`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
                         resolve(undefined);
                     }
                 } else {
-                    log("MAIN", "INFO", `${this.getName()}: User already logged in, continuing`);
+                    log("MAIN", "DEBUG", `${this.getName()}: User already logged in, continuing`);
                     resolve(undefined);
                 }
             } catch (err) {
@@ -192,7 +192,7 @@ export default class OverwatchLeague extends FarmTemplate {
                  * Check if farming windows exist, if yes don't try to check for new stream.
                  */
                 if (this.getFarmingWindows().length > 0) {
-                    log("MAIN", "INFO", `${this.getName()}: Already farming, no need to start again`);
+                    log("MAIN", "DEBUG", `${this.getName()}: Already farming, no need to start again`);
 
                     this.updateStatus("farming");
                     resolve(undefined);
@@ -203,7 +203,7 @@ export default class OverwatchLeague extends FarmTemplate {
                      * Check for *LIVE NOW* element.
                      */
                     if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                        log("MAIN", "INFO", `${this.getName()}: Found stream on main site`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Found stream on main site`);
 
                         /**
                          * Get the stream title.
@@ -224,7 +224,7 @@ export default class OverwatchLeague extends FarmTemplate {
                                 .then(async (farmingWindow: Electron.BrowserWindow) => {
                                     await this.pressPlay(farmingWindow, 200);
 
-                                    log("MAIN", "INFO", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
+                                    log("MAIN", "DEBUG", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
 
                                     this.timerAction("start");
 
@@ -237,7 +237,7 @@ export default class OverwatchLeague extends FarmTemplate {
                          * No live match right now.
                          * Set the status back to idle.
                          */
-                        log("MAIN", "INFO", `${this.getName()}: No live matches available, returning status back to idle`);
+                        log("MAIN", "DEBUG", `${this.getName()}: No live matches available, returning status back to idle`);
                         this.updateStatus("idle");
 
                         resolve(undefined);

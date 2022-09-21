@@ -57,7 +57,7 @@ app.whenReady()
         if (!inProd) {
             installExtension(REACT_DEVELOPER_TOOLS)
                 .then((extensionName: string) => {
-                    log("MAIN", "INFO", `Installed ${extensionName} extension`);
+                    log("MAIN", "DEBUG", `Installed ${extensionName} extension`);
                 })
                 .catch((err) => {
                     log("MAIN", "ERROR", `Failed adding extension. ${err}`);

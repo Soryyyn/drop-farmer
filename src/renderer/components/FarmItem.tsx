@@ -32,7 +32,7 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                                     icon={faRotate}
                                     tooltipText="Restart farm"
                                     onClickAction={() => {
-                                        window.api.log("INFO", `Clicked restart farm button on \"${name}\"`);
+                                        window.api.log("DEBUG", `Clicked restart farm button on \"${name}\"`);
                                         window.api.sendOneWay(window.api.channels.restartScheduler, (name));
                                     }}
                                 />
@@ -40,7 +40,7 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                                     icon={faTrash}
                                     tooltipText="Clear cache of the farm. User login is required again after clearing."
                                     onClickAction={() => {
-                                        window.api.log("INFO", `Clicked button to clear cache on \"${name}\"`);
+                                        window.api.log("DEBUG", `Clicked button to clear cache on \"${name}\"`);
                                         window.api.sendOneWay(window.api.channels.clearCache, (name));
                                     }}
                                 />
@@ -55,7 +55,7 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                          * Only react if there are actual windows.
                          */
                         if (status === "checking" || status === "farming" || status === "attention-required") {
-                            window.api.log("INFO", `Clicked \"eye\"-icon on \"${name}\", setting to \"${showing}\"`);
+                            window.api.log("DEBUG", `Clicked \"eye\"-icon on \"${name}\", setting to \"${showing}\"`);
                             setShowingWindows(showing);
 
                             /**
@@ -75,14 +75,14 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
                     <FarmActionButton
                         label="Clear cache"
                         handleClick={() => {
-                            window.api.log("INFO", `Clicked button to reset clear cache on \"${name}\"`);
+                            window.api.log("DEBUG", `Clicked button to reset clear cache on \"${name}\"`);
                             window.api.sendOneWay(window.api.channels.clearCache, (name));
                         }}
                     />
                     <FarmActionButton
                         label="Restart Farm"
                         handleClick={() => {
-                            window.api.log("INFO", `Clicked restart farm button on \"${name}\"`);
+                            window.api.log("DEBUG", `Clicked restart farm button on \"${name}\"`);
                             window.api.sendOneWay(window.api.channels.restartScheduler, (name));
                         }}
                     />

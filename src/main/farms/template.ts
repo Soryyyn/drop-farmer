@@ -96,7 +96,7 @@ export default abstract class FarmTemplate {
         if (this._enabled)
             this._taskManager.start("checking-schedule");
 
-        log("MAIN", "INFO", `${this._name}: Initialized farm data`);
+        log("MAIN", "DEBUG", `${this._name}: Initialized farm data`);
     }
 
     /**
@@ -133,7 +133,7 @@ export default abstract class FarmTemplate {
          */
         this._checkerWebsite = newSettings.checkerWebsite;
 
-        log("MAIN", "INFO", `${this._name}: Applied new settings`);
+        log("MAIN", "DEBUG", `${this._name}: Applied new settings`);
     }
 
     /**
@@ -152,7 +152,7 @@ export default abstract class FarmTemplate {
             status: this._currentStatus,
         });
 
-        log("MAIN", "INFO", `${this._name}: Updated status to ${this._currentStatus}`);
+        log("MAIN", "DEBUG", `${this._name}: Updated status to ${this._currentStatus}`);
     }
 
     /**
@@ -178,7 +178,7 @@ export default abstract class FarmTemplate {
         this._checkingSchedule = newSchedule;
         this._taskManager.update("checking-schedule", `*/${this._checkingSchedule} * * * *`);
 
-        log("MAIN", "INFO", `${this._name}: Updated schedule to ${newSchedule}`);
+        log("MAIN", "DEBUG", `${this._name}: Updated schedule to ${newSchedule}`);
     }
 
     /**
@@ -205,7 +205,7 @@ export default abstract class FarmTemplate {
 
                         this._checkerWindow = createdWindow;
 
-                        log("MAIN", "INFO", `${this._name}: Created checker window`);
+                        log("MAIN", "DEBUG", `${this._name}: Created checker window`);
 
                         resolve(this._checkerWindow);
                     })
@@ -251,7 +251,7 @@ export default abstract class FarmTemplate {
                         this.removeFarmingWindowFromArray(index);
                     });
 
-                    log("MAIN", "INFO", `${this._name}: Created farming window(${createdWindow.id})`);
+                    log("MAIN", "DEBUG", `${this._name}: Created farming window(${createdWindow.id})`);
 
                     resolve(createdWindow);
                 })
@@ -305,7 +305,7 @@ export default abstract class FarmTemplate {
         if (this._farmingWindows.length === 0)
             this.updateStatus("idle");
 
-        log("MAIN", "INFO", `${this._name}: Removed farming window from array`);
+        log("MAIN", "DEBUG", `${this._name}: Removed farming window from array`);
     }
 
     /**
@@ -317,7 +317,7 @@ export default abstract class FarmTemplate {
             this._checkerWindow = undefined;
         }
 
-        log("MAIN", "INFO", `${this._name}: Destroyed checker window`);
+        log("MAIN", "DEBUG", `${this._name}: Destroyed checker window`);
     }
 
     /**
@@ -328,7 +328,7 @@ export default abstract class FarmTemplate {
             this.removeFarmingWindowFromArray(farmingWindow);
         }
 
-        log("MAIN", "INFO", `${this._name}: Destroyed all farming windows`);
+        log("MAIN", "DEBUG", `${this._name}: Destroyed all farming windows`);
     }
 
     /**
@@ -339,7 +339,7 @@ export default abstract class FarmTemplate {
         for (const windowObject of this._farmingWindows)
             windowObject.window.show();
 
-        log("MAIN", "INFO", `${this._name}: Showing all windows of farm`);
+        log("MAIN", "DEBUG", `${this._name}: Showing all windows of farm`);
     }
 
     /**
@@ -350,7 +350,7 @@ export default abstract class FarmTemplate {
         for (const windowObject of this._farmingWindows)
             windowObject.window.hide();
 
-        log("MAIN", "INFO", `${this._name}: Hidding all windows of farm`);
+        log("MAIN", "DEBUG", `${this._name}: Hidding all windows of farm`);
     }
 
     /**
@@ -372,7 +372,7 @@ export default abstract class FarmTemplate {
 
         this._taskManager.start("checking-schedule");
 
-        log("MAIN", "INFO", `${this._name}: Restarted checking schedule`);
+        log("MAIN", "DEBUG", `${this._name}: Restarted checking schedule`);
     }
 
     /**
@@ -383,7 +383,7 @@ export default abstract class FarmTemplate {
             .then(async (createdWindow: Electron.BrowserWindow) => {
                 await createdWindow.webContents.session.clearCache();
                 destroyWindow(createdWindow);
-                log("MAIN", "INFO", `${this._name}: Cleared cache`);
+                log("MAIN", "DEBUG", `${this._name}: Cleared cache`);
             })
             .catch((err) => {
                 log("MAIN", "ERROR", `${this._name}: Failed clearing cache. ${err}`);
@@ -435,7 +435,7 @@ export default abstract class FarmTemplate {
      */
     private _schedule(): void {
         if (this._currentStatus !== "checking") {
-            log("MAIN", "INFO", `${this._name}: Schedule check running`);
+            log("MAIN", "DEBUG", `${this._name}: Schedule check running`);
             this.updateStatus("checking");
 
             /**

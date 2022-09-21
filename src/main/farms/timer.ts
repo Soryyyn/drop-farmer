@@ -21,7 +21,7 @@ export class UptimeTimer {
             this._amount += this._timer.ms();
 
             this._timer.stop();
-            log("MAIN", "INFO", `${this._timerName}: stopped`);
+            log("MAIN", "DEBUG", `${this._timerName}: stopped`);
         }
     }
 
@@ -31,7 +31,7 @@ export class UptimeTimer {
     pauseTimer(): void {
         if (this._timer.isRunning()) {
             this._timer.pause();
-            log("MAIN", "INFO", `${this._timerName}: paused`);
+            log("MAIN", "DEBUG", `${this._timerName}: paused`);
         }
     }
 
@@ -41,10 +41,10 @@ export class UptimeTimer {
     startTimer(): void {
         if (this._timer.isPaused()) {
             this._timer.resume();
-            log("MAIN", "INFO", `${this._timerName}: resumed`);
+            log("MAIN", "DEBUG", `${this._timerName}: resumed`);
         } else if (this._timer.isStopped() || !this._timer.isStarted()) {
             this._timer.start();
-            log("MAIN", "INFO", `${this._timerName}: started`);
+            log("MAIN", "DEBUG", `${this._timerName}: started`);
         }
     }
 

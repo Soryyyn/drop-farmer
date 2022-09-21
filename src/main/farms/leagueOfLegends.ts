@@ -50,10 +50,10 @@ export default class LeagueOfLegends extends FarmTemplate {
                     for (const element of matchElements)
                         hrefs.push(await (await element.getProperty("href")).jsonValue());
 
-                    log("MAIN", "INFO", `${this.getName()}: Got ${hrefs.length} matches`);
+                    log("MAIN", "DEBUG", `${this.getName()}: Got ${hrefs.length} matches`);
                     resolve(hrefs);
                 } else {
-                    log("MAIN", "INFO", `${this.getName()}: No matches found`);
+                    log("MAIN", "DEBUG", `${this.getName()}: No matches found`);
                     resolve([]);
                 }
             } catch (err) {
@@ -74,10 +74,10 @@ export default class LeagueOfLegends extends FarmTemplate {
                  * Skip this step if there are no farming windows available.
                  */
                 if (this.getFarmingWindows().length === 0) {
-                    log("MAIN", "INFO", `${this.getName()}: No farming windows, skipping checking step`);
+                    log("MAIN", "DEBUG", `${this.getName()}: No farming windows, skipping checking step`);
                     resolve(undefined);
                 } else {
-                    log("MAIN", "INFO", `${this.getName()}: Checking if farming windows can be closed`);
+                    log("MAIN", "DEBUG", `${this.getName()}: Checking if farming windows can be closed`);
 
                     const currentLiveMatches: string[] = await this.getCurrentLiveMatches(window);
                     let destroyedWindowsAmount: number = 0;
@@ -111,9 +111,9 @@ export default class LeagueOfLegends extends FarmTemplate {
                     }
 
                     if (destroyedWindowsAmount > 0)
-                        log("MAIN", "INFO", `${this.getName()}: No farming windows destroyed`);
+                        log("MAIN", "DEBUG", `${this.getName()}: No farming windows destroyed`);
                     else
-                        log("MAIN", "INFO", `${this.getName()}: Destroyed ${destroyedWindowsAmount} farming windows`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Destroyed ${destroyedWindowsAmount} farming windows`);
 
                     resolve(undefined);
                 }
@@ -157,10 +157,10 @@ export default class LeagueOfLegends extends FarmTemplate {
                     const element = await page.evaluate(element => element!.tagName, finishedSelector);
 
                     if (element === "DIV") {
-                        log("MAIN", "INFO", `${this.getName()}: Login completed`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
                         resolve(undefined);
                     } else if (element === "INPUT") {
-                        log("MAIN", "INFO", `${this.getName()}: Login is needed by user`);
+                        log("MAIN", "DEBUG", `${this.getName()}: Login is needed by user`);
 
                         /**
                          * Open checker window for user login.
@@ -173,7 +173,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                          */
                         page.waitForSelector("div.riotbar-summoner-name", { timeout: 0 })
                             .then(() => {
-                                log("MAIN", "INFO", `${this.getName()}: Login completed`);
+                                log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
                                 window.hide();
                                 resolve(undefined);
                             });
@@ -248,7 +248,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                     /**
                      * Change status to farming.
                      */
-                    log("MAIN", "INFO", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
+                    log("MAIN", "DEBUG", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
 
                     this.timerAction("start");
 
@@ -259,7 +259,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * No live matches available.
                      * Set app farm status back to idle.
                      */
-                    log("MAIN", "INFO", `${this.getName()}: No live matches available, returning status back to idle`);
+                    log("MAIN", "DEBUG", `${this.getName()}: No live matches available, returning status back to idle`);
                     this.updateStatus("idle");
 
                     resolve(undefined);

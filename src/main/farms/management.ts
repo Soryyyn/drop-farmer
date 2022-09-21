@@ -71,7 +71,7 @@ function applyDataToFarms(): void {
  */
 export function saveUserChanges(userChanges: FarmSaveData[]): void {
     updateFarmsData(userChanges);
-    log("MAIN", "INFO", "Saved user made changes to config file")
+    log("MAIN", "DEBUG", "Saved user made changes to config file")
 }
 
 /**
@@ -85,7 +85,7 @@ export function destroyAllFarmWindows(): void {
             farm.removeFarmingWindowFromArray(farmingWindow);
     }
 
-    log("MAIN", "INFO", "Destroyed all windows of farms");
+    log("MAIN", "DEBUG", "Destroyed all windows of farms");
 }
 
 /**
