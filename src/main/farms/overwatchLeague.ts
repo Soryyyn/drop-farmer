@@ -215,23 +215,23 @@ export default class OverwatchLeague extends FarmTemplate {
                          * "Co-Stream" (case insensitive).
                          * If yes don't farm.
                          */
-                        if (innerText.match(/Co-Stream/i)) {
-                            log("MAIN", "INFO", `${this.getName()}: Co-Stream running, no need to farm`);
+                        if (innerText.match(/Co-Stream/i) || innerText.match(/Contenders/i)) {
+                            log("MAIN", "DEBUG", `${this.getName()}: Co-Stream / Contenders running, no need to farm`);
                             this.updateStatus("idle");
                             resolve(undefined);
+                        } else {
+                            this.createFarmingWindow(this.getCheckerWebsite())
+                                .then(async (farmingWindow: Electron.BrowserWindow) => {
+                                    await this.pressPlay(farmingWindow, 200);
+
+                                    log("MAIN", "INFO", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
+
+                                    this.timerAction("start");
+
+                                    this.updateStatus("farming");
+                                    resolve(undefined);
+                                });
                         }
-
-                        this.createFarmingWindow(this.getCheckerWebsite())
-                            .then(async (farmingWindow: Electron.BrowserWindow) => {
-                                await this.pressPlay(farmingWindow, 200);
-
-                                log("MAIN", "INFO", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
-
-                                this.timerAction("start");
-
-                                this.updateStatus("farming");
-                                resolve(undefined);
-                            });
                     } else {
                         /**
                          * No live match right now.
