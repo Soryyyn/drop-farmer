@@ -116,6 +116,13 @@ handleOneWay(Channels.clearCache, (event, name) => {
             });
 
             farm.updateStatus("idle");
+
+            sendToast({
+                id: `cleared-cache-${farm.getName()}`,
+                type: "success",
+                body: `Cleared cache for ${farm.getName()}.`,
+                duration: 4000,
+            });
         }
     });
 });
@@ -125,6 +132,13 @@ handleOneWay(Channels.restartScheduler, (event, name) => {
         if (farm.getName() === name) {
             farm.restartScheduler();
             farm.updateStatus("idle");
+
+            sendToast({
+                id: `restart-schedule-${farm.getName()}`,
+                type: "success",
+                body: `Restarted schedule for ${farm.getName()}.`,
+                duration: 4000,
+            });
         }
     });
 });

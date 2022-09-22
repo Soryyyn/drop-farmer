@@ -38,6 +38,18 @@ export default function App() {
                 position={"bottom-center"}
                 toastOptions={{
                     className: styles.toastNotification,
+                    success: {
+                        iconTheme: {
+                            primary: "rgb(33, 219, 135)",
+                            secondary: "rgb(16, 18, 27)",
+                        }
+                    },
+                    error: {
+                        iconTheme: {
+                            primary: "rgb(231, 75, 101)",
+                            secondary: "rgb(16, 18, 27)"
+                        }
+                    }
                 }}
             />
             <div className={styles.spacer}>
