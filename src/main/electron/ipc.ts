@@ -4,7 +4,7 @@ import { getApplicationSettings, getFarmsData, updateApplicationSettings, update
 import { getFarmRendererData, getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
-import { sendToast } from "./toast";
+import { sendToast } from "../util/toast";
 import { getMainWindow, setAppQuitting } from "./windows";
 
 /**

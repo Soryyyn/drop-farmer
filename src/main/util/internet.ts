@@ -1,9 +1,9 @@
 import isOnline from "is-online";
 import { Channels } from "../common/channels";
 import { sendOneWay } from "../electron/ipc";
-import { sendToast } from "../electron/toast";
 import { getMainWindow } from "../electron/windows";
 import { log } from "./logger";
+import { sendToast } from "./toast";
 
 /**
  * The current internet connection.
