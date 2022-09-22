@@ -15,4 +15,5 @@ export enum Channels {
     clearCache = "clear-cache",
     restartScheduler = "restart-scheduler",
     shutdown = "shutdown",
+    toast = "toast",
 }

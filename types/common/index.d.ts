@@ -36,3 +36,10 @@ type ConfigFile = {
     applicationSettings: ApplicationSettings;
     farms: FarmSaveData[];
 }
+
+type ToastNotification = {
+    id: string;
+    type: "success" | "error";
+    body: string;
+    duration: number;
+}

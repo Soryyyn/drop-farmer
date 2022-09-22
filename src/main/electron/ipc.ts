@@ -4,7 +4,8 @@ import { getApplicationSettings, getFarmsData, updateApplicationSettings, update
 import { getFarmRendererData, getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
-import { setAppQuitting } from "./windows";
+import { sendToast } from "./toast";
+import { getMainWindow, setAppQuitting } from "./windows";
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -75,12 +76,28 @@ handleAndReply(Channels.getSettings, () => {
     }
 });
 
-handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
+handleOneWay(Channels.saveNewSettings, async (event, settingsToSave: {
     applicationSettings: ApplicationSettings,
     farmSettings: FarmSaveData[]
 }) => {
-    updateApplicationSettings(settingsToSave.applicationSettings);
-    updateFarmsData(settingsToSave.farmSettings);
+    try {
+        await updateApplicationSettings(settingsToSave.applicationSettings);
+        await updateFarmsData(settingsToSave.farmSettings);
+
+        sendToast({
+            id: "settings-saving",
+            type: "success",
+            body: "Saved settings.",
+            duration: 4000,
+        });
+    } catch (err) {
+        sendToast({
+            id: "settings-saving",
+            type: "error",
+            body: `Failed saving settings. ${err}`,
+            duration: 15000,
+        });
+    }
 });
 
 handleAndReply(Channels.get3DAnimationsDisabled, () => {
