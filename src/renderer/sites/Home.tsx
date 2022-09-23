@@ -7,8 +7,8 @@ import ButtonNolabel from "../components/ButtonNoLabel";
 import DropdownItem from "../components/DropdownItem";
 import ModelAnimation from "../components/ModelAnimation";
 import Sidebar from "../components/Sidebar";
-import { useHandleOneWay } from "../hooks/useHandleOneWay";
 import styles from "../styles/Home.module.scss";
+import { useHandleOneWay } from "../util/hooks/useHandleOneWay";
 
 /**
  * The route for the main page of the application.
