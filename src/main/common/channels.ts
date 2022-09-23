@@ -15,5 +15,8 @@ export enum Channels {
     clearCache = "clear-cache",
     restartScheduler = "restart-scheduler",
     shutdown = "shutdown",
-    toast = "toast",
+    toastSuccess = "toast-success",
+    toastError = "toast-error",
+    toastLoading = "toast-loading",
+    toastForcedType = "toast-forced-type",
 }

@@ -4,7 +4,7 @@ import { getApplicationSettings, getFarmsData, updateApplicationSettings, update
 import { getFarmRendererData, getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
-import { sendToast } from "../util/toast";
+import { sendBasicToast, sendPromiseToast } from "../util/toast";
 import { getMainWindow, setAppQuitting } from "./windows";
 
 /**
@@ -76,28 +76,26 @@ handleAndReply(Channels.getSettings, () => {
     }
 });
 
-handleOneWay(Channels.saveNewSettings, async (event, settingsToSave: {
+handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
     applicationSettings: ApplicationSettings,
     farmSettings: FarmSaveData[]
 }) => {
-    try {
-        await updateApplicationSettings(settingsToSave.applicationSettings);
-        await updateFarmsData(settingsToSave.farmSettings);
+    sendPromiseToast({
+        id: "settings-saving",
+        textOnLoading: "Saving settings...",
+        textOnSuccess: "Saved settings.",
+        textOnError: "Failed saving settings.",
+        duration: 4000
+    }, new Promise(async (resolve, reject) => {
+        try {
+            await updateApplicationSettings(settingsToSave.applicationSettings);
+            await updateFarmsData(settingsToSave.farmSettings);
 
-        sendToast({
-            id: "settings-saving",
-            type: "success",
-            body: "Saved settings.",
-            duration: 4000,
-        });
-    } catch (err) {
-        sendToast({
-            id: "settings-saving",
-            type: "error",
-            body: `Failed saving settings. ${err}`,
-            duration: 15000,
-        });
-    }
+            resolve(undefined);
+        } catch (err) {
+            reject(err);
+        }
+    }));
 });
 
 handleAndReply(Channels.get3DAnimationsDisabled, () => {
@@ -111,17 +109,17 @@ handleAndReply(Channels.getApplicationVersion, () => {
 handleOneWay(Channels.clearCache, (event, name) => {
     getFarms().forEach((farm: FarmTemplate) => {
         if (farm.getName() === name) {
-            farm.restartScheduler(async () => {
-                await farm.clearFarmCache();
-            });
-
-            farm.updateStatus("idle");
-
-            sendToast({
+            sendBasicToast({
                 id: `cleared-cache-${farm.getName()}`,
-                type: "success",
-                body: `Cleared cache for ${farm.getName()}.`,
-                duration: 4000,
+                textOnSuccess: `Cleared cache for ${farm.getName()}.`,
+                textOnError: `Failed clearing cache for ${farm.getName()}}.`,
+                duration: 4000
+            }, () => {
+                farm.restartScheduler(async () => {
+                    await farm.clearFarmCache();
+                });
+
+                farm.updateStatus("idle");
             });
         }
     });
@@ -130,14 +128,14 @@ handleOneWay(Channels.clearCache, (event, name) => {
 handleOneWay(Channels.restartScheduler, (event, name) => {
     getFarms().forEach((farm: FarmTemplate) => {
         if (farm.getName() === name) {
-            farm.restartScheduler();
-            farm.updateStatus("idle");
-
-            sendToast({
+            sendBasicToast({
                 id: `restart-schedule-${farm.getName()}`,
-                type: "success",
-                body: `Restarted schedule for ${farm.getName()}.`,
-                duration: 4000,
+                textOnSuccess: `Restarted schedule for ${farm.getName()}.`,
+                textOnError: `Failed restarting schedule for ${farm.getName()}}.`,
+                duration: 4000
+            }, () => {
+                farm.restartScheduler();
+                farm.updateStatus("idle");
             });
         }
     });

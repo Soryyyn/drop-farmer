@@ -8,26 +8,53 @@ import styles from "./styles/App.module.scss";
 
 export default function App() {
     /**
-     * React to toast signals.
+     * React to toast signals coming from main.
      */
     useEffect(() => {
-        window.api.handleOneWay(window.api.channels.toast, (event, toastNotification) => {
-            window.api.log("DEBUG", "Displaying toast");
+        window.api.handleOneWay(window.api.channels.toastSuccess, (event, toastNotif: ToastFromMain) => {
+            window.api.log("DEBUG", "Displaying success toast");
+            toast.success(toastNotif.text, {
+                id: toastNotif.id,
+                duration: toastNotif.duration
+            });
+        });
 
-            if (toastNotification.type === "error")
-                toast.error(toastNotification.body, {
-                    id: toastNotification.id,
-                    duration: toastNotification.duration
+        window.api.handleOneWay(window.api.channels.toastError, (event, toastNotif: ToastFromMain) => {
+            window.api.log("DEBUG", "Displaying error toast");
+            toast.error(toastNotif.text, {
+                id: toastNotif.id,
+                duration: toastNotif.duration
+            });
+        });
+
+        window.api.handleOneWay(window.api.channels.toastLoading, (event, toastNotif: ToastFromMain) => {
+            window.api.log("DEBUG", "Displaying loading toast");
+            toast.loading(toastNotif.text, {
+                id: toastNotif.id,
+                duration: toastNotif.duration
+            });
+        });
+
+        window.api.handleOneWay(window.api.channels.toastForcedType, (event, toastNotif: ToastFromMain) => {
+            window.api.log("DEBUG", "Displaying forced type toast");
+
+            if (toastNotif.type === "error")
+                toast.success(toastNotif.text, {
+                    id: toastNotif.id,
+                    duration: toastNotif.duration
                 });
-            else if (toastNotification.type === "success")
-                toast.success(toastNotification.body, {
-                    id: toastNotification.id,
-                    duration: toastNotification.duration
+            else
+                toast.error(toastNotif.text, {
+                    id: toastNotif.id,
+                    duration: toastNotif.duration
                 });
         });
 
         return () => {
-            window.api.removeAllListeners(window.api.channels.toast);
+            window.api.removeAllListeners(window.api.channels.toastSuccess);
+            window.api.removeAllListeners(window.api.channels.toastError);
+            window.api.removeAllListeners(window.api.channels.toastLoading);
+            window.api.removeAllListeners(window.api.channels.toastForcedType);
         };
     }, []);
 
@@ -41,6 +68,12 @@ export default function App() {
                     success: {
                         iconTheme: {
                             primary: "rgb(33, 219, 135)",
+                            secondary: "rgb(16, 18, 27)",
+                        }
+                    },
+                    loading: {
+                        iconTheme: {
+                            primary: "rgb(200, 222, 245)",
                             secondary: "rgb(16, 18, 27)",
                         }
                     },

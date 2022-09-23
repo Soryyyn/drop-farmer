@@ -37,9 +37,31 @@ type ConfigFile = {
     farms: FarmSaveData[];
 }
 
-type ToastNotification = {
+type BasicToast = {
+    id: string;
+    textOnSuccess: string;
+    textOnError: string;
+    duration: number;
+}
+
+type PromiseToast = {
+    id: string;
+    textOnLoading: string;
+    textOnSuccess: string;
+    textOnError: string;
+    duration: number;
+}
+
+type ForcedTypeToast = {
     id: string;
     type: "success" | "error";
-    body: string;
+    text: string;
     duration: number;
+}
+
+type ToastFromMain = {
+    id: string;
+    text: string;
+    duration: number;
+    type?: "success" | "error";
 }
