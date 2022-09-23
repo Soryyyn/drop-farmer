@@ -2,6 +2,7 @@ on:
     push:
         branches:
           - 'master'
+          - 'beta'
 name: Build application and upload artifacts
 
 jobs:
