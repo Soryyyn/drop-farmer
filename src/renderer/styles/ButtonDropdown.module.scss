@@ -1,0 +1,84 @@
+.mainContainer {
+    position: relative;
+    display: block;
+}
+
+.buttonContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+
+    aspect-ratio: 1 / 1;
+    margin-inline: 0.5rem;
+    width: 48px;
+    box-sizing: border-box;
+
+    user-select: none;
+    transition: all 0.1s;
+
+    .icon {
+        color: #0c0e16;
+    }
+
+    &:active,
+    &:hover {
+        cursor: pointer;
+        outline: 2px solid rgba(200, 222, 245, 0.2);
+        outline-offset: 2px;
+    }
+}
+
+.primary {
+    box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
+    background: rgba(59, 62, 97, 0.5);
+    border: 1px solid rgba(59, 62, 97, 0.1);
+    transition: all 0.1s;
+
+    &:hover,
+    &:active {
+        background: rgba(59, 62, 97, 0.7) !important;
+    }
+
+    &:active {
+        .icon {
+            color: rgb(200, 222, 245);
+        }
+    }
+}
+
+.secondary {
+    box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
+    background: rgba(59, 62, 97, 0.3);
+    border: 2px solid rgba(226, 59, 87, 0.1);
+    transition: all 0.1s;
+
+    &:hover,
+    &:active {
+        background: rgba(59, 62, 97, 0.7) !important;
+    }
+
+    &:active {
+        .icon {
+            color: rgb(200, 222, 245);
+        }
+    }
+}
+
+.dropdownContainer {
+    position: absolute;
+    left: 65px;
+
+    color: rgb(200, 222, 245);
+    background: rgba(16, 18, 27, 0.75);
+    border: 1px solid rgba(16, 18, 27, 0.1);
+    box-shadow: 5px 5px 15px rgba(16, 18, 27, 0.4);
+    backdrop-filter: blur(12px);
+    border-radius: 7px;
+
+    padding: 0.5rem;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.35rem;
+}

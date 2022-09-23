@@ -1,8 +1,10 @@
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import { faGear, faGlobe, faPowerOff, faReceipt } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faGear, faGlobe, faPowerOff, faReceipt } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ButtonDropdown from "../components/ButtonDropdown";
 import ButtonNolabel from "../components/ButtonNoLabel";
+import DropdownItem from "../components/DropdownItem";
 import ModelAnimation from "../components/ModelAnimation";
 import Sidebar from "../components/Sidebar";
 import { useHandleOneWay } from "../hooks/useHandleOneWay";
@@ -87,6 +89,26 @@ export default function Home() {
                     <h1 className={styles.title}>DROP-FARMER</h1>
                     <p className={styles.desc}>Stream drops farmer application</p>
                     <div className={styles.buttonsContainer}>
+                        <ButtonDropdown
+                            icon={faBars}
+                            primary={true}
+                            tooltipText="More options"
+                        >
+                            <DropdownItem
+                                label={"Check for update"}
+                                action={() => { }}
+                            />
+                            <DropdownItem
+                                label={"Statistics"}
+                                action={() => { }}
+                            />
+                            <DropdownItem
+                                label={"Quit application"}
+                                action={() => {
+                                    window.api.sendOneWay(window.api.channels.shutdown);
+                                }}
+                            />
+                        </ButtonDropdown>
                         <ButtonNolabel
                             icon={faGithub}
                             primary={true}
@@ -104,25 +126,11 @@ export default function Home() {
                             }}
                         />
                         <ButtonNolabel
-                            icon={faReceipt}
-                            primary={true}
-                            tooltipText="Statistics"
-                            onClickAction={() => { }}
-                        />
-                        <ButtonNolabel
                             icon={faGear}
                             primary={true}
                             tooltipText="Settings"
                             onClickAction={() => {
                                 navigation("/settings");
-                            }}
-                        />
-                        <ButtonNolabel
-                            icon={faPowerOff}
-                            primary={true}
-                            tooltipText="Quit application"
-                            onClickAction={() => {
-                                window.api.sendOneWay(window.api.channels.shutdown);
                             }}
                         />
                     </div>

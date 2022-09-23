@@ -1,0 +1,11 @@
+.container {
+    min-width: 175px;
+    border-radius: 3px;
+    padding: 0.3rem;
+
+    &:hover,
+    &:active {
+        cursor: pointer;
+        background: rgba(16, 18, 27, 0.3);
+    }
+}
