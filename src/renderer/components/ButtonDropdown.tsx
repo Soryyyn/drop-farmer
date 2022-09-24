@@ -27,17 +27,12 @@ export default function ButtonDropdown({ children, icon, primary, tooltipText }:
 
     return (
         <div className={styles.mainContainer}>
-            <Tooltip
-                tooltipText={tooltipText}
-                placement="bottom"
+            <div
+                className={clsx(styles.buttonContainer, (primary) ? styles.primary : styles.secondary)}
+                onClick={() => setShowingDropdown(!showingDropdown)}
             >
-                <div
-                    className={clsx(styles.buttonContainer, (primary) ? styles.primary : styles.secondary)}
-                    onClick={() => setShowingDropdown(!showingDropdown)}
-                >
-                    <FontAwesomeIcon icon={icon} size="lg" className={styles.icon} />
-                </div>
-            </Tooltip>
+                <FontAwesomeIcon icon={icon} size="lg" className={styles.icon} />
+            </div>
             {(showingDropdown) &&
                 <div
                     className={styles.dropdownContainer}

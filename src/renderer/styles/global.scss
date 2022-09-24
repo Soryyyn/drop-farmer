@@ -9,49 +9,6 @@ Main Colors:
     src: url("../assets/fonts/Rubik-VariableFont_wght.ttf");
 }
 
-@mixin default-dark-shadow {
-    box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
-}
-
-@mixin darker-with-border {
-    background: rgba(59, 62, 97, 0.5);
-    border: 1px solid rgba(59, 62, 97, 0.1);
-    border-radius: 10px;
-
-    transition: 0.1s;
-}
-
-@mixin container-with-hover {
-    @include darker-with-border;
-    transition: 0.1s;
-
-    &:hover {
-        transition: 0.1s;
-        background: rgba(59, 62, 97, 0.7) !important;
-    }
-}
-
-@mixin secondary-button {
-    @include darker-with-border;
-    background: rgba(59, 62, 97, 0.3);
-    transition: 0.1s;
-
-    &:hover {
-        transition: 0.1s;
-        background: rgba(59, 62, 97, 0.4) !important;
-    }
-}
-
-@mixin hover-cursor {
-    &:hover {
-        cursor: pointer;
-    }
-}
-
-@mixin bg-blur {
-    backdrop-filter: blur(12px);
-}
-
 // Global stylings
 *,
 *::before,

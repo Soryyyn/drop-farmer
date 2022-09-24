@@ -68,12 +68,13 @@
 .dropdownContainer {
     position: absolute;
     left: 65px;
+    z-index: 100000000000000;
 
     color: rgb(200, 222, 245);
     background: rgba(16, 18, 27, 0.75);
     border: 1px solid rgba(16, 18, 27, 0.1);
     box-shadow: 5px 5px 15px rgba(16, 18, 27, 0.4);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px);
     border-radius: 7px;
 
     padding: 0.5rem;

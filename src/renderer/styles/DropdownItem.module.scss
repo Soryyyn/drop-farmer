@@ -1,11 +1,29 @@
 .container {
     min-width: 175px;
-    border-radius: 3px;
+    border-radius: 5px;
     padding: 0.3rem;
+    padding-left: 0.5rem;
 
     &:hover,
     &:active {
         cursor: pointer;
-        background: rgba(16, 18, 27, 0.3);
+        background: rgba(16, 18, 27, 0.4);
+    }
+
+    &:active {
+        background: rgba(16, 18, 27, 0.6)
+    }
+}
+
+.disabled {
+    color: rgba(200, 222, 245, 0.6) !important;
+
+    &:hover,
+    &:active {
+        cursor: default;
+    }
+
+    &:active {
+        background: rgba(16, 18, 27, 0.4) !important;
     }
 }

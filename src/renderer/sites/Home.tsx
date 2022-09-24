@@ -96,14 +96,22 @@ export default function Home() {
                         >
                             <DropdownItem
                                 label={"Check for update"}
+                                disabled={true}
+                                action={() => { }}
+                            />
+                            <DropdownItem
+                                label={"About"}
+                                disabled={true}
                                 action={() => { }}
                             />
                             <DropdownItem
                                 label={"Statistics"}
+                                disabled={true}
                                 action={() => { }}
                             />
                             <DropdownItem
                                 label={"Quit application"}
+                                disabled={false}
                                 action={() => {
                                     window.api.sendOneWay(window.api.channels.shutdown);
                                 }}
