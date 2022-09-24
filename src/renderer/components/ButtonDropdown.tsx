@@ -1,8 +1,9 @@
 import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styles from "../styles/ButtonDropdown.module.scss";
+import { useOutsideAlterter } from "../util/hooks/useOutsideAlterter";
 import Tooltip from "./Tooltip";
 
 
@@ -15,6 +16,14 @@ interface Props {
 
 export default function ButtonDropdown({ children, icon, primary, tooltipText }: Props) {
     const [showingDropdown, setShowingDropdown] = useState<boolean>(false);
+
+    /**
+     * Handle when the user does not click on the dropdown.
+     */
+    const ref = useRef(null);
+    useOutsideAlterter(ref, () => {
+        setShowingDropdown(false);
+    });
 
     return (
         <div className={styles.mainContainer}>
@@ -35,6 +44,7 @@ export default function ButtonDropdown({ children, icon, primary, tooltipText }:
                     style={{
                         top: -(Array.isArray(children) ? Math.pow(children.length, 2.5) : -3)
                     }}
+                    ref={ref}
                 >
                     <div onClick={() => setShowingDropdown(false)}>
                         {children}
