@@ -3,13 +3,13 @@ on:
         tags:
             - "*"
 
-name: Publish a release draft
 jobs:
     build-artifacts:
         name: Build artifacts
         uses: Soryyyn/drop-farmer/.github/workflows/build-and-upload.yml@beta
     publish-draft:
         name: Publish draft
+        needs: [build-artifacts]
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
