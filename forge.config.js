@@ -25,7 +25,7 @@ module.exports = {
             }
         }
     ],
-    publisher: [
+    publishers: [
         {
             name: "@electron-forge/publisher-github",
             config: {
@@ -33,8 +33,7 @@ module.exports = {
                     owner: "Soryyyn",
                     name: "drop-farmer"
                 },
-                draft: true,
-                authToken: process.env.GITHUB_TOKEN
+                draft: true
             }
         }
     ],
