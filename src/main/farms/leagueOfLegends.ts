@@ -179,7 +179,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                             });
                     }
                 } else {
-                    log("MAIN", "INFO", `${this.getName()}: User already logged in, continuing`);
+                    log("MAIN", "DEBUG", `${this.getName()}: User already logged in, continuing`);
                     resolve(undefined);
                 }
             } catch (err) {
