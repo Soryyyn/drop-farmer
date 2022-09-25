@@ -18,12 +18,15 @@ const updateURL: string = `https://drop-farmer-release-server.vercel.app/update/
  */
 autoUpdater.setFeedURL({ url: updateURL });
 
+/**
+ * Only start the auto-checking for updates after the first run.
+ */
 if (!checkIfFirstRun()) {
     if (process.env.NODE_ENV === "production") {
-        log("MAIN", "INFO", "Auto-update-checking is enabled");
+        log("MAIN", "DEBUG", "Auto-update-checking is enabled");
         setInterval(() => {
             autoUpdater.checkForUpdates();
-        }, 15000);
+        }, 60000);
     } else {
         log("MAIN", "WARN", "Auto-update-checking is disabled");
     }
@@ -32,13 +35,13 @@ if (!checkIfFirstRun()) {
 }
 
 autoUpdater.on("checking-for-update", () => {
-    log("MAIN", "INFO", "CURRENTLY CHECKING FOR UPDATE");
+    log("MAIN", "INFO", "Currently checking if application can update");
 });
 
 autoUpdater.on("update-not-available", () => {
-    log("MAIN", "INFO", "NO UPDATE AVAILBALE");
+    log("MAIN", "INFO", "No update available");
 });
 
 autoUpdater.on("update-available", () => {
-    log("MAIN", "INFO", "UPDATE AVAILABLE");
+    log("MAIN", "INFO", "Update to application is available!");
 });
