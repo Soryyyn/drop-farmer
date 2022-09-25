@@ -8,6 +8,8 @@ import { internetConnectionChecker } from "./util/internet";
 import { initLogger, log } from "./util/logger";
 import { initPuppeteerConnection } from "./util/puppeteer";
 
+import "./electron/update";
+
 /**
  * If application is in run in production environment.
  */
