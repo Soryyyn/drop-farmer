@@ -47,5 +47,15 @@
                 "close": false
             }
         },
+        {
+            "type": "shell",
+            "label": "drop-farmer: Publish application (create GitHub release draft)",
+            "command": "yarn run publish || npm publish",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false,
+            }
+        },
     ]
 }
