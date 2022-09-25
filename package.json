@@ -2,7 +2,7 @@
     "name": "drop-farmer",
     "productName": "drop-farmer",
     "description": "Application to farm your stream drops",
-    "version": "1.0.0-beta",
+    "version": "1.0.0-beta.1",
     "main": ".webpack/main",
     "scripts": {
         "start": "set CLEAR_CACHE=0 && electron-forge start",
