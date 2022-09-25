@@ -3,8 +3,9 @@ on:
         branches:
           - 'master'
           - 'beta'
-name: Build application and upload artifacts
+    workflow_call:
 
+name: Build application and upload artifacts
 jobs:
     build-squirrel-x64:
         name: Build application (Windows x64)
