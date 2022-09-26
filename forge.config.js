@@ -1,8 +1,9 @@
 require('dotenv').config();
+const path = require("path");
 
 module.exports = {
     packagerConfig: {
-        icon: "./resources/icon.ico"
+        icon: path.resolve(__dirname, "resources", "icon.ico")
     },
     makers: [
         {
@@ -13,15 +14,16 @@ module.exports = {
             ],
             config: {
                 name: "drop-farmer",
+                authors: "Soryn Bächli",
                 iconURL: "https://raw.githubusercontent.com/Soryyyn/drop-farmer/master/resources/icon.ico",
-                setupIcon: "./resources/icon.ico"
+                setupIcon: path.resolve(__dirname, "resources", "icon.ico")
             }
         },
         {
             name: "@electron-forge/maker-deb",
             config: {
                 debianArch: "arm64",
-                icon: "./resources/icon.png"
+                icon: path.resolve(__dirname, "resources", "icon.png")
             }
         }
     ],
