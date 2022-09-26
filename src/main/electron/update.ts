@@ -1,5 +1,8 @@
 import { app, autoUpdater } from "electron";
+import { saveCurrentDataOnQuit } from "../config";
+import { destroyAllFarmWindows } from "../farms/management";
 import { log } from "../util/logger";
+import { destroyTray } from "./tray";
 
 /**
  * Check if "--squirrel-firstrun" is in startup args, and don't auto-update.
@@ -43,5 +46,23 @@ autoUpdater.on("update-not-available", () => {
 });
 
 autoUpdater.on("update-available", () => {
-    log("MAIN", "INFO", "Update to application is available!");
+    log("MAIN", "INFO", "Update to application is available! downloading...");
+});
+
+autoUpdater.on("update-downloaded", () => {
+    log("MAIN", "INFO", "Update has finished downloading! installing now...");
+    autoUpdater.quitAndInstall();
+});
+
+/**
+ * `before-quit` will not be fired, so call all function here too.
+ */
+autoUpdater.on("before-quit-for-update", () => {
+    saveCurrentDataOnQuit();
+    destroyTray();
+    destroyAllFarmWindows();
+});
+
+autoUpdater.on("error", (err) => {
+    log("MAIN", "ERROR", `Failed downloading / installing update. ${err}`);
 });
