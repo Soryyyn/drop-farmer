@@ -8,8 +8,6 @@ import { internetConnectionChecker } from "./util/internet";
 import { initLogger, log } from "./util/logger";
 import { initPuppeteerConnection } from "./util/puppeteer";
 
-import "./electron/update";
-
 /**
  * If application is in run in production environment.
  */
@@ -21,6 +19,11 @@ const inProd: boolean = (process.env.NODE_ENV === "production");
 if (require("electron-squirrel-startup")) {
     app.quit();
 }
+
+/**
+ * Update checking / downloading.
+ */
+import "./electron/update";
 
 /**
  * Initialize all drop-farmer background functions.
