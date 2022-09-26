@@ -3,7 +3,7 @@ const path = require("path");
 
 module.exports = {
     packagerConfig: {
-        icon: path.resolve(__dirname, "resources", "icon.ico")
+        icon: "resources/icon"
     },
     makers: [
         {

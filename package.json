@@ -2,7 +2,7 @@
     "name": "drop-farmer",
     "productName": "drop-farmer",
     "description": "Application to farm your stream drops",
-    "version": "1.0.0-beta6",
+    "version": "1.0.0-beta7",
     "main": ".webpack/main",
     "scripts": {
         "start": "set CLEAR_CACHE=0 && electron-forge start",
@@ -25,23 +25,23 @@
         "@electron-forge/maker-rpm": "^6.0.0-beta.63",
         "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
         "@electron-forge/maker-zip": "^6.0.0-beta.63",
-        "@electron-forge/plugin-webpack": "6.0.0-beta.63",
+        "@electron-forge/plugin-webpack": "6.0.0-beta.66",
         "@electron-forge/publisher-github": "^6.0.0-beta.66",
         "@types/auto-launch": "^5.0.2",
         "@types/node": "^18.6.1",
         "@types/styled-components": "^5.1.26",
-        "@vercel/webpack-asset-relocator-loader": "1.7.0",
+        "@vercel/webpack-asset-relocator-loader": "1.7.3",
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.0.0",
-        "electron": "19.0.9",
+        "electron": "20.2.0",
         "electron-devtools-installer": "^3.2.0",
-        "fork-ts-checker-webpack-plugin": "^6.0.1",
+        "fork-ts-checker-webpack-plugin": "^7.2.13",
         "node-loader": "^2.0.0",
         "sass": "^1.54.0",
         "sass-loader": "^13.0.2",
         "style-loader": "^3.0.0",
         "ts-loader": "^9.2.2",
-        "typescript": "~4.5.4"
+        "typescript": "~4.8.3"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.2.0",
@@ -59,7 +59,7 @@
         "dotenv": "^16.0.2",
         "electron-squirrel-startup": "^1.0.0",
         "is-online": "^10.0.0",
-        "puppeteer-core": "^16.0.0",
+        "puppeteer-core": "^18.0.5",
         "puppeteer-in-electron": "^3.0.5",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
@@ -68,6 +68,6 @@
         "react-switch": "^7.0.0",
         "styled-components": "^5.3.5",
         "timer-node": "^5.0.6",
-        "uuid": "^8.3.2"
+        "uuid": "^9.0.0"
     }
 }
