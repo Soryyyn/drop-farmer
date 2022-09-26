@@ -114,7 +114,7 @@ export function log(location: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WA
     /**
      * If in production environment disable debug-type loggings.
      */
-    if ((process.env.NODE_ENV === "production") && type === "DEBUG" || !debugLogsEnabled && type === "DEBUG")
+    if (!debugLogsEnabled && type === "DEBUG")
         return;
 
     try {

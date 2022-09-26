@@ -7,6 +7,7 @@ import ButtonNolabel from "../components/ButtonNoLabel";
 import DropdownItem from "../components/DropdownItem";
 import ModelAnimation from "../components/ModelAnimation";
 import Sidebar from "../components/Sidebar";
+import Tooltip from "../components/Tooltip";
 import styles from "../styles/Home.module.scss";
 import { useHandleOneWay } from "../util/hooks/useHandleOneWay";
 
@@ -30,6 +31,11 @@ export default function Home() {
     const [applicationVersion, setApplicationVersion] = useState<string>("0.0.0");
 
     /**
+     * If a update is available.
+     */
+    const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
+
+    /**
      * Get the navigation from react router
      * to make navigation on button click possible.
      */
@@ -46,6 +52,13 @@ export default function Home() {
          */
         window.api.handleOneWay(window.api.channels.internetChange, (event, connection) => {
             setInternetConnection(connection);
+        });
+
+        /**
+         * Update available listener
+         */
+        window.api.handleOneWay(window.api.channels.updateAvailable, () => {
+            setUpdateAvailable(true);
         });
 
         /**
@@ -96,8 +109,10 @@ export default function Home() {
                         >
                             <DropdownItem
                                 label={"Check for update"}
-                                disabled={true}
-                                action={() => { }}
+                                disabled={false}
+                                action={() => {
+                                    window.api.sendOneWay(window.api.channels.updateCheck);
+                                }}
                             />
                             <DropdownItem
                                 label={"About"}
@@ -146,10 +161,24 @@ export default function Home() {
                         <p>Version: {applicationVersion}</p>
                         <p>Copyright © Soryn</p>
                         <p>Internet connection: {(internetConnection) ? "Connected" : "No internet"}</p>
+                        {updateAvailable &&
+                            <Tooltip
+                                placement="top"
+                                tooltipText="Will get installed on restart"
+                            >
+                                <p
+                                    className={styles.installUpdate}
+                                    onClick={() => {
+                                        window.api.sendOneWay(window.api.channels.installUpdate);
+                                    }}
+                                >
+                                    Update available! Click here to update<br />
+                                </p>
+                            </Tooltip>
+                        }
                     </div>
                 </div>
             </div>
         </div>
-
     );
 }

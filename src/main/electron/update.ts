@@ -1,8 +1,11 @@
 import { app, autoUpdater } from "electron";
+import { Channels } from "../common/channels";
 import { saveCurrentDataOnQuit } from "../config";
 import { destroyAllFarmWindows } from "../farms/management";
 import { log } from "../util/logger";
+import { handleOneWay, sendOneWay } from "./ipc";
 import { destroyTray } from "./tray";
+import { getMainWindow, setAppQuitting } from "./windows";
 
 /**
  * Check if "--squirrel-firstrun" is in startup args, and don't auto-update.
@@ -49,9 +52,13 @@ autoUpdater.on("update-available", () => {
     log("MAIN", "INFO", "Update to application is available! downloading...");
 });
 
+/**
+ * When the update is available, show a signal to renderer to display that a
+ * update is available.
+ */
 autoUpdater.on("update-downloaded", () => {
-    log("MAIN", "INFO", "Update has finished downloading! installing now...");
-    autoUpdater.quitAndInstall();
+    log("MAIN", "INFO", "Update has finished downloading!");
+    sendOneWay(getMainWindow(), Channels.updateAvailable);
 });
 
 /**
@@ -63,6 +70,25 @@ autoUpdater.on("before-quit-for-update", () => {
     destroyAllFarmWindows();
 });
 
+/**
+ * If an error happens during any step of updating, checking for updates,
+ * downloading updates, etc.
+ */
 autoUpdater.on("error", (err) => {
     log("MAIN", "ERROR", `Failed downloading / installing update. ${err}`);
+});
+
+/**
+ * If the user wants to manually check for updates.
+ */
+handleOneWay(Channels.updateCheck, () => {
+    autoUpdater.checkForUpdates();
+});
+
+/**
+ * If the user wants to manually install the update.
+ */
+handleOneWay(Channels.installUpdate, () => {
+    setAppQuitting(true);
+    autoUpdater.quitAndInstall();
 });

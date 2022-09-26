@@ -19,4 +19,7 @@ export enum Channels {
     toastError = "toast-error",
     toastLoading = "toast-loading",
     toastForcedType = "toast-forced-type",
+    updateCheck = "update-check",
+    updateAvailable = "update-available",
+    installUpdate = "install-update",
 }
