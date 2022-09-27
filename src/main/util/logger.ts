@@ -35,25 +35,25 @@ function createLogFile(): void {
  * Creates an appropriate log entry for the log file with timestamp,
  * type and message.
  *
- * @param {"MAIN" | "RENDERER"} location From which location the log is coming from.
+ * @param {"MAIN" | "RENDERER"} origin From which origin the log is coming from.
  * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
  * @param {string} message Message to include in log entry.
  * @returns {string} Prepared log entry.
  */
-function createLogEntry(location: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): string {
+function createLogEntry(origin: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): string {
     let currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
-    return `[${type}] (${location}) ${currentTimeStamp} - ${message}\n`;
+    return `[${type}] (${origin}) ${currentTimeStamp} - ${message}\n`;
 }
 
 /**
  * Creates an appropriate log entry for the the terminal with colors.
  *
- * @param {"MAIN" | "RENDERER"} location From which location the log is coming from.
+ * @param {"MAIN" | "RENDERER"} origin From which origin the log is coming from.
  * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
  * @param {string} message Message to include in log entry.
  * @returns {string} Prepared log entry.
  */
-function createTerminalLogEntry(location: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): string {
+function createTerminalLogEntry(origin: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): string {
     let currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
 
     /**
@@ -73,11 +73,11 @@ function createTerminalLogEntry(location: "MAIN" | "RENDERER", type: "FATAL" | "
     /**
      * Process color.
      */
-    let locationText: string;
-    if (location === "MAIN")
-        locationText = color.bold.green(`(${location})`);
+    let originText: string;
+    if (origin === "MAIN")
+        originText = color.bold.green(`(${origin})`);
     else
-        locationText = color.bold.magenta(`(${location})`);
+        originText = color.bold.magenta(`(${origin})`);
 
     /**
      * Timestamp color
@@ -92,19 +92,19 @@ function createTerminalLogEntry(location: "MAIN" | "RENDERER", type: "FATAL" | "
     /**
      * Build the text from blocks.
      */
-    return `${typeText} ${locationText} ${timeStampText} - ${messageText}`;
+    return `${typeText} ${originText} ${timeStampText} - ${messageText}`;
 }
 
 /**
  * Logs (writes) a log entry into the ".log" file in the app dir.
  *
- * @param {"MAIN" | "RENDERER"} location From which location the log is coming from.
+ * @param {"MAIN" | "RENDERER"} origin From which origin the log is coming from.
  * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
  * @param {string} message Message to log.
  */
-export function log(location: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: any): void {
-    let entry: string = createLogEntry(location, type, message);
-    let terminalEntry: string = createTerminalLogEntry(location, type, message);
+export function log(origin: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: any): void {
+    let entry: string = createLogEntry(origin, type, message);
+    let terminalEntry: string = createTerminalLogEntry(origin, type, message);
 
     /**
      * Add log to recent entries for crash log.
