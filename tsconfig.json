@@ -31,7 +31,6 @@
     },
     "include": [
         "src/**/*",
-        "types/common/renderer.d.ts",
-        "types/common/declarations.d.ts",
+        "types/*.d.ts",
     ]
 }
