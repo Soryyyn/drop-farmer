@@ -22,4 +22,5 @@ export enum Channels {
     updateCheck = "update-check",
     updateAvailable = "update-available",
     installUpdate = "install-update",
+    restart = "restart",
 }

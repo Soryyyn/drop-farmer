@@ -69,6 +69,18 @@ handleOneWay(Channels.shutdown, () => {
     app.quit();
 });
 
+handleOneWay(Channels.restart, () => {
+    log("MAIN", "INFO", "Restarting application");
+    app.relaunch();
+
+    /**
+     * NOTE: We have to quit the app here, because `app.relaunch()` doesn't quit
+     * the app automatically.
+     */
+    setAppQuitting(true);
+    app.quit();
+});
+
 handleAndReply(Channels.getSettings, () => {
     return {
         applicationSettings: getApplicationSettings(),

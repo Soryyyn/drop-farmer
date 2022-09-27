@@ -85,6 +85,7 @@ export default function Home() {
 
         return () => {
             window.api.removeAllListeners(window.api.channels.internetChange);
+            window.api.removeAllListeners(window.api.channels.updateAvailable);
             window.api.removeAllListeners(window.api.channels.get3DAnimationsEnabled);
             window.api.removeAllListeners(window.api.channels.getApplicationVersion);
         };
@@ -125,6 +126,13 @@ export default function Home() {
                                 action={() => { }}
                             />
                             <DropdownItem
+                                label={"Restart application"}
+                                disabled={false}
+                                action={() => {
+                                    window.api.sendOneWay(window.api.channels.restart);
+                                }}
+                            />
+                            <DropdownItem
                                 label={"Quit application"}
                                 disabled={false}
                                 action={() => {
@@ -143,9 +151,9 @@ export default function Home() {
                         <ButtonNolabel
                             icon={faGlobe}
                             primary={true}
-                            tooltipText="Developer website"
+                            tooltipText="Website"
                             onClickAction={() => {
-                                window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://soryn.dev");
+                                window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://drop-farmer.soryn.dev");
                             }}
                         />
                         <ButtonNolabel
