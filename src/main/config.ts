@@ -1,4 +1,5 @@
 import AutoLaunch from "auto-launch";
+import isEqual from "lodash.isequal";
 import { getFarms } from "./farms/management";
 import { createFile, readFile, writeToFile } from "./files/handling";
 import { debugLogs, log } from "./util/logger";
@@ -117,10 +118,7 @@ export function updateApplicationSettings(newApplicationSettings: ApplicationSet
             /**
              * If at least one change happened do the write call.
              */
-            if (currentConfigData.applicationSettings.disable3DModuleAnimation != newApplicationSettings.disable3DModuleAnimation ||
-                currentConfigData.applicationSettings.launchOnStartup != newApplicationSettings.launchOnStartup ||
-                currentConfigData.applicationSettings.showMainWindowOnLaunch != newApplicationSettings.showMainWindowOnLaunch ||
-                currentConfigData.applicationSettings.debugLogs != newApplicationSettings.debugLogs) {
+            if (!isEqual(newApplicationSettings, currentConfigData.applicationSettings)) {
                 currentConfigData.applicationSettings = newApplicationSettings;
 
                 debugLogs(newApplicationSettings.debugLogs);
