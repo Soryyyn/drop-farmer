@@ -15,7 +15,7 @@ module.exports = {
             config: {
                 name: "drop-farmer",
                 authors: "Soryn Bächli",
-                iconURL: "https://raw.githubusercontent.com/Soryyyn/drop-farmer/master/resources/icon.ico",
+                iconUrl: "https://www.dropbox.com/s/d6cli8zbty1pcqh/icon.ico?dl=1",
                 setupIcon: path.resolve(__dirname, "resources", "icon.ico")
             }
         },
