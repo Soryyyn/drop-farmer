@@ -1,6 +1,7 @@
 const plugins = require('./webpack.plugins');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 
 module.exports = {
@@ -12,6 +13,12 @@ module.exports = {
     // Put your normal webpack config below here
     module: {
         rules: require('./webpack.rules'),
+    },
+    optimization: {
+        minimize: (process.env.NODE_ENV === 'production'),
+        minimizer: [
+            new UglifyJsPlugin(),
+        ]
     },
     plugins: [
         ...plugins,
