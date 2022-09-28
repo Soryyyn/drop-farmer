@@ -141,14 +141,6 @@ export default function Home() {
                             />
                         </ButtonDropdown>
                         <ButtonNolabel
-                            icon={faGithub}
-                            primary={true}
-                            tooltipText="GitHub page for drop-farmer"
-                            onClickAction={() => {
-                                window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://github.com/Soryyyn/drop-farmer");
-                            }}
-                        />
-                        <ButtonNolabel
                             icon={faGlobe}
                             primary={true}
                             tooltipText="Website"
