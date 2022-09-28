@@ -38,11 +38,6 @@ initFarms();
 initPuppeteerConnection();
 
 /**
- * Repeatedly check the internet connection.
- */
-internetConnectionChecker();
-
-/**
  * Gets executed when electron has finished starting.
  * Some API's might only be available after it has started.
  */
@@ -79,6 +74,14 @@ app.whenReady()
          * been created.
          */
         createMainWindow(inProd);
+
+        /**
+         * Repeatedly check the internet connection.
+         *
+         * NOTE: Only initializing after the main window has been created to
+         * avoid fatal crash.
+         */
+        internetConnectionChecker();
 
         /**
          * Load all ipc listeners when the app is ready.
