@@ -94,7 +94,7 @@ export default function Home() {
                                 {
                                     type: "label",
                                     label: "Check for update",
-                                    disabled: false,
+                                    disabled: (process.env.NODE_ENV !== "production"),
                                     action() {
                                         window.api.sendOneWay(window.api.channels.updateCheck);
                                     }
