@@ -37,8 +37,10 @@ export function handleAndReply(channel: string, listener: (event: Electron.IpcMa
  * @param {...any[]} args The data to send with the signal.
  */
 export function sendOneWay(window: Electron.BrowserWindow, channel: string, ...args: any[]) {
-    log("MAIN", "DEBUG", `Sending one-way signal on ${channel}`);
-    window.webContents.send(channel, ...args);
+    if (window.webContents != undefined) {
+        log("MAIN", "DEBUG", `Sending one-way signal on ${channel}`);
+        window.webContents.send(channel, ...args);
+    }
 }
 
 handleOneWay(Channels.log, (event, { type, message }) => {

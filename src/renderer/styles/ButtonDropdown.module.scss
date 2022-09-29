@@ -82,4 +82,44 @@
     display: flex;
     flex-direction: column;
     row-gap: 0.35rem;
+    list-style: none;
+
+    .dropdownItemLabel {
+        list-style: none;
+        min-width: 175px;
+        border-radius: 5px;
+        padding: 0.3rem;
+        padding-left: 0.5rem;
+
+        &:hover,
+        &:active {
+            cursor: pointer;
+            background: rgba(16, 18, 27, 0.4);
+        }
+
+        &:active {
+            background: rgba(16, 18, 27, 0.6)
+        }
+    }
+
+    .dropdownItemDisabled {
+        color: rgba(200, 222, 245, 0.6) !important;
+
+        &:hover,
+        &:active {
+            cursor: default;
+        }
+
+        &:active {
+            background: rgba(16, 18, 27, 0.4) !important;
+        }
+    }
+
+    .dropdownSeperator {
+        list-style: none;
+        height: 2px;
+        width: 100%;
+        background: rgba(200, 222, 245, 0.05);
+        margin-block: 0.2rem;
+    }
 }

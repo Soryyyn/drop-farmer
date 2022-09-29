@@ -1,7 +1,4 @@
 import isOnline from "is-online";
-import { Channels } from "../common/channels";
-import { sendOneWay } from "../electron/ipc";
-import { getMainWindow } from "../electron/windows";
 import { log } from "./logger";
 import { sendForcedTypeToast } from "./toast";
 
@@ -17,7 +14,6 @@ export function internetConnectionChecker(): void {
     isOnline()
         .then((connection: boolean) => {
             internetConnection = connection;
-            sendOneWay(getMainWindow(), Channels.internetChange, connection);
 
             /**
              * If user has no internet connection, notify via toast.

@@ -65,3 +65,10 @@ type ToastFromMain = {
     duration: number;
     type?: "success" | "error";
 }
+
+type DropdownItem = {
+    type: "label" | "seperator";
+    label?: string;
+    disabled?: boolean;
+    action?: () => void;
+}

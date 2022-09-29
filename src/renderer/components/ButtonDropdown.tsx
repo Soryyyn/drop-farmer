@@ -1,20 +1,19 @@
 import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import styles from "../styles/ButtonDropdown.module.scss";
 import { useOutsideAlterter } from "../util/hooks/useOutsideAlterter";
 import Tooltip from "./Tooltip";
 
 
 interface Props {
-    children: JSX.Element[] | JSX.Element;
     icon: IconDefinition,
     primary: boolean,
-    tooltipText: string,
+    dropdownItems: DropdownItem[]
 }
 
-export default function ButtonDropdown({ children, icon, primary, tooltipText }: Props) {
+export default function ButtonDropdown({ icon, primary, dropdownItems }: Props) {
     const [showingDropdown, setShowingDropdown] = useState<boolean>(false);
 
     /**
@@ -23,6 +22,36 @@ export default function ButtonDropdown({ children, icon, primary, tooltipText }:
     const ref = useRef(null);
     useOutsideAlterter(ref, () => {
         setShowingDropdown(false);
+    });
+
+    /**
+     * The vertical (y) offset of the shown dropdown.
+     */
+    const dropdownYOffset = useCallback(() => {
+        let temp = 0;
+        dropdownItems.forEach((item) => {
+            if (item.type === "label")
+                temp += 12
+            else temp += 4
+        });
+        return -temp;
+    }, [dropdownItems]);
+
+    /**
+     * The to render dropdown items.
+     */
+    const dropdownItemsList = dropdownItems.map((item) => {
+        return (item.type === "label")
+            ? <li
+                className={clsx(styles.dropdownItemLabel, (item.disabled ? styles.dropdownItemDisabled : ""))}
+                onClick={() => {
+                    if (!item.disabled)
+                        item.action!();
+                }}
+            >
+                <p>{item.label}</p>
+            </li>
+            : <li className={styles.dropdownSeperator}></li>
     });
 
     return (
@@ -37,13 +66,13 @@ export default function ButtonDropdown({ children, icon, primary, tooltipText }:
                 <div
                     className={styles.dropdownContainer}
                     style={{
-                        top: -(Array.isArray(children) ? Math.pow(children.length, 2.5) : -3)
+                        top: dropdownYOffset()
                     }}
                     ref={ref}
                 >
-                    <div onClick={() => setShowingDropdown(false)}>
-                        {children}
-                    </div>
+                    <ul onClick={() => setShowingDropdown(false)}>
+                        {dropdownItemsList}
+                    </ul>
                 </div>
             }
         </div>
