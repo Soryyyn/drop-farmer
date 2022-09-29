@@ -7,7 +7,6 @@ export enum Channels {
     farmStatusChange = "farm-status-change",
     farmWindowsVisibility = "farm-windows-visibility",
     getSettings = "get-settings",
-    internetChange = "internet-change",
     log = "log",
     saveNewSettings = "save-new-settings",
     get3DAnimationsDisabled = "get-3D-animations-disabled",
