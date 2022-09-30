@@ -3,7 +3,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-
 module.exports = {
     /**
      * This is the main entry point for your application, it's the first file
@@ -15,9 +14,16 @@ module.exports = {
         rules: require('./webpack.rules'),
     },
     optimization: {
-        minimize: (process.env.NODE_ENV === 'production'),
+        minimize: true,
         minimizer: [
-            new UglifyJsPlugin(),
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    toplevel: true,
+                    mangle: {
+                        toplevel: true
+                    }
+                }
+            }),
         ]
     },
     plugins: [

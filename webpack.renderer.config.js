@@ -14,10 +14,15 @@ module.exports = {
         rules,
     },
     optimization: {
-        minimize: (process.env.NODE_ENV === 'production'),
+        minimize: true,
         minimizer: [
             new UglifyJsPlugin({
-
+                uglifyOptions: {
+                    toplevel: true,
+                    mangle: {
+                        toplevel: true
+                    }
+                }
             }),
         ]
     },
