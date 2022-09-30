@@ -2,7 +2,7 @@
     "name": "drop-farmer",
     "productName": "drop-farmer",
     "description": "Application to farm your stream drops",
-    "version": "1.0.0-beta10",
+    "version": "1.0.0-beta11",
     "main": ".webpack/main",
     "scripts": {
         "start": "set CLEAR_CACHE=0 && electron-forge start",
@@ -51,6 +51,7 @@
         "@fortawesome/free-brands-svg-icons": "^6.2.0",
         "@fortawesome/free-solid-svg-icons": "^6.2.0",
         "@fortawesome/react-fontawesome": "^0.2.0",
+        "@paymoapp/electron-shutdown-handler": "^1.0.13",
         "@tippyjs/react": "^4.2.6",
         "@types/react": "^18.0.15",
         "@types/react-dom": "^18.0.6",

@@ -1,9 +1,10 @@
+import ElectronShutdownHandler from "@paymoapp/electron-shutdown-handler";
 import { app, session } from "electron";
 import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
-import { getApplicationSettings, initConfig, saveCurrentDataOnQuit } from "./config";
+import { initConfig, saveCurrentDataOnQuit } from "./config";
 import { createTray, destroyTray } from "./electron/tray";
-import { createMainWindow } from "./electron/windows";
-import { destroyAllFarmWindows, initFarms } from "./farms/management";
+import { createMainWindow, getMainWindow, setAppQuitting } from "./electron/windows";
+import { destroyAllFarmWindows, initFarms, stopCronJobs } from "./farms/management";
 import { internetConnectionChecker } from "./util/internet";
 import { initLogger, log } from "./util/logger";
 import { initPuppeteerConnection } from "./util/puppeteer";
@@ -71,7 +72,7 @@ app.whenReady()
 
         /**
          * Create the actual application window and show it when it has
-         * been created.
+         * been created (if set).
          */
         createMainWindow(inProd);
 
@@ -87,6 +88,34 @@ app.whenReady()
          * Load all ipc listeners when the app is ready.
          */
         require("./electron/ipc");
+
+        /**
+         * Block the shutdown process.
+         * And set the native window handle for handling windows shutdown events.
+         * e.x. blocking it while the farms are checking.
+         */
+        ElectronShutdownHandler.setWindowHandle(getMainWindow().getNativeWindowHandle());
+        log("MAIN", "DEBUG", "Preventing system from shutting down before application savely quits");
+        ElectronShutdownHandler.blockShutdown("Please wait for graceful shutdown");
+
+        /**
+         * React to the windows shutdown event firing.
+         */
+        ElectronShutdownHandler.on("shutdown", () => {
+            log("MAIN", "INFO", "Received shutdown event, shutting down now");
+
+            /**
+             * Stop all cron jobs, to prevent unfulfilled promises.
+             */
+            stopCronJobs();
+
+            /**
+             * Allow app to shutdown.
+             */
+            ElectronShutdownHandler.releaseShutdown();
+            setAppQuitting(true);
+            app.quit();
+        });
     });
 
 /**

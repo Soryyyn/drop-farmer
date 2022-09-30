@@ -109,3 +109,13 @@ export function getFarmRendererData(): newFarmRendererObject[] {
 export function getFarms(): FarmTemplate[] {
     return FARMS;
 }
+
+/**
+ * Stop all farm cron jobs.
+ */
+export function stopCronJobs(): void {
+    for (const farm of FARMS)
+        farm.stopScheduler();
+
+    log("MAIN", "INFO", "Stopped all farm cron jobs");
+}

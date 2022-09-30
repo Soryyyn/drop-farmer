@@ -376,6 +376,13 @@ export default abstract class FarmTemplate {
     }
 
     /**
+     * Stop all scheduling (cron tasks).
+     */
+    stopScheduler(): void {
+        this._taskManager.stopAll();
+    }
+
+    /**
      * Clear the cache of the farm.
      */
     async clearFarmCache(): Promise<void> {
