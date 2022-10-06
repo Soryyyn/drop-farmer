@@ -3,6 +3,7 @@ const plugins = require('./webpack.plugins');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+require("dotenv").config();
 
 rules.push({
     test: /\.css$/,
@@ -14,7 +15,7 @@ module.exports = {
         rules,
     },
     optimization: {
-        minimize: true,
+        minimize: (process.env.MINIMIZE == undefined) ? true : false,
         minimizer: [
             new UglifyJsPlugin({
                 uglifyOptions: {
