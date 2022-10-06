@@ -7,14 +7,16 @@ type FarmingWindowObject = {
 
 type FarmSaveData = {
     enabled: boolean;
+    type: "default" | "custom";
     name: string;
     checkerWebsite: string;
     checkingSchedule: number;
     uptime: number;
 }
 
-type newFarmRendererObject = {
+type FarmRendererObject = {
     name: string;
+    type: "default" | "custom";
     status: FarmStatus;
 }
 

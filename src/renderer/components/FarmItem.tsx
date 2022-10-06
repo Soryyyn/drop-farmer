@@ -1,4 +1,4 @@
-import { faAngleDown, faAngleUp, faRotate, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faRotate, faShield, faStar, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import styles from "../styles/FarmItem.module.scss";
@@ -11,7 +11,7 @@ import IndicatorTag from "./IndicatorTag";
  *
  * @param {Object} props Farm to show the status of.
  */
-export default function FarmItem({ name, status }: newFarmRendererObject) {
+export default function FarmItem({ name, type, status }: FarmRendererObject) {
     /**
      * If the farming windows are being shown.
      * Show open eye when showing else strikedthrough eye.
@@ -22,7 +22,21 @@ export default function FarmItem({ name, status }: newFarmRendererObject) {
         <div className={styles.container}>
             <div className={styles.firstRow}>
                 <div className={styles.left}>
-                    <p className={styles.title}>{name}</p>
+                    <div className={styles.titleRow}>
+                        {(type == "default")
+                            ? <FontAwesomeIcon
+                                icon={faShield}
+                                className={styles.typeIcon}
+                                size="1x"
+                            />
+                            : <FontAwesomeIcon
+                                icon={faStar}
+                                className={styles.typeIcon}
+                                size="1x"
+                            />
+                        }
+                        <p className={styles.title}>{name}</p>
+                    </div>
                     <div className={styles.details}>
                         <IndicatorTag status={status} />
                         {

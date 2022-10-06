@@ -11,7 +11,7 @@ export default function Sidebar() {
     /**
      * The current farms from main process.
      */
-    const [farms, setFarms] = useState<newFarmRendererObject[]>([]);
+    const [farms, setFarms] = useState<FarmRendererObject[]>([]);
 
     useSendAndWait(window.api.channels.getFarms, null, (err, response) => {
         if (err) {
@@ -31,7 +31,7 @@ export default function Sidebar() {
         /**
          * Create empty array for the state.
          */
-        let tempCopy: newFarmRendererObject[] = [];
+        let tempCopy: FarmRendererObject[] = [];
 
         /**
          * Check which farm had a status change.
@@ -58,10 +58,11 @@ export default function Sidebar() {
         <div className={styles.container}>
             <ul className={styles.items}>
                 {
-                    farms && farms.map((farm: newFarmRendererObject) => {
+                    farms && farms.map((farm: FarmRendererObject) => {
                         return <FarmItem
                             key={farm.name}
                             name={farm.name}
+                            type={farm.type}
                             status={farm.status}
                         />
                     })

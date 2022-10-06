@@ -4,6 +4,7 @@ import LeagueOfLegends from "./leagueOfLegends";
 import OverwatchContenders from "./overwatchContenders";
 import OverwatchLeague from "./overwatchLeague";
 import FarmTemplate from "./template";
+import TwitchStreamer from "./twitchStreamer";
 
 /**
  * All farms.
@@ -18,14 +19,27 @@ const FARMS: FarmTemplate[] = [
  * Initialize all farms.
  */
 export function initFarms(): void {
-    applyDataToFarms();
+    addCustomFarms();
+    loadSavedData();
+}
+
+/**
+ * Add the found custom farms from the config to the farm array.
+ * NOTE: Currently only twitch farms. May change in the future.
+ */
+function addCustomFarms(): void {
+    for (const farm of getFarmsData()) {
+        if (farm.type === "custom") {
+            FARMS.push(new TwitchStreamer(farm.name, farm.checkerWebsite));
+        }
+    }
 }
 
 /**
  * Apply the already saved data from the config file to the farm.
  * If no data for the farm is found, write it to the config file.
  */
-function applyDataToFarms(): void {
+function loadSavedData(): void {
     let farmsData: FarmSaveData[] = getFarmsData();
 
     /**
@@ -91,12 +105,13 @@ export function destroyAllFarmWindows(): void {
 /**
  * Get all data of the farms which the renderer needs.
  */
-export function getFarmRendererData(): newFarmRendererObject[] {
-    let rendererData: newFarmRendererObject[] = [];
+export function getFarmRendererData(): FarmRendererObject[] {
+    let rendererData: FarmRendererObject[] = [];
 
     for (const farm of FARMS)
         rendererData.push({
             name: farm.getName(),
+            type: farm.getType(),
             status: farm.getCurrentStatus()
         });
 

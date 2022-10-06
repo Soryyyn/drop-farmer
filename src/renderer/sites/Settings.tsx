@@ -32,6 +32,7 @@ export default function Settings() {
      */
     const [showedSettings, setShowedSettings] = useState<FarmSaveData>({
         enabled: false,
+        type: "custom",
         name: "undefined",
         checkerWebsite: "undefined",
         checkingSchedule: 0,

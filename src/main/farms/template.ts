@@ -12,6 +12,7 @@ export default abstract class FarmTemplate {
     private _name: string;
     private _checkerWebsite: string;
     private _enabled: boolean = false;
+    private _type: "default" | "custom" = "default";
     private _currentStatus: FarmStatus = "disabled";
     private _checkingSchedule: number = 30;
     private _checkerWindow: Electron.BrowserWindow | undefined = undefined;
@@ -19,10 +20,11 @@ export default abstract class FarmTemplate {
     private _taskManager: CrontabManager = new CrontabManager();
     private _uptimeTimer: UptimeTimer | undefined = undefined;
 
-    constructor(name: string, checkerWebsite: string) {
+    constructor(name: string, checkerWebsite: string, type: "default" | "custom") {
         this._name = name;
         this._checkerWebsite = checkerWebsite;
         this._uptimeTimer = new UptimeTimer(`${name} (timer)`);
+        this._type = type;
     }
 
     /**
@@ -105,6 +107,7 @@ export default abstract class FarmTemplate {
     getFarmData(): FarmSaveData {
         return {
             enabled: this._enabled,
+            type: this._type,
             name: this._name,
             checkerWebsite: this._checkerWebsite,
             checkingSchedule: this._checkingSchedule,
@@ -160,6 +163,13 @@ export default abstract class FarmTemplate {
      */
     getCurrentStatus(): FarmStatus {
         return this._currentStatus;
+    }
+
+    /**
+     * Return the type of the farm.
+     */
+    getType(): "default" | "custom" {
+        return this._type;
     }
 
     /**

@@ -64,6 +64,9 @@ function addNotFoundEntries(readObject: any, defaultObject: any): any {
     let writtenAmount: number = 0;
     let newObjectToWrite = { ...readObject };
 
+    /**
+     * Add object entries to settings in config.
+     */
     for (const [keys, value] of Object.entries(defaultObject)) {
         if (!Object.keys(readObject).includes(keys)) {
             newObjectToWrite[keys] = value;
@@ -71,6 +74,34 @@ function addNotFoundEntries(readObject: any, defaultObject: any): any {
         }
     }
 
+    /**
+     * Add not found farm entries which are needed.
+     * NOTE: Use for migrating with new entries.
+     */
+    for (const farm of readObject.farms) {
+        /**
+         * Decide if the farm is a default farm.
+         */
+        let found: boolean = false;
+        for (const defaultFarm of getFarms()) {
+            if (farm.name === defaultFarm.getName()) {
+                found = true;
+            }
+        }
+
+        /**
+         * If it is a default farm or if it is a custom farm.
+         */
+        if (found) {
+            farm.type = "default";
+        } else {
+            farm.type = "custom";
+        }
+    }
+
+    /**
+     * Write the changes if needed to the file.
+     */
     if (writtenAmount > 0) {
         writeToFile(FILE_NAME, JSON.stringify(newObjectToWrite, null, 4), "w");
         log("MAIN", "DEBUG", `Written ${writtenAmount} properties to settings file`);

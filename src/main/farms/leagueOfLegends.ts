@@ -9,7 +9,8 @@ export default class LeagueOfLegends extends FarmTemplate {
     constructor() {
         super(
             "league-of-legends",
-            "https://lolesports.com/"
+            "https://lolesports.com/",
+            "default"
         );
     }
 

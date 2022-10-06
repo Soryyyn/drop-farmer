@@ -8,7 +8,8 @@ export default class OverwatchContenders extends FarmTemplate {
     constructor() {
         super(
             "overwatch-contenders",
-            "https://www.youtube.com/c/OverwatchContenders"
+            "https://www.youtube.com/c/OverwatchContenders",
+            "default"
         );
     }
 

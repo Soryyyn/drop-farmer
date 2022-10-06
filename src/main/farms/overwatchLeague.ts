@@ -8,7 +8,8 @@ export default class OverwatchLeague extends FarmTemplate {
     constructor() {
         super(
             "overwatch-league",
-            "https://overwatchleague.com/en-us"
+            "https://overwatchleague.com/en-us",
+            "default"
         );
     }
 
