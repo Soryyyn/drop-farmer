@@ -1,11 +1,11 @@
 import { app, ipcMain, shell } from "electron";
 import { Channels } from "../common/channels";
 import { getApplicationSettings, getFarmsData, updateApplicationSettings, updateFarmsData } from "../config";
-import { getFarmRendererData, getFarms } from "../farms/management";
+import { deleteFarm, getFarmByName, getFarmRendererData, getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
 import { sendBasicToast, sendPromiseToast } from "../util/toast";
-import { getMainWindow, setAppQuitting } from "./windows";
+import { setAppQuitting } from "./windows";
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -52,14 +52,13 @@ handleAndReply(Channels.getFarms, () => {
 });
 
 handleOneWay(Channels.farmWindowsVisibility, (event, { name, showing }) => {
-    for (const farm of getFarms())
-        if (farm.getName() === name) {
-            if (showing) {
-                farm.showAllWindows();
-            } else {
-                farm.hideAllWindows();
-            }
-        }
+    const farm = getFarmByName(name);
+    if (farm != undefined) {
+        if (showing)
+            farm.showAllWindows();
+        else
+            farm.hideAllWindows();
+    }
 });
 
 handleOneWay(Channels.openLinkInExternal, (event, link: string) => {
@@ -121,36 +120,56 @@ handleAndReply(Channels.getApplicationVersion, () => {
 });
 
 handleOneWay(Channels.clearCache, (event, name) => {
-    getFarms().forEach((farm: FarmTemplate) => {
-        if (farm.getName() === name) {
-            sendBasicToast({
-                id: `cleared-cache-${farm.getName()}`,
-                textOnSuccess: `Cleared cache for ${farm.getName()}.`,
-                textOnError: `Failed clearing cache for ${farm.getName()}}.`,
-                duration: 4000
-            }, () => {
-                farm.restartScheduler(async () => {
-                    await farm.clearFarmCache();
-                });
-
-                farm.updateStatus("idle");
+    const farm = getFarmByName(name);
+    if (farm != undefined) {
+        sendBasicToast({
+            id: `cleared-cache-${farm.getName()}`,
+            textOnSuccess: `Cleared cache for ${farm.getName()}.`,
+            textOnError: `Failed clearing cache for ${farm.getName()}}.`,
+            duration: 4000
+        }, () => {
+            farm.restartScheduler(async () => {
+                await farm.clearFarmCache();
             });
-        }
-    });
+
+            farm.updateStatus("idle");
+        });
+    }
 });
 
 handleOneWay(Channels.restartScheduler, (event, name) => {
-    getFarms().forEach((farm: FarmTemplate) => {
-        if (farm.getName() === name) {
-            sendBasicToast({
-                id: `restart-schedule-${farm.getName()}`,
-                textOnSuccess: `Restarted schedule for ${farm.getName()}.`,
-                textOnError: `Failed restarting schedule for ${farm.getName()}}.`,
-                duration: 4000
-            }, () => {
-                farm.restartScheduler();
-                farm.updateStatus("idle");
-            });
-        }
-    });
+    const farm = getFarmByName(name);
+    if (farm != undefined) {
+        sendBasicToast({
+            id: `restart-schedule-${farm.getName()}`,
+            textOnSuccess: `Restarted schedule for ${farm.getName()}.`,
+            textOnError: `Failed restarting schedule for ${farm.getName()}}.`,
+            duration: 4000
+        }, () => {
+            farm.restartScheduler();
+            farm.updateStatus("idle");
+        });
+    }
+});
+
+handleAndReply(Channels.deleteFarm, (event, name) => {
+    const farm = getFarmByName(name);
+    if (farm != undefined) {
+        sendPromiseToast({
+            id: "delete-farm",
+            textOnLoading: "Deleting farm...",
+            textOnSuccess: `Deleted farm \"${name}\".`,
+            textOnError: "Failed deleting farm.",
+            duration: 4000
+        }, new Promise((resolve, reject) => {
+            try {
+                deleteFarm(farm);
+                resolve(undefined);
+            } catch (err) {
+                reject(err);
+            }
+        }));
+    }
+
+    return getFarmsData();
 });

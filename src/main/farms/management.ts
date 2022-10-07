@@ -1,4 +1,4 @@
-import { getFarmsData, updateFarmsData } from "../config";
+import { getFarmsData, removeFarmFromConfig, updateFarmsData } from "../config";
 import { log } from "../util/logger";
 import LeagueOfLegends from "./leagueOfLegends";
 import OverwatchContenders from "./overwatchContenders";
@@ -133,4 +133,43 @@ export function stopCronJobs(): void {
         farm.stopScheduler();
 
     log("MAIN", "INFO", "Stopped all farm cron jobs");
+}
+
+/**
+ * Get a farm by name. May return undefined if no such farm is found
+ * @param {string} name The name of the farm to get.
+ */
+export function getFarmByName(name: string): FarmTemplate | undefined {
+    let found: FarmTemplate | undefined = undefined;
+
+    FARMS.forEach((farm: FarmTemplate) => {
+        if (farm.getName() === name) {
+            found = farm;
+        }
+    });
+
+    return found;
+}
+
+/**
+ * Delete the farm from the current runtime and the config file.
+ * @param {FarmTemplate} farm The farm to delete.
+ */
+export function deleteFarm(farm: FarmTemplate): void {
+    /**
+     * Stop the cron jobs of the farm.
+     */
+    farm.stopScheduler();
+
+    /**
+     * Splice the farm from the runtime.
+     */
+    FARMS.splice(FARMS.indexOf(farm), 1);
+
+    /**
+     * Delete it from the config file.
+     */
+    removeFarmFromConfig(farm);
+
+    log("MAIN", "DEBUG", `${farm.getName()}: deleted farm`);
 }

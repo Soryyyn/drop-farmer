@@ -1,6 +1,7 @@
 import AutoLaunch from "auto-launch";
 import isEqual from "lodash.isequal";
 import { getFarms } from "./farms/management";
+import FarmTemplate from "./farms/template";
 import { createFile, readFile, writeToFile } from "./files/handling";
 import { debugLogs, log } from "./util/logger";
 
@@ -267,5 +268,23 @@ export function saveCurrentDataOnQuit(): void {
         log("MAIN", "DEBUG", "Wrote runtime config to file");
     } catch (err) {
         log("MAIN", "ERROR", `Failed to write runtime config to file. ${err}`);
+    }
+}
+
+/**
+ * Remove the farm from the config file.
+ */
+export function removeFarmFromConfig(farm: FarmTemplate): void {
+    getFarmsData().forEach((farmData) => {
+        if (farm.getName() === farmData.name) {
+            currentConfigData.farms.splice(currentConfigData.farms.indexOf(farmData, 1));
+        }
+    });
+
+    try {
+        writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
+        log("MAIN", "DEBUG", "Removed farm from config file");
+    } catch (err) {
+        log("MAIN", "ERROR", `Failed removing farm from config file. ${err}`);
     }
 }

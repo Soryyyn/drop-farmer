@@ -22,4 +22,5 @@ export enum Channels {
     updateAvailable = "update-available",
     installUpdate = "install-update",
     restart = "restart",
+    deleteFarm = "delete-farm",
 }
