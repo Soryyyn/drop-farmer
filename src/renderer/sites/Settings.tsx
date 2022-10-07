@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonLabel from "../components/ButtonLabel";
 import FarmSelector from "../components/FarmSelector";
+import SettingsItemButton from "../components/SettingsItemButton";
 import SettingsItemInput from "../components/SettingsItemInput";
 import SettingsItemToggle from "../components/SettingsItemToggle";
 import styles from "../styles/Settings.module.scss";
@@ -254,6 +255,30 @@ export default function Settings() {
                                             setFarmSettings(changesToApply);
                                         }}
                                     />
+
+                                    {/*
+                                        If farm is custom type.
+                                    */}
+                                    {(showedSettings.type === "custom") &&
+                                        <SettingsItemButton
+                                            label="Delete farm"
+                                            disabled={false}
+                                            description="Delete this farm. It's configuration and history data will be deleted too."
+                                            buttonLabel="Delete"
+                                            onClick={() => {
+                                                window.api.sendAndWait(window.api.channels.deleteFarm, showedSettings.name)
+                                                    .then((farms: any) => {
+                                                        /**
+                                                         * Set the farm settings
+                                                         * and the currently
+                                                         * selected to application.
+                                                         */
+                                                        setFarmSettings(farms);
+                                                        setSelected("application");
+                                                    })
+                                            }}
+                                        />
+                                    }
                                 </>
                             }
                         </div>
