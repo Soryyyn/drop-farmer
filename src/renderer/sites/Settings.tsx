@@ -33,7 +33,7 @@ export default function Settings() {
      */
     const [showedSettings, setShowedSettings] = useState<FarmSaveData>({
         enabled: false,
-        type: "custom",
+        type: "default",
         name: "undefined",
         checkerWebsite: "undefined",
         checkingSchedule: 0,
@@ -259,7 +259,7 @@ export default function Settings() {
                                     {/*
                                         If farm is custom type.
                                     */}
-                                    {(showedSettings.type === "custom") &&
+                                    {(showedSettings.type != "default") &&
                                         <SettingsItemButton
                                             label="Delete farm"
                                             disabled={false}

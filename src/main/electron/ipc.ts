@@ -102,7 +102,7 @@ handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
     }, new Promise(async (resolve, reject) => {
         try {
             await updateApplicationSettings(settingsToSave.applicationSettings);
-            await updateFarmsData(settingsToSave.farmSettings);
+            await updateFarmsData(settingsToSave.farmSettings, false);
 
             resolve(undefined);
         } catch (err) {

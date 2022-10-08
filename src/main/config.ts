@@ -189,7 +189,7 @@ function updateUptimes(): void {
  *
  * @param {FarmSaveData[]} newFarmsData The new farms data to set.
  */
-export function updateFarmsData(newFarmsData: FarmSaveData[]): Promise<void> {
+export function updateFarmsData(newFarmsData: FarmSaveData[], forceWrite: boolean): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         try {
             /**
@@ -209,9 +209,9 @@ export function updateFarmsData(newFarmsData: FarmSaveData[]): Promise<void> {
                          * Only apply new changes if the current settings
                          * differentiate from the new changes.
                          */
-                        if (newFarmData.checkerWebsite !== farm.getFarmData().checkerWebsite ||
-                            newFarmData.checkingSchedule !== farm.getFarmData().checkingSchedule ||
-                            newFarmData.enabled !== farm.getFarmData().enabled) {
+                        if (newFarmData.checkerWebsite !== farm.getSaveData().checkerWebsite ||
+                            newFarmData.checkingSchedule !== farm.getSaveData().checkingSchedule ||
+                            newFarmData.enabled !== farm.getSaveData().enabled) {
                             farm.applyNewSettings(newFarmData);
                             changed = true;
                         }
@@ -219,7 +219,10 @@ export function updateFarmsData(newFarmsData: FarmSaveData[]): Promise<void> {
                 }
             }
 
-            if (changed) {
+            /**
+             * If a change happened or a force write call is wanted.
+             */
+            if (changed || forceWrite) {
                 updateUptimes();
                 writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
                 log("MAIN", "DEBUG", `Updated farms data in config`);

@@ -1,4 +1,5 @@
 type FarmStatus = "farming" | "idle" | "checking" | "disabled" | "attention-required";
+type FarmType = "default" | "custom";
 
 type FarmingWindowObject = {
     window: Electron.BrowserWindow;
@@ -7,7 +8,7 @@ type FarmingWindowObject = {
 
 type FarmSaveData = {
     enabled: boolean;
-    type: "default" | "custom";
+    type: FarmType;
     name: string;
     checkerWebsite: string;
     checkingSchedule: number;
@@ -16,7 +17,7 @@ type FarmSaveData = {
 
 type FarmRendererObject = {
     name: string;
-    type: "default" | "custom";
+    type: FarmType;
     status: FarmStatus;
 }
 

@@ -1,4 +1,4 @@
-import { getFarmsData, removeFarmFromConfig, updateFarmsData } from "../config";
+import { getFarmsData, updateFarmsData } from "../config";
 import { log } from "../util/logger";
 import LeagueOfLegends from "./leagueOfLegends";
 import OverwatchContenders from "./overwatchContenders";
@@ -7,7 +7,8 @@ import FarmTemplate from "./template";
 import TwitchStreamer from "./twitchStreamer";
 
 /**
- * All farms.
+ * The farms array.
+ * Gets initialized with the default pre-configured farms.
  */
 const FARMS: FarmTemplate[] = [
     new LeagueOfLegends(),
@@ -16,30 +17,43 @@ const FARMS: FarmTemplate[] = [
 ];
 
 /**
- * Initialize all farms.
+ * Init function.
+ *
+ * Adds custom farms from the config file to the `FARMS` array.
+ * Loads the data from the config file into the farm.
+ *
+ * NOTE: Before the `addCustomFarmsFromConfig` function is executed,
+ * only the default farms are set in the array.
  */
 export function initFarms(): void {
-    addCustomFarms();
-    loadSavedData();
+    addCustomFarmsFromConfig();
+    loadSavedDataFromConfig();
+
+    log("MAIN", "DEBUG", "Initialized farms");
 }
 
 /**
  * Add the found custom farms from the config to the farm array.
  * NOTE: Currently only twitch farms. May change in the future.
  */
-function addCustomFarms(): void {
+function addCustomFarmsFromConfig(): void {
+    let added: number = 0;
     for (const farm of getFarmsData()) {
-        if (farm.type === "custom") {
+        if (farm.type == "custom") {
             FARMS.push(new TwitchStreamer(farm.name, farm.checkerWebsite));
+            added++;
         }
     }
+
+    if (added > 0)
+        log("MAIN", "DEBUG", `Added ${added} custom farms to the farms array`);
 }
 
 /**
  * Apply the already saved data from the config file to the farm.
  * If no data for the farm is found, write it to the config file.
  */
-function loadSavedData(): void {
+function loadSavedDataFromConfig(): void {
     let farmsData: FarmSaveData[] = getFarmsData();
 
     /**
@@ -66,7 +80,7 @@ function loadSavedData(): void {
          */
         if (!found) {
             updateNeeded = true;
-            farmsData.push(farm.getFarmData());
+            farmsData.push(farm.getSaveData());
             farm.initialize(farmsData[farmsData.length - 1]);
         }
     }
@@ -75,17 +89,9 @@ function loadSavedData(): void {
      * If new data needs to be written.
      */
     if (updateNeeded)
-        updateFarmsData(farmsData);
-}
+        updateFarmsData(farmsData, false);
 
-/**
- * Save the changes to the config file which the user made from the renderer.
- *
- * @param {FarmSaveData[]} userChanges The changes the user made to the farm.
- */
-export function saveUserChanges(userChanges: FarmSaveData[]): void {
-    updateFarmsData(userChanges);
-    log("MAIN", "DEBUG", "Saved user made changes to config file")
+    log("MAIN", "DEBUG", "Loaded saved data");
 }
 
 /**
@@ -128,7 +134,7 @@ export function getFarms(): FarmTemplate[] {
 /**
  * Stop all farm cron jobs.
  */
-export function stopCronJobs(): void {
+export function stopFarmCronJobs(): void {
     for (const farm of FARMS)
         farm.stopScheduler();
 
@@ -153,9 +159,9 @@ export function getFarmByName(name: string): FarmTemplate | undefined {
 
 /**
  * Delete the farm from the current runtime and the config file.
- * @param {FarmTemplate} farm The farm to delete.
+ * @param {FarmTemplate | number} farm The farm to delete.
  */
-export function deleteFarm(farm: FarmTemplate): void {
+export async function deleteFarm(farm: FarmTemplate): Promise<void> {
     /**
      * Stop the cron jobs of the farm.
      */
@@ -167,9 +173,19 @@ export function deleteFarm(farm: FarmTemplate): void {
     FARMS.splice(FARMS.indexOf(farm), 1);
 
     /**
-     * Delete it from the config file.
+     * Remove farm from the config file.
      */
-    removeFarmFromConfig(farm);
+    let temp = getFarmsData();
+    for (let i = 0; i < temp.length; i++) {
+        if (temp[i].name === farm.getName()) {
+            temp.splice(i, 1);
+        }
+    }
+
+    /**
+     * Do a force write of the config file.
+     */
+    await updateFarmsData(temp, true);
 
     log("MAIN", "DEBUG", `${farm.getName()}: deleted farm`);
 }

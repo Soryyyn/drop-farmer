@@ -4,7 +4,7 @@ import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-insta
 import { initConfig, saveCurrentDataOnQuit } from "./config";
 import { createTray, destroyTray } from "./electron/tray";
 import { createMainWindow, getMainWindow, setAppQuitting } from "./electron/windows";
-import { destroyAllFarmWindows, initFarms, stopCronJobs } from "./farms/management";
+import { destroyAllFarmWindows, initFarms, stopFarmCronJobs } from "./farms/management";
 import { internetConnectionChecker } from "./util/internet";
 import { initLogger, log } from "./util/logger";
 import { initPuppeteerConnection } from "./util/puppeteer";
@@ -107,7 +107,7 @@ app.whenReady()
             /**
              * Stop all cron jobs, to prevent unfulfilled promises.
              */
-            stopCronJobs();
+            stopFarmCronJobs();
 
             /**
              * Allow app to shutdown.

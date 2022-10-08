@@ -12,19 +12,60 @@ export default abstract class FarmTemplate {
     private _name: string;
     private _checkerWebsite: string;
     private _enabled: boolean = false;
-    private _type: "default" | "custom" = "default";
+    private _type: FarmType = "default";
     private _currentStatus: FarmStatus = "disabled";
     private _checkingSchedule: number = 30;
     private _checkerWindow: Electron.BrowserWindow | undefined = undefined;
     private _farmingWindows: FarmingWindowObject[] = [];
     private _taskManager: CrontabManager = new CrontabManager();
     private _uptimeTimer: UptimeTimer | undefined = undefined;
+    private _hasInitialized: boolean = false;
 
-    constructor(name: string, checkerWebsite: string, type: "default" | "custom") {
+    constructor(name: string, checkerWebsite: string, type: FarmType) {
         this._name = name;
         this._checkerWebsite = checkerWebsite;
         this._uptimeTimer = new UptimeTimer(`${name} (timer)`);
         this._type = type;
+    }
+
+    /**
+     * Initialize the needed attributes and start the schedule if needed.
+     * @param {any} configData The data from the config which should be loaded.
+     */
+    initialize(configData: any): void {
+        /**
+         * Change the basic data.
+         */
+        this._checkingSchedule = configData.checkingSchedule;
+        this._checkerWebsite = configData.checkerWebsite;
+        this._enabled = configData.enabled;
+
+        /**
+         * Change the status depending if the farm is enabled or disabled.
+         * If the farm is disabled, set it to idle.
+         */
+        this._currentStatus = (this._enabled) ? "idle" : "disabled";
+
+        /**
+         * Add the schedule task to the task manager.
+         */
+        this._taskManager.add("checking-schedule", `*/${this._checkingSchedule} * * * *`, () => {
+            this._schedule();
+        });
+
+        /**
+         * Only if the farm is enabled, the task manager will start the
+         * checking-schedule on farm initialization.
+         */
+        if (this._enabled)
+            this._taskManager.start("checking-schedule");
+
+        /**
+         * Set the initialized status to true.
+         */
+        this._hasInitialized = true;
+
+        log("MAIN", "DEBUG", `${this._name}: Initialized farm data`);
     }
 
     /**
@@ -35,14 +76,10 @@ export default abstract class FarmTemplate {
     }
 
     /**
-     * Disable the farm and set the status to disabled.
+     * Returns if the farm is enabled or not.
      */
-    disableFarm(): void {
-        this._enabled = false;
-        this.updateStatus("disabled");
-        this._taskManager.stop("checking-schedule");
-
-        log("MAIN", "INFO", `${this._name}: Disabled farm`);
+    isEnabled(): boolean {
+        return this._enabled;
     }
 
     /**
@@ -68,43 +105,20 @@ export default abstract class FarmTemplate {
     }
 
     /**
-     * Returns if the farm is enabled or disabled.
+     * Disable the farm and set the status to disabled.
      */
-    isEnabled(): boolean {
-        return this._enabled;
+    disableFarm(): void {
+        this._enabled = false;
+        this.updateStatus("disabled");
+        this.stopAllTasks();
+
+        log("MAIN", "INFO", `${this._name}: Disabled farm`);
     }
 
     /**
-     * Initialize the needed attributes and start the schedule if needed.
-     * @param storeData
+     * Get the save data of the farm.
      */
-    initialize(storeData: any): void {
-        this._checkingSchedule = storeData.checkingSchedule;
-        this._checkerWebsite = storeData.checkerWebsite;
-        this._enabled = storeData.enabled;
-
-        /**
-         * Change the status depending if the farm is enabled or disabled.
-         */
-        this._currentStatus = (this._enabled) ? "idle" : "disabled";
-
-        /**
-         * Start the schedule if the farm is enabled.
-         */
-        this._taskManager.add("checking-schedule", `*/${this._checkingSchedule} * * * *`, () => {
-            this._schedule();
-        });
-
-        if (this._enabled)
-            this._taskManager.start("checking-schedule");
-
-        log("MAIN", "DEBUG", `${this._name}: Initialized farm data`);
-    }
-
-    /**
-     * Prepare the data of the farm which needs to be saved.
-     */
-    getFarmData(): FarmSaveData {
+    getSaveData(): FarmSaveData {
         return {
             enabled: this._enabled,
             type: this._type,
@@ -112,7 +126,7 @@ export default abstract class FarmTemplate {
             checkerWebsite: this._checkerWebsite,
             checkingSchedule: this._checkingSchedule,
             uptime: this._uptimeTimer!.getAmount()
-        }
+        };
     }
 
     /**
@@ -168,7 +182,7 @@ export default abstract class FarmTemplate {
     /**
      * Return the type of the farm.
      */
-    getType(): "default" | "custom" {
+    getType(): FarmType {
         return this._type;
     }
 
@@ -390,6 +404,14 @@ export default abstract class FarmTemplate {
      */
     stopScheduler(): void {
         this._taskManager.stopAll();
+    }
+
+    /**
+     * Stop all tasks which are added to the task scheduler.
+     */
+    stopAllTasks(): void {
+        this._taskManager.stopAll();
+        log("MAIN", "DEBUG", `${this._name}: Stopped all tasks`);
     }
 
     /**
