@@ -58,11 +58,80 @@ export default class TwitchStreamer extends FarmTemplate {
         });
     }
 
-    windowsStillFarming(window?: Electron.BrowserWindow | undefined): Promise<any> {
-        throw new Error("Method not implemented.");
+    windowsStillFarming(window: Electron.BrowserWindow): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                if (this.getFarmingWindows().length === 0) {
+                    log("MAIN", "DEBUG", `${this.getName()}: No farming windows, skipping checking step`);
+                    resolve(undefined);
+                } else {
+                    let page = await getPage(getBrowserConnection(), window);
+
+                    /**
+                     * Check for *LIVE* text on profile of streamer.
+                     */
+                    if (await page.$("#live-channel-stream-information > div > div > div > div > div.Layout-sc-nxg1ff-0.wEGRY > div > div > div > a > div.Layout-sc-nxg1ff-0.ScHaloIndicator-sc-1l14b0i-1.ceXRHq.tw-halo__indicator > div > div > div > div > p") != null) {
+                        log("MAIN", "DEBUG", `${this.getName()}: Stream still live, continue farming`);
+                        resolve(undefined);
+                    } else {
+                        this.removeFarmingWindowFromArray(0);
+
+                        log("MAIN", "DEBUG", `${this.getName()}: Stream not live anymore, stopping farming`);
+
+                        resolve(undefined);
+                    }
+                }
+            } catch (err) {
+                reject(err);
+            }
+        });
     }
 
-    startFarming(window?: Electron.BrowserWindow | undefined): Promise<any> {
-        throw new Error("Method not implemented.");
+    startFarming(window: Electron.BrowserWindow): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                let page = await getPage(getBrowserConnection(), window);
+
+                if (this.getFarmingWindows().length > 0) {
+                    log("MAIN", "DEBUG", `${this.getName()}: Already farming, no need to start again`);
+
+                    this.updateStatus("farming");
+                    resolve(undefined);
+                } else {
+                    /**
+                     * Wait a bit for the page to load.
+                     */
+                    await page.waitForTimeout(2000);
+
+                    /**
+                     * Check if the *LIVE* container is present.
+                     */
+                    if (await page.$("#live-channel-stream-information > div > div > div > div > div.Layout-sc-nxg1ff-0.wEGRY > div > div > div > a > div.Layout-sc-nxg1ff-0.ScHaloIndicator-sc-1l14b0i-1.ceXRHq.tw-halo__indicator > div > div > div > div > p") != null) {
+                        log("MAIN", "DEBUG", `${this.getName()}: Found livestream`);
+
+                        /**
+                         * Create the farming window and open the livestream.
+                         */
+                        this.createFarmingWindow(this.getCheckerWebsite())
+                            .then(() => {
+                                log("MAIN", "DEBUG", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
+
+                                this.timerAction("start");
+
+                                this.updateStatus("farming");
+                                resolve(undefined);
+                            });
+
+                    } else {
+                        log("MAIN", "DEBUG", `${this.getName()}: Stream not live, no need to farm`);
+                        this.updateStatus("idle");
+
+                        resolve(undefined);
+                    }
+                }
+            } catch (err) {
+                reject(err);
+            }
+        });
     }
 }
