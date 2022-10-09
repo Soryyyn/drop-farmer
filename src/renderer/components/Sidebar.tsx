@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from "react";
 import styles from "../styles/Sidebar.module.scss";
 import { useHandleOneWay } from "../util/hooks/useHandleOneWay";
 import { useSendAndWait } from "../util/hooks/useSendAndWait";
@@ -55,19 +57,27 @@ export default function Sidebar() {
     });
 
     return (
-        <div className={styles.container}>
-            <ul className={styles.items}>
-                {
-                    farms && farms.map((farm: FarmRendererObject) => {
-                        return <FarmItem
-                            key={farm.name}
-                            name={farm.name}
-                            type={farm.type}
-                            status={farm.status}
-                        />
-                    })
-                }
-            </ul>
+        <div className={styles.upperContainer}>
+            <div className={styles.container}>
+                <ul className={styles.items}>
+                    {
+                        farms && farms.map((farm: FarmRendererObject) => {
+                            return <FarmItem
+                                key={farm.name}
+                                name={farm.name}
+                                type={farm.type}
+                                status={farm.status}
+                            />
+                        })
+                    }
+                </ul>
+            </div>
+            <button
+                className={styles.addFarmButton}
+            >
+                <FontAwesomeIcon icon={faPlus} size="lg" className={styles.icon} />
+                Add farm
+            </button>
         </div>
     );
 }
