@@ -131,7 +131,6 @@ export default abstract class FarmTemplate {
 
     /**
      * Apply new settings (e.x. from renderer) to the farm.
-     *
      * @param {FarmSaveData} newSettings The new settings to apply to the farm.
      */
     applyNewSettings(newSettings: FarmSaveData): void {
@@ -155,7 +154,6 @@ export default abstract class FarmTemplate {
 
     /**
      * Update the status of the farm.
-     *
      * @param status The new status to set.
      */
     updateStatus(status: FarmStatus): void {
@@ -397,13 +395,6 @@ export default abstract class FarmTemplate {
         this._taskManager.start("checking-schedule");
 
         log("MAIN", "DEBUG", `${this._name}: Restarted checking schedule`);
-    }
-
-    /**
-     * Stop all scheduling (cron tasks).
-     */
-    stopScheduler(): void {
-        this._taskManager.stopAll();
     }
 
     /**

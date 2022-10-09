@@ -136,7 +136,7 @@ export function getFarms(): FarmTemplate[] {
  */
 export function stopFarmCronJobs(): void {
     for (const farm of FARMS)
-        farm.stopScheduler();
+        farm.stopAllTasks();
 
     log("MAIN", "INFO", "Stopped all farm cron jobs");
 }
@@ -165,7 +165,7 @@ export async function deleteFarm(farm: FarmTemplate): Promise<void> {
     /**
      * Stop the cron jobs of the farm.
      */
-    farm.stopScheduler();
+    farm.stopAllTasks();
 
     /**
      * Splice the farm from the runtime.
