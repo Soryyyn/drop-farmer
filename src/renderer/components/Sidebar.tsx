@@ -1,6 +1,7 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "../styles/Sidebar.module.scss";
 import { useHandleOneWay } from "../util/hooks/useHandleOneWay";
 import { useSendAndWait } from "../util/hooks/useSendAndWait";
@@ -14,6 +15,7 @@ export default function Sidebar() {
      * The current farms from main process.
      */
     const [farms, setFarms] = useState<FarmRendererObject[]>([]);
+    const navigation = useNavigate();
 
     useSendAndWait(window.api.channels.getFarms, null, (err, response) => {
         if (err) {
@@ -74,6 +76,12 @@ export default function Sidebar() {
             </div>
             <button
                 className={styles.addFarmButton}
+                onClick={() => {
+                    /**
+                     * Move the user to the new farm screen.
+                     */
+                    navigation("/new-farm");
+                }}
             >
                 <FontAwesomeIcon icon={faPlus} size="lg" className={styles.icon} />
                 Add farm
