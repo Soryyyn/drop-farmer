@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonDropdown from "../components/ButtonDropdown";
 import ButtonNolabel from "../components/ButtonNoLabel";
+import ModalManager from "../components/ModalManager";
 import ModelAnimation from "../components/ModelAnimation";
 import Sidebar from "../components/Sidebar";
 import Tooltip from "../components/Tooltip";
@@ -12,20 +13,12 @@ import styles from "../styles/Home.module.scss";
  * The route for the main page of the application.
  */
 export default function Home() {
-    /**
-     * If the 3d-animations are disabled or not.
-     */
     const [animationsDisabled, setAnimationsDisabled] = useState<boolean>(false);
-
-    /**
-     * The application version.
-     */
     const [applicationVersion, setApplicationVersion] = useState<string>("0.0.0");
-
-    /**
-     * If a update is available.
-     */
     const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
+
+    const [showingModal, setShowingModal] = useState<boolean>(false);
+    const [modalToShow, setModalToShow] = useState<"settings" | "add-new-farm">("settings");
 
     /**
      * Get the navigation from react router
@@ -76,101 +69,110 @@ export default function Home() {
     }, []);
 
     return (
-        <div className={styles.divider}>
-            <Sidebar />
-            <div className={styles.mainContainer}>
-                <div className={styles.content}>
-                    <ModelAnimation
-                        animationDisabled={animationsDisabled}
-                        animationSrc="../assets/crate-falling.webm"
-                    />
-                    <h1 className={styles.title}>DROP-FARMER</h1>
-                    <p className={styles.desc}>Stream drops farmer application</p>
-                    <div className={styles.buttonsContainer}>
-                        <ButtonDropdown
-                            icon={faBars}
-                            primary={true}
-                            dropdownItems={[
-                                {
-                                    type: "label",
-                                    label: "Check for update",
-                                    disabled: (process.env.NODE_ENV !== "production"),
-                                    action() {
-                                        window.api.sendOneWay(window.api.channels.updateCheck);
-                                    }
-                                },
-                                {
-                                    type: "seperator"
-                                },
-                                {
-                                    type: "label",
-                                    label: "About",
-                                    disabled: true,
-                                },
-                                {
-                                    type: "label",
-                                    label: "Statistics",
-                                    disabled: true,
-                                },
-                                {
-                                    type: "seperator"
-                                },
-                                {
-                                    type: "label",
-                                    label: "Restart application",
-                                    disabled: false,
-                                    action() {
-                                        window.api.sendOneWay(window.api.channels.restart);
-                                    }
-                                },
-                                {
-                                    type: "label",
-                                    label: "Quit application",
-                                    disabled: false,
-                                    action() {
-                                        window.api.sendOneWay(window.api.channels.shutdown);
-                                    }
-                                },
-                            ]}
+        <>
+            <ModalManager
+                showing={showingModal}
+                modalToShow={modalToShow}
+                handleClosing={() => setShowingModal(false)}
+            />
+            <div className={styles.divider}>
+                <Sidebar />
+                <div className={styles.mainContainer}>
+                    <div className={styles.content}>
+                        <ModelAnimation
+                            animationDisabled={animationsDisabled}
+                            animationSrc="../assets/crate-falling.webm"
                         />
-                        <ButtonNolabel
-                            icon={faGlobe}
-                            primary={true}
-                            tooltipText="Website"
-                            onClickAction={() => {
-                                window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://drop-farmer.soryn.dev");
-                            }}
-                        />
-                        <ButtonNolabel
-                            icon={faGear}
-                            primary={true}
-                            tooltipText="Settings"
-                            onClickAction={() => {
-                                navigation("/settings");
-                            }}
-                        />
-                    </div>
-                    <div className={styles.additionalData}>
-                        <p>Version: {applicationVersion}</p>
-                        <p>Copyright © Soryn</p>
-                        {updateAvailable &&
-                            <Tooltip
-                                placement="top"
-                                tooltipText="Will get installed on restart"
-                            >
-                                <p
-                                    className={styles.installUpdate}
-                                    onClick={() => {
-                                        window.api.sendOneWay(window.api.channels.installUpdate);
-                                    }}
+                        <h1 className={styles.title}>DROP-FARMER</h1>
+                        <p className={styles.desc}>Stream drops farmer application</p>
+                        <div className={styles.buttonsContainer}>
+                            <ButtonDropdown
+                                icon={faBars}
+                                primary={true}
+                                dropdownItems={[
+                                    {
+                                        type: "label",
+                                        label: "Check for update",
+                                        disabled: (process.env.NODE_ENV !== "production"),
+                                        action() {
+                                            window.api.sendOneWay(window.api.channels.updateCheck);
+                                        }
+                                    },
+                                    {
+                                        type: "seperator"
+                                    },
+                                    {
+                                        type: "label",
+                                        label: "About",
+                                        disabled: true,
+                                    },
+                                    {
+                                        type: "label",
+                                        label: "Statistics",
+                                        disabled: true,
+                                    },
+                                    {
+                                        type: "seperator"
+                                    },
+                                    {
+                                        type: "label",
+                                        label: "Restart application",
+                                        disabled: false,
+                                        action() {
+                                            window.api.sendOneWay(window.api.channels.restart);
+                                        }
+                                    },
+                                    {
+                                        type: "label",
+                                        label: "Quit application",
+                                        disabled: false,
+                                        action() {
+                                            window.api.sendOneWay(window.api.channels.shutdown);
+                                        }
+                                    },
+                                ]}
+                            />
+                            <ButtonNolabel
+                                icon={faGlobe}
+                                primary={true}
+                                tooltipText="Website"
+                                onClickAction={() => {
+                                    window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://drop-farmer.soryn.dev");
+                                }}
+                            />
+                            <ButtonNolabel
+                                icon={faGear}
+                                primary={true}
+                                tooltipText="Settings"
+                                onClickAction={() => {
+                                    // navigation("/settings");
+                                    setShowingModal(true);
+                                    setModalToShow("settings");
+                                }}
+                            />
+                        </div>
+                        <div className={styles.additionalData}>
+                            <p>Version: {applicationVersion}</p>
+                            <p>Copyright © Soryn</p>
+                            {updateAvailable &&
+                                <Tooltip
+                                    placement="top"
+                                    tooltipText="Will get installed on restart"
                                 >
-                                    Update available! Click here to update<br />
-                                </p>
-                            </Tooltip>
-                        }
+                                    <p
+                                        className={styles.installUpdate}
+                                        onClick={() => {
+                                            window.api.sendOneWay(window.api.channels.installUpdate);
+                                        }}
+                                    >
+                                        Update available! Click here to update<br />
+                                    </p>
+                                </Tooltip>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

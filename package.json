@@ -70,6 +70,7 @@
         "react-dom": "^18.2.0",
         "react-hot-toast": "^2.4.0",
         "react-router-dom": "^6.3.0",
+        "react-spring": "^9.5.5",
         "react-switch": "^7.0.0",
         "styled-components": "^5.3.5",
         "timer-node": "^5.0.6",
