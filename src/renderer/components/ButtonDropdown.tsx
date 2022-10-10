@@ -40,9 +40,10 @@ export default function ButtonDropdown({ icon, primary, dropdownItems }: Props) 
     /**
      * The to render dropdown items.
      */
-    const dropdownItemsList = dropdownItems.map((item) => {
+    const dropdownItemsList = dropdownItems.map((item, index) => {
         return (item.type === "label")
             ? <li
+                key={index}
                 className={clsx(styles.dropdownItemLabel, (item.disabled ? styles.dropdownItemDisabled : ""))}
                 onClick={() => {
                     if (!item.disabled)
@@ -51,7 +52,7 @@ export default function ButtonDropdown({ icon, primary, dropdownItems }: Props) 
             >
                 <p>{item.label}</p>
             </li>
-            : <li className={styles.dropdownSeperator}></li>
+            : <li key={index} className={styles.dropdownSeperator}></li>
     });
 
     return (
