@@ -39,7 +39,25 @@ body {
     text-align: center;
 
     .tippy-arrow::before {
-        border-bottom-color: rgb(34, 37, 54);
+        border-bottom-color: #222536;
         border-top-color: rgb(34, 37, 54);
     }
+}
+
+// Scrollbar
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {}
+
+::-webkit-scrollbar-thumb {
+    pointer-events: initial;
+    background: #BAD5F1;
+    border-radius: 2px;
+    border: 4px #BAD5F1 solid;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #BAD5F1;
 }
