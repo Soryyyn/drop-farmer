@@ -18,7 +18,11 @@ export default function Home() {
     const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
     const [showingModal, setShowingModal] = useState<boolean>(false);
-    const [modalToShow, setModalToShow] = useState<"settings" | "add-new-farm">("settings");
+    const [modalData, setModalData] = useState<{
+        modalToShow: "settings" | "add-new-farm"
+    }>({
+        modalToShow: "settings"
+    });
 
     /**
      * Get the navigation from react router
@@ -72,7 +76,7 @@ export default function Home() {
         <>
             <ModalManager
                 showing={showingModal}
-                modalToShow={modalToShow}
+                modalToShow={modalData.modalToShow}
                 handleClosing={() => setShowingModal(false)}
             />
             <div className={styles.divider}>
@@ -145,9 +149,10 @@ export default function Home() {
                                 primary={true}
                                 tooltipText="Settings"
                                 onClickAction={() => {
-                                    // navigation("/settings");
                                     setShowingModal(true);
-                                    setModalToShow("settings");
+                                    setModalData({
+                                        modalToShow: "settings"
+                                    });
                                 }}
                             />
                         </div>

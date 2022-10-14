@@ -1,0 +1,56 @@
+.splitterContainer {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    column-gap: 2rem;
+
+    .settingsSelectors {
+        width: 25%;
+
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        list-style: none;
+
+        .selector {
+            border-radius: 5px;
+            padding-block: 0.75rem;
+            padding-inline: 1rem;
+
+            color: #BAD5F1;
+            text-transform: capitalize;
+            transition: all 0.1s;
+
+            &:active,
+            &:hover {
+                transition: all 0.1s;
+                cursor: pointer;
+                background: #1F2233;
+            }
+
+            &:active {
+                transition: all 0.1s;
+                background: #181B2B;
+            }
+        }
+
+        .selectorSelected {
+            transition: all 0.1s;
+            background: #1F2233;
+        }
+
+        .seperator {
+            width: 90%;
+            height: 2px;
+            align-self: center;
+            margin-block: 0.25rem;
+
+            background: #1F2233;
+        }
+    }
+
+    .settingsItems {
+        flex-grow: 1;
+    }
+}
