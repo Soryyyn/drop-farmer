@@ -38,6 +38,7 @@ type ApplicationSettings = {
 type ConfigFile = {
     applicationSettings: ApplicationSettings;
     farms: FarmSaveData[];
+    settings: {};
 }
 
 type BasicToast = {
@@ -74,4 +75,23 @@ type DropdownItem = {
     label?: string;
     disabled?: boolean;
     action?: () => void;
+}
+
+type Setting = {
+    name: string;
+    description: string;
+    value: number | string | boolean | undefined;
+    defaultValue: number | string | boolean;
+}
+
+type Settings = {
+    [name: string]: Setting[];
+}
+
+type CachedSetting = {
+    [name: string]: number | string | boolean | undefined;
+}
+
+type CachedSettings = {
+    [name: string]: CachedSetting;
 }

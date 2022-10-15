@@ -1,3 +1,4 @@
+import set from "lodash.set";
 import { log } from "./logger";
 
 /**
@@ -57,8 +58,26 @@ export const specificFarmSettings: Setting[] = [
 /**
  * All of the settings set by key of owner.
  */
-export const settings: Settings = {
+let settings: Settings = {
     application: applicationSettings,
+}
+
+/**
+ * Returns the settings.
+ */
+export function getSettings(): Settings {
+    return settings;
+}
+
+/**
+ * Update the settings as a whole.
+ *
+ * @param {Settings} settings The new settings object to apply.
+ * @returns {Settings} The newly updated settings to write.
+ */
+export function updateSettings(newSettings: Settings): Settings {
+    settings = newSettings;
+    return settings;
 }
 
 /**
@@ -98,8 +117,8 @@ export function convertSettingsIntoCached(): CachedSettings {
         /**
          * Only add owner keys if they haven't already been added.
          */
-        if (converted[key] != undefined) {
-            converted[key] = [];
+        if (converted[key] == undefined) {
+            converted[key] = {};
         }
 
         /**
@@ -107,10 +126,7 @@ export function convertSettingsIntoCached(): CachedSettings {
          * Set the default value if the value of the setting is undefined.
          */
         value.forEach((setting: Setting) => {
-            converted[key].push({
-                name: setting.name,
-                value: (setting.value == undefined) ? setting.defaultValue : setting.value
-            });
+            set(converted, `${key}.${setting.name}`, setting.value ?? setting.defaultValue);
         });
     }
 
