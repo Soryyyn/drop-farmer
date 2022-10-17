@@ -4,51 +4,47 @@ import { useSendAndWait } from "../../util/hooks";
 import styles from "./Settings.module.scss";
 
 export default function Settings() {
-    const [currentlySelected, setCurrentlySelected] = useState<number>(0);
-    const [applicationSettings, setApplicationSettings] = useState<ApplicationSettings>();
-    const [farmSettings, setFarmSettings] = useState<FarmSaveData[]>([]);
+    const [currentlySelected, setCurrentlySelected] = useState<string>("application");
+    const [selectors, setSelectors] = useState<string[]>([]);
+    const [settings, setSettings] = useState<Settings>();
 
     /**
      * Get the settings file data from main process.
      */
     useSendAndWait(window.api.channels.getSettings, null, (err, response) => {
         if (!err) {
-            setApplicationSettings(response.applicationSettings);
-            setFarmSettings(response.farmSettings);
+            setSelectors(Object.keys(response));
+            setSettings(response);
         }
     });
 
     return (
         <>
-            {applicationSettings && farmSettings &&
+            {selectors && settings &&
                 <div className={styles.splitterContainer}>
                     <ul className={styles.settingsSelectors}>
-                        <li
-                            className={clsx(styles.selector, (currentlySelected === 0) ? styles.selectorSelected : null)}
-                            key="application"
-                            onClick={() => {
-                                setCurrentlySelected(0);
-                            }}
-                        >application</li>
-                        <li className={styles.seperator}></li>
                         {
-                            farmSettings.map((farmSetting, index) => {
+                            selectors.map((selector) => {
                                 return <li
-                                    className={clsx(styles.selector, (currentlySelected === index + 1) ? styles.selectorSelected : null)}
-                                    key={farmSetting.name}
+                                    className={clsx(styles.selector, (currentlySelected === selector) ? styles.selectorSelected : null)}
+                                    key={selector}
                                     onClick={() => {
-                                        /**
-                                         * The index is increased by one here to
-                                         * include the 0 of the application settings.
-                                         */
-                                        setCurrentlySelected(index + 1);
+                                        setCurrentlySelected(selector);
                                     }}
-                                >{farmSetting.name}</li>
+                                >{selector}</li>
                             })
                         }
                     </ul>
                     <ul className={styles.settingsItems}>
-                        <p>{currentlySelected}</p>
+                        {
+                            settings[currentlySelected].map((setting) => {
+                                return <li>
+                                    {setting.name.toString()}
+                                    {setting.description.toString()}
+                                    {setting.value!.toString()}
+                                </li>
+                            })
+                        }
                     </ul>
                 </div>
             }

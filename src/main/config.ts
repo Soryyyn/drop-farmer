@@ -1,53 +1,60 @@
 import AutoLaunch from "auto-launch";
-import isEqual from "lodash.isequal";
-import { getFarms } from "./farms/management";
-import FarmTemplate from "./farms/template";
+import get from "lodash.get";
+import set from "lodash.set";
+import { convertFarmsIntoCached } from "./farms/management";
 import { createFile, readFile, writeToFile } from "./files/handling";
-import { debugLogs, log } from "./util/logger";
+import { enableDebugLogs, log } from "./util/logger";
+import { convertSettingsIntoCached, loadCachedIntoSettings } from "./util/settings";
 
 const FILE_NAME = "config.json";
-const DEFAULT_STRUCTURE: ConfigFile = {
-    applicationSettings: {
-        launchOnStartup: false,
-        showMainWindowOnLaunch: true,
-        disable3DModuleAnimation: false,
-        debugLogs: false
-    },
-    farms: [],
-}
+let currentConfig: any;
 const autoLauncher = new AutoLaunch({
     name: "drop-farmer"
 });
-let currentConfigData: ConfigFile = DEFAULT_STRUCTURE;
 
-/**
- * Initialize the config file.
- */
 export function initConfig(): void {
-    createConfigFile();
-    currentConfigData = addNotFoundEntries(readConfigFile(), DEFAULT_STRUCTURE);
+    createDefaultConfig();
+    currentConfig = readConfig();
 
     /**
-     * Enable or disable the debug logs.
+     * Update some settings which are needed on startup.
      */
-    debugLogs(currentConfigData.applicationSettings.debugLogs);
-}
+    if (Boolean(getConfigKey("settings.application.debugLogs")))
+        enableDebugLogs(true);
+    if (Boolean(getConfigKey("settings.application.launchOnStartup")))
+        launchOnStartup(true);
+
+    log("MAIN", "DEBUG", "Initialized config");
+};
 
 /**
- * Create the config file.
+ * Creates the basic `config.json` file with the default settings applied and
+ * the default farms.
  */
-function createConfigFile(): void {
+function createDefaultConfig(): void {
+    /**
+     * Default config file with the basic settings applied.
+     * NOTE: The farms are empty here, because they are not yet initialized.
+     */
+    let defaultConfig = {
+        farms: convertFarmsIntoCached(),
+        settings: convertSettingsIntoCached(),
+    };
+
     try {
-        createFile(FILE_NAME, JSON.stringify(DEFAULT_STRUCTURE, null, 4));
+        /**
+         * Just create the file, it won't try to get overriden if it already exists.
+         */
+        createFile(FILE_NAME, JSON.stringify(defaultConfig, null, 4));
     } catch (err) {
         log("MAIN", "FATAL", `Failed creating config file. ${err}`);
     }
 }
 
 /**
- * Read the config file.
+ * Reads the config file and return it.
  */
-function readConfigFile(): void {
+function readConfig() {
     try {
         return JSON.parse(readFile(FILE_NAME));
     } catch (err) {
@@ -56,184 +63,36 @@ function readConfigFile(): void {
 }
 
 /**
- * Add not found keys to the config file.
+ * Returns the value of the specified key from the config.
  *
- * @param readObject The newly read settings file.
- * @param defaultObject The default settings object.
+ * @param {string} key The key of the config to return.
  */
-function addNotFoundEntries(readObject: any, defaultObject: any): any {
-    let writtenAmount: number = 0;
-    let newObjectToWrite = { ...readObject };
-
-    /**
-     * Add object entries to settings in config.
-     */
-    for (const [keys, value] of Object.entries(defaultObject)) {
-        if (!Object.keys(readObject).includes(keys)) {
-            newObjectToWrite[keys] = value;
-            writtenAmount++;
-        }
-    }
-
-    /**
-     * Add not found farm entries which are needed.
-     * NOTE: Use for migrating with new entries.
-     */
-    for (const farm of readObject.farms) {
-        /**
-         * Decide if the farm is a default farm.
-         */
-        let found: boolean = false;
-        for (const defaultFarm of getFarms()) {
-            if (farm.name === defaultFarm.getName()) {
-                found = true;
-            }
-        }
-
-        /**
-         * If it is a default farm or if it is a custom farm.
-         */
-        if (found) {
-            farm.type = "default";
-        } else {
-            farm.type = "custom";
-        }
-    }
-
-    /**
-     * Write the changes if needed to the file.
-     */
-    if (writtenAmount > 0) {
-        writeToFile(FILE_NAME, JSON.stringify(newObjectToWrite, null, 4), "w");
-        log("MAIN", "DEBUG", `Written ${writtenAmount} properties to settings file`);
-        return readConfigFile();
-    } else {
-        return readObject;
-    }
+export function getConfigKey(key: string): any {
+    return get(currentConfig, key);
 }
 
 /**
- * Get the current application settings.
- */
-export function getApplicationSettings(): ApplicationSettings {
-    return currentConfigData.applicationSettings;
-}
-
-/**
- * Get the current app uptime.
- */
-export function getAppUptime(): number {
-    let tempUptime = 0;
-
-    for (const farm of currentConfigData.farms)
-        tempUptime += farm.uptime;
-
-    return tempUptime;
-}
-
-/**
- * Get the current farms data.
- */
-export function getFarmsData(): FarmSaveData[] {
-    return currentConfigData.farms;
-}
-
-/**
- * Update the application settings.
+ * Update / override a value of the config file.
  *
- * @param {ApplicationSettings} newApplicationSettings The new application
- * settings to set.
+ * @param {string} key The key of the config to update the value of.
+ * @param {any} value The value of the key to update / set.
  */
-export function updateApplicationSettings(newApplicationSettings: ApplicationSettings): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        try {
-            /**
-             * If at least one change happened do the write call.
-             */
-            if (!isEqual(newApplicationSettings, currentConfigData.applicationSettings)) {
-                currentConfigData.applicationSettings = newApplicationSettings;
-
-                debugLogs(newApplicationSettings.debugLogs);
-                launchOnStartup(newApplicationSettings.launchOnStartup);
-                writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
-                log("MAIN", "DEBUG", `Updated application settings in config`);
-            }
-
-            resolve(undefined);
-        } catch (err) {
-            log("MAIN", "ERROR", `Failed updating application settings. ${err}`);
-            reject(err);
-        }
-    });
+export function updateKeyValue(key: string, value: any): void {
+    set(currentConfig, key, value);
+    log("MAIN", "DEBUG", `Updated ${key} in runtime config`);
 }
 
 /**
- * Update the app and farms uptimes.
+ * Update the actual config file with the runtime config.
  */
-function updateUptimes(): void {
-    for (const farm of getFarms()) {
-        for (let i = 0; i < currentConfigData.farms.length; i++) {
-            if (farm.getName() === currentConfigData.farms[i].name) {
-                /**
-                 * Stop the timer and add up the times.
-                 */
-                farm.timerAction("stop");
-                currentConfigData.farms[i].uptime += farm.getCurrentUptime();
-            }
-        }
+export function updateConfigFile(): void {
+    try {
+        cacheAllData();
+        writeToFile(FILE_NAME, JSON.stringify(currentConfig, null, 4), "w");
+        log("MAIN", "DEBUG", "Updated config file with runtime config");
+    } catch (err) {
+        log("MAIN", "ERROR", `Failed to write runtime config to file. ${err}`);
     }
-}
-
-/**
- * Update the farms data.
- *
- * @param {FarmSaveData[]} newFarmsData The new farms data to set.
- */
-export function updateFarmsData(newFarmsData: FarmSaveData[], forceWrite: boolean): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        try {
-            /**
-             * Prematurely set the new farm config data even if nothing changed.
-             */
-            currentConfigData.farms = newFarmsData;
-
-            /**
-             * If at least one change happened do the write call.
-             */
-            let changed: boolean = false;
-
-            for (const farm of getFarms()) {
-                for (const newFarmData of newFarmsData) {
-                    if (farm.getName() === newFarmData.name) {
-                        /**
-                         * Only apply new changes if the current settings
-                         * differentiate from the new changes.
-                         */
-                        if (newFarmData.checkerWebsite !== farm.getSaveData().checkerWebsite ||
-                            newFarmData.checkingSchedule !== farm.getSaveData().checkingSchedule ||
-                            newFarmData.enabled !== farm.getSaveData().enabled) {
-                            farm.applyNewSettings(newFarmData);
-                            changed = true;
-                        }
-                    }
-                }
-            }
-
-            /**
-             * If a change happened or a force write call is wanted.
-             */
-            if (changed || forceWrite) {
-                updateUptimes();
-                writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
-                log("MAIN", "DEBUG", `Updated farms data in config`);
-            }
-
-            resolve(undefined);
-        } catch (err) {
-            log("MAIN", "ERROR", `Failed updating farms data. ${err}`);
-            reject(err);
-        }
-    });
 }
 
 /**
@@ -241,7 +100,7 @@ export function updateFarmsData(newFarmsData: FarmSaveData[], forceWrite: boolea
  *
  * @param {boolean} launchOnStartup The launchOnStartup setting to set.
  */
-function launchOnStartup(launchOnStartup: boolean): void {
+export function launchOnStartup(launchOnStartup: boolean): void {
     autoLauncher.isEnabled()
         .then((isEnabled: boolean) => {
             if (launchOnStartup) {
@@ -261,33 +120,14 @@ function launchOnStartup(launchOnStartup: boolean): void {
         });
 }
 
-/**
- * Save the current runtime config to the config file on app close.
- */
-export function saveCurrentDataOnQuit(): void {
-    updateUptimes();
-    try {
-        writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
-        log("MAIN", "DEBUG", "Wrote runtime config to file");
-    } catch (err) {
-        log("MAIN", "ERROR", `Failed to write runtime config to file. ${err}`);
-    }
-}
+function cacheAllData(): void {
+    /**
+     * Update farms.
+     */
+    updateKeyValue("farms", convertFarmsIntoCached());
 
-/**
- * Remove the farm from the config file.
- */
-export function removeFarmFromConfig(farm: FarmTemplate): void {
-    getFarmsData().forEach((farmData) => {
-        if (farm.getName() === farmData.name) {
-            currentConfigData.farms.splice(currentConfigData.farms.indexOf(farmData, 1));
-        }
-    });
-
-    try {
-        writeToFile(FILE_NAME, JSON.stringify(currentConfigData, null, 4), "w");
-        log("MAIN", "DEBUG", "Removed farm from config file");
-    } catch (err) {
-        log("MAIN", "ERROR", `Failed removing farm from config file. ${err}`);
-    }
+    /**
+     * Update settings.
+     */
+    updateKeyValue("settings", convertSettingsIntoCached());
 }

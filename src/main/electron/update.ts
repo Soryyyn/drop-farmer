@@ -1,6 +1,6 @@
 import { app, autoUpdater } from "electron";
 import { Channels } from "../common/channels";
-import { saveCurrentDataOnQuit } from "../config";
+import { updateConfigFile } from "../config";
 import { destroyAllFarmWindows } from "../farms/management";
 import { log } from "../util/logger";
 import { handleOneWay, sendOneWay } from "./ipc";
@@ -65,7 +65,7 @@ autoUpdater.on("update-downloaded", () => {
  * `before-quit` will not be fired, so call all function here too.
  */
 autoUpdater.on("before-quit-for-update", () => {
-    saveCurrentDataOnQuit();
+    updateConfigFile();
     destroyTray();
     destroyAllFarmWindows();
 });

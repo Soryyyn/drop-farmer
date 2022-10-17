@@ -1,4 +1,5 @@
 import set from "lodash.set";
+import { getConfigKey, launchOnStartup, updateKeyValue } from "../config";
 import { log } from "./logger";
 
 /**
@@ -18,7 +19,7 @@ export const applicationSettings: Setting[] = [
         defaultValue: true
     },
     {
-        name: "disable3DModuleAnimation",
+        name: "disable3DModelAnimation",
         description: "Disable the 3D models animation on various pages (Home, etc.).",
         value: undefined,
         defaultValue: false
@@ -29,30 +30,6 @@ export const applicationSettings: Setting[] = [
         value: undefined,
         defaultValue: false
     },
-];
-
-/**
- * The settings for each specific farm.
- */
-export const specificFarmSettings: Setting[] = [
-    {
-        name: "enabled",
-        description: "Enable or disable this farm.",
-        value: undefined,
-        defaultValue: false
-    },
-    {
-        name: "checkerWebsite",
-        description: "The website drop-farmer checks for the schedule, live matches, etc. to start farming.",
-        value: undefined,
-        defaultValue: ""
-    },
-    {
-        name: "checkingSchedule",
-        description: "The schedule (in minutes) on which drop-farmer will check if farming is possible.",
-        value: undefined,
-        defaultValue: 30
-    }
 ];
 
 /**
@@ -72,35 +49,39 @@ export function getSettings(): Settings {
 /**
  * Update the settings as a whole.
  *
- * @param {Settings} settings The new settings object to apply.
- * @returns {Settings} The newly updated settings to write.
+ * @param {Settings} key The key to update / add.
  */
-export function updateSettings(newSettings: Settings): Settings {
-    settings = newSettings;
-    return settings;
+export function updateSettings(key: string, value: Setting[]): void {
+    set(settings, key, value);
+
+    /**
+     * Update the launch on startup if the settings changed.
+     */
+    launchOnStartup(Boolean(getSpecificSetting("application", "launchOnStartup").value));
 }
 
 /**
  * Convert a cached setting to the setting usable by the app.
- *
- * @param {CachedSetting} cached The setting to get the cached data from.
- * @param {string} settingOwner The owner of the setting. May be "application"
- * or any other farm name.
  */
-export function loadCachedIntoSettings(cached: CachedSetting, settingOwner: string): void {
+export function loadCachedIntoSettings(): void {
+    let cachedSettings: CachedSettings = getConfigKey("settings");
+
     /**
      * Go through each setting and find the cached one.
      */
-    for (const [key, value] of Object.entries(settings)) {
-        if (key === settingOwner) {
-            value.forEach((setting: Setting) => {
-                /**
-                 * Load the cached value into the setting of the runtime.
-                 */
-                if (setting.name === cached.name) {
-                    setting.value = cached.value;
-                }
-            });
+    for (const [settingsKey, settingsValue] of Object.entries(settings)) {
+        for (const [cachedKey, cachedValue] of Object.entries(cachedSettings)) {
+            if (settingsKey === cachedKey) {
+                settingsValue.forEach((setting: Setting) => {
+                    /**
+                     * Load the cached value into the setting of the runtime.
+                     */
+                    for (const [cachedSettingKey, cachedSettingValue] of Object.entries(cachedValue)) {
+                        if (setting.name == cachedSettingKey)
+                            setting.value = cachedSettingValue;
+                    }
+                });
+            }
         }
     }
 
@@ -126,10 +107,23 @@ export function convertSettingsIntoCached(): CachedSettings {
          * Set the default value if the value of the setting is undefined.
          */
         value.forEach((setting: Setting) => {
-            set(converted, `${key}.${setting.name}`, setting.value ?? setting.defaultValue);
+            set(converted, `${key}.${setting.name}`, (setting.value == undefined) ? setting.defaultValue : setting.value);
         });
     }
 
-    log("MAIN", "DEBUG", "Converted runtime settings to cached settings");
     return converted;
+}
+
+/**
+ * Get a specific setting by the setting owner and the setting name.
+ *
+ * @param {string} settingOwner The owner of the setting. ex. "application".
+ * @param {string} nameOfSetting The name of the setting to get.
+ */
+export function getSpecificSetting(settingOwner: string, nameOfSetting: string): Setting {
+    let index = settings[settingOwner].findIndex((setting) => {
+        return setting.name === nameOfSetting
+    });
+
+    return settings[settingOwner][index];
 }

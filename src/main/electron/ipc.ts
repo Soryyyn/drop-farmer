@@ -1,9 +1,11 @@
 import { app, ipcMain, shell } from "electron";
 import { Channels } from "../common/channels";
-import { getApplicationSettings, getFarmsData, updateApplicationSettings, updateFarmsData } from "../config";
-import { deleteFarm, getFarmByName, getFarmRendererData, getFarms } from "../farms/management";
+import { getFarmByName, getSidebarItems } from "../farms/management";
+// import { getApplicationSettings, getFarmsData, updateApplicationSettings, updateFarmsData } from "../config";
+// import { deleteFarm, getFarmByName, getFarmRendererData, getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
+import { getSettings, getSpecificSetting } from "../util/settings";
 import { sendBasicToast, sendPromiseToast } from "../util/toast";
 import { setAppQuitting } from "./windows";
 
@@ -43,12 +45,16 @@ export function sendOneWay(window: Electron.BrowserWindow, channel: string, ...a
     }
 }
 
+/**
+ * Ipc events below.
+ */
+
 handleOneWay(Channels.log, (event, { type, message }) => {
     log("RENDERER", type, message);
 });
 
 handleAndReply(Channels.getFarms, () => {
-    return getFarmRendererData();
+    return getSidebarItems();
 });
 
 handleOneWay(Channels.farmWindowsVisibility, (event, { name, showing }) => {
@@ -83,36 +89,37 @@ handleOneWay(Channels.restart, () => {
 });
 
 handleAndReply(Channels.getSettings, () => {
-    return {
-        applicationSettings: getApplicationSettings(),
-        farmSettings: getFarmsData(),
-    }
+    // return {
+    //     applicationSettings: getApplicationSettings(),
+    //     farmSettings: getFarmsData(),
+    // }
+    return getSettings();
 });
 
-handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
-    applicationSettings: ApplicationSettings,
-    farmSettings: FarmSaveData[]
-}) => {
-    sendPromiseToast({
-        id: "settings-saving",
-        textOnLoading: "Saving settings...",
-        textOnSuccess: "Saved settings.",
-        textOnError: "Failed saving settings.",
-        duration: 4000
-    }, new Promise(async (resolve, reject) => {
-        try {
-            await updateApplicationSettings(settingsToSave.applicationSettings);
-            await updateFarmsData(settingsToSave.farmSettings, false);
+// handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
+//     applicationSettings: ApplicationSettings,
+//     farmSettings: FarmSaveData[]
+// }) => {
+//     sendPromiseToast({
+//         id: "settings-saving",
+//         textOnLoading: "Saving settings...",
+//         textOnSuccess: "Saved settings.",
+//         textOnError: "Failed saving settings.",
+//         duration: 4000
+//     }, new Promise(async (resolve, reject) => {
+//         try {
+//             // await updateApplicationSettings(settingsToSave.applicationSettings);
+//             // await updateFarmsData(settingsToSave.farmSettings, false);
 
-            resolve(undefined);
-        } catch (err) {
-            reject(err);
-        }
-    }));
-});
+//             resolve(undefined);
+//         } catch (err) {
+//             reject(err);
+//         }
+//     }));
+// });
 
 handleAndReply(Channels.get3DAnimationsDisabled, () => {
-    return getApplicationSettings().disable3DModuleAnimation;
+    return getSpecificSetting("application", "disable3DModelAnimation");
 });
 
 handleAndReply(Channels.getApplicationVersion, () => {
@@ -152,24 +159,24 @@ handleOneWay(Channels.restartScheduler, (event, name) => {
     }
 });
 
-handleAndReply(Channels.deleteFarm, (event, name) => {
-    const farm = getFarmByName(name);
-    if (farm != undefined) {
-        sendPromiseToast({
-            id: "delete-farm",
-            textOnLoading: "Deleting farm...",
-            textOnSuccess: `Deleted farm \"${name}\".`,
-            textOnError: "Failed deleting farm.",
-            duration: 4000
-        }, new Promise((resolve, reject) => {
-            try {
-                deleteFarm(farm);
-                resolve(undefined);
-            } catch (err) {
-                reject(err);
-            }
-        }));
-    }
+// handleAndReply(Channels.deleteFarm, (event, name) => {
+//     const farm = getFarmByName(name);
+//     if (farm != undefined) {
+//         sendPromiseToast({
+//             id: "delete-farm",
+//             textOnLoading: "Deleting farm...",
+//             textOnSuccess: `Deleted farm \"${name}\".`,
+//             textOnError: "Failed deleting farm.",
+//             duration: 4000
+//         }, new Promise((resolve, reject) => {
+//             try {
+//                 deleteFarm(farm);
+//                 resolve(undefined);
+//             } catch (err) {
+//                 reject(err);
+//             }
+//         }));
+//     }
 
-    return getFarmsData();
-});
+//     // return getFarmsData();
+// });

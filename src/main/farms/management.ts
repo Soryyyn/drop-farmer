@@ -1,191 +1,237 @@
-import { getFarmsData, updateFarmsData } from "../config";
+import set from "lodash.set";
+import { getConfigKey, updateKeyValue } from "../config";
 import { log } from "../util/logger";
+import { getSettings, loadCachedIntoSettings, updateSettings } from "../util/settings";
 import LeagueOfLegends from "./leagueOfLegends";
 import OverwatchContenders from "./overwatchContenders";
 import OverwatchLeague from "./overwatchLeague";
 import FarmTemplate from "./template";
-import TwitchStreamer from "./twitchStreamer";
 
 /**
- * The farms array.
- * Gets initialized with the default pre-configured farms.
+ * All default farms which are added by default.
  */
-const FARMS: FarmTemplate[] = [
+const DEFAULT_FARMS: FarmTemplate[] = [
     new LeagueOfLegends(),
     new OverwatchLeague(),
     new OverwatchContenders(),
 ];
 
 /**
- * Init function.
- *
- * Adds custom farms from the config file to the `FARMS` array.
- * Loads the data from the config file into the farm.
- *
- * NOTE: Before the `addCustomFarmsFromConfig` function is executed,
- * only the default farms are set in the array.
+ * The currently usable farms.
  */
+let currentFarms: FarmTemplate[] = [];
+
 export function initFarms(): void {
-    addCustomFarmsFromConfig();
-    loadSavedDataFromConfig();
+    addDefaultFarms();
+    addCustomFarms();
+    cacheAvailableFarms();
+
+    /**
+     * After setting the the config to the cached config, update the settings
+     * useable by the app, with the cached settings.
+     */
+    loadCachedIntoSettings();
+
+    loadSettingsIntoFarms();
+    startFarms();
 
     log("MAIN", "DEBUG", "Initialized farms");
 }
 
 /**
- * Add the found custom farms from the config to the farm array.
- * NOTE: Currently only twitch farms. May change in the future.
+ * Add the default farms to the current farms array.
  */
-function addCustomFarmsFromConfig(): void {
-    let added: number = 0;
-    for (const farm of getFarmsData()) {
-        if (farm.type == "custom") {
-            FARMS.push(new TwitchStreamer(farm.name, farm.checkerWebsite));
-            added++;
-        }
-    }
-
-    if (added > 0)
-        log("MAIN", "DEBUG", `Added ${added} custom farms to the farms array`);
+function addDefaultFarms(): void {
+    currentFarms.push(...DEFAULT_FARMS);
+    log("MAIN", "DEBUG", "Added default farms");
 }
 
 /**
- * Apply the already saved data from the config file to the farm.
- * If no data for the farm is found, write it to the config file.
+ * Add the custom farms found from the config file.
  */
-function loadSavedDataFromConfig(): void {
-    let farmsData: FarmSaveData[] = getFarmsData();
+function addCustomFarms(): void {
+    let cachedFarms: CachedFarms = getConfigKey("farms");
 
     /**
-     * If no farms are in the config file, add them with default values.
-     * Else initialize the data.
+     * Find the none default farms in the farms object.
      */
-    let updateNeeded: boolean = false;
-
-    for (const farm of FARMS) {
-        let found: boolean = false;
-
-        /**
-         * Initialize if farm data is found in config.
-         */
-        for (const farmData of farmsData) {
-            if (farm.getName() === farmData.name) {
-                found = true;
-                farm.initialize(farmData);
-            }
+    for (const [key] of Object.entries(cachedFarms)) {
+        let foundDefault: boolean = false;
+        for (const farm of currentFarms) {
+            if (key === farm.getName()) foundDefault = true;
         }
 
         /**
-         * If not found, get data from farm and initialize.
+         * Add the farm if `foundDefault` is set to false.
          */
-        if (!found) {
-            updateNeeded = true;
-            farmsData.push(farm.getSaveData());
-            farm.initialize(farmsData[farmsData.length - 1]);
+        if (!foundDefault) {
         }
     }
 
+    log("MAIN", "DEBUG", "Added custom farms");
+}
+
+/**
+ * Chache all available farms.
+ */
+function cacheAvailableFarms(): void {
     /**
-     * If new data needs to be written.
+     * Add the farm settings to the settings.
+     * These are only the initial settings.
      */
-    if (updateNeeded)
-        updateFarmsData(farmsData, false);
+    currentFarms.forEach((farm) => {
+        updateSettings(farm.getName(), createSpecificFarmSettings(farm));
+    });
 
-    log("MAIN", "DEBUG", "Loaded saved data");
+    /**
+     * Also manually update the cached farms.
+     */
+    updateKeyValue("farms", convertFarmsIntoCached());
 }
 
 /**
- * Destroy all windows of the farm (checker and farming windows).
+ * Start all farms which are in the current farms array.
+ * If they are not enabled, they won't start.
  */
-export function destroyAllFarmWindows(): void {
-    for (const farm of FARMS) {
-        if (farm.getCheckerWindow() != undefined)
-            farm.destroyCheckerWindow();
-        for (const farmingWindow of farm.getFarmingWindows())
-            farm.removeFarmingWindowFromArray(farmingWindow);
-    }
-
-    log("MAIN", "DEBUG", "Destroyed all windows of farms");
+export function startFarms(): void {
+    currentFarms.forEach((farm) => {
+        farm.start();
+    });
+    log("MAIN", "DEBUG", "Started enabled farms");
 }
 
 /**
- * Get all data of the farms which the renderer needs.
- */
-export function getFarmRendererData(): FarmRendererObject[] {
-    let rendererData: FarmRendererObject[] = [];
-
-    for (const farm of FARMS)
-        rendererData.push({
-            name: farm.getName(),
-            type: farm.getType(),
-            status: farm.getCurrentStatus()
-        });
-
-    return rendererData;
-}
-
-/**
- * Get farms.
+ * Returns all current farms.
  */
 export function getFarms(): FarmTemplate[] {
-    return FARMS;
+    return currentFarms;
+}
+
+/**
+ * Returns a farm by its name.
+ * @param {string} name The name of the farm to retrieve.
+ */
+export function getFarmByName(name: string): FarmTemplate {
+    let foundIndex = 0;
+    currentFarms.forEach((farm, index) => {
+        if (farm.getName() === name) foundIndex = index;
+    });
+    return currentFarms[foundIndex];
+}
+
+/**
+ * Convert the currently in runtime loaded farms into cached objects for writing
+ * to the config file.
+ */
+export function convertFarmsIntoCached(): CachedFarms {
+    let converted: CachedFarms = {};
+
+    /**
+     * Create a object entry for each farm with the values wanted.
+     */
+    currentFarms.forEach((farm) => {
+        set(converted, farm.getName(), {
+            uptime: farm.getCurrentUptime()
+        });
+    });
+
+    return converted;
+}
+
+/**
+ * Create the settings for the wanted farm.
+ * NOTE: Add wanted settings here.
+ *
+ * @param {FarmTemplate} farm The farm to create the settings for.
+ */
+function createSpecificFarmSettings(farm: FarmTemplate): Setting[] {
+    return [
+        {
+            name: "enabled",
+            description: "Enable or disable this farm.",
+            value: farm.isEnabled(),
+            defaultValue: false
+        },
+        {
+            name: "checkerWebsite",
+            description: "The website drop-farmer checks for the schedule, live matches, etc. to start farming.",
+            value: farm.getCheckerWebsite(),
+            defaultValue: ""
+        },
+        {
+            name: "checkingSchedule",
+            description: "The schedule (in minutes) on which drop-farmer will check if farming is possible.",
+            value: farm.getCheckingSchedule(),
+            defaultValue: 30
+        }
+    ];
+}
+
+/**
+ * Convert the farm settings to cached for writing to config.
+ */
+export function convertFarmSettingsIntoCached(): Setting[] {
+    let settings: Setting[] = [];
+
+    /**
+     * Load the current setting from each farm into the settings array for caching.
+     */
+    currentFarms.forEach((farm) => {
+        let tempObject: any = {};
+        set(tempObject, farm.getName(), createSpecificFarmSettings(farm));
+
+        settings.push(tempObject);
+    });
+
+    return settings;
+}
+
+/**
+ * Load the setting which were loaded previously into the farms.
+ */
+export function loadSettingsIntoFarms(): void {
+    currentFarms.forEach((farm) => {
+        /**
+         * Initialize all settings data for each farm after the settings have
+         * been loaded.
+         */
+        farm.initializeData();
+    });
+
+    log("MAIN", "DEBUG", "Loaded cached data into farmss");
+}
+
+/**
+ * Get the farm sidebar items to render.
+ */
+export function getSidebarItems(): SidebarFarmItem[] {
+    const sidebarItems: SidebarFarmItem[] = [];
+
+    currentFarms.forEach((farm) => {
+        sidebarItems.push(farm.getForSidebar());
+    });
+
+    return sidebarItems;
+}
+
+/**
+ * Destroy all farming windows and checker windows for each farm.
+ */
+export function destroyAllFarmWindows(): void {
+    currentFarms.forEach((farm) => {
+        farm.destroyAllFarmingWindows();
+        farm.destroyCheckerWindow();
+    });
+
+    log("MAIN", "DEBUG", "Destroyed all farm windows");
 }
 
 /**
  * Stop all farm cron jobs.
  */
-export function stopFarmCronJobs(): void {
-    for (const farm of FARMS)
+export function stopFarmJobs(): void {
+    currentFarms.forEach((farm) => {
         farm.stopAllTasks();
-
-    log("MAIN", "INFO", "Stopped all farm cron jobs");
-}
-
-/**
- * Get a farm by name. May return undefined if no such farm is found
- * @param {string} name The name of the farm to get.
- */
-export function getFarmByName(name: string): FarmTemplate | undefined {
-    let found: FarmTemplate | undefined = undefined;
-
-    FARMS.forEach((farm: FarmTemplate) => {
-        if (farm.getName() === name) {
-            found = farm;
-        }
     });
-
-    return found;
-}
-
-/**
- * Delete the farm from the current runtime and the config file.
- * @param {FarmTemplate | number} farm The farm to delete.
- */
-export async function deleteFarm(farm: FarmTemplate): Promise<void> {
-    /**
-     * Stop the cron jobs of the farm.
-     */
-    farm.stopAllTasks();
-
-    /**
-     * Splice the farm from the runtime.
-     */
-    FARMS.splice(FARMS.indexOf(farm), 1);
-
-    /**
-     * Remove farm from the config file.
-     */
-    let temp = getFarmsData();
-    for (let i = 0; i < temp.length; i++) {
-        if (temp[i].name === farm.getName()) {
-            temp.splice(i, 1);
-        }
-    }
-
-    /**
-     * Do a force write of the config file.
-     */
-    await updateFarmsData(temp, true);
-
-    log("MAIN", "DEBUG", `${farm.getName()}: deleted farm`);
+    log("MAIN", "DEBUG", "Stopped all farm jobs");
 }

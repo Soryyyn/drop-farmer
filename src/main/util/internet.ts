@@ -23,7 +23,7 @@ export function internetConnectionChecker(): void {
                     id: "no-internet",
                     type: "error",
                     text: "No internet connection.",
-                    duration: Infinity
+                    duration: 4000
                 });
         })
         .catch((err) => {

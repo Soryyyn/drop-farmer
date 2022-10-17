@@ -1,14 +1,13 @@
 import ElectronShutdownHandler from "@paymoapp/electron-shutdown-handler";
 import { app, session } from "electron";
 import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
-import { initConfig, saveCurrentDataOnQuit } from "./config";
+import { initConfig, updateConfigFile } from "./config";
 import { createTray, destroyTray } from "./electron/tray";
 import { createMainWindow, getMainWindow, setAppQuitting } from "./electron/windows";
-import { destroyAllFarmWindows, initFarms, stopFarmCronJobs } from "./farms/management";
+import { destroyAllFarmWindows, initFarms, stopFarmJobs } from "./farms/management";
 import { internetConnectionChecker } from "./util/internet";
 import { initLogger, log } from "./util/logger";
 import { initPuppeteerConnection } from "./util/puppeteer";
-
 /**
  * If application is in run in production environment.
  */
@@ -24,7 +23,7 @@ if (require("electron-squirrel-startup")) {
 /**
  * Update checking / downloading.
  */
-import "./electron/update";
+require("./electron/update");
 
 /**
  * Initialize all drop-farmer background functions.
@@ -107,7 +106,7 @@ app.whenReady()
             /**
              * Stop all cron jobs, to prevent unfulfilled promises.
              */
-            stopFarmCronJobs();
+            stopFarmJobs();
 
             /**
              * Allow app to shutdown.
@@ -122,7 +121,7 @@ app.whenReady()
  * Quitting routine.
  */
 app.on("before-quit", () => {
-    saveCurrentDataOnQuit();
+    updateConfigFile();
     destroyTray();
     destroyAllFarmWindows();
 });

@@ -31,7 +31,7 @@ type FarmSettings = {
 type ApplicationSettings = {
     launchOnStartup: boolean;
     showMainWindowOnLaunch: boolean;
-    disable3DModuleAnimation: boolean;
+    disable3DModelAnimation: boolean;
     debugLogs: boolean;
 }
 
@@ -77,6 +77,11 @@ type DropdownItem = {
     action?: () => void;
 }
 
+/**
+ * The type of a single setting.
+ * NOTE: Value accepts undefined here, because there may not be a value stored
+ * in the settings atm.
+ */
 type Setting = {
     name: string;
     description: string;
@@ -84,14 +89,35 @@ type Setting = {
     defaultValue: number | string | boolean;
 }
 
+/**
+ * The whole settings object which accepts multiple keys with setting arrays.
+ */
 type Settings = {
     [name: string]: Setting[];
 }
 
+/**
+ * A single cached setting used to write to the config file.
+ */
 type CachedSetting = {
     [name: string]: number | string | boolean | undefined;
 }
-
 type CachedSettings = {
     [name: string]: CachedSetting;
+}
+
+/**
+ * Farm data which get saved for each farm in the config file.
+ */
+type CachedFarm = {
+    uptime: number;
+}
+type CachedFarms = {
+    [name: string]: CachedFarm;
+}
+
+type SidebarFarmItem = {
+    name: string;
+    type: FarmType;
+    status: FarmStatus;
 }

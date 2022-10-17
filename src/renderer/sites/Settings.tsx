@@ -163,11 +163,11 @@ export default function Settings() {
 
                                     <SettingsItemToggle
                                         label="Disable 3D model animations"
-                                        checked={applicationSettings?.disable3DModuleAnimation}
+                                        checked={applicationSettings?.disable3DModelAnimation}
                                         disabled={false}
                                         onClick={(checked: boolean) => {
                                             let tempSettings = { ...applicationSettings };
-                                            tempSettings.disable3DModuleAnimation = checked;
+                                            tempSettings.disable3DModelAnimation = checked;
                                             setApplicationSettings(tempSettings);
                                         }}
                                         description="Disable the 3D models animation on various pages (Home, etc.)."

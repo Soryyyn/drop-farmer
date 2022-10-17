@@ -3,6 +3,7 @@ import { Channels } from "../common/channels";
 import { sendOneWay } from "../electron/ipc";
 import { createWindow, destroyWindow, getMainWindow } from "../electron/windows";
 import { log } from "../util/logger";
+import { getSpecificSetting } from "../util/settings";
 import { UptimeTimer } from "./timer";
 
 /**
@@ -15,11 +16,11 @@ export default abstract class FarmTemplate {
     private _type: FarmType = "default";
     private _currentStatus: FarmStatus = "disabled";
     private _checkingSchedule: number = 30;
+
     private _checkerWindow: Electron.BrowserWindow | undefined = undefined;
     private _farmingWindows: FarmingWindowObject[] = [];
     private _taskManager: CrontabManager = new CrontabManager();
     private _uptimeTimer: UptimeTimer | undefined = undefined;
-    private _hasInitialized: boolean = false;
 
     constructor(name: string, checkerWebsite: string, type: FarmType) {
         this._name = name;
@@ -30,15 +31,14 @@ export default abstract class FarmTemplate {
 
     /**
      * Initialize the needed attributes and start the schedule if needed.
-     * @param {any} configData The data from the config which should be loaded.
      */
-    initialize(configData: any): void {
+    initializeData(): void {
         /**
          * Change the basic data.
          */
-        this._checkingSchedule = configData.checkingSchedule;
-        this._checkerWebsite = configData.checkerWebsite;
-        this._enabled = configData.enabled;
+        this._checkingSchedule = getSpecificSetting(this._name, "checkingSchedule").value as number;
+        this._checkerWebsite = getSpecificSetting(this._name, "checkerWebsite").value as string;
+        this._enabled = getSpecificSetting(this._name, "enabled").value as boolean;
 
         /**
          * Change the status depending if the farm is enabled or disabled.
@@ -53,19 +53,39 @@ export default abstract class FarmTemplate {
             this._schedule();
         });
 
+        log("MAIN", "DEBUG", `${this._name}: Initialized farm data`);
+    }
+
+    /**
+     * Apply new settings (e.x. from renderer) to the farm.
+     *
+     * @param {FarmSaveData} newSettings The new settings to apply to the farm.
+     */
+    applyNewSettings(newSettings: FarmSaveData): void {
         /**
-         * Only if the farm is enabled, the task manager will start the
-         * checking-schedule on farm initialization.
+         * Enable or disable farm.
          */
+        (newSettings.enabled) ? this.enableFarm() : this.disableFarm();
+
+        /**
+         * Update schedule.
+         */
+        this.updateSchedule(newSettings.checkingSchedule);
+
+        /**
+         * Set checker website.
+         */
+        this._checkerWebsite = newSettings.checkerWebsite;
+
+        log("MAIN", "DEBUG", `${this._name}: Applied new settings`);
+    }
+
+    /**
+     * Start the actual farm if it is enabled.
+     */
+    start(): void {
         if (this._enabled)
             this._taskManager.start("checking-schedule");
-
-        /**
-         * Set the initialized status to true.
-         */
-        this._hasInitialized = true;
-
-        log("MAIN", "DEBUG", `${this._name}: Initialized farm data`);
     }
 
     /**
@@ -116,61 +136,6 @@ export default abstract class FarmTemplate {
     }
 
     /**
-     * Get the save data of the farm.
-     */
-    getSaveData(): FarmSaveData {
-        return {
-            enabled: this._enabled,
-            type: this._type,
-            name: this._name,
-            checkerWebsite: this._checkerWebsite,
-            checkingSchedule: this._checkingSchedule,
-            uptime: this._uptimeTimer!.getAmount()
-        };
-    }
-
-    /**
-     * Apply new settings (e.x. from renderer) to the farm.
-     * @param {FarmSaveData} newSettings The new settings to apply to the farm.
-     */
-    applyNewSettings(newSettings: FarmSaveData): void {
-        /**
-         * Enable or disable farm.
-         */
-        (newSettings.enabled) ? this.enableFarm() : this.disableFarm();
-
-        /**
-         * Update schedule.
-         */
-        this.updateSchedule(newSettings.checkingSchedule);
-
-        /**
-         * Set checker website.
-         */
-        this._checkerWebsite = newSettings.checkerWebsite;
-
-        log("MAIN", "DEBUG", `${this._name}: Applied new settings`);
-    }
-
-    /**
-     * Update the status of the farm.
-     * @param status The new status to set.
-     */
-    updateStatus(status: FarmStatus): void {
-        this._currentStatus = status;
-
-        /**
-         * Send the signal to the main window that a farms status has changed.
-         */
-        sendOneWay(getMainWindow(), Channels.farmStatusChange, {
-            name: this._name,
-            status: this._currentStatus,
-        });
-
-        log("MAIN", "DEBUG", `${this._name}: Updated status to ${this._currentStatus}`);
-    }
-
-    /**
      * Return the current farm stats.
      */
     getCurrentStatus(): FarmStatus {
@@ -189,6 +154,42 @@ export default abstract class FarmTemplate {
      */
     getCheckerWebsite(): string {
         return this._checkerWebsite;
+    }
+
+    /**
+     * Get the checking schedule.
+     */
+    getCheckingSchedule(): number {
+        return this._checkingSchedule;
+    }
+
+    /**
+     * Returns the needed farm properties for renderering an item for the sidebar.
+     */
+    getForSidebar(): SidebarFarmItem {
+        return {
+            name: this._name,
+            type: this._type,
+            status: this._currentStatus
+        };
+    }
+
+    /**
+     * Update the status of the farm.
+     * @param status The new status to set.
+     */
+    updateStatus(status: FarmStatus): void {
+        this._currentStatus = status;
+
+        /**
+         * Send the signal to the main window that a farms status has changed.
+         */
+        sendOneWay(getMainWindow(), Channels.farmStatusChange, {
+            name: this._name,
+            status: this._currentStatus,
+        });
+
+        log("MAIN", "DEBUG", `${this._name}: Updated status to ${this._currentStatus}`);
     }
 
     /**

@@ -157,6 +157,6 @@ function createCrashLog(): void {
  *
  * @param {boolean} enabled Value for the new debug logs.
  */
-export function debugLogs(enabled: boolean): void {
+export function enableDebugLogs(enabled: boolean): void {
     debugLogsEnabled = enabled;
 }
