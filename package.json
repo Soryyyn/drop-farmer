@@ -78,7 +78,7 @@
         "@vercel/webpack-asset-relocator-loader": "1.7.0",
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.0.0",
-        "electron": "19.0.9",
+        "electron": "21.1.1",
         "electron-devtools-installer": "^3.2.0",
         "fork-ts-checker-webpack-plugin": "^6.0.1",
         "node-loader": "^2.0.0",
