@@ -5,7 +5,7 @@ import { getFarmByName, getSidebarItems } from "../farms/management";
 // import { deleteFarm, getFarmByName, getFarmRendererData, getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
-import { getSettings, getSpecificSetting } from "../util/settings";
+import { getSettings, getSpecificSetting, updateSettings } from "../util/settings";
 import { sendBasicToast, sendPromiseToast } from "../util/toast";
 import { setAppQuitting } from "./windows";
 
@@ -89,34 +89,29 @@ handleOneWay(Channels.restart, () => {
 });
 
 handleAndReply(Channels.getSettings, () => {
-    // return {
-    //     applicationSettings: getApplicationSettings(),
-    //     farmSettings: getFarmsData(),
-    // }
     return getSettings();
 });
 
-// handleOneWay(Channels.saveNewSettings, (event, settingsToSave: {
-//     applicationSettings: ApplicationSettings,
-//     farmSettings: FarmSaveData[]
-// }) => {
-//     sendPromiseToast({
-//         id: "settings-saving",
-//         textOnLoading: "Saving settings...",
-//         textOnSuccess: "Saved settings.",
-//         textOnError: "Failed saving settings.",
-//         duration: 4000
-//     }, new Promise(async (resolve, reject) => {
-//         try {
-//             // await updateApplicationSettings(settingsToSave.applicationSettings);
-//             // await updateFarmsData(settingsToSave.farmSettings, false);
+handleOneWay(Channels.saveNewSettings, (event, settingsToSave: Settings) => {
+    sendPromiseToast({
+        id: "settings-saving",
+        textOnLoading: "Saving settings...",
+        textOnSuccess: "Saved settings.",
+        textOnError: "Failed saving settings.",
+        duration: 4000
+    }, new Promise(async (resolve, reject) => {
+        try {
+            for (const [key, value] of Object.entries(settingsToSave)) {
+                updateSettings(key, value);
+                // TODO: farm should be notified.
+            }
 
-//             resolve(undefined);
-//         } catch (err) {
-//             reject(err);
-//         }
-//     }));
-// });
+            resolve(undefined);
+        } catch (err) {
+            reject(err);
+        }
+    }));
+});
 
 handleAndReply(Channels.get3DAnimationsDisabled, () => {
     return getSpecificSetting("application", "disable3DModelAnimation");

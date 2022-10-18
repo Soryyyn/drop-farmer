@@ -31,8 +31,7 @@ export default function Settings({ handleClosing }: Props) {
                 <button
                     key="savingButton"
                     onClick={() => {
-                        console.log("saving...");
-                        handleClosing();
+                        window.api.sendOneWay(window.api.channels.saveNewSettings, settings);
                     }}
                     className={styles.topBarButton}
                 >
