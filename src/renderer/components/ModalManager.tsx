@@ -1,6 +1,6 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faFloppyDisk, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { animated, easings, useTransition } from "react-spring";
 import Settings from "../modals/Settings/Settings";
 import styles from "../styles/ModalManager.module.scss";
@@ -23,11 +23,11 @@ export default function ModalManager({ modalToShow, showing, handleClosing }: Pr
      */
     const modal = useCallback(() => {
         if (modalToShow === "settings") {
-            return <Settings />
+            return <Settings handleClosing={handleClosing} />
         } else if (modalToShow === "add-new-farm") {
             return <p>add new farm</p>
         }
-    }, [modalToShow]);
+    }, []);
 
     /**
      * The animation for animation the mounting of the modal manager component.
@@ -60,15 +60,9 @@ export default function ModalManager({ modalToShow, showing, handleClosing }: Pr
     return mountTransition((extraStyles, item) => item &&
         <animated.div style={extraStyles} className={styles.bgFilter}>
             <div className={styles.container}>
-                <button
-                    onClick={handleClosing}
-                    className={styles.closeModalButton}
-                >
-                    <FontAwesomeIcon icon={faXmark} size="lg" className={styles.icon} />
-                </button>
                 <div className={styles.content}>
                     {
-                        (modalToShow) && modal()
+                        modalToShow && showing && modal()
                     }
                 </div>
             </div>

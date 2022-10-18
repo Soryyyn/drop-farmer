@@ -10,8 +10,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
-    // backdrop-filter: blur(5px);
 }
 
 .container {
@@ -25,33 +23,8 @@
     backdrop-filter: blur(30px);
 
     padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    row-gap: 1rem;
-
     position: relative;
     box-sizing: border-box;
-
-    .closeModalButton {
-        align-self: flex-end;
-        aspect-ratio: 1 / 1;
-        backdrop-filter: blur(30px);
-
-        background: #2B3246;
-        border: 1px solid #31394E;
-        border-radius: 5px;
-        box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
-        color: #BAD5F1;
-
-        padding: 0.5rem;
-
-        &:hover,
-        &:active {
-            cursor: pointer;
-            background: #3C445A;
-            border: 1px solid #3C445A;
-        }
-    }
 
     .content {
         width: 100%;

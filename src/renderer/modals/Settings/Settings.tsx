@@ -1,10 +1,16 @@
+import { faFloppyDisk, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { useSendAndWait } from "../../util/hooks";
 import SettingItem from "./SettingItem";
 import styles from "./Settings.module.scss";
 
-export default function Settings() {
+interface Props {
+    handleClosing: () => void
+}
+
+export default function Settings({ handleClosing }: Props) {
     const [currentlySelected, setCurrentlySelected] = useState<string>("application");
     const [selectors, setSelectors] = useState<string[]>([]);
     const [settings, setSettings] = useState<Settings>();
@@ -20,7 +26,36 @@ export default function Settings() {
     });
 
     return (
-        <>
+        <div className={styles.container}>
+            <div className={styles.topBar}>
+                <button
+                    key="savingButton"
+                    onClick={() => {
+                        console.log("saving...");
+                        handleClosing();
+                    }}
+                    className={styles.topBarButton}
+                >
+                    <FontAwesomeIcon
+                        icon={faFloppyDisk}
+                        size="lg"
+                        className={styles.icon}
+                        fixedWidth={true}
+                    />
+                </button>
+                <button
+                    key="closingButton"
+                    onClick={handleClosing}
+                    className={styles.topBarButton}
+                >
+                    <FontAwesomeIcon
+                        icon={faXmark}
+                        size="lg"
+                        className={styles.icon}
+                        fixedWidth={true}
+                    />
+                </button>
+            </div>
             {selectors && settings &&
                 <div className={styles.splitterContainer}>
                     <ul className={styles.settingsSelectors}>
@@ -67,6 +102,6 @@ export default function Settings() {
                     </ul>
                 </div>
             }
-        </>
+        </div>
     );
 }
