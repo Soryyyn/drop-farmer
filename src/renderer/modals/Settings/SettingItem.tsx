@@ -28,17 +28,41 @@ export default function SettingItem({ setting, onChanged }: Props) {
                 onColor="#ff0044"
                 onHandleColor="#fad2dd"
                 className={styles.toggle}
-                borderRadius={6}
+                borderRadius={5}
+                activeBoxShadow="0 0 0 rgba(255,255,255,0)"
             />
         } else if (typeof setting.value === "number") {
             return <input
                 value={setting.value}
                 type="number"
+                onInput={(event) => {
+                    /**
+                     * Check for NaN.
+                     */
+                    if (event.currentTarget.value == "")
+                        event.currentTarget.value = "1";
+
+                    let value = parseInt(event.currentTarget.value);
+
+                    /**
+                     * Check for min and max values.
+                     */
+                    if (value < setting.min!) {
+                        value = 1;
+                    } else if (value > setting.max!) {
+                        value = 60;
+                    }
+
+                    onChanged(value);
+                }}
             />
         } else if (typeof setting.value === "string") {
             return <input
                 value={setting.value}
                 type="text"
+                onInput={(event) => {
+                    onChanged(event.currentTarget.value);
+                }}
             />
         }
     }

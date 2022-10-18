@@ -165,7 +165,9 @@ function createSpecificFarmSettings(farm: FarmTemplate): Setting[] {
             shownName: "Checking schedule",
             description: "The schedule (in minutes) on which drop-farmer will check if farming is possible.",
             value: farm.getCheckingSchedule(),
-            defaultValue: 30
+            defaultValue: 30,
+            max: 60,
+            min: 1,
         }
     ];
 }

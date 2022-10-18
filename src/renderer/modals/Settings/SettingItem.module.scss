@@ -31,5 +31,26 @@
         display: flex;
         justify-content: center;
         align-items: center;
+
+        input {
+            width: 75%;
+            transition: all 0.1s;
+            padding: 0.5rem 0.5rem;
+
+            background: #2B3246;
+            color: #BAD5F1;
+            border: none;
+            border-radius: 5px;
+
+            &:focus {
+                outline: none;
+                background: #3C445A;
+            }
+
+            &:active:enabled,
+            &:hover:enabled {
+                background: #3C445A;
+            }
+        }
     }
 }

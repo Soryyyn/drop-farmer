@@ -81,6 +81,8 @@ type DropdownItem = {
  * The type of a single setting.
  * NOTE: Value accepts undefined here, because there may not be a value stored
  * in the settings atm.
+ *
+ * NOTE: `max` and `min` are only needed for a number value.
  */
 type Setting = {
     name: string;
@@ -88,6 +90,8 @@ type Setting = {
     description: string;
     value: number | string | boolean | undefined;
     defaultValue: number | string | boolean;
+    max?: number;
+    min?: number;
 }
 
 /**
