@@ -1,5 +1,8 @@
+import get from "lodash.get";
+import isEqual from "lodash.isequal";
 import set from "lodash.set";
-import { getConfigKey, launchOnStartup, updateKeyValue } from "../config";
+import { getConfigKey, launchOnStartup } from "../config";
+import { getFarmByName, getFarms } from "../farms/management";
 import { log } from "./logger";
 
 /**
@@ -55,13 +58,32 @@ export function getSettings(): Settings {
  *
  * @param {Settings} key The key to update / add.
  */
-export function updateSettings(key: string, value: Setting[]): void {
-    set(settings, key, value);
-
+export function updateSettings(key: string, value: Setting[], adding: boolean = false): void {
     /**
-     * Update the launch on startup if the settings changed.
+     * Decide if a new key is being added, because if so, no checking if the
+     * settings are the same needed.
      */
-    launchOnStartup(Boolean(getSpecificSetting("application", "launchOnStartup").value));
+    if (adding) {
+        set(settings, key, value);
+    } else {
+        /**
+         * Only update the settings if settings are not the same as the newly received.
+         */
+        if (!isEqual(get(settings, key), value)) {
+            set(settings, key, value);
+
+            /**
+             * Update the launch on startup if the settings changed.
+             */
+            launchOnStartup(Boolean(getSpecificSetting("application", "launchOnStartup").value));
+
+            /**
+             * Preemptively apply the new settings to the farms.
+             */
+            if (key != "application")
+                getFarmByName(key).applyNewSettings();
+        }
+    }
 }
 
 /**

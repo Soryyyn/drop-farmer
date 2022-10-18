@@ -61,21 +61,21 @@ export default abstract class FarmTemplate {
      *
      * @param {FarmSaveData} newSettings The new settings to apply to the farm.
      */
-    applyNewSettings(newSettings: FarmSaveData): void {
+    applyNewSettings(): void {
         /**
          * Enable or disable farm.
          */
-        (newSettings.enabled) ? this.enableFarm() : this.disableFarm();
+        (getSpecificSetting(this._name, "enabled").value as boolean) ? this.enableFarm() : this.disableFarm();
 
         /**
          * Update schedule.
          */
-        this.updateSchedule(newSettings.checkingSchedule);
+        this.updateSchedule(getSpecificSetting(this._name, "checkingSchedule").value as number);
 
         /**
          * Set checker website.
          */
-        this._checkerWebsite = newSettings.checkerWebsite;
+        this._checkerWebsite = getSpecificSetting(this._name, "checkerWebsite").value as string;
 
         log("MAIN", "DEBUG", `${this._name}: Applied new settings`);
     }

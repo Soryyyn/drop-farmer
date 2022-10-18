@@ -80,7 +80,7 @@ function cacheAvailableFarms(): void {
      * These are only the initial settings.
      */
     currentFarms.forEach((farm) => {
-        updateSettings(farm.getName(), createSpecificFarmSettings(farm));
+        updateSettings(farm.getName(), createSpecificFarmSettings(farm), true);
     });
 
     /**

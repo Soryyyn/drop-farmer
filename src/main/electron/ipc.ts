@@ -1,6 +1,6 @@
 import { app, ipcMain, shell } from "electron";
 import { Channels } from "../common/channels";
-import { getFarmByName, getSidebarItems } from "../farms/management";
+import { getFarmByName, getFarms, getSidebarItems } from "../farms/management";
 // import { getApplicationSettings, getFarmsData, updateApplicationSettings, updateFarmsData } from "../config";
 // import { deleteFarm, getFarmByName, getFarmRendererData, getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
@@ -103,9 +103,7 @@ handleOneWay(Channels.saveNewSettings, (event, settingsToSave: Settings) => {
         try {
             for (const [key, value] of Object.entries(settingsToSave)) {
                 updateSettings(key, value);
-                // TODO: farm should be notified.
             }
-
             resolve(undefined);
         } catch (err) {
             reject(err);
