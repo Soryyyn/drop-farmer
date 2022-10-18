@@ -148,18 +148,21 @@ function createSpecificFarmSettings(farm: FarmTemplate): Setting[] {
     return [
         {
             name: "enabled",
+            shownName: "Farm enabled",
             description: "Enable or disable this farm.",
             value: farm.isEnabled(),
             defaultValue: false
         },
         {
             name: "checkerWebsite",
+            shownName: "Checking website",
             description: "The website drop-farmer checks for the schedule, live matches, etc. to start farming.",
             value: farm.getCheckerWebsite(),
             defaultValue: ""
         },
         {
             name: "checkingSchedule",
+            shownName: "Checking schedule",
             description: "The schedule (in minutes) on which drop-farmer will check if farming is possible.",
             value: farm.getCheckingSchedule(),
             defaultValue: 30

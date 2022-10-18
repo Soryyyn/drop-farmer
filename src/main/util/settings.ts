@@ -8,24 +8,28 @@ import { log } from "./logger";
 export const applicationSettings: Setting[] = [
     {
         name: "launchOnStartup",
+        shownName: "Launch on startup",
         description: "Enable or disable if drop-farmer should be started when your PC has finished booting.",
         value: undefined,
         defaultValue: false
     },
     {
         name: "showMainWindowOnLaunch",
+        shownName: "Show main window on launch",
         description: "If the main window should be shown when drop-farmer starts.",
         value: undefined,
         defaultValue: true
     },
     {
         name: "disable3DModelAnimation",
+        shownName: "Disable 3D model animation",
         description: "Disable the 3D models animation on various pages (Home, etc.).",
         value: undefined,
         defaultValue: false
     },
     {
         name: "debugLogs",
+        shownName: "Enable debug logs",
         description: "Enable the debug logs. Use for debugging or reporting errors.",
         value: undefined,
         defaultValue: false

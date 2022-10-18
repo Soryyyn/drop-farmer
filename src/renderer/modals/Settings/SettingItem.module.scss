@@ -1,0 +1,35 @@
+.settingItem {
+    width: 100%;
+    transition: all 0.1s;
+    padding: 1rem;
+    list-style: none;
+    border-radius: 5px;
+
+    background: #1F2233;
+    box-shadow: 5px 5px 15px rgba(31, 34, 51, 0.5);
+
+    display: flex;
+    flex-direction: row;
+
+    .details {
+        width: 75%;
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+
+        .title {
+            color: #BAD5F1;
+        }
+
+        .desc {
+            color: rgba(186, 213, 241, 0.5);
+        }
+    }
+
+    .action {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

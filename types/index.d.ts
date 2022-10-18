@@ -84,6 +84,7 @@ type DropdownItem = {
  */
 type Setting = {
     name: string;
+    shownName: string;
     description: string;
     value: number | string | boolean | undefined;
     defaultValue: number | string | boolean;

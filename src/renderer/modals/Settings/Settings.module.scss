@@ -27,17 +27,20 @@
                 transition: all 0.1s;
                 cursor: pointer;
                 background: #1F2233;
+                box-shadow: 5px 5px 15px rgba(31, 34, 51, 0.5);
             }
 
             &:active {
                 transition: all 0.1s;
                 background: #181B2B;
+                box-shadow: 5px 5px 15px rgba(24, 27, 43, 0.5);
             }
         }
 
         .selectorSelected {
             transition: all 0.1s;
             background: #1F2233;
+            box-shadow: 5px 5px 15px rgba(31, 34, 51, 0.5);
         }
 
         .seperator {
@@ -52,5 +55,8 @@
 
     .settingsItems {
         flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        row-gap: 1rem;
     }
 }
