@@ -2,6 +2,7 @@ import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import React, { useCallback, useRef, useState } from "react";
+import { animated, easings, useTransition } from "react-spring";
 import styles from "../styles/ButtonDropdown.module.scss";
 import { useOutsideAlterter } from "../util/hooks/useOutsideAlterter";
 import Tooltip from "./Tooltip";
@@ -55,6 +56,25 @@ export default function ButtonDropdown({ icon, primary, dropdownItems }: Props) 
             : <li key={index} className={styles.dropdownSeperator}></li>
     });
 
+    const dropdownMount = useTransition(showingDropdown, {
+        from: {
+            opacity: 0,
+            scale: 0.9
+        },
+        enter: {
+            opacity: 1,
+            scale: 1
+        },
+        leave: {
+            opacity: 0,
+            scale: 0.9
+        },
+        config: {
+            duration: 100,
+            easing: easings.easeInOutQuad
+        }
+    });
+
     return (
         <div className={styles.mainContainer}>
             <div
@@ -63,18 +83,21 @@ export default function ButtonDropdown({ icon, primary, dropdownItems }: Props) 
             >
                 <FontAwesomeIcon icon={icon} size="lg" className={styles.icon} />
             </div>
-            {(showingDropdown) &&
-                <div
-                    className={styles.dropdownContainer}
-                    style={{
-                        top: dropdownYOffset()
-                    }}
-                    ref={ref}
-                >
-                    <ul onClick={() => setShowingDropdown(false)}>
-                        {dropdownItemsList}
-                    </ul>
-                </div>
+            {
+                dropdownMount((extraStyles, item) => item &&
+                    <animated.div
+                        style={{
+                            ...extraStyles,
+                            top: dropdownYOffset()
+                        }}
+                        className={styles.dropdownContainer}
+                        ref={ref}
+                    >
+                        <ul onClick={() => setShowingDropdown(false)}>
+                            {dropdownItemsList}
+                        </ul>
+                    </animated.div>
+                )
             }
         </div>
     );

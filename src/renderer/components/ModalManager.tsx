@@ -1,5 +1,4 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { animated, easings, useTransition } from "react-spring";
 import Settings from "../modals/Settings/Settings";
 import styles from "../styles/ModalManager.module.scss";
