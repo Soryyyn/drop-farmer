@@ -74,18 +74,6 @@ export default function Sidebar() {
                     }
                 </ul>
             </div>
-            <button
-                className={styles.addFarmButton}
-                onClick={() => {
-                    /**
-                     * Move the user to the new farm screen.
-                     */
-                    navigation("/new-farm");
-                }}
-            >
-                <FontAwesomeIcon icon={faPlus} size="lg" className={styles.icon} />
-                Add farm
-            </button>
         </div>
     );
 }
