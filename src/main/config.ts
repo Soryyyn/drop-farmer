@@ -159,14 +159,14 @@ function migrateToNewerConfigVersion(configFile: ConfigFile): ConfigFile {
  * Check if the config file is older than the current one.
  */
 function checkConfigUpdate(configFile: ConfigFile): ConfigFile {
-    let updated: any;
+    let updated: any = configFile;
 
-    if (configFile.version == undefined) {
+    if (!configFile.hasOwnProperty("version")) {
         /**
          * If no version key is found inside the config file, reset the file,
          * and set the default config.
          *
-         * NOTE: When resetting, viewing the actual file will appear empty.
+         * NOTE: While resetting, viewing the actual file will appear empty.
          */
         log("MAIN", "INFO", "Version key inside config file not found. Resetting config file.");
         writeToFile(FILE_NAME, "", "w");
@@ -175,6 +175,7 @@ function checkConfigUpdate(configFile: ConfigFile): ConfigFile {
             farms: convertFarmsIntoCached(),
             settings: convertSettingsIntoCached(),
         };
+        writeToFile(FILE_NAME, JSON.stringify(updated, null, 4), "w");
     } else if (parseFloat(configFile.version) < configVersion) {
         updated = migrateToNewerConfigVersion(configFile);
         log("MAIN", "INFO", "Migrated to a newer config file version");
