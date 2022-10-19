@@ -184,7 +184,8 @@ export default abstract class FarmTemplate {
          */
         sendOneWay(getMainWindow(), Channels.farmStatusChange, {
             name: this._name,
-            status: this._currentStatus,
+            type: this._type,
+            status: this._currentStatus
         });
 
         log("MAIN", "DEBUG", `${this._name}: Updated status to ${this._currentStatus}`);

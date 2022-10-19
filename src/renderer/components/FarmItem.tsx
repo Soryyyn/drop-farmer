@@ -28,11 +28,13 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                                 icon={faShield}
                                 className={styles.typeIcon}
                                 size="1x"
+                                fixedWidth={true}
                             />
                             : <FontAwesomeIcon
                                 icon={faStar}
                                 className={styles.typeIcon}
                                 size="1x"
+                                fixedWidth={true}
                             />
                         }
                         <p className={styles.title}>{name}</p>
