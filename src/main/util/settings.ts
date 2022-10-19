@@ -26,7 +26,7 @@ export const applicationSettings: Setting[] = [
     {
         name: "disable3DModelAnimation",
         shownName: "Disable 3D model animation",
-        description: "Disable the 3D models animation on various pages (Home, etc.).",
+        description: "Disable the 3D models animation on various page. Will be visible on restart.",
         value: undefined,
         defaultValue: false
     },

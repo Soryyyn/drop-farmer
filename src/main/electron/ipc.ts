@@ -112,7 +112,7 @@ handleOneWay(Channels.saveNewSettings, (event, settingsToSave: Settings) => {
 });
 
 handleAndReply(Channels.get3DAnimationsDisabled, () => {
-    return getSpecificSetting("application", "disable3DModelAnimation");
+    return getSpecificSetting("application", "disable3DModelAnimation").value;
 });
 
 handleAndReply(Channels.getApplicationVersion, () => {
