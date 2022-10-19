@@ -1,4 +1,6 @@
-import React from "react";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useRef } from "react";
 import Switch from "react-switch";
 import styles from "./SettingItem.module.scss";
 
@@ -8,6 +10,8 @@ interface Props {
 }
 
 export default function SettingItem({ setting, onChanged }: Props) {
+    const numberInputRef = useRef<any>();
+
     /**
      * Decide which action to display based on type of the setting value.
      */
@@ -32,30 +36,63 @@ export default function SettingItem({ setting, onChanged }: Props) {
                 activeBoxShadow="0 0 0 rgba(255,255,255,0)"
             />
         } else if (typeof setting.value === "number") {
-            return <input
-                value={setting.value}
-                type="number"
-                onInput={(event) => {
-                    /**
-                     * Check for NaN.
-                     */
-                    if (event.currentTarget.value == "")
-                        event.currentTarget.value = "1";
+            return <div className={styles.inputNumberContainer}>
+                <button
+                    onClick={() => {
+                        if (parseInt(numberInputRef.current.value) < 60) {
+                            numberInputRef.current.value = (parseInt(numberInputRef.current.value) + 1).toString();
+                            onChanged(parseInt(numberInputRef.current.value));
+                        }
+                    }}
+                >
+                    <FontAwesomeIcon
+                        icon={faPlus}
+                        size="sm"
+                        className={styles.icon}
+                        fixedWidth={true}
+                    />
+                </button>
+                <input
+                    ref={numberInputRef}
+                    value={setting.value}
+                    type="number"
+                    onInput={(event) => {
+                        /**
+                         * Check for NaN.
+                         */
+                        if (event.currentTarget.value == "")
+                            event.currentTarget.value = "1";
 
-                    let value = parseInt(event.currentTarget.value);
+                        let value = parseInt(event.currentTarget.value);
 
-                    /**
-                     * Check for min and max values.
-                     */
-                    if (value < setting.min!) {
-                        value = 1;
-                    } else if (value > setting.max!) {
-                        value = 60;
-                    }
+                        /**
+                         * Check for min and max values.
+                         */
+                        if (value < setting.min!) {
+                            value = 1;
+                        } else if (value > setting.max!) {
+                            value = 60;
+                        }
 
-                    onChanged(value);
-                }}
-            />
+                        onChanged(value);
+                    }}
+                />
+                <button
+                    onClick={() => {
+                        if (parseInt(numberInputRef.current.value) > 1) {
+                            numberInputRef.current.value = (parseInt(numberInputRef.current.value) - 1).toString();
+                            onChanged(parseInt(numberInputRef.current.value));
+                        }
+                    }}
+                >
+                    <FontAwesomeIcon
+                        icon={faMinus}
+                        size="sm"
+                        className={styles.icon}
+                        fixedWidth={true}
+                    />
+                </button>
+            </div>
         } else if (typeof setting.value === "string") {
             return <input
                 value={setting.value}

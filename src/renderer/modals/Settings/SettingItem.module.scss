@@ -12,7 +12,7 @@
     flex-direction: row;
 
     .details {
-        width: 75%;
+        width: 75% !important;
         display: flex;
         flex-direction: column;
         row-gap: 0.5rem;
@@ -27,13 +27,14 @@
     }
 
     .action {
-        flex-grow: 1;
+        width: 25%;
+        // flex-grow: 1;
         display: flex;
         justify-content: center;
         align-items: center;
 
         input {
-            width: 75%;
+            width: 85%;
             transition: all 0.1s;
             padding: 0.5rem 0.5rem;
 
@@ -52,6 +53,45 @@
             &:hover:enabled {
                 background: #3C445A;
             }
+        }
+
+        .inputNumberContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            column-gap: 0.25rem;
+            // flex-grow: 0;
+
+            input {
+                width: 30%;
+                text-align: center;
+            }
+
+            button {
+                transition: all 0.1s;
+                // width: 30%;
+                min-height: 31px;
+                background: #2B3246;
+                color: #BAD5F1;
+                border: none;
+                border-radius: 5px;
+                padding-block: 0.1rem;
+                aspect-ratio: 1 / 1;
+                padding: 0.25rem;
+                height: 100%;
+                // align-self: stretch;
+
+
+                &:hover,
+                &:focus,
+                &:active {
+                    cursor: pointer;
+                    outline: none;
+                    background: #3C445A;
+                }
+            }
+
         }
     }
 }
