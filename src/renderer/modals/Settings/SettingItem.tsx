@@ -34,10 +34,12 @@ export default function SettingItem({ setting, onChanged }: Props) {
                 className={styles.toggle}
                 borderRadius={5}
                 activeBoxShadow="0 0 0 rgba(255,255,255,0)"
+                disabled={setting.changingDisabled}
             />
         } else if (typeof setting.value === "number") {
             return <div className={styles.inputNumberContainer}>
                 <button
+                    disabled={setting.changingDisabled}
                     onClick={() => {
                         if (parseInt(numberInputRef.current.value) < 60) {
                             numberInputRef.current.value = (parseInt(numberInputRef.current.value) + 1).toString();
@@ -55,6 +57,7 @@ export default function SettingItem({ setting, onChanged }: Props) {
                 <input
                     ref={numberInputRef}
                     value={setting.value}
+                    disabled={setting.changingDisabled}
                     type="number"
                     onInput={(event) => {
                         /**
@@ -78,6 +81,7 @@ export default function SettingItem({ setting, onChanged }: Props) {
                     }}
                 />
                 <button
+                    disabled={setting.changingDisabled}
                     onClick={() => {
                         if (parseInt(numberInputRef.current.value) > 1) {
                             numberInputRef.current.value = (parseInt(numberInputRef.current.value) - 1).toString();
@@ -95,6 +99,7 @@ export default function SettingItem({ setting, onChanged }: Props) {
             </div>
         } else if (typeof setting.value === "string") {
             return <input
+                disabled={setting.changingDisabled}
                 value={setting.value}
                 type="text"
                 onInput={(event) => {
@@ -106,13 +111,21 @@ export default function SettingItem({ setting, onChanged }: Props) {
 
     return (
         <li className={styles.settingItem}>
-            <div className={styles.details}>
-                <p className={styles.title}>{setting.shownName}</p>
-                <p className={styles.desc}>{setting.description}</p>
+            <div className={styles.container}>
+                <div className={styles.details}>
+                    <p className={styles.title}>{setting.shownName}</p>
+                    <p className={styles.desc}>{setting.description}</p>
+                </div>
+                <div className={styles.action}>
+                    {renderAction()}
+                </div>
             </div>
-            <div className={styles.action}>
-                {renderAction()}
-            </div>
+            {
+                (setting.changingDisabled) &&
+                <p
+                    className={styles.changingDisabled}
+                >Changing disabled</p>
+            }
         </li>
     );
 }

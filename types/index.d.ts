@@ -90,6 +90,7 @@ type Setting = {
     description: string;
     value: number | string | boolean | undefined;
     defaultValue: number | string | boolean;
+    changingDisabled?: boolean;
     max?: number;
     min?: number;
 }

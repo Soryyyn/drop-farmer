@@ -158,7 +158,8 @@ function createSpecificFarmSettings(farm: FarmTemplate): Setting[] {
             shownName: "Checking website",
             description: "The website drop-farmer checks for the schedule, live matches, etc. to start farming.",
             value: farm.getCheckerWebsite(),
-            defaultValue: ""
+            defaultValue: farm.getCheckerWebsite(),
+            changingDisabled: true
         },
         {
             name: "checkingSchedule",
