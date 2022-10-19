@@ -54,9 +54,12 @@ export function getSettings(): Settings {
 }
 
 /**
- * Update the settings as a whole.
+ * Update a specific settings key with a value.
  *
- * @param {Settings} key The key to update / add.
+ * @param {string} key The key to update / add.
+ * @param {Setting[]} value The value of the key to set.
+ * @param {boolean} [adding=false] If a new key value pair is being added or
+ * just set.
  */
 export function updateSettings(key: string, value: Setting[], adding: boolean = false): void {
     /**
