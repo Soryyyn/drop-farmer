@@ -11,7 +11,7 @@ import IndicatorTag from "./IndicatorTag";
  *
  * @param {Object} props Farm to show the status of.
  */
-export default function FarmItem({ name, type, status }: FarmRendererObject) {
+export default function FarmItem({ name, type, status }: SidebarFarmItem) {
     /**
      * If the farming windows are being shown.
      * Show open eye when showing else strikedthrough eye.

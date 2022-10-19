@@ -58,8 +58,6 @@ export default abstract class FarmTemplate {
 
     /**
      * Apply new settings (e.x. from renderer) to the farm.
-     *
-     * @param {FarmSaveData} newSettings The new settings to apply to the farm.
      */
     applyNewSettings(): void {
         /**

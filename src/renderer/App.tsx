@@ -3,8 +3,6 @@ import toast, { Toaster } from "react-hot-toast";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Dragbar from "./components/Dragbar";
 import Home from "./sites/Home";
-import NewFarm from "./sites/NewFarm";
-import Settings from "./sites/Settings";
 import styles from "./styles/App.module.scss";
 
 export default function App() {
@@ -90,8 +88,6 @@ export default function App() {
                 <HashRouter>
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/new-farm" element={<NewFarm />} />
                     </Routes>
                 </HashRouter>
             </div>

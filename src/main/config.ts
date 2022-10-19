@@ -4,17 +4,18 @@ import set from "lodash.set";
 import { convertFarmsIntoCached } from "./farms/management";
 import { createFile, readFile, writeToFile } from "./files/handling";
 import { enableDebugLogs, log } from "./util/logger";
-import { convertSettingsIntoCached, loadCachedIntoSettings } from "./util/settings";
+import { convertSettingsIntoCached } from "./util/settings";
 
 const FILE_NAME = "config.json";
 let currentConfig: any;
 const autoLauncher = new AutoLaunch({
     name: "drop-farmer"
 });
+const configVersion = 1.0;
 
 export function initConfig(): void {
     createDefaultConfig();
-    currentConfig = readConfig();
+    currentConfig = checkConfigUpdate(readConfig());
 
     /**
      * Update some settings which are needed on startup.
@@ -36,7 +37,8 @@ function createDefaultConfig(): void {
      * Default config file with the basic settings applied.
      * NOTE: The farms are empty here, because they are not yet initialized.
      */
-    let defaultConfig = {
+    let defaultConfig: ConfigFile = {
+        version: configVersion.toFixed(1).toString(),
         farms: convertFarmsIntoCached(),
         settings: convertSettingsIntoCached(),
     };
@@ -130,4 +132,53 @@ function cacheAllData(): void {
      * Update settings.
      */
     updateKeyValue("settings", convertSettingsIntoCached());
+}
+
+/**
+ * Migrate to a newer type of config file version.
+ * @param {ConfigFile} configFile The found config file to migrate.
+ */
+function migrateToNewerConfigVersion(configFile: ConfigFile): ConfigFile {
+    /**
+     * Default to change.
+     */
+    let migrated: any = {
+        version: configVersion.toFixed(1).toString(),
+        farms: convertFarmsIntoCached(),
+        settings: convertSettingsIntoCached(),
+    };
+
+    if (parseFloat(configFile.version) == 1.0) {
+        migrated = configFile;
+    }
+
+    return migrated;
+}
+
+/**
+ * Check if the config file is older than the current one.
+ */
+function checkConfigUpdate(configFile: ConfigFile): ConfigFile {
+    let updated: any;
+
+    if (configFile.version == undefined) {
+        /**
+         * If no version key is found inside the config file, reset the file,
+         * and set the default config.
+         *
+         * NOTE: When resetting, viewing the actual file will appear empty.
+         */
+        log("MAIN", "INFO", "Version key inside config file not found. Resetting config file.");
+        writeToFile(FILE_NAME, "", "w");
+        updated = {
+            version: configVersion.toFixed(1).toString(),
+            farms: convertFarmsIntoCached(),
+            settings: convertSettingsIntoCached(),
+        };
+    } else if (parseFloat(configFile.version) < configVersion) {
+        updated = migrateToNewerConfigVersion(configFile);
+        log("MAIN", "INFO", "Migrated to a newer config file version");
+    }
+
+    return updated;
 }

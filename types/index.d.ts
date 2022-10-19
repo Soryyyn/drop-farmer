@@ -6,41 +6,6 @@ type FarmingWindowObject = {
     createdAt: number;
 }
 
-type FarmSaveData = {
-    enabled: boolean;
-    type: FarmType;
-    name: string;
-    checkerWebsite: string;
-    checkingSchedule: number;
-    uptime: number;
-}
-
-type FarmRendererObject = {
-    name: string;
-    type: FarmType;
-    status: FarmStatus;
-}
-
-type FarmSettings = {
-    name: string;
-    enabled: boolean;
-    checkerWebsite: string;
-    checkingSchedule: number;
-}
-
-type ApplicationSettings = {
-    launchOnStartup: boolean;
-    showMainWindowOnLaunch: boolean;
-    disable3DModelAnimation: boolean;
-    debugLogs: boolean;
-}
-
-type ConfigFile = {
-    applicationSettings: ApplicationSettings;
-    farms: FarmSaveData[];
-    settings: {};
-}
-
 type BasicToast = {
     id: string;
     textOnSuccess: string;
@@ -126,4 +91,10 @@ type SidebarFarmItem = {
     name: string;
     type: FarmType;
     status: FarmStatus;
+}
+
+type ConfigFile = {
+    version: string;
+    farms: CachedFarms;
+    settings: CachedSettings;
 }
