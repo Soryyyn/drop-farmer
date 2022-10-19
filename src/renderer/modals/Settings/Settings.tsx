@@ -1,6 +1,7 @@
 import { faFloppyDisk, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
+import { cloneDeep, isEqual } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useSendAndWait } from "../../util/hooks";
 import SettingItem from "./SettingItem";
@@ -16,12 +17,20 @@ export default function Settings({ handleClosing }: Props) {
     const [settings, setSettings] = useState<Settings>();
 
     /**
+     * We keep an original settings here to compare with after changes if
+     * calling a save is actually necessary.
+     */
+    const [originalSettings, setOriginalSettings] = useState<Settings>();
+
+    /**
      * Get the settings file data from main process.
      */
     useSendAndWait(window.api.channels.getSettings, null, (err, response) => {
         if (!err) {
             setSelectors(Object.keys(response));
             setSettings(response);
+
+            setOriginalSettings(cloneDeep(response));
         }
     });
 
@@ -31,7 +40,13 @@ export default function Settings({ handleClosing }: Props) {
                 <button
                     key="savingButton"
                     onClick={() => {
-                        window.api.sendOneWay(window.api.channels.saveNewSettings, settings);
+                        /**
+                         * Only send the ipc signal if changing is needed.
+                         */
+                        if (!isEqual(settings, originalSettings)) {
+                            window.api.sendOneWay(window.api.channels.saveNewSettings, settings);
+                            setOriginalSettings(cloneDeep(settings))
+                        }
                     }}
                     className={styles.topBarButton}
                 >
