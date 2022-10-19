@@ -111,21 +111,13 @@ export default function SettingItem({ setting, onChanged }: Props) {
 
     return (
         <li className={styles.settingItem}>
-            <div className={styles.container}>
-                <div className={styles.details}>
-                    <p className={styles.title}>{setting.shownName}</p>
-                    <p className={styles.desc}>{setting.description}</p>
-                </div>
-                <div className={styles.action}>
-                    {renderAction()}
-                </div>
+            <div className={styles.details}>
+                <p className={styles.title}>{setting.shownName} <i>{(setting.changingDisabled) ? "(Changing disabled)" : ""}</i></p>
+                <p className={styles.desc}>{setting.description}</p>
             </div>
-            {
-                (setting.changingDisabled) &&
-                <p
-                    className={styles.changingDisabled}
-                >Changing disabled</p>
-            }
+            <div className={styles.action}>
+                {renderAction()}
+            </div>
         </li>
     );
 }

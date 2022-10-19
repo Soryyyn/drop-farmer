@@ -84,6 +84,12 @@
     row-gap: 0.35rem;
     list-style: none;
 
+    ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
     .dropdownItemLabel {
         list-style: none;
         min-width: 175px;
@@ -118,8 +124,8 @@
     .dropdownSeperator {
         list-style: none;
         height: 2px;
-        width: 100%;
-        background: rgba(200, 222, 245, 0.05);
+        width: 95%;
+        background: #1F2233;
         margin-block: 0.2rem;
     }
 }
