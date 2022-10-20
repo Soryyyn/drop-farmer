@@ -16,7 +16,7 @@
         backdrop-filter: blur(30px);
 
         background: #2B3246;
-        border: 1px solid #31394E;
+        border: none;
         border-radius: 5px;
         box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
         color: #BAD5F1;
@@ -27,7 +27,6 @@
         &:active {
             cursor: pointer;
             background: #3C445A;
-            border: 1px solid #3C445A;
         }
     }
 }
