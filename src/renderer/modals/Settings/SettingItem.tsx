@@ -112,7 +112,7 @@ export default function SettingItem({ setting, onChanged }: Props) {
     return (
         <li className={styles.settingItem}>
             <div className={styles.details}>
-                <p className={styles.title}>{setting.shownName} <i>{(setting.changingDisabled) ? "(Changing disabled)" : ""}</i></p>
+                <p className={styles.title}>{setting.shownName} <i>{(setting.changingDisabled) ? "(changing disabled)" : ""}</i></p>
                 <p className={styles.desc}>{setting.description}</p>
             </div>
             <div className={styles.action}>
