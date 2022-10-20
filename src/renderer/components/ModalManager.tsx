@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import { animated, easings, useTransition } from "react-spring";
 import Settings from "../modals/Settings/Settings";
 import styles from "../styles/ModalManager.module.scss";
@@ -10,11 +10,6 @@ interface Props {
 }
 
 export default function ModalManager({ modalToShow, showing, handleClosing }: Props) {
-    useEffect(() => {
-        if (showing)
-            window.api.log("DEBUG", `Main modal showing ${modalToShow}`);
-    }, [showing]);
-
     /**
      * The callback to control which modal to show depending on the
      * `modalToShow` prop.

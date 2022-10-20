@@ -1,14 +1,14 @@
-import { faFloppyDisk, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faFloppyDisk, faRotateRight, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { cloneDeep, isEqual } from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSendAndWait } from "../../util/hooks";
 import SettingItem from "./SettingItem";
 import styles from "./Settings.module.scss";
 
 interface Props {
-    handleClosing: () => void
+    handleClosing: () => void,
 }
 
 export default function Settings({ handleClosing }: Props) {
@@ -37,6 +37,37 @@ export default function Settings({ handleClosing }: Props) {
     return (
         <div className={styles.container}>
             <div className={styles.topBar}>
+                <button
+                    key="resetSettingsToDefault"
+                    onClick={() => {
+                        let copy = cloneDeep(settings!);
+
+                        /**
+                         * Go through each setting and reset it to the default.
+                         */
+                        for (const [key] of Object.entries(copy)) {
+                            for (const [setting, settingValues] of Object.entries(copy[key])) {
+                                settingValues.value = settingValues.defaultValue;
+                            }
+                        }
+
+                        setSettings(copy);
+
+                        /**
+                         * Save the reset.
+                         */
+                        window.api.sendOneWay(window.api.channels.saveNewSettings, settings);
+                        setOriginalSettings(cloneDeep(settings))
+                    }}
+                    className={styles.topBarButton}
+                >
+                    <FontAwesomeIcon
+                        icon={faRotateRight}
+                        size="lg"
+                        className={styles.icon}
+                        fixedWidth={true}
+                    />
+                </button>
                 <button
                     key="savingButton"
                     onClick={() => {
