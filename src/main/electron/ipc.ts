@@ -48,7 +48,6 @@ export function sendOneWay(window: Electron.BrowserWindow, channel: string, ...a
 /**
  * Ipc events below.
  */
-
 handleOneWay(Channels.log, (event, { type, message }) => {
     log("RENDERER", type, message);
 });

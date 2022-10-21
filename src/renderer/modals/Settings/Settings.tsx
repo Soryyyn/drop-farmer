@@ -29,7 +29,6 @@ export default function Settings({ handleClosing }: Props) {
         if (!err) {
             setSelectors(Object.keys(response));
             setSettings(response);
-
             setOriginalSettings(cloneDeep(response));
         }
     });

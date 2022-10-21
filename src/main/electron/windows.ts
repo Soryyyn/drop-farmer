@@ -1,7 +1,6 @@
 import { BrowserWindow } from "electron";
 import { resolve } from "path";
 import { getPage } from "puppeteer-in-electron";
-// import { getApplicationSettings } from "../config";
 import { getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
