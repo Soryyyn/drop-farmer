@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { cloneDeep, isEqual } from "lodash";
 import React, { useState } from "react";
-import { useSendAndWait } from "../../util/hooks";
+import { useSendAndWait } from "../../hooks";
 import SettingItem from "./SettingItem";
 import styles from "./Settings.module.scss";
 

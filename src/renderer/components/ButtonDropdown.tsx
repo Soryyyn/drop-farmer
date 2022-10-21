@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import React, { useCallback, useRef, useState } from "react";
 import { animated, easings, useTransition } from "react-spring";
+import { useOutsideAlterter } from "../hooks";
 import styles from "../styles/ButtonDropdown.module.scss";
-import { useOutsideAlterter } from "../util/hooks/useOutsideAlterter";
 import Tooltip from "./Tooltip";
 
 

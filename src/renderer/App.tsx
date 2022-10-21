@@ -11,7 +11,6 @@ export default function App() {
      */
     useEffect(() => {
         window.api.handleOneWay(window.api.channels.toastSuccess, (event, toastNotif: ToastFromMain) => {
-            window.api.log("DEBUG", "Displaying success toast");
             toast.success(toastNotif.text, {
                 id: toastNotif.id,
                 duration: toastNotif.duration
@@ -19,7 +18,6 @@ export default function App() {
         });
 
         window.api.handleOneWay(window.api.channels.toastError, (event, toastNotif: ToastFromMain) => {
-            window.api.log("DEBUG", "Displaying error toast");
             toast.error(toastNotif.text, {
                 id: toastNotif.id,
                 duration: toastNotif.duration
@@ -27,7 +25,6 @@ export default function App() {
         });
 
         window.api.handleOneWay(window.api.channels.toastLoading, (event, toastNotif: ToastFromMain) => {
-            window.api.log("DEBUG", "Displaying loading toast");
             toast.loading(toastNotif.text, {
                 id: toastNotif.id,
                 duration: toastNotif.duration
@@ -35,8 +32,6 @@ export default function App() {
         });
 
         window.api.handleOneWay(window.api.channels.toastForcedType, (event, toastNotif: ToastFromMain) => {
-            window.api.log("DEBUG", "Displaying forced type toast");
-
             if (toastNotif.type === "error")
                 toast.success(toastNotif.text, {
                     id: toastNotif.id,

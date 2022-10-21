@@ -1,10 +1,6 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useHandleOneWay, useSendAndWait } from "../hooks";
 import styles from "../styles/Sidebar.module.scss";
-import { useHandleOneWay } from "../util/hooks/useHandleOneWay";
-import { useSendAndWait } from "../util/hooks/useSendAndWait";
 import FarmItem from "./FarmItem";
 
 /**
@@ -15,7 +11,6 @@ export default function Sidebar() {
      * The current farms from main process.
      */
     const [farms, setFarms] = useState<SidebarFarmItem[]>([]);
-    const navigation = useNavigate();
 
     useSendAndWait(window.api.channels.getFarms, null, (err, response) => {
         if (err) {
@@ -31,7 +26,7 @@ export default function Sidebar() {
      * - Check if the changed status of farm is the current one, if not ignore.
      * - If it is this one, then change the status.
      */
-    useHandleOneWay(window.api.channels.farmStatusChange, farms, (event, data) => {
+    useHandleOneWay(window.api.channels.farmStatusChange, farms, (event, response) => {
         /**
          * Create empty array for the state.
          */
@@ -41,13 +36,13 @@ export default function Sidebar() {
          * Check which farm had a status change.
          */
         for (let i = 0; i < farms.length; i++) {
-            if (farms[i].name === data.name) {
+            if (farms[i].name === response.name) {
                 /**
                  * Clear the temporary state to apply latest changes to states.
                  */
                 tempCopy = [];
                 tempCopy = [...farms];
-                tempCopy[i] = data;
+                tempCopy[i] = response;
             }
         }
 

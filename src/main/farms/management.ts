@@ -1,7 +1,7 @@
 import set from "lodash.set";
 import { getConfigKey, updateKeyValue } from "../config";
 import { log } from "../util/logger";
-import { getSettings, loadCachedIntoSettings, updateSettings } from "../util/settings";
+import { loadCachedIntoSettings, updateSettings } from "../util/settings";
 import LeagueOfLegends from "./leagueOfLegends";
 import OverwatchContenders from "./overwatchContenders";
 import OverwatchLeague from "./overwatchLeague";
