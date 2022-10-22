@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Dragbar from "./components/Dragbar";
-import Home from "./sites/Home";
+import Home from "./scenes/home";
 import styles from "./styles/App.module.scss";
 
 export default function App() {

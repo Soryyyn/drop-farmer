@@ -1,13 +1,12 @@
-import { faBars, faGear, faGlobe, faPowerOff, faReceipt } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faGear, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ButtonDropdown from "../components/ButtonDropdown";
-import ButtonNolabel from "../components/ButtonNoLabel";
-import ModalManager from "../components/ModalManager";
-import ModelAnimation from "../components/ModelAnimation";
-import Sidebar from "../components/Sidebar";
-import Tooltip from "../components/Tooltip";
-import styles from "../styles/Home.module.scss";
+import ButtonDropdown from "../../components/ButtonDropdown";
+import ButtonNolabel from "../../components/ButtonNoLabel";
+import ModalManager from "../../components/ModalManager";
+import ModelAnimation from "../../components/ModelAnimation";
+import Sidebar from "../../components/Sidebar";
+import Tooltip from "../../components/Tooltip";
+import styles from "./index.module.scss";
 
 /**
  * The route for the main page of the application.
@@ -23,12 +22,6 @@ export default function Home() {
     }>({
         modalToShow: "settings"
     });
-
-    /**
-     * Get the navigation from react router
-     * to make navigation on button click possible.
-     */
-    const navigation = useNavigate();
 
     /**
      * On site load, get internet connection
