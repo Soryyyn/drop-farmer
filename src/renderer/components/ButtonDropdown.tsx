@@ -5,8 +5,6 @@ import React, { useCallback, useRef, useState } from "react";
 import { animated, easings, useTransition } from "react-spring";
 import { useOutsideAlterter } from "../hooks";
 import styles from "../styles/ButtonDropdown.module.scss";
-import Tooltip from "./Tooltip";
-
 
 interface Props {
     icon: IconDefinition,

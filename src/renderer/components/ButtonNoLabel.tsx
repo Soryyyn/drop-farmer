@@ -5,7 +5,6 @@ import React from "react";
 import styles from "../styles/ButtonNoLabel.module.scss";
 import Tooltip from "./Tooltip";
 
-
 interface Props {
     icon: IconDefinition,
     primary: boolean,
