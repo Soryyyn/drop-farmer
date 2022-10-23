@@ -38,7 +38,7 @@ export function createMainWindow(isProd: boolean): void {
         center: true,
         maximizable: false,
         resizable: false,
-        show: false,
+        show: (process.platform === "linux") ? true : false,
         title: "drop-farmer",
         autoHideMenuBar: true,
         titleBarStyle: "hidden",
