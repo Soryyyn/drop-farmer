@@ -62,7 +62,7 @@ export function createMainWindow(isProd: boolean): void {
      * Show when the window is ready.
      */
     mainWindow.on("ready-to-show", () => {
-        if (Boolean(getSpecificSetting("application", "showMainWindowOnLaunch").value)) {
+        if (Boolean(getSpecificSetting("application", "showMainWindowOnLaunch").value) || process.platform == "linux") {
             log("MAIN", "DEBUG", `Created main window (shown) ${(!isProd ? "in dev mode" : "")}`);
             mainWindow.show();
             mainWindow.focus();
