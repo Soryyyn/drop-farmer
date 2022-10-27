@@ -20,8 +20,8 @@ export default function DisplayWindowsButton({ showing, handleChange }: Props) {
             >
                 {
                     (showing)
-                        ? <FontAwesomeIcon icon={faEye} size="xl" className={styles.icon} />
-                        : <FontAwesomeIcon icon={faEyeSlash} size="xl" className={styles.icon} />
+                        ? <FontAwesomeIcon icon={faEye} size="xl" className={styles.icon} fixedWidth={true} />
+                        : <FontAwesomeIcon icon={faEyeSlash} size="xl" className={styles.icon} fixedWidth={true} />
                 }
             </div>
         </div>

@@ -1,5 +1,6 @@
 .container {
-    min-width: 100% !important;
+    min-width: 345px !important;
+    width: 100%;
     padding: 1rem;
     margin-bottom: 1rem;
 
@@ -22,6 +23,7 @@
             flex-direction: column;
             flex-grow: 1;
             white-space: nowrap;
+            width: 80%;
 
             .titleRow {
                 display: flex;
