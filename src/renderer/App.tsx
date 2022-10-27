@@ -3,7 +3,6 @@ import toast, { Toaster } from "react-hot-toast";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Dragbar from "./components/Dragbar";
 import Home from "./sites/Home";
-import styles from "./styles/App.module.scss";
 
 export default function App() {
     /**
@@ -58,7 +57,15 @@ export default function App() {
             <Toaster
                 position={"bottom-center"}
                 toastOptions={{
-                    className: styles.toastNotification,
+                    style: {
+                        minWidth: "450px",
+                        background: "rgba(16, 18, 27, 0.75)",
+                        border: "1px solid rgba(16, 18, 27, 0.1)",
+                        boxShadow: "5px 5px 15px rgba(16, 18, 27, 0.4)",
+                        backdropFilter: "blur(20px)",
+                        color: "rgb(200, 222, 245)",
+                        padding: "0.75rem",
+                    },
                     success: {
                         iconTheme: {
                             primary: "rgb(33, 219, 135)",
@@ -79,7 +86,14 @@ export default function App() {
                     }
                 }}
             />
-            <div className={styles.spacer}>
+            <div
+                style={{
+                    padding: "2rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100vh"
+                }}
+            >
                 <HashRouter>
                     <Routes>
                         <Route path="/" element={<Home />} />
