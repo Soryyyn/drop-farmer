@@ -80,7 +80,7 @@ handleOneWay(Channels.restart, () => {
     app.relaunch();
 
     /**
-     * NOTE: We have to quit the app here, because `app.relaunch()` doesn't quit
+     * We have to quit the app here, because `app.relaunch()` doesn't quit
      * the app automatically.
      */
     setAppQuitting(true);
@@ -150,25 +150,3 @@ handleOneWay(Channels.restartScheduler, (event, name) => {
         });
     }
 });
-
-// handleAndReply(Channels.deleteFarm, (event, name) => {
-//     const farm = getFarmByName(name);
-//     if (farm != undefined) {
-//         sendPromiseToast({
-//             id: "delete-farm",
-//             textOnLoading: "Deleting farm...",
-//             textOnSuccess: `Deleted farm \"${name}\".`,
-//             textOnError: "Failed deleting farm.",
-//             duration: 4000
-//         }, new Promise((resolve, reject) => {
-//             try {
-//                 deleteFarm(farm);
-//                 resolve(undefined);
-//             } catch (err) {
-//                 reject(err);
-//             }
-//         }));
-//     }
-
-//     // return getFarmsData();
-// });
