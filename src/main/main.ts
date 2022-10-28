@@ -78,7 +78,7 @@ app.whenReady()
         /**
          * Repeatedly check the internet connection.
          *
-         * NOTE: Only initializing after the main window has been created to
+         * Only initializing after the main window has been created to
          * avoid fatal crash.
          */
         internetConnectionChecker();

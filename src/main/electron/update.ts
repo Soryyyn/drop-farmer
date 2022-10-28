@@ -37,7 +37,7 @@ if (!checkIfFirstRun()) {
         log("MAIN", "DEBUG", "Auto-update-checking is enabled");
         setInterval(() => {
             autoUpdater.checkForUpdates();
-        }, 60000);
+        }, 900000);
     } else {
         log("MAIN", "WARN", "Auto-update-checking is disabled");
     }
