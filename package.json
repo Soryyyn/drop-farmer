@@ -1,6 +1,4 @@
 {
-    "name": "turbo-test",
-    "version": "0.0.0",
     "private": true,
     "workspaces": [
         "apps/*",
@@ -8,7 +6,9 @@
     ],
     "scripts": {
         "build": "turbo run build",
-        "dev": "turbo run dev --parallel"
+        "dev": "turbo run dev --parallel",
+        "dev:desktop": "turbo run dev --filter desktop",
+        "build:desktop": "turbo run build --filter desktop"
     },
     "devDependencies": {
         "turbo": "latest"
