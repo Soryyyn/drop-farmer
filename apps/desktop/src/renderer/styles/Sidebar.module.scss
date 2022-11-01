@@ -1,0 +1,61 @@
+.upperContainer {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+
+    .container {
+        padding: 2rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 40% !important;
+
+        box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
+        background: rgba(59, 62, 97, 0.5);
+        border: 1px solid rgba(59, 62, 97, 0.1);
+        border-radius: 10px;
+
+        .items {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+
+    .addFarmButton {
+        box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
+        background: rgba(59, 62, 97, 0.5);
+        border: 1px solid rgba(59, 62, 97, 0.1);
+        border-radius: 10px;
+        color: #0c0e16;
+        padding: 1rem;
+        font-family: "Rubik";
+        font-weight: bold;
+        font-size: 1rem;
+        letter-spacing: 1px;
+
+        display: flex;
+        flex-direction: row;
+        column-gap: 0.5rem;
+        justify-content: center;
+        align-items: center;
+
+        &:hover,
+        &:active {
+            cursor: pointer;
+            background: rgba(59, 62, 97, 0.7) !important;
+        }
+
+        &:active {
+            color: rgb(200, 222, 245);
+
+            .icon {
+                color: rgb(200, 222, 245);
+            }
+        }
+
+        .icon {
+            color: #0c0e16;
+        }
+    }
+}

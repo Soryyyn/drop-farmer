@@ -1,0 +1,75 @@
+.buttonContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    flex-direction: row;
+    column-gap: 0.5rem;
+    box-sizing: border-box;
+    user-select: none;
+    width: 120px;
+    height: 58px !important;
+    padding-block: 1rem;
+    transition: all 0.1s;
+
+    .icon {
+        color: #0c0e16;
+    }
+
+    p {
+        font-family: "Rubik";
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    &:active,
+    &:hover {
+        cursor: pointer;
+        outline: 2px solid rgba(200, 222, 245, 0.2);
+        outline-offset: 2px;
+    }
+}
+
+.primary {
+    box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
+    background: rgba(59, 62, 97, 0.5);
+    border: 1px solid rgba(59, 62, 97, 0.1);
+    transition: all 0.1s;
+
+    &:hover,
+    &:active {
+        background: rgba(59, 62, 97, 0.7) !important;
+    }
+
+    &:active {
+        p {
+            color: rgb(200, 222, 245);
+        }
+
+        .icon {
+            color: rgb(200, 222, 245);
+        }
+    }
+}
+
+.secondary {
+    box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
+    background: rgba(59, 62, 97, 0.3);
+    border: 1px solid rgba(59, 62, 97, 0.1);
+    transition: all 0.1s;
+
+    &:hover,
+    &:active {
+        background: rgba(59, 62, 97, 0.7) !important;
+    }
+
+    &:active {
+        p {
+            color: rgb(200, 222, 245);
+        }
+
+        .icon {
+            color: rgb(200, 222, 245);
+        }
+    }
+}

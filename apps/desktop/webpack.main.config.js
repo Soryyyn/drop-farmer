@@ -1,4 +1,3 @@
-require("dotenv").config();
 const plugins = require('./webpack.plugins');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
