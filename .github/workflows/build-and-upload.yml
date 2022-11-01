@@ -3,7 +3,7 @@ on:
         branches:
           - 'master'
 
-name: Desktop: Build and artifacts
+name: 'Desktop: Build and artifacts'
 jobs:
     build-squirrel-x64:
         name: Build application (Windows x64)
