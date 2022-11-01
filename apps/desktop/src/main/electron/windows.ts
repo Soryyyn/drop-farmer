@@ -32,7 +32,7 @@ let appQuitting: boolean = false;
  */
 export function createMainWindow(isProd: boolean): void {
     mainWindow = new BrowserWindow({
-        icon: resolve(__dirname, "resources/icon.ico"),
+        icon: resolve(__dirname, `resources/icon.${(process.platform != "linux") ? "ico" : "png"}`),
         height: 800,
         width: 1200,
         center: true,
@@ -107,7 +107,7 @@ export function getMainWindow(): BrowserWindow {
  */
 export async function createWindow(url: string, gameName?: string) {
     const window = new BrowserWindow({
-        icon: resolve(__dirname, "resources/icon.ico"),
+        icon: resolve(__dirname, `resources/icon.${(process.platform != "linux") ? "ico" : "png"}`),
         height: 1080,
         width: 1920,
         show: false,
