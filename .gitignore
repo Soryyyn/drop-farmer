@@ -38,3 +38,4 @@ apps/desktop/out/
 
 # update server
 apps/update-server/.vercel
+apps/update-server/.env

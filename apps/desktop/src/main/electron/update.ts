@@ -22,7 +22,7 @@ app.setAppUserModelId("com.squirrel.soryn.DropFarmer");
 /**
  * The url to point to for updates.
  */
-const updateURL: string = `https://drop-farmer-release-server.vercel.app/update/${process.platform}/${app.getVersion()}`;
+const updateURL: string = `https://drop-farmer-update-server.vercel.app/update/${process.platform}/${app.getVersion()}`;
 
 /**
  * Set the feed url (so the autoupdater knows where to listen for updates).
