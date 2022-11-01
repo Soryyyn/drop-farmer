@@ -3,28 +3,8 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "drop-farmer: Start application (with cache)",
-            "command": "yarn run start || npm start",
-            "problemMatcher": [],
-            "presentation": {
-                "showReuseMessage": false,
-                "clear": false,
-            }
-        },
-        {
-            "type": "shell",
-            "label": "drop-farmer: Start application (as fresh/new user)",
-            "command": "yarn run start:fresh || npm start:fresh",
-            "problemMatcher": [],
-            "presentation": {
-                "showReuseMessage": false,
-                "clear": false,
-            }
-        },
-        {
-            "type": "shell",
-            "label": "drop-farmer: Build application",
-            "command": "yarn run make || npm make",
+            "label": "Turbo: Build all",
+            "command": "yarn run build || npm build",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
@@ -36,8 +16,28 @@
         },
         {
             "type": "shell",
-            "label": "drop-farmer: Package application",
-            "command": "yarn run package || npm package",
+            "label": "Turbo: Dev all",
+            "command": "yarn run dev || npm dev",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false,
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Turbo: Dev desktop app",
+            "command": "yarn run dev:desktop || npm dev:desktop",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false,
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Turbo: Build desktop app",
+            "command": "yarn run build:desktop || npm build:desktop",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
@@ -45,16 +45,6 @@
                 "clear": true,
                 "revealProblems": "onProblem",
                 "close": false
-            }
-        },
-        {
-            "type": "shell",
-            "label": "drop-farmer: Publish application (create GitHub release draft)",
-            "command": "yarn run publish || npm publish",
-            "problemMatcher": [],
-            "presentation": {
-                "showReuseMessage": false,
-                "clear": false,
             }
         },
     ]

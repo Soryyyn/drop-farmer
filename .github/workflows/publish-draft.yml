@@ -3,7 +3,7 @@ on:
         tags:
             - "*"
 
-name: "Create artifacts and create release draft"
+name: "Desktop: Create release draft"
 jobs:
     publish-squirrel-x64:
         name: Publish (Squirrel Windows x64)

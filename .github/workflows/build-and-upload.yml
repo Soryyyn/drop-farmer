@@ -3,7 +3,7 @@ on:
         branches:
           - 'master'
 
-name: Build application and upload artifacts
+name: Desktop: Build and artifacts
 jobs:
     build-squirrel-x64:
         name: Build application (Windows x64)
@@ -21,13 +21,13 @@ jobs:
             run: yarn
 
           - name: Build application
-            run: yarn run make
+            run: yarn run build:desktop
 
           - name: Upload build artifacts
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-windows-x64
-                path: out/make/squirrel.windows/x64/
+                path: apps/desktop/out/make/squirrel.windows/x64/
     build-debian-arm64:
         name: Build application (Debian ARM64)
         runs-on: ubuntu-latest
@@ -50,4 +50,4 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: drop-farmer-debian-arm64
-                path: out/make/deb/arm64/drop-farmer*.deb
+                path: apps/desktop/out/make/deb/arm64/drop-farmer*.deb
