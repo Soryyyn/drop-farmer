@@ -16,8 +16,8 @@
         },
         {
             "type": "shell",
-            "label": "Turbo: Dev all",
-            "command": "yarn run dev || npm dev",
+            "label": "Turbo: Start all",
+            "command": "yarn run start || npm start",
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -26,8 +26,8 @@
         },
         {
             "type": "shell",
-            "label": "Turbo: Dev desktop app",
-            "command": "yarn run dev:desktop || npm dev:desktop",
+            "label": "Turbo: Start desktop app",
+            "command": "yarn run start:desktop || npm start:desktop",
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,

@@ -6,7 +6,7 @@
     "version": "1.0.0-beta14",
     "main": ".webpack/main",
     "scripts": {
-        "dev": "set CLEAR_CACHE=0 && set MINIMIZE=0 && electron-forge start",
+        "start": "set CLEAR_CACHE=0 && set MINIMIZE=0 && electron-forge start",
         "build": "electron-forge make",
         "publish": "electron-forge publish"
     },

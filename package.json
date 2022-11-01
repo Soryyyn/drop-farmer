@@ -6,8 +6,8 @@
     ],
     "scripts": {
         "build": "turbo run build",
-        "dev": "turbo run dev --parallel",
-        "dev:desktop": "turbo run dev --filter desktop",
+        "start": "turbo run start --parallel",
+        "start:desktop": "turbo run start --filter desktop",
         "build:desktop": "turbo run build --filter desktop",
         "publish": "turbo run publish"
     },
@@ -19,3 +19,4 @@
     },
     "dependencies": {},
     "packageManager": "yarn@1.22.19"
+}

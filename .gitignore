@@ -35,3 +35,6 @@ apps/desktop/config.json
 apps/desktop/.log
 apps/desktop/.webpack/
 apps/desktop/out/
+
+# update server
+apps/update-server/.vercel
