@@ -7,7 +7,7 @@ module.exports = {
     makers: [
         {
             name: "@electron-forge/maker-squirrel",
-            platforms: ["win64"],
+            platforms: ["win32"],
             config: {
                 name: "drop-farmer",
                 authors: "Soryn Bächli",
@@ -31,7 +31,7 @@ module.exports = {
         },
         {
             name: "@electron-forge/maker-zip",
-            platforms: ["darwin", "win32"],
+            platforms: ["darwin"],
         },
     ],
     publishers: [
