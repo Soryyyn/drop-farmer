@@ -27,15 +27,7 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# turbo
-.turbo
-
-# desktop app
-apps/desktop/config.json
-apps/desktop/.log
-apps/desktop/.webpack/
-apps/desktop/out/
-
-# update server
-apps/update-server/.vercel
-apps/update-server/.env
+config.json
+.log
+.webpack/
+out/

@@ -20,11 +20,22 @@ module.exports = {
         },
         {
             name: "@electron-forge/maker-deb",
+            platforms: ["linux"],
             config: {
-                debianArch: "arm64",
                 icon: path.resolve(__dirname, "resources", "icon.png")
             }
-        }
+        },
+        {
+            name: '@electron-forge/maker-rpm',
+            platforms: ['linux'],
+            config: {
+                icon: path.resolve(__dirname, "resources", "icon.png")
+            }
+        },
+        {
+            name: '@electron-forge/maker-zip',
+            platforms: ['darwin'],
+        },
     ],
     publishers: [
         {
@@ -55,8 +66,7 @@ module.exports = {
                             }
                         }
                     ]
-                },
-                port: 3001
+                }
             }
         }
     ]
