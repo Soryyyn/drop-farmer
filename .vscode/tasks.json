@@ -3,8 +3,8 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Turbo: Build all",
-            "command": "yarn run build || npm build",
+            "label": "Build application",
+            "command": "yarn run make || npm make",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
@@ -16,7 +16,7 @@
         },
         {
             "type": "shell",
-            "label": "Turbo: Start all",
+            "label": "Start",
             "command": "yarn run start || npm start",
             "problemMatcher": [],
             "presentation": {
@@ -26,25 +26,12 @@
         },
         {
             "type": "shell",
-            "label": "Turbo: Start desktop app",
-            "command": "yarn run start:desktop || npm start:desktop",
+            "label": "Start fresh",
+            "command": "yarn run start:fresh || npm start:fresh",
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
                 "clear": false,
-            }
-        },
-        {
-            "type": "shell",
-            "label": "Turbo: Build desktop app",
-            "command": "yarn run build:desktop || npm build:desktop",
-            "problemMatcher": [],
-            "presentation": {
-                "reveal": "silent",
-                "showReuseMessage": false,
-                "clear": true,
-                "revealProblems": "onProblem",
-                "close": false
             }
         },
     ]
