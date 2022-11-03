@@ -1,21 +1,21 @@
-const rules = require('./webpack.rules');
-const plugins = require('./webpack.plugins');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const rules = require("./webpack.rules");
+const plugins = require("./webpack.plugins");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const path = require("path");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 require("dotenv").config();
 
 rules.push({
     test: /\.css$/,
-    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+    use: [{ loader: "style-loader" }, { loader: "css-loader" }]
 });
 
 module.exports = {
     module: {
-        rules,
+        rules
     },
     optimization: {
-        minimize: (process.env.MINIMIZE == undefined) ? true : false,
+        minimize: process.env.MINIMIZE == undefined ? true : false,
         minimizer: [
             new UglifyJsPlugin({
                 uglifyOptions: {
@@ -24,7 +24,7 @@ module.exports = {
                         toplevel: true
                     }
                 }
-            }),
+            })
         ]
     },
     plugins: [
@@ -32,13 +32,13 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    from: path.resolve(__dirname, 'src', 'renderer', 'assets'),
-                    to: path.resolve(__dirname, '.webpack/renderer', 'assets')
+                    from: path.resolve(__dirname, "src", "renderer", "assets"),
+                    to: path.resolve(__dirname, ".webpack/renderer", "assets")
                 }
             ]
         })
     ],
     resolve: {
-        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss'],
-    },
+        extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".scss"]
+    }
 };

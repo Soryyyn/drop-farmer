@@ -15,18 +15,18 @@
         aspect-ratio: 1 / 1;
         backdrop-filter: blur(30px);
 
-        background: #2B3246;
+        background: #2b3246;
         border: none;
         border-radius: 5px;
         box-shadow: 5px 5px 15px rgba(45, 42, 75, 0.2);
-        color: #BAD5F1;
+        color: #bad5f1;
 
         padding: 0.5rem;
 
         &:hover,
         &:active {
             cursor: pointer;
-            background: #3C445A;
+            background: #3c445a;
         }
     }
 }
@@ -51,7 +51,7 @@
             padding-block: 0.75rem;
             padding-inline: 1rem;
 
-            color: #BAD5F1;
+            color: #bad5f1;
             text-transform: capitalize;
             transition: all 0.1s;
 
@@ -59,20 +59,20 @@
             &:hover {
                 transition: all 0.1s;
                 cursor: pointer;
-                background: #1F2233;
+                background: #1f2233;
                 box-shadow: 5px 5px 15px rgba(31, 34, 51, 0.5);
             }
 
             &:active {
                 transition: all 0.1s;
-                background: #181B2B;
+                background: #181b2b;
                 box-shadow: 5px 5px 15px rgba(24, 27, 43, 0.5);
             }
         }
 
         .selectorSelected {
             transition: all 0.1s;
-            background: #1F2233;
+            background: #1f2233;
             box-shadow: 5px 5px 15px rgba(31, 34, 51, 0.5);
         }
 
@@ -82,7 +82,7 @@
             align-self: center;
             margin-block: 0.25rem;
 
-            background: #1F2233;
+            background: #1f2233;
         }
     }
 

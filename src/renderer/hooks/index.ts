@@ -8,7 +8,11 @@ import { useEffect } from "react";
  * @param {(event: any, response: any) => void} callback The received signal
  * from the ipc event.
  */
-export function useHandleOneWay(channel: string, dependency: any, callback: (event: any, response: any) => void) {
+export function useHandleOneWay(
+    channel: string,
+    dependency: any,
+    callback: (event: any, response: any) => void
+) {
     useEffect(() => {
         window.api.handleOneWay(channel, (event: any, response: any) => {
             callback(event, response);
@@ -16,7 +20,7 @@ export function useHandleOneWay(channel: string, dependency: any, callback: (eve
 
         return () => {
             window.api.removeAllListeners(channel);
-        }
+        };
     }, [dependency]);
 }
 
@@ -26,19 +30,27 @@ export function useHandleOneWay(channel: string, dependency: any, callback: (eve
  * @param {string} channel The ipc channel to send and wait for a signal for.
  * @param {any} args The arguments to pass to with the signal.
  */
-export function useSendAndWait(channel: string, args: any, callback: (err: any, response: any) => void) {
+export function useSendAndWait(
+    channel: string,
+    args: any,
+    callback: (err: any, response: any) => void
+) {
     useEffect(() => {
-        window.api.sendAndWait(channel, args)
+        window.api
+            .sendAndWait(channel, args)
             .then((result) => {
                 callback(undefined, result);
             })
             .catch((err) => {
-                callback(new Error(`Error when sending and waiting hook. ${err}`), undefined)
+                callback(
+                    new Error(`Error when sending and waiting hook. ${err}`),
+                    undefined
+                );
             });
 
         return () => {
             window.api.removeAllListeners(channel);
-        }
+        };
     }, []);
 }
 
@@ -52,13 +64,12 @@ export function useSendAndWait(channel: string, args: any, callback: (err: any, 
 export function useOutsideAlterter(ref: any, callback: () => void) {
     useEffect(() => {
         function handleClickOutside(event: any) {
-            if (ref.current && !ref.current.contains(event.target))
-                callback();
+            if (ref.current && !ref.current.contains(event.target)) callback();
         }
 
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
-        }
+        };
     }, [ref]);
 }

@@ -7,12 +7,16 @@ import { useOutsideAlterter } from "../hooks";
 import styles from "../styles/ButtonDropdown.module.scss";
 
 interface Props {
-    icon: IconDefinition,
-    primary: boolean,
-    dropdownItems: DropdownItem[]
+    icon: IconDefinition;
+    primary: boolean;
+    dropdownItems: DropdownItem[];
 }
 
-export default function ButtonDropdown({ icon, primary, dropdownItems }: Props) {
+export default function ButtonDropdown({
+    icon,
+    primary,
+    dropdownItems
+}: Props) {
     const [showingDropdown, setShowingDropdown] = useState<boolean>(false);
 
     /**
@@ -29,9 +33,8 @@ export default function ButtonDropdown({ icon, primary, dropdownItems }: Props) 
     const dropdownYOffset = useCallback(() => {
         let temp = 0;
         dropdownItems.forEach((item) => {
-            if (item.type === "label")
-                temp += 12
-            else temp += 4
+            if (item.type === "label") temp += 12;
+            else temp += 4;
         });
         return -temp;
     }, [dropdownItems]);
@@ -40,18 +43,22 @@ export default function ButtonDropdown({ icon, primary, dropdownItems }: Props) 
      * The to render dropdown items.
      */
     const dropdownItemsList = dropdownItems.map((item, index) => {
-        return (item.type === "label")
-            ? <li
+        return item.type === "label" ? (
+            <li
                 key={index}
-                className={clsx(styles.dropdownItemLabel, (item.disabled ? styles.dropdownItemDisabled : ""))}
+                className={clsx(
+                    styles.dropdownItemLabel,
+                    item.disabled ? styles.dropdownItemDisabled : ""
+                )}
                 onClick={() => {
-                    if (!item.disabled)
-                        item.action!();
+                    if (!item.disabled) item.action!();
                 }}
             >
                 <p>{item.label}</p>
             </li>
-            : <li key={index} className={styles.dropdownSeperator}></li>
+        ) : (
+            <li key={index} className={styles.dropdownSeperator}></li>
+        );
     });
 
     const dropdownMount = useTransition(showingDropdown, {
@@ -76,27 +83,35 @@ export default function ButtonDropdown({ icon, primary, dropdownItems }: Props) 
     return (
         <div className={styles.mainContainer}>
             <div
-                className={clsx(styles.buttonContainer, (primary) ? styles.primary : styles.secondary)}
+                className={clsx(
+                    styles.buttonContainer,
+                    primary ? styles.primary : styles.secondary
+                )}
                 onClick={() => setShowingDropdown(!showingDropdown)}
             >
-                <FontAwesomeIcon icon={icon} size="lg" className={styles.icon} />
+                <FontAwesomeIcon
+                    icon={icon}
+                    size="lg"
+                    className={styles.icon}
+                />
             </div>
-            {
-                dropdownMount((extraStyles, item) => item &&
-                    <animated.div
-                        style={{
-                            ...extraStyles,
-                            top: dropdownYOffset()
-                        }}
-                        className={styles.dropdownContainer}
-                        ref={ref}
-                    >
-                        <ul onClick={() => setShowingDropdown(false)}>
-                            {dropdownItemsList}
-                        </ul>
-                    </animated.div>
-                )
-            }
+            {dropdownMount(
+                (extraStyles, item) =>
+                    item && (
+                        <animated.div
+                            style={{
+                                ...extraStyles,
+                                top: dropdownYOffset()
+                            }}
+                            className={styles.dropdownContainer}
+                            ref={ref}
+                        >
+                            <ul onClick={() => setShowingDropdown(false)}>
+                                {dropdownItemsList}
+                            </ul>
+                        </animated.div>
+                    )
+            )}
         </div>
     );
 }

@@ -11,7 +11,8 @@ module.exports = {
             config: {
                 name: "drop-farmer",
                 authors: "Soryn Bächli",
-                iconUrl: "https://www.dropbox.com/s/gckge20qqx0t4sk/icon.ico?dl=1",
+                iconUrl:
+                    "https://www.dropbox.com/s/gckge20qqx0t4sk/icon.ico?dl=1",
                 setupIcon: path.resolve(__dirname, "resources", "icon.ico")
             }
         },
@@ -31,8 +32,8 @@ module.exports = {
         },
         {
             name: "@electron-forge/maker-zip",
-            platforms: ["darwin"],
-        },
+            platforms: ["darwin"]
+        }
     ],
     publishers: [
         {
@@ -59,7 +60,7 @@ module.exports = {
                             js: "./src/renderer/renderer.tsx",
                             name: "main_window",
                             preload: {
-                                "js": "./src/main/preload.js"
+                                js: "./src/main/preload.js"
                             }
                         }
                     ]
@@ -67,5 +68,4 @@ module.exports = {
             }
         }
     ]
-
-}
+};

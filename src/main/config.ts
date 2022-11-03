@@ -26,7 +26,7 @@ export function initConfig(): void {
         launchOnStartup(true);
 
     log("MAIN", "DEBUG", "Initialized config");
-};
+}
 
 /**
  * Creates the basic `config.json` file with the default settings applied and
@@ -40,7 +40,7 @@ function createDefaultConfig(): void {
     let defaultConfig: ConfigFile = {
         version: configVersion.toFixed(1).toString(),
         farms: convertFarmsIntoCached(),
-        settings: convertSettingsIntoCached(),
+        settings: convertSettingsIntoCached()
     };
 
     try {
@@ -103,7 +103,8 @@ export function updateConfigFile(): void {
  * @param {boolean} launchOnStartup The launchOnStartup setting to set.
  */
 export function launchOnStartup(launchOnStartup: boolean): void {
-    autoLauncher.isEnabled()
+    autoLauncher
+        .isEnabled()
         .then((isEnabled: boolean) => {
             if (launchOnStartup) {
                 if (!isEnabled) {
@@ -118,7 +119,11 @@ export function launchOnStartup(launchOnStartup: boolean): void {
             }
         })
         .catch((err) => {
-            log("MAIN", "ERROR", `Failed to change the launch on startup setting. ${err}`);
+            log(
+                "MAIN",
+                "ERROR",
+                `Failed to change the launch on startup setting. ${err}`
+            );
         });
 }
 
@@ -145,7 +150,7 @@ function migrateToNewerConfigVersion(configFile: ConfigFile): ConfigFile {
     let migrated: any = {
         version: configVersion.toFixed(1).toString(),
         farms: convertFarmsIntoCached(),
-        settings: convertSettingsIntoCached(),
+        settings: convertSettingsIntoCached()
     };
 
     if (parseFloat(configFile.version) == 1.0) {
@@ -168,12 +173,16 @@ function checkConfigUpdate(configFile: ConfigFile): ConfigFile {
          *
          * NOTE: While resetting, viewing the actual file will appear empty.
          */
-        log("MAIN", "INFO", "Version key inside config file not found. Resetting config file.");
+        log(
+            "MAIN",
+            "INFO",
+            "Version key inside config file not found. Resetting config file."
+        );
         writeToFile(FILE_NAME, "", "w");
         updated = {
             version: configVersion.toFixed(1).toString(),
             farms: convertFarmsIntoCached(),
-            settings: convertSettingsIntoCached(),
+            settings: convertSettingsIntoCached()
         };
         writeToFile(FILE_NAME, JSON.stringify(updated, null, 4), "w");
     } else if (parseFloat(configFile.version) < configVersion) {

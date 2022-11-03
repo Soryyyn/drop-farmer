@@ -1,17 +1,22 @@
-type FarmStatus = "farming" | "idle" | "checking" | "disabled" | "attention-required";
+type FarmStatus =
+    | "farming"
+    | "idle"
+    | "checking"
+    | "disabled"
+    | "attention-required";
 type FarmType = "default" | "custom";
 
 type FarmingWindowObject = {
     window: Electron.BrowserWindow;
     createdAt: number;
-}
+};
 
 type BasicToast = {
     id: string;
     textOnSuccess: string;
     textOnError: string;
     duration: number;
-}
+};
 
 type PromiseToast = {
     id: string;
@@ -19,28 +24,28 @@ type PromiseToast = {
     textOnSuccess: string;
     textOnError: string;
     duration: number;
-}
+};
 
 type ForcedTypeToast = {
     id: string;
     type: "success" | "error";
     text: string;
     duration: number;
-}
+};
 
 type ToastFromMain = {
     id: string;
     text: string;
     duration: number;
     type?: "success" | "error";
-}
+};
 
 type DropdownItem = {
     type: "label" | "seperator";
     label?: string;
     disabled?: boolean;
     action?: () => void;
-}
+};
 
 /**
  * The type of a single setting.
@@ -58,43 +63,43 @@ type Setting = {
     changingDisabled?: boolean;
     max?: number;
     min?: number;
-}
+};
 
 /**
  * The whole settings object which accepts multiple keys with setting arrays.
  */
 type Settings = {
     [name: string]: Setting[];
-}
+};
 
 /**
  * A single cached setting used to write to the config file.
  */
 type CachedSetting = {
     [name: string]: number | string | boolean | undefined;
-}
+};
 type CachedSettings = {
     [name: string]: CachedSetting;
-}
+};
 
 /**
  * Farm data which get saved for each farm in the config file.
  */
 type CachedFarm = {
     uptime: number;
-}
+};
 type CachedFarms = {
     [name: string]: CachedFarm;
-}
+};
 
 type SidebarFarmItem = {
     name: string;
     type: FarmType;
     status: FarmStatus;
-}
+};
 
 type ConfigFile = {
     version: string;
     farms: CachedFarms;
     settings: CachedSettings;
-}
+};

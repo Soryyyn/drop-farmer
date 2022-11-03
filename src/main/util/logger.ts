@@ -3,7 +3,12 @@ import dayjs from "dayjs";
 import { app } from "electron";
 import { existsSync } from "fs";
 import { join } from "path";
-import { APP_PATH, createFile, deleteFile, writeToFile } from "../files/handling";
+import {
+    APP_PATH,
+    createFile,
+    deleteFile,
+    writeToFile
+} from "../files/handling";
 
 const FILE_NAME: string = ".log";
 const CRASHLOG_FILE_NAME = "crash.log";
@@ -25,7 +30,10 @@ export function initLogger(): void {
  */
 function createLogFile(): void {
     try {
-        createFile(FILE_NAME, createLogEntry("MAIN", "INFO", "Created logfile"));
+        createFile(
+            FILE_NAME,
+            createLogEntry("MAIN", "INFO", "Created logfile")
+        );
     } catch (err) {
         log("MAIN", "FATAL", `Failed creating logfile. ${err}`);
     }
@@ -40,7 +48,11 @@ function createLogFile(): void {
  * @param {string} message Message to include in log entry.
  * @returns {string} Prepared log entry.
  */
-function createLogEntry(origin: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): string {
+function createLogEntry(
+    origin: "MAIN" | "RENDERER",
+    type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
+    message: string
+): string {
     let currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
     return `[${type}] (${origin}) ${currentTimeStamp} - ${message}\n`;
 }
@@ -53,7 +65,11 @@ function createLogEntry(origin: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "
  * @param {string} message Message to include in log entry.
  * @returns {string} Prepared log entry.
  */
-function createTerminalLogEntry(origin: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: string): string {
+function createTerminalLogEntry(
+    origin: "MAIN" | "RENDERER",
+    type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
+    message: string
+): string {
     let currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
 
     /**
@@ -74,10 +90,8 @@ function createTerminalLogEntry(origin: "MAIN" | "RENDERER", type: "FATAL" | "ER
      * Process color.
      */
     let originText: string;
-    if (origin === "MAIN")
-        originText = color.bold.green(`(${origin})`);
-    else
-        originText = color.bold.magenta(`(${origin})`);
+    if (origin === "MAIN") originText = color.bold.green(`(${origin})`);
+    else originText = color.bold.magenta(`(${origin})`);
 
     /**
      * Timestamp color
@@ -102,7 +116,11 @@ function createTerminalLogEntry(origin: "MAIN" | "RENDERER", type: "FATAL" | "ER
  * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
  * @param {string} message Message to log.
  */
-export function log(origin: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG", message: any): void {
+export function log(
+    origin: "MAIN" | "RENDERER",
+    type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
+    message: any
+): void {
     let entry: string = createLogEntry(origin, type, message);
     let terminalEntry: string = createTerminalLogEntry(origin, type, message);
 
@@ -114,8 +132,7 @@ export function log(origin: "MAIN" | "RENDERER", type: "FATAL" | "ERROR" | "WARN
     /**
      * If in production environment disable debug-type loggings.
      */
-    if (!debugLogsEnabled && type === "DEBUG")
-        return;
+    if (!debugLogsEnabled && type === "DEBUG") return;
 
     try {
         /**

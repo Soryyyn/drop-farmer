@@ -5,7 +5,11 @@ import { getFarmByName, getFarms, getSidebarItems } from "../farms/management";
 // import { deleteFarm, getFarmByName, getFarmRendererData, getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
-import { getSettings, getSpecificSetting, updateSettings } from "../util/settings";
+import {
+    getSettings,
+    getSpecificSetting,
+    updateSettings
+} from "../util/settings";
 import { sendBasicToast, sendPromiseToast } from "../util/toast";
 import { setAppQuitting } from "./windows";
 
@@ -15,7 +19,10 @@ import { setAppQuitting } from "./windows";
  * @param {Channels} channel IPC channel to listen on.
  * @param {(event: IpcMainEvent, ...args: any[]) => void} listener Callback when event has been received.
  */
-export function handleOneWay(channel: Channels, listener: (event: Electron.IpcMainEvent, ...args: any[]) => void) {
+export function handleOneWay(
+    channel: Channels,
+    listener: (event: Electron.IpcMainEvent, ...args: any[]) => void
+) {
     log("MAIN", "DEBUG", `Handling one-way signal on ${channel}`);
     ipcMain.on(channel, listener);
 }
@@ -26,7 +33,10 @@ export function handleOneWay(channel: Channels, listener: (event: Electron.IpcMa
  * @param {Channels} channel IPC channel to listen on.
  * @param {(event: IpcMainEvent, ...args: any[]) => void} listener Callback to execute when event has been received.
  */
-export function handleAndReply(channel: string, listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any) {
+export function handleAndReply(
+    channel: string,
+    listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any
+) {
     log("MAIN", "DEBUG", `Handling two-way signal on ${channel}`);
     ipcMain.handle(channel, listener);
 }
@@ -38,7 +48,11 @@ export function handleAndReply(channel: string, listener: (event: Electron.IpcMa
  * @param {Channels} channel The ipc channel to send the signal too.
  * @param {...any[]} args The data to send with the signal.
  */
-export function sendOneWay(window: Electron.BrowserWindow, channel: string, ...args: any[]) {
+export function sendOneWay(
+    window: Electron.BrowserWindow,
+    channel: string,
+    ...args: any[]
+) {
     if (window.webContents != undefined) {
         log("MAIN", "DEBUG", `Sending one-way signal on ${channel}`);
         window.webContents.send(channel, ...args);
@@ -59,10 +73,8 @@ handleAndReply(Channels.getFarms, () => {
 handleOneWay(Channels.farmWindowsVisibility, (event, { name, showing }) => {
     const farm = getFarmByName(name);
     if (farm != undefined) {
-        if (showing)
-            farm.showAllWindows();
-        else
-            farm.hideAllWindows();
+        if (showing) farm.showAllWindows();
+        else farm.hideAllWindows();
     }
 });
 
@@ -92,22 +104,25 @@ handleAndReply(Channels.getSettings, () => {
 });
 
 handleOneWay(Channels.saveNewSettings, (event, settingsToSave: Settings) => {
-    sendPromiseToast({
-        id: "settings-saving",
-        textOnLoading: "Saving settings...",
-        textOnSuccess: "Saved settings.",
-        textOnError: "Failed saving settings.",
-        duration: 4000
-    }, new Promise(async (resolve, reject) => {
-        try {
-            for (const [key, value] of Object.entries(settingsToSave)) {
-                updateSettings(key, value);
+    sendPromiseToast(
+        {
+            id: "settings-saving",
+            textOnLoading: "Saving settings...",
+            textOnSuccess: "Saved settings.",
+            textOnError: "Failed saving settings.",
+            duration: 4000
+        },
+        new Promise(async (resolve, reject) => {
+            try {
+                for (const [key, value] of Object.entries(settingsToSave)) {
+                    updateSettings(key, value);
+                }
+                resolve(undefined);
+            } catch (err) {
+                reject(err);
             }
-            resolve(undefined);
-        } catch (err) {
-            reject(err);
-        }
-    }));
+        })
+    );
 });
 
 handleAndReply(Channels.get3DAnimationsDisabled, () => {
@@ -121,32 +136,38 @@ handleAndReply(Channels.getApplicationVersion, () => {
 handleOneWay(Channels.clearCache, (event, name) => {
     const farm = getFarmByName(name);
     if (farm != undefined) {
-        sendBasicToast({
-            id: `cleared-cache-${farm.getName()}`,
-            textOnSuccess: `Cleared cache for ${farm.getName()}.`,
-            textOnError: `Failed clearing cache for ${farm.getName()}}.`,
-            duration: 4000
-        }, () => {
-            farm.restartScheduler(async () => {
-                await farm.clearFarmCache();
-            });
+        sendBasicToast(
+            {
+                id: `cleared-cache-${farm.getName()}`,
+                textOnSuccess: `Cleared cache for ${farm.getName()}.`,
+                textOnError: `Failed clearing cache for ${farm.getName()}}.`,
+                duration: 4000
+            },
+            () => {
+                farm.restartScheduler(async () => {
+                    await farm.clearFarmCache();
+                });
 
-            farm.updateStatus("idle");
-        });
+                farm.updateStatus("idle");
+            }
+        );
     }
 });
 
 handleOneWay(Channels.restartScheduler, (event, name) => {
     const farm = getFarmByName(name);
     if (farm != undefined) {
-        sendBasicToast({
-            id: `restart-schedule-${farm.getName()}`,
-            textOnSuccess: `Restarted schedule for ${farm.getName()}.`,
-            textOnError: `Failed restarting schedule for ${farm.getName()}}.`,
-            duration: 4000
-        }, () => {
-            farm.restartScheduler();
-            farm.updateStatus("idle");
-        });
+        sendBasicToast(
+            {
+                id: `restart-schedule-${farm.getName()}`,
+                textOnSuccess: `Restarted schedule for ${farm.getName()}.`,
+                textOnError: `Failed restarting schedule for ${farm.getName()}}.`,
+                duration: 4000
+            },
+            () => {
+                farm.restartScheduler();
+                farm.updateStatus("idle");
+            }
+        );
     }
 });

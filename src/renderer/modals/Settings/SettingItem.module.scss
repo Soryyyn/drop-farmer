@@ -5,7 +5,7 @@
     list-style: none;
     border-radius: 5px;
 
-    background: #1F2233;
+    background: #1f2233;
     box-shadow: 5px 5px 15px rgba(31, 34, 51, 0.5);
 
     display: flex;
@@ -18,7 +18,7 @@
         padding: 0.2rem 2rem;
         font-family: "Rubik";
         border-radius: 5px;
-        background: #181B2B;
+        background: #181b2b;
         color: rgba(186, 213, 241, 0.5);
     }
 
@@ -29,7 +29,7 @@
         row-gap: 0.5rem;
 
         .title {
-            color: #BAD5F1;
+            color: #bad5f1;
 
             i {
                 margin-left: 0.25rem;
@@ -54,20 +54,20 @@
             transition: all 0.1s;
             padding: 0.5rem 0.5rem;
 
-            background: #2B3246;
-            color: #BAD5F1;
+            background: #2b3246;
+            color: #bad5f1;
             border: none;
             border-radius: 5px;
             font-family: "Rubik";
 
             &:focus {
                 outline: none;
-                background: #3C445A;
+                background: #3c445a;
             }
 
             &:active:enabled,
             &:hover:enabled {
-                background: #3C445A;
+                background: #3c445a;
             }
         }
 
@@ -86,8 +86,8 @@
             button {
                 transition: all 0.1s;
                 min-height: 31px;
-                background: #2B3246;
-                color: #BAD5F1;
+                background: #2b3246;
+                color: #bad5f1;
                 border: none;
                 border-radius: 5px;
                 padding-block: 0.1rem;
@@ -95,16 +95,14 @@
                 padding: 0.25rem;
                 height: 100%;
 
-
                 &:hover,
                 &:focus,
                 &:active {
                     cursor: pointer;
                     outline: none;
-                    background: #3C445A;
+                    background: #3c445a;
                 }
             }
-
         }
     }
 }

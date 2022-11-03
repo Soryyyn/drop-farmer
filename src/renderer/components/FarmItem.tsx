@@ -1,4 +1,9 @@
-import { faRotate, faShield, faStar, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+    faRotate,
+    faShield,
+    faStar,
+    faTrash
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import styles from "../styles/FarmItem.module.scss";
@@ -23,45 +28,58 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
             <div className={styles.firstRow}>
                 <div className={styles.left}>
                     <div className={styles.titleRow}>
-                        {(type == "default")
-                            ? <FontAwesomeIcon
+                        {type == "default" ? (
+                            <FontAwesomeIcon
                                 icon={faShield}
                                 className={styles.typeIcon}
                                 size="1x"
                                 fixedWidth={true}
                             />
-                            : <FontAwesomeIcon
+                        ) : (
+                            <FontAwesomeIcon
                                 icon={faStar}
                                 className={styles.typeIcon}
                                 size="1x"
                                 fixedWidth={true}
                             />
-                        }
+                        )}
                         <p className={styles.title}>{name}</p>
                     </div>
                     <div className={styles.details}>
                         <IndicatorTag status={status} />
-                        {
-                            (status !== "disabled") &&
+                        {status !== "disabled" && (
                             <div className={styles.extraButtons}>
                                 <ExtraButton
                                     icon={faRotate}
                                     tooltipText="Restart farm"
                                     onClickAction={() => {
-                                        window.api.log("DEBUG", `Clicked restart farm button on \"${name}\"`);
-                                        window.api.sendOneWay(window.api.channels.restartScheduler, (name));
+                                        window.api.log(
+                                            "DEBUG",
+                                            `Clicked restart farm button on \"${name}\"`
+                                        );
+                                        window.api.sendOneWay(
+                                            window.api.channels
+                                                .restartScheduler,
+                                            name
+                                        );
                                     }}
                                 />
                                 <ExtraButton
                                     icon={faTrash}
                                     tooltipText="Clear cache of the farm. User login is required again after clearing."
                                     onClickAction={() => {
-                                        window.api.log("DEBUG", `Clicked button to clear cache on \"${name}\"`);
-                                        window.api.sendOneWay(window.api.channels.clearCache, (name));
+                                        window.api.log(
+                                            "DEBUG",
+                                            `Clicked button to clear cache on \"${name}\"`
+                                        );
+                                        window.api.sendOneWay(
+                                            window.api.channels.clearCache,
+                                            name
+                                        );
                                     }}
                                 />
                             </div>
-                        }
+                        )}
                     </div>
                 </div>
                 <DisplayWindowsButton
@@ -70,17 +88,27 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                         /**
                          * Only react if there are actual windows.
                          */
-                        if (status === "checking" || status === "farming" || status === "attention-required") {
-                            window.api.log("DEBUG", `Clicked \"eye\"-icon on \"${name}\", setting to \"${showing}\"`);
+                        if (
+                            status === "checking" ||
+                            status === "farming" ||
+                            status === "attention-required"
+                        ) {
+                            window.api.log(
+                                "DEBUG",
+                                `Clicked \"eye\"-icon on \"${name}\", setting to \"${showing}\"`
+                            );
                             setShowingWindows(showing);
 
                             /**
                              * When the eye symbol is pressed and the windows should be showed or hidden.
                              */
-                            window.api.sendOneWay(window.api.channels.farmWindowsVisibility, {
-                                name: name,
-                                showing: showing
-                            });
+                            window.api.sendOneWay(
+                                window.api.channels.farmWindowsVisibility,
+                                {
+                                    name: name,
+                                    showing: showing
+                                }
+                            );
                         }
                     }}
                 />

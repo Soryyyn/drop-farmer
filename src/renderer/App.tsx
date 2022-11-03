@@ -9,39 +9,51 @@ export default function App() {
      * React to toast signals coming from main.
      */
     useEffect(() => {
-        window.api.handleOneWay(window.api.channels.toastSuccess, (event, toastNotif: ToastFromMain) => {
-            toast.success(toastNotif.text, {
-                id: toastNotif.id,
-                duration: toastNotif.duration
-            });
-        });
-
-        window.api.handleOneWay(window.api.channels.toastError, (event, toastNotif: ToastFromMain) => {
-            toast.error(toastNotif.text, {
-                id: toastNotif.id,
-                duration: toastNotif.duration
-            });
-        });
-
-        window.api.handleOneWay(window.api.channels.toastLoading, (event, toastNotif: ToastFromMain) => {
-            toast.loading(toastNotif.text, {
-                id: toastNotif.id,
-                duration: toastNotif.duration
-            });
-        });
-
-        window.api.handleOneWay(window.api.channels.toastForcedType, (event, toastNotif: ToastFromMain) => {
-            if (toastNotif.type === "error")
+        window.api.handleOneWay(
+            window.api.channels.toastSuccess,
+            (event, toastNotif: ToastFromMain) => {
                 toast.success(toastNotif.text, {
                     id: toastNotif.id,
                     duration: toastNotif.duration
                 });
-            else
+            }
+        );
+
+        window.api.handleOneWay(
+            window.api.channels.toastError,
+            (event, toastNotif: ToastFromMain) => {
                 toast.error(toastNotif.text, {
                     id: toastNotif.id,
                     duration: toastNotif.duration
                 });
-        });
+            }
+        );
+
+        window.api.handleOneWay(
+            window.api.channels.toastLoading,
+            (event, toastNotif: ToastFromMain) => {
+                toast.loading(toastNotif.text, {
+                    id: toastNotif.id,
+                    duration: toastNotif.duration
+                });
+            }
+        );
+
+        window.api.handleOneWay(
+            window.api.channels.toastForcedType,
+            (event, toastNotif: ToastFromMain) => {
+                if (toastNotif.type === "error")
+                    toast.success(toastNotif.text, {
+                        id: toastNotif.id,
+                        duration: toastNotif.duration
+                    });
+                else
+                    toast.error(toastNotif.text, {
+                        id: toastNotif.id,
+                        duration: toastNotif.duration
+                    });
+            }
+        );
 
         return () => {
             window.api.removeAllListeners(window.api.channels.toastSuccess);
@@ -64,18 +76,18 @@ export default function App() {
                         boxShadow: "5px 5px 15px rgba(16, 18, 27, 0.4)",
                         backdropFilter: "blur(20px)",
                         color: "rgb(200, 222, 245)",
-                        padding: "0.75rem",
+                        padding: "0.75rem"
                     },
                     success: {
                         iconTheme: {
                             primary: "rgb(33, 219, 135)",
-                            secondary: "rgb(16, 18, 27)",
+                            secondary: "rgb(16, 18, 27)"
                         }
                     },
                     loading: {
                         iconTheme: {
                             primary: "rgb(200, 222, 245)",
-                            secondary: "rgb(16, 18, 27)",
+                            secondary: "rgb(16, 18, 27)"
                         }
                     },
                     error: {

@@ -12,13 +12,15 @@ import styles from "./index.module.scss";
  * The route for the main page of the application.
  */
 export default function Home() {
-    const [animationsDisabled, setAnimationsDisabled] = useState<boolean>(false);
-    const [applicationVersion, setApplicationVersion] = useState<string>("0.0.0");
+    const [animationsDisabled, setAnimationsDisabled] =
+        useState<boolean>(false);
+    const [applicationVersion, setApplicationVersion] =
+        useState<string>("0.0.0");
     const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
     const [showingModal, setShowingModal] = useState<boolean>(false);
     const [modalData, setModalData] = useState<{
-        modalToShow: "settings" | "add-new-farm"
+        modalToShow: "settings" | "add-new-farm";
     }>({
         modalToShow: "settings"
     });
@@ -27,7 +29,7 @@ export default function Home() {
      * On site load, get internet connection
      */
     useEffect(() => {
-        window.api.log("DEBUG", "Rendering home page")
+        window.api.log("DEBUG", "Rendering home page");
 
         /**
          * Update available listener
@@ -39,29 +41,41 @@ export default function Home() {
         /**
          * 3D-Animations disabled?
          */
-        window.api.sendAndWait(window.api.channels.get3DAnimationsDisabled)
+        window.api
+            .sendAndWait(window.api.channels.get3DAnimationsDisabled)
             .then((disabled: any) => {
                 setAnimationsDisabled(disabled);
             })
             .catch((err) => {
-                window.api.log("ERROR", `Error when setting animations status. ${err}`);
+                window.api.log(
+                    "ERROR",
+                    `Error when setting animations status. ${err}`
+                );
             });
 
         /**
          * Application version.
          */
-        window.api.sendAndWait(window.api.channels.getApplicationVersion)
+        window.api
+            .sendAndWait(window.api.channels.getApplicationVersion)
             .then((version: any) => {
                 setApplicationVersion(version);
             })
             .catch((err) => {
-                window.api.log("ERROR", `Error when setting application version. ${err}`);
+                window.api.log(
+                    "ERROR",
+                    `Error when setting application version. ${err}`
+                );
             });
 
         return () => {
             window.api.removeAllListeners(window.api.channels.updateAvailable);
-            window.api.removeAllListeners(window.api.channels.get3DAnimationsEnabled);
-            window.api.removeAllListeners(window.api.channels.getApplicationVersion);
+            window.api.removeAllListeners(
+                window.api.channels.get3DAnimationsEnabled
+            );
+            window.api.removeAllListeners(
+                window.api.channels.getApplicationVersion
+            );
         };
     }, []);
 
@@ -81,7 +95,9 @@ export default function Home() {
                             animationSrc="../assets/crate-falling.webm"
                         />
                         <h1 className={styles.title}>DROP-FARMER</h1>
-                        <p className={styles.desc}>Stream drops farmer application</p>
+                        <p className={styles.desc}>
+                            Stream drops farmer application
+                        </p>
                         <div className={styles.buttonsContainer}>
                             <ButtonDropdown
                                 icon={faBars}
@@ -90,9 +106,13 @@ export default function Home() {
                                     {
                                         type: "label",
                                         label: "Check for update",
-                                        disabled: (process.env.NODE_ENV !== "production"),
+                                        disabled:
+                                            process.env.NODE_ENV !==
+                                            "production",
                                         action() {
-                                            window.api.sendOneWay(window.api.channels.updateCheck);
+                                            window.api.sendOneWay(
+                                                window.api.channels.updateCheck
+                                            );
                                         }
                                     },
                                     {
@@ -101,12 +121,12 @@ export default function Home() {
                                     {
                                         type: "label",
                                         label: "About",
-                                        disabled: true,
+                                        disabled: true
                                     },
                                     {
                                         type: "label",
                                         label: "Statistics",
-                                        disabled: true,
+                                        disabled: true
                                     },
                                     {
                                         type: "seperator"
@@ -116,7 +136,9 @@ export default function Home() {
                                         label: "Restart application",
                                         disabled: false,
                                         action() {
-                                            window.api.sendOneWay(window.api.channels.restart);
+                                            window.api.sendOneWay(
+                                                window.api.channels.restart
+                                            );
                                         }
                                     },
                                     {
@@ -124,9 +146,11 @@ export default function Home() {
                                         label: "Quit application",
                                         disabled: false,
                                         action() {
-                                            window.api.sendOneWay(window.api.channels.shutdown);
+                                            window.api.sendOneWay(
+                                                window.api.channels.shutdown
+                                            );
                                         }
-                                    },
+                                    }
                                 ]}
                             />
                             <ButtonNolabel
@@ -134,7 +158,10 @@ export default function Home() {
                                 primary={true}
                                 tooltipText="Website"
                                 onClickAction={() => {
-                                    window.api.sendOneWay(window.api.channels.openLinkInExternal, "https://drop-farmer.soryn.dev");
+                                    window.api.sendOneWay(
+                                        window.api.channels.openLinkInExternal,
+                                        "https://drop-farmer.soryn.dev"
+                                    );
                                 }}
                             />
                             <ButtonNolabel
@@ -152,7 +179,7 @@ export default function Home() {
                         <div className={styles.additionalData}>
                             <p>Version: {applicationVersion}</p>
                             <p>Copyright © Soryn</p>
-                            {updateAvailable &&
+                            {updateAvailable && (
                                 <Tooltip
                                     placement="top"
                                     tooltipText="Will get installed on restart"
@@ -160,13 +187,17 @@ export default function Home() {
                                     <p
                                         className={styles.installUpdate}
                                         onClick={() => {
-                                            window.api.sendOneWay(window.api.channels.installUpdate);
+                                            window.api.sendOneWay(
+                                                window.api.channels
+                                                    .installUpdate
+                                            );
                                         }}
                                     >
-                                        Update available! Click here to update<br />
+                                        Update available! Click here to update
+                                        <br />
                                     </p>
                                 </Tooltip>
-                            }
+                            )}
                         </div>
                     </div>
                 </div>

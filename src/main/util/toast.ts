@@ -32,7 +32,10 @@ export function sendBasicToast(toast: BasicToast, callback: () => void): void {
  * @param {PromiseToast} toast Toast data.
  * @param {Promise<any>} promise The promise to check for.
  */
-export function sendPromiseToast(toast: PromiseToast, promise: Promise<any>): void {
+export function sendPromiseToast(
+    toast: PromiseToast,
+    promise: Promise<any>
+): void {
     sendOneWay(getMainWindow(), Channels.toastLoading, {
         id: toast.id,
         text: toast.textOnLoading,
@@ -53,7 +56,7 @@ export function sendPromiseToast(toast: PromiseToast, promise: Promise<any>): vo
                 text: `${toast.textOnError} ${err}`,
                 duration: toast.duration
             });
-        })
+        });
 }
 
 /**
@@ -67,5 +70,5 @@ export function sendForcedTypeToast(toast: ForcedTypeToast): void {
         text: toast.text,
         duration: toast.duration,
         type: toast.type
-    })
+    });
 }

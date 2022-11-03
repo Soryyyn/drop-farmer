@@ -4,7 +4,6 @@ import { getBrowserConnection } from "../util/puppeteer";
 import FarmTemplate from "./template";
 
 export default class OverwatchLeague extends FarmTemplate {
-
     constructor() {
         super(
             "overwatch-league",
@@ -20,7 +19,10 @@ export default class OverwatchLeague extends FarmTemplate {
      * play on.
      * @param {number} scrollY The Y-scroll position.
      */
-    pressPlay(farmingWindow: Electron.BrowserWindow, scrollY: number): Promise<any> {
+    pressPlay(
+        farmingWindow: Electron.BrowserWindow,
+        scrollY: number
+    ): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
                 let page = await getPage(getBrowserConnection(), farmingWindow);
@@ -30,8 +32,12 @@ export default class OverwatchLeague extends FarmTemplate {
                 /**
                  * Reload the page if the iframe is not found.
                  */
-                while (await page.$("iframe") == null) {
-                    log("MAIN", "DEBUG", `${this.getName()}: Page needs to reload because iframe is not loaded`);
+                while ((await page.$("iframe")) == null) {
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: Page needs to reload because iframe is not loaded`
+                    );
                     await page.reload();
                 }
 
@@ -39,19 +45,27 @@ export default class OverwatchLeague extends FarmTemplate {
                  * Scroll to the video element.
                  */
                 await page.evaluate(`window.scrollTo(0, ${scrollY})`);
-                log("MAIN", "DEBUG", `${this.getName()}: Scrolled to ${scrollY}`);
+                log(
+                    "MAIN",
+                    "DEBUG",
+                    `${this.getName()}: Scrolled to ${scrollY}`
+                );
 
                 /**
                  * Enter the iframe element and play the video.
                  */
-                await page.waitForSelector("iframe")
+                await page
+                    .waitForSelector("iframe")
                     .then(async (iframeHandle) => {
                         await page.waitForNetworkIdle();
-                        log("MAIN", "DEBUG", `${this.getName()}: Endered iframe element`);
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Endered iframe element`
+                        );
                         return await iframeHandle!.contentFrame();
                     })
                     .then(async (frame) => {
-
                         /**
                          * Get the video element.
                          */
@@ -64,7 +78,14 @@ export default class OverwatchLeague extends FarmTemplate {
                          * If the src tag is not set, keep trying to
                          * play the video until it is set.
                          */
-                        while (await (await videoElement!.getProperty("src")).jsonValue() == null || await (await videoElement!.getProperty("src")).jsonValue() == "") {
+                        while (
+                            (await (
+                                await videoElement!.getProperty("src")
+                            ).jsonValue()) == null ||
+                            (await (
+                                await videoElement!.getProperty("src")
+                            ).jsonValue()) == ""
+                        ) {
                             await frame!.click("button.ytp-large-play-button");
                             await frame!.waitForTimeout(2000);
                         }
@@ -74,7 +95,11 @@ export default class OverwatchLeague extends FarmTemplate {
                          */
                         await frame!.focus("div.html5-video-container");
 
-                        log("MAIN", "DEBUG", `${this.getName()}: Successfully started the stream`);
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Successfully started the stream`
+                        );
                         resolve(undefined);
                     });
             } catch (err) {
@@ -92,21 +117,40 @@ export default class OverwatchLeague extends FarmTemplate {
         return new Promise<any>(async (resolve, reject) => {
             try {
                 if (this.getFarmingWindows().length === 0) {
-                    log("MAIN", "DEBUG", `${this.getName()}: No farming windows, skipping checking step`);
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: No farming windows, skipping checking step`
+                    );
                     resolve(undefined);
                 } else {
-                    let page = await getPage(getBrowserConnection(), this.getFarmingWindow(0).window);
+                    let page = await getPage(
+                        getBrowserConnection(),
+                        this.getFarmingWindow(0).window
+                    );
 
                     /**
                      * Check for *LIVE NOW* element.
                      */
-                    if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                        log("MAIN", "DEBUG", `${this.getName()}: Stream still live, continue farming`);
+                    if (
+                        (await page.$(
+                            "#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div"
+                        )) !== null
+                    ) {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Stream still live, continue farming`
+                        );
                         resolve(undefined);
                     } else {
                         this.removeFarmingWindowFromArray(0);
 
-                        log("MAIN", "DEBUG", `${this.getName()}: Stream not live anymore, stopping farming`);
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Stream not live anymore, stopping farming`
+                        );
 
                         resolve(undefined);
                     }
@@ -127,7 +171,11 @@ export default class OverwatchLeague extends FarmTemplate {
     login(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                log("MAIN", "DEBUG", `${this.getName()}: Login process started`);
+                log(
+                    "MAIN",
+                    "DEBUG",
+                    `${this.getName()}: Login process started`
+                );
                 let page = await getPage(getBrowserConnection(), window);
 
                 await page.waitForNetworkIdle();
@@ -135,11 +183,17 @@ export default class OverwatchLeague extends FarmTemplate {
                 /**
                  * If sign in button under video has been found (user *not* logged in).
                  */
-                if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a") !== null) {
+                if (
+                    (await page.$(
+                        "#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a"
+                    )) !== null
+                ) {
                     /**
                      * Click the sign in button.
                      */
-                    await page.click("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a");
+                    await page.click(
+                        "#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-loginstyles__Wrapper-sc-1ta207g-0.bMrUTC > div > div > a"
+                    );
 
                     /**
                      * Check if user has been moved to the login page.
@@ -147,7 +201,11 @@ export default class OverwatchLeague extends FarmTemplate {
                     try {
                         await page.waitForSelector("#accountName");
 
-                        log("MAIN", "DEBUG", `${this.getName()}: Login is needed by user`);
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Login is needed by user`
+                        );
 
                         /**
                          * Open checker window for user login.
@@ -158,18 +216,32 @@ export default class OverwatchLeague extends FarmTemplate {
                         /**
                          * Wait until user is back at main page with video element.
                          */
-                        page.waitForSelector("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp", { timeout: 0 })
-                            .then(() => {
-                                log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
-                                window.hide();
-                                resolve(undefined);
-                            });
+                        page.waitForSelector(
+                            "#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp",
+                            { timeout: 0 }
+                        ).then(() => {
+                            log(
+                                "MAIN",
+                                "DEBUG",
+                                `${this.getName()}: Login completed`
+                            );
+                            window.hide();
+                            resolve(undefined);
+                        });
                     } catch (err) {
-                        log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Login completed`
+                        );
                         resolve(undefined);
                     }
                 } else {
-                    log("MAIN", "DEBUG", `${this.getName()}: User already logged in, continuing`);
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: User already logged in, continuing`
+                    );
                     resolve(undefined);
                 }
             } catch (err) {
@@ -193,7 +265,11 @@ export default class OverwatchLeague extends FarmTemplate {
                  * Check if farming windows exist, if yes don't try to check for new stream.
                  */
                 if (this.getFarmingWindows().length > 0) {
-                    log("MAIN", "DEBUG", `${this.getName()}: Already farming, no need to start again`);
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: Already farming, no need to start again`
+                    );
 
                     this.updateStatus("farming");
                     resolve(undefined);
@@ -203,42 +279,75 @@ export default class OverwatchLeague extends FarmTemplate {
                     /**
                      * Check for *LIVE NOW* element.
                      */
-                    if (await page.$("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div") !== null) {
-                        log("MAIN", "DEBUG", `${this.getName()}: Found stream on main site`);
+                    if (
+                        (await page.$(
+                            "#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div"
+                        )) !== null
+                    ) {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Found stream on main site`
+                        );
 
                         /**
                          * Get the stream title.
                          */
-                        const innerText = await page.$eval("#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__SectionTitleStyled-sc-14q9if3-11.jFcduW.section-titlestyles__Container-sc-1wlp19u-0.gquVmG > div.section-titlestyles__NormalTitleContainer-sc-1wlp19u-2.bDbfSO > h2 > div", (el: any) => el.innerText);
+                        const innerText = await page.$eval(
+                            "#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__SectionTitleStyled-sc-14q9if3-11.jFcduW.section-titlestyles__Container-sc-1wlp19u-0.gquVmG > div.section-titlestyles__NormalTitleContainer-sc-1wlp19u-2.bDbfSO > h2 > div",
+                            (el: any) => el.innerText
+                        );
 
                         /**
                          * Check if the stream title container the text
                          * "Co-Stream" (case insensitive).
                          * If yes don't farm.
                          */
-                        if (innerText.match(/Co-Stream/i) || innerText.match(/Contenders/i)) {
-                            log("MAIN", "DEBUG", `${this.getName()}: Co-Stream / Contenders running, no need to farm`);
+                        if (
+                            innerText.match(/Co-Stream/i) ||
+                            innerText.match(/Contenders/i)
+                        ) {
+                            log(
+                                "MAIN",
+                                "DEBUG",
+                                `${this.getName()}: Co-Stream / Contenders running, no need to farm`
+                            );
                             this.updateStatus("idle");
                             resolve(undefined);
                         } else {
-                            this.createFarmingWindow(this.getCheckerWebsite())
-                                .then(async (farmingWindow: Electron.BrowserWindow) => {
+                            this.createFarmingWindow(
+                                this.getCheckerWebsite()
+                            ).then(
+                                async (
+                                    farmingWindow: Electron.BrowserWindow
+                                ) => {
                                     await this.pressPlay(farmingWindow, 200);
 
-                                    log("MAIN", "DEBUG", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
+                                    log(
+                                        "MAIN",
+                                        "DEBUG",
+                                        `${this.getName()}: Farming with \"${
+                                            this.getFarmingWindows().length
+                                        }\" windows`
+                                    );
 
                                     this.timerAction("start");
 
                                     this.updateStatus("farming");
                                     resolve(undefined);
-                                });
+                                }
+                            );
                         }
                     } else {
                         /**
                          * No live match right now.
                          * Set the status back to idle.
                          */
-                        log("MAIN", "DEBUG", `${this.getName()}: No live matches available, returning status back to idle`);
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: No live matches available, returning status back to idle`
+                        );
                         this.updateStatus("idle");
 
                         resolve(undefined);

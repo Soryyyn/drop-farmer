@@ -5,16 +5,24 @@ import React from "react";
 import styles from "../styles/ButtonLabel.module.scss";
 
 interface Props {
-    icon: IconDefinition,
-    primary: boolean,
-    label: string
-    onClickAction: () => void
+    icon: IconDefinition;
+    primary: boolean;
+    label: string;
+    onClickAction: () => void;
 }
 
-export default function ButtonLabel({ icon, primary, label, onClickAction }: Props) {
+export default function ButtonLabel({
+    icon,
+    primary,
+    label,
+    onClickAction
+}: Props) {
     return (
         <div
-            className={clsx(styles.buttonContainer, (primary) ? styles.primary : styles.secondary)}
+            className={clsx(
+                styles.buttonContainer,
+                primary ? styles.primary : styles.secondary
+            )}
             onClick={onClickAction}
         >
             <FontAwesomeIcon icon={icon} size="lg" className={styles.icon} />

@@ -1,4 +1,8 @@
-import { faFloppyDisk, faRotateRight, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+    faFloppyDisk,
+    faRotateRight,
+    faXmark
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { cloneDeep, isEqual } from "lodash";
@@ -8,11 +12,12 @@ import SettingItem from "./SettingItem";
 import styles from "./Settings.module.scss";
 
 interface Props {
-    handleClosing: () => void,
+    handleClosing: () => void;
 }
 
 export default function Settings({ handleClosing }: Props) {
-    const [currentlySelected, setCurrentlySelected] = useState<string>("application");
+    const [currentlySelected, setCurrentlySelected] =
+        useState<string>("application");
     const [selectors, setSelectors] = useState<string[]>([]);
     const [settings, setSettings] = useState<Settings>();
 
@@ -45,8 +50,12 @@ export default function Settings({ handleClosing }: Props) {
                          * Go through each setting and reset it to the default.
                          */
                         for (const [key] of Object.entries(copy)) {
-                            for (const [setting, settingValues] of Object.entries(copy[key])) {
-                                settingValues.value = settingValues.defaultValue;
+                            for (const [
+                                setting,
+                                settingValues
+                            ] of Object.entries(copy[key])) {
+                                settingValues.value =
+                                    settingValues.defaultValue;
                             }
                         }
 
@@ -55,8 +64,11 @@ export default function Settings({ handleClosing }: Props) {
                         /**
                          * Save the reset.
                          */
-                        window.api.sendOneWay(window.api.channels.saveNewSettings, settings);
-                        setOriginalSettings(cloneDeep(settings))
+                        window.api.sendOneWay(
+                            window.api.channels.saveNewSettings,
+                            settings
+                        );
+                        setOriginalSettings(cloneDeep(settings));
                     }}
                     className={styles.topBarButton}
                 >
@@ -74,8 +86,11 @@ export default function Settings({ handleClosing }: Props) {
                          * Only send the ipc signal if changing is needed.
                          */
                         if (!isEqual(settings, originalSettings)) {
-                            window.api.sendOneWay(window.api.channels.saveNewSettings, settings);
-                            setOriginalSettings(cloneDeep(settings))
+                            window.api.sendOneWay(
+                                window.api.channels.saveNewSettings,
+                                settings
+                            );
+                            setOriginalSettings(cloneDeep(settings));
                         }
                     }}
                     className={styles.topBarButton}
@@ -100,25 +115,32 @@ export default function Settings({ handleClosing }: Props) {
                     />
                 </button>
             </div>
-            {selectors && settings &&
+            {selectors && settings && (
                 <div className={styles.splitterContainer}>
                     <ul className={styles.settingsSelectors}>
-                        {
-                            selectors.map((selector) => {
-                                return <li
-                                    className={clsx(styles.selector, (currentlySelected === selector) ? styles.selectorSelected : null)}
+                        {selectors.map((selector) => {
+                            return (
+                                <li
+                                    className={clsx(
+                                        styles.selector,
+                                        currentlySelected === selector
+                                            ? styles.selectorSelected
+                                            : null
+                                    )}
                                     key={selector}
                                     onClick={() => {
                                         setCurrentlySelected(selector);
                                     }}
-                                >{selector}</li>
-                            })
-                        }
+                                >
+                                    {selector}
+                                </li>
+                            );
+                        })}
                     </ul>
                     <ul className={styles.settingsItems}>
-                        {
-                            settings[currentlySelected].map((setting) => {
-                                return <SettingItem
+                        {settings[currentlySelected].map((setting) => {
+                            return (
+                                <SettingItem
                                     key={setting.name}
                                     setting={setting}
                                     onChanged={(value: any) => {
@@ -131,8 +153,12 @@ export default function Settings({ handleClosing }: Props) {
                                         let copyOfSettings = { ...settings };
                                         let newFarmSetting = { ...setting };
 
-                                        copyOfSettings[currentlySelected].forEach((s) => {
-                                            if (newFarmSetting.name === s.name) {
+                                        copyOfSettings[
+                                            currentlySelected
+                                        ].forEach((s) => {
+                                            if (
+                                                newFarmSetting.name === s.name
+                                            ) {
                                                 s.value = value;
                                                 s = newFarmSetting;
                                             }
@@ -141,11 +167,11 @@ export default function Settings({ handleClosing }: Props) {
                                         setSettings(copyOfSettings);
                                     }}
                                 />
-                            })
-                        }
+                            );
+                        })}
                     </ul>
                 </div>
-            }
+            )}
         </div>
     );
 }

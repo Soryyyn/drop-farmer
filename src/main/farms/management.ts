@@ -13,7 +13,7 @@ import FarmTemplate from "./template";
 const DEFAULT_FARMS: FarmTemplate[] = [
     new LeagueOfLegends(),
     new OverwatchLeague(),
-    new OverwatchContenders(),
+    new OverwatchContenders()
 ];
 
 /**
@@ -156,7 +156,8 @@ function createSpecificFarmSettings(farm: FarmTemplate): Setting[] {
         {
             name: "checkerWebsite",
             shownName: "Checking website",
-            description: "The website drop-farmer checks for the schedule, live matches, etc. to start farming.",
+            description:
+                "The website drop-farmer checks for the schedule, live matches, etc. to start farming.",
             value: farm.getCheckerWebsite(),
             defaultValue: farm.getCheckerWebsite(),
             changingDisabled: true
@@ -164,11 +165,12 @@ function createSpecificFarmSettings(farm: FarmTemplate): Setting[] {
         {
             name: "checkingSchedule",
             shownName: "Checking schedule",
-            description: "The schedule (in minutes) on which drop-farmer will check if farming is possible.",
+            description:
+                "The schedule (in minutes) on which drop-farmer will check if farming is possible.",
             value: farm.getCheckingSchedule(),
             defaultValue: 30,
             max: 60,
-            min: 1,
+            min: 1
         }
     ];
 }

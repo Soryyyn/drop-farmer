@@ -4,7 +4,6 @@ import { getBrowserConnection } from "../util/puppeteer";
 import FarmTemplate from "./template";
 
 export default class OverwatchContenders extends FarmTemplate {
-
     constructor() {
         super(
             "overwatch-contenders",
@@ -27,9 +26,19 @@ export default class OverwatchContenders extends FarmTemplate {
                 /**
                  * Check if user agreement acception is needed.
                  */
-                if (await page.$("#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb") != null) {
-                    await page.click("#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb");
-                    log("MAIN", "INFO", `${this.getName()}: Accepted user agreement`);
+                if (
+                    (await page.$(
+                        "#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb"
+                    )) != null
+                ) {
+                    await page.click(
+                        "#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb"
+                    );
+                    log(
+                        "MAIN",
+                        "INFO",
+                        `${this.getName()}: Accepted user agreement`
+                    );
                     await page.waitForNavigation();
                 }
 
@@ -39,14 +48,20 @@ export default class OverwatchContenders extends FarmTemplate {
                 /**
                  * Check if not logged in logged in.
                  */
-                if (await page.$("#buttons > ytd-button-renderer > a") != null) {
+                if (
+                    (await page.$("#buttons > ytd-button-renderer > a")) != null
+                ) {
                     /**
                      * Login needed.
                      */
                     await page.click("#buttons > ytd-button-renderer > a");
                     await page.waitForNetworkIdle();
 
-                    log("MAIN", "DEBUG", `${this.getName()}: Login is needed by user`);
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: Login is needed by user`
+                    );
 
                     /**
                      * Open checker window for user login.
@@ -58,17 +73,27 @@ export default class OverwatchContenders extends FarmTemplate {
                      * Wait until user is back at account page by waiting for
                      * the yt banner.
                      */
-                    page.waitForSelector("#contentContainer > div.banner-visible-area.style-scope.ytd-c4-tabbed-header-renderer", { timeout: 0 })
-                        .then(() => {
-                            log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
-                            window.hide();
-                            resolve(undefined);
-                        });
+                    page.waitForSelector(
+                        "#contentContainer > div.banner-visible-area.style-scope.ytd-c4-tabbed-header-renderer",
+                        { timeout: 0 }
+                    ).then(() => {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Login completed`
+                        );
+                        window.hide();
+                        resolve(undefined);
+                    });
                 } else {
                     /**
                      * Login not needed.
                      */
-                    log("MAIN", "DEBUG", `${this.getName()}: User already logged in, continuing`);
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: User already logged in, continuing`
+                    );
                     resolve(undefined);
                 }
             } catch (err) {
@@ -86,7 +111,11 @@ export default class OverwatchContenders extends FarmTemplate {
         return new Promise<any>(async (resolve, reject) => {
             try {
                 if (this.getFarmingWindows().length === 0) {
-                    log("MAIN", "DEBUG", `${this.getName()}: No farming windows, skipping checking step`);
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: No farming windows, skipping checking step`
+                    );
                     resolve(undefined);
                 } else {
                     let page = await getPage(getBrowserConnection(), window);
@@ -96,13 +125,25 @@ export default class OverwatchContenders extends FarmTemplate {
                      * Check if there are any livestreams.
                      * If there are none, close the farming window.
                      */
-                    if (await page.$("ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]") != null) {
-                        log("MAIN", "DEBUG", `${this.getName()}: Stream still live, continue farming`);
+                    if (
+                        (await page.$(
+                            "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]"
+                        )) != null
+                    ) {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Stream still live, continue farming`
+                        );
                         resolve(undefined);
                     } else {
                         this.removeFarmingWindowFromArray(0);
 
-                        log("MAIN", "DEBUG", `${this.getName()}: Stream not live anymore, stopping farming`);
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Stream not live anymore, stopping farming`
+                        );
 
                         resolve(undefined);
                     }
@@ -110,7 +151,7 @@ export default class OverwatchContenders extends FarmTemplate {
             } catch (err) {
                 reject(err);
             }
-        })
+        });
     }
 
     /**
@@ -128,7 +169,11 @@ export default class OverwatchContenders extends FarmTemplate {
                  * Check if farming windows exist, if yes don't try to check for new stream.
                  */
                 if (this.getFarmingWindows().length > 0) {
-                    log("MAIN", "DEBUG", `${this.getName()}: Already farming, no need to start again`);
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: Already farming, no need to start again`
+                    );
 
                     this.updateStatus("farming");
                     resolve(undefined);
@@ -136,15 +181,26 @@ export default class OverwatchContenders extends FarmTemplate {
                     /**
                      * Check if there is a "LIVE" element / current livestream.
                      */
-                    if (await page.$("ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]") != null) {
-                        log("MAIN", "DEBUG", `${this.getName()}: Found livestream`);
+                    if (
+                        (await page.$(
+                            "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]"
+                        )) != null
+                    ) {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Found livestream`
+                        );
 
                         /**
                          * Create the farming window and open the livestream.
                          */
-                        this.createFarmingWindow(this.getCheckerWebsite())
-                            .then(async (farmingWindow) => {
-                                let farmingWindowPage = await getPage(getBrowserConnection(), farmingWindow);
+                        this.createFarmingWindow(this.getCheckerWebsite()).then(
+                            async (farmingWindow) => {
+                                let farmingWindowPage = await getPage(
+                                    getBrowserConnection(),
+                                    farmingWindow
+                                );
 
                                 await farmingWindowPage.waitForNetworkIdle();
                                 await farmingWindowPage.waitForTimeout(2000);
@@ -154,18 +210,30 @@ export default class OverwatchContenders extends FarmTemplate {
                                  * In case of a livestream it is always the
                                  * first one.
                                  */
-                                await farmingWindowPage.click("#contents > ytd-video-renderer");
+                                await farmingWindowPage.click(
+                                    "#contents > ytd-video-renderer"
+                                );
 
-                                log("MAIN", "DEBUG", `${this.getName()}: Farming with \"${this.getFarmingWindows().length}\" windows`);
+                                log(
+                                    "MAIN",
+                                    "DEBUG",
+                                    `${this.getName()}: Farming with \"${
+                                        this.getFarmingWindows().length
+                                    }\" windows`
+                                );
 
                                 this.timerAction("start");
 
                                 this.updateStatus("farming");
                                 resolve(undefined);
-                            });
-
+                            }
+                        );
                     } else {
-                        log("MAIN", "DEBUG", `${this.getName()}: No livestream found, no need to farm`);
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: No livestream found, no need to farm`
+                        );
                         this.updateStatus("idle");
 
                         resolve(undefined);
@@ -174,6 +242,6 @@ export default class OverwatchContenders extends FarmTemplate {
             } catch (err) {
                 reject(err);
             }
-        })
+        });
     }
 }

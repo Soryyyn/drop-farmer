@@ -1,7 +1,11 @@
 import CrontabManager from "cron-job-manager";
 import { Channels } from "../common/channels";
 import { sendOneWay } from "../electron/ipc";
-import { createWindow, destroyWindow, getMainWindow } from "../electron/windows";
+import {
+    createWindow,
+    destroyWindow,
+    getMainWindow
+} from "../electron/windows";
 import { log } from "../util/logger";
 import { getSpecificSetting } from "../util/settings";
 import { UptimeTimer } from "./timer";
@@ -36,22 +40,31 @@ export default abstract class FarmTemplate {
         /**
          * Change the basic data.
          */
-        this._checkingSchedule = getSpecificSetting(this._name, "checkingSchedule").value as number;
-        this._checkerWebsite = getSpecificSetting(this._name, "checkerWebsite").value as string;
-        this._enabled = getSpecificSetting(this._name, "enabled").value as boolean;
+        this._checkingSchedule = getSpecificSetting(
+            this._name,
+            "checkingSchedule"
+        ).value as number;
+        this._checkerWebsite = getSpecificSetting(this._name, "checkerWebsite")
+            .value as string;
+        this._enabled = getSpecificSetting(this._name, "enabled")
+            .value as boolean;
 
         /**
          * Change the status depending if the farm is enabled or disabled.
          * If the farm is disabled, set it to idle.
          */
-        this._currentStatus = (this._enabled) ? "idle" : "disabled";
+        this._currentStatus = this._enabled ? "idle" : "disabled";
 
         /**
          * Add the schedule task to the task manager.
          */
-        this._taskManager.add("checking-schedule", `*/${this._checkingSchedule} * * * *`, () => {
-            this._schedule();
-        });
+        this._taskManager.add(
+            "checking-schedule",
+            `*/${this._checkingSchedule} * * * *`,
+            () => {
+                this._schedule();
+            }
+        );
 
         log("MAIN", "DEBUG", `${this._name}: Initialized farm data`);
     }
@@ -63,17 +76,22 @@ export default abstract class FarmTemplate {
         /**
          * Enable or disable farm.
          */
-        (getSpecificSetting(this._name, "enabled").value as boolean) ? this.enableFarm() : this.disableFarm();
+        (getSpecificSetting(this._name, "enabled").value as boolean)
+            ? this.enableFarm()
+            : this.disableFarm();
 
         /**
          * Update schedule.
          */
-        this.updateSchedule(getSpecificSetting(this._name, "checkingSchedule").value as number);
+        this.updateSchedule(
+            getSpecificSetting(this._name, "checkingSchedule").value as number
+        );
 
         /**
          * Set checker website.
          */
-        this._checkerWebsite = getSpecificSetting(this._name, "checkerWebsite").value as string;
+        this._checkerWebsite = getSpecificSetting(this._name, "checkerWebsite")
+            .value as string;
 
         log("MAIN", "DEBUG", `${this._name}: Applied new settings`);
     }
@@ -82,8 +100,7 @@ export default abstract class FarmTemplate {
      * Start the actual farm if it is enabled.
      */
     start(): void {
-        if (this._enabled)
-            this._taskManager.start("checking-schedule");
+        if (this._enabled) this._taskManager.start("checking-schedule");
     }
 
     /**
@@ -188,7 +205,11 @@ export default abstract class FarmTemplate {
             status: this._currentStatus
         });
 
-        log("MAIN", "DEBUG", `${this._name}: Updated status to ${this._currentStatus}`);
+        log(
+            "MAIN",
+            "DEBUG",
+            `${this._name}: Updated status to ${this._currentStatus}`
+        );
     }
 
     /**
@@ -198,9 +219,16 @@ export default abstract class FarmTemplate {
      */
     updateSchedule(newSchedule: number): void {
         this._checkingSchedule = newSchedule;
-        this._taskManager.update("checking-schedule", `*/${this._checkingSchedule} * * * *`);
+        this._taskManager.update(
+            "checking-schedule",
+            `*/${this._checkingSchedule} * * * *`
+        );
 
-        log("MAIN", "DEBUG", `${this._name}: Updated schedule to ${newSchedule}`);
+        log(
+            "MAIN",
+            "DEBUG",
+            `${this._name}: Updated schedule to ${newSchedule}`
+        );
     }
 
     /**
@@ -211,7 +239,11 @@ export default abstract class FarmTemplate {
     createCheckerWindow(): Promise<Electron.BrowserWindow> {
         return new Promise<Electron.BrowserWindow>((resolve, reject) => {
             if (this._checkerWindow) {
-                log("MAIN", "WARN", `${this._name}: Checker window already exists`);
+                log(
+                    "MAIN",
+                    "WARN",
+                    `${this._name}: Checker window already exists`
+                );
                 resolve(this._checkerWindow);
             } else {
                 createWindow(this._checkerWebsite, this._name)
@@ -227,12 +259,20 @@ export default abstract class FarmTemplate {
 
                         this._checkerWindow = createdWindow;
 
-                        log("MAIN", "DEBUG", `${this._name}: Created checker window`);
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this._name}: Created checker window`
+                        );
 
                         resolve(this._checkerWindow);
                     })
                     .catch((err) => {
-                        log("MAIN", "ERROR", `${this._name}: Failed creating checker window. ${err}`);
+                        log(
+                            "MAIN",
+                            "ERROR",
+                            `${this._name}: Failed creating checker window. ${err}`
+                        );
                         reject(err);
                     });
             }
@@ -273,12 +313,20 @@ export default abstract class FarmTemplate {
                         this.removeFarmingWindowFromArray(index);
                     });
 
-                    log("MAIN", "DEBUG", `${this._name}: Created farming window(${createdWindow.id})`);
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this._name}: Created farming window(${createdWindow.id})`
+                    );
 
                     resolve(createdWindow);
                 })
                 .catch((err) => {
-                    log("MAIN", "ERROR", `${this._name}: Failed creating farming window. ${err}`);
+                    log(
+                        "MAIN",
+                        "ERROR",
+                        `${this._name}: Failed creating farming window. ${err}`
+                    );
                     reject(err);
                 });
         });
@@ -309,7 +357,9 @@ export default abstract class FarmTemplate {
      * @param {number | FarmingWindowObject} toDestroy The index or the farming window object to get removed
      * and destroyed.
      */
-    removeFarmingWindowFromArray(toDestroy: number | FarmingWindowObject): void {
+    removeFarmingWindowFromArray(
+        toDestroy: number | FarmingWindowObject
+    ): void {
         if (typeof toDestroy === "number") {
             destroyWindow(this._farmingWindows[toDestroy].window);
             this._farmingWindows.splice(toDestroy, 1);
@@ -319,15 +369,17 @@ export default abstract class FarmTemplate {
             this._farmingWindows.splice(index, 1);
         }
 
-
         /**
          * If no more farming windows are in the array, return the farm status
          * to idle.
          */
-        if (this._farmingWindows.length === 0)
-            this.updateStatus("idle");
+        if (this._farmingWindows.length === 0) this.updateStatus("idle");
 
-        log("MAIN", "DEBUG", `${this._name}: Removed farming window from array`);
+        log(
+            "MAIN",
+            "DEBUG",
+            `${this._name}: Removed farming window from array`
+        );
     }
 
     /**
@@ -387,10 +439,7 @@ export default abstract class FarmTemplate {
         this._taskManager.stop("checking-schedule");
 
         if (stepsBetweenRestart != undefined)
-            Promise.all([
-                stepsBetweenRestart()
-            ]);
-
+            Promise.all([stepsBetweenRestart()]);
 
         this._taskManager.start("checking-schedule");
 
@@ -416,7 +465,11 @@ export default abstract class FarmTemplate {
                 log("MAIN", "DEBUG", `${this._name}: Cleared cache`);
             })
             .catch((err) => {
-                log("MAIN", "ERROR", `${this._name}: Failed clearing cache. ${err}`);
+                log(
+                    "MAIN",
+                    "ERROR",
+                    `${this._name}: Failed clearing cache. ${err}`
+                );
             });
     }
 
@@ -424,12 +477,9 @@ export default abstract class FarmTemplate {
      * Start or resume uptime timer.
      */
     timerAction(action: "start" | "stop" | "pause"): void {
-        if (action === "start")
-            this._uptimeTimer!.startTimer();
-        else if (action === "stop")
-            this._uptimeTimer!.stopTimer();
-        else if (action === "pause")
-            this._uptimeTimer!.pauseTimer();
+        if (action === "start") this._uptimeTimer!.startTimer();
+        else if (action === "stop") this._uptimeTimer!.stopTimer();
+        else if (action === "pause") this._uptimeTimer!.pauseTimer();
     }
 
     /**
@@ -489,10 +539,13 @@ export default abstract class FarmTemplate {
                     }
                 })
                 .catch((err) => {
-                    log("MAIN", "ERROR", `${this._name}: Error occurred while checking the farm. ${err}`);
+                    log(
+                        "MAIN",
+                        "ERROR",
+                        `${this._name}: Error occurred while checking the farm. ${err}`
+                    );
                     this.updateStatus("attention-required");
                 });
         }
     }
-
 }

@@ -1,6 +1,6 @@
 import Tippy from "@tippyjs/react";
 import React from "react";
-import 'tippy.js/dist/tippy.css';
+import "tippy.js/dist/tippy.css";
 
 interface Props {
     children: JSX.Element;

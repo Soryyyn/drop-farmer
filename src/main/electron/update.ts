@@ -11,7 +11,7 @@ import { getMainWindow, setAppQuitting } from "./windows";
  * Check if "--squirrel-firstrun" is in startup args, and don't auto-update.
  */
 function checkIfFirstRun(): boolean {
-    return (process.argv.indexOf("--squirrel-firstrun") > -1);
+    return process.argv.indexOf("--squirrel-firstrun") > -1;
 }
 
 /**
@@ -22,7 +22,9 @@ app.setAppUserModelId("com.squirrel.soryn.DropFarmer");
 /**
  * The url to point to for updates.
  */
-const updateURL: string = `https://drop-farmer-release-server.vercel.app/update/${process.platform}/${app.getVersion()}`;
+const updateURL: string = `https://drop-farmer-release-server.vercel.app/update/${
+    process.platform
+}/${app.getVersion()}`;
 
 /**
  * Set the feed url (so the autoupdater knows where to listen for updates).
@@ -42,7 +44,11 @@ if (!checkIfFirstRun()) {
         log("MAIN", "WARN", "Auto-update-checking is disabled");
     }
 } else {
-    log("MAIN", "WARN", "First run of application after install/update. No automatic update checking enabled")
+    log(
+        "MAIN",
+        "WARN",
+        "First run of application after install/update. No automatic update checking enabled"
+    );
 }
 
 autoUpdater.on("checking-for-update", () => {

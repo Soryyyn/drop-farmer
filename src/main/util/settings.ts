@@ -12,39 +12,43 @@ export const applicationSettings: Setting[] = [
     {
         name: "launchOnStartup",
         shownName: "Launch on startup",
-        description: "Enable or disable if drop-farmer should be started when your PC has finished booting.",
+        description:
+            "Enable or disable if drop-farmer should be started when your PC has finished booting.",
         value: undefined,
         defaultValue: false
     },
     {
         name: "showMainWindowOnLaunch",
         shownName: "Show main window on launch",
-        description: "If the main window should be shown when drop-farmer starts.",
+        description:
+            "If the main window should be shown when drop-farmer starts.",
         value: undefined,
         defaultValue: true
     },
     {
         name: "disable3DModelAnimation",
         shownName: "Disable 3D model animation",
-        description: "Disable the 3D models animation on various page. Will be visible on restart.",
+        description:
+            "Disable the 3D models animation on various page. Will be visible on restart.",
         value: undefined,
         defaultValue: false
     },
     {
         name: "debugLogs",
         shownName: "Enable debug logs",
-        description: "Enable the debug logs. Use for debugging or reporting errors.",
+        description:
+            "Enable the debug logs. Use for debugging or reporting errors.",
         value: undefined,
         defaultValue: false
-    },
+    }
 ];
 
 /**
  * All of the settings set by key of owner.
  */
 let settings: Settings = {
-    application: applicationSettings,
-}
+    application: applicationSettings
+};
 
 /**
  * Returns the settings.
@@ -61,7 +65,11 @@ export function getSettings(): Settings {
  * @param {boolean} [adding=false] If a new key value pair is being added or
  * just set.
  */
-export function updateSettings(key: string, value: Setting[], adding: boolean = false): void {
+export function updateSettings(
+    key: string,
+    value: Setting[],
+    adding: boolean = false
+): void {
     /**
      * Decide if a new key is being added, because if so, no checking if the
      * settings are the same needed.
@@ -78,13 +86,16 @@ export function updateSettings(key: string, value: Setting[], adding: boolean = 
             /**
              * Update the launch on startup if the settings changed.
              */
-            launchOnStartup(Boolean(getSpecificSetting("application", "launchOnStartup").value));
+            launchOnStartup(
+                Boolean(
+                    getSpecificSetting("application", "launchOnStartup").value
+                )
+            );
 
             /**
              * Preemptively apply the new settings to the farms.
              */
-            if (key != "application")
-                getFarmByName(key).applyNewSettings();
+            if (key != "application") getFarmByName(key).applyNewSettings();
         }
     }
 }
@@ -105,7 +116,10 @@ export function loadCachedIntoSettings(): void {
                     /**
                      * Load the cached value into the setting of the runtime.
                      */
-                    for (const [cachedSettingKey, cachedSettingValue] of Object.entries(cachedValue)) {
+                    for (const [
+                        cachedSettingKey,
+                        cachedSettingValue
+                    ] of Object.entries(cachedValue)) {
                         if (setting.name == cachedSettingKey)
                             setting.value = cachedSettingValue;
                     }
@@ -136,7 +150,13 @@ export function convertSettingsIntoCached(): CachedSettings {
          * Set the default value if the value of the setting is undefined.
          */
         value.forEach((setting: Setting) => {
-            set(converted, `${key}.${setting.name}`, (setting.value == undefined) ? setting.defaultValue : setting.value);
+            set(
+                converted,
+                `${key}.${setting.name}`,
+                setting.value == undefined
+                    ? setting.defaultValue
+                    : setting.value
+            );
         });
     }
 
@@ -149,9 +169,12 @@ export function convertSettingsIntoCached(): CachedSettings {
  * @param {string} settingOwner The owner of the setting. ex. "application".
  * @param {string} nameOfSetting The name of the setting to get.
  */
-export function getSpecificSetting(settingOwner: string, nameOfSetting: string): Setting {
+export function getSpecificSetting(
+    settingOwner: string,
+    nameOfSetting: string
+): Setting {
     let index = settings[settingOwner].findIndex((setting) => {
-        return setting.name === nameOfSetting
+        return setting.name === nameOfSetting;
     });
 
     return settings[settingOwner][index];
