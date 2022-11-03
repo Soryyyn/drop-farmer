@@ -9,7 +9,8 @@
         "start": "set CLEAR_CACHE=0 && set MINIMIZE=0 && electron-forge start",
         "start:fresh": "set CLEAR_CACHE=1 && set MINIMIZE=0 && electron-forge start",
         "make": "electron-forge make",
-        "publish": "electron-forge publish"
+        "publish": "electron-forge publish",
+        "prepare": "husky install && husky add .husky/pre-commit \"yarn run lint-staged\""
     },
     "lint-staged": {
         "**/*.{ts,tsx,json,html,scss,yml,md,js}": "prettier --write ."

@@ -1,9 +1,6 @@
 import { app, ipcMain, shell } from "electron";
 import { Channels } from "../common/channels";
-import { getFarmByName, getFarms, getSidebarItems } from "../farms/management";
-// import { getApplicationSettings, getFarmsData, updateApplicationSettings, updateFarmsData } from "../config";
-// import { deleteFarm, getFarmByName, getFarmRendererData, getFarms } from "../farms/management";
-import type FarmTemplate from "../farms/template";
+import { getFarmByName, getSidebarItems } from "../farms/management";
 import { log } from "../util/logger";
 import {
     getSettings,
