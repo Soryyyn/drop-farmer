@@ -525,8 +525,8 @@ export default abstract class FarmTemplate {
 
             this.createCheckerWindow()
                 .then(async (checkerWindow) => {
-                    await this.login(checkerWindow);
                     await this.windowsStillFarming(checkerWindow);
+                    await this.login(checkerWindow);
                     await this.startFarming(checkerWindow);
 
                     /**
