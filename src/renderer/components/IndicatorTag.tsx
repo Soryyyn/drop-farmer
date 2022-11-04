@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import styles from "../styles/IndicatorTag.module.scss";
-import Tooltip from "./Tooltip";
+import Tooltip from "./global/Tooltip";
 
 interface Props {
     status: FarmStatus;

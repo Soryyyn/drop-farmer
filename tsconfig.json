@@ -16,7 +16,9 @@
         "resolveJsonModule": true,
         "jsx": "react",
         "paths": {
-            "*": ["node_modules/*"]
+            "*": ["node_modules/*"],
+            "@assets/*": ["src/renderer/assets/*"],
+            "@components/*": ["src/renderer/components/*"]
         },
         "typeRoots": ["./node_modules/@types", "./types"]
     },

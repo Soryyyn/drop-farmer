@@ -1,11 +1,11 @@
 import { faBars, faGear, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
-import ButtonDropdown from "../../components/ButtonDropdown";
-import ButtonNolabel from "../../components/ButtonNoLabel";
-import ModalManager from "../../components/ModalManager";
-import ModelAnimation from "../../components/ModelAnimation";
-import Sidebar from "../../components/Sidebar";
-import Tooltip from "../../components/Tooltip";
+import ButtonDropdown from "../ButtonDropdown";
+import ButtonNolabel from "../ButtonNoLabel";
+import Tooltip from "../global/Tooltip";
+import ModalManager from "../ModalManager";
+import ModelAnimation from "../ModelAnimation";
+import Sidebar from "../Sidebar";
 import styles from "./index.module.scss";
 
 /**

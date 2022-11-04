@@ -1,8 +1,8 @@
+import Dragbar from "@components/Dragbar";
+import Home from "@components/Home";
 import React, { useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { HashRouter, Route, Routes } from "react-router-dom";
-import Dragbar from "./components/Dragbar";
-import Home from "./sites/Home";
 
 export default function App() {
     /**

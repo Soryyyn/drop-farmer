@@ -3,6 +3,7 @@ const plugins = require("./webpack.plugins");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 require("dotenv").config();
 
 rules.push({
@@ -39,6 +40,7 @@ module.exports = {
         })
     ],
     resolve: {
+        plugins: [new TsconfigPathsPlugin()],
         extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".scss"]
     }
 };
