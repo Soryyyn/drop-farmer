@@ -26,6 +26,8 @@ export function getBrowserConnection(): Browser {
 
 /**
  * Manually implemented timeout waiting for use.
+ *
+ * @param {number} timeout The amount of time to wait before continuing (in ms).
  */
 export function waitForTimeout(timeout: number): Promise<void> {
     return new Promise((r) => setTimeout(r, timeout));
