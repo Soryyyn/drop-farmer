@@ -1,6 +1,6 @@
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../util/logger";
-import { getBrowserConnection } from "../util/puppeteer";
+import { getBrowserConnection, waitForTimeout } from "../util/puppeteer";
 import FarmTemplate from "./template";
 
 export default class TwitchStreamer extends FarmTemplate {
@@ -138,7 +138,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     /**
                      * Wait a bit for the page to load.
                      */
-                    await page.waitForTimeout(2000);
+                    await waitForTimeout(2000);
 
                     /**
                      * Check if the *LIVE* container is present.

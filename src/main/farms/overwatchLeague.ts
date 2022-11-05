@@ -1,6 +1,11 @@
+import { Frame, Page } from "puppeteer-core";
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../util/logger";
-import { getBrowserConnection } from "../util/puppeteer";
+import {
+    enterIFrame,
+    getBrowserConnection,
+    waitForTimeout
+} from "../util/puppeteer";
 import FarmTemplate from "./template";
 
 export default class OverwatchLeague extends FarmTemplate {
@@ -10,6 +15,46 @@ export default class OverwatchLeague extends FarmTemplate {
             "https://overwatchleague.com/en-us",
             "default"
         );
+    }
+
+    /**
+     * Check for the yt live badge on the player to determine if the livestream
+     * is still running or just random videos playing.
+     *
+     * @param {Electron.BrowserWindow} farmingWindow The farming window to check.
+     */
+    checkForYTLiveBadge(controlledFarmingWindow: Page): Promise<boolean> {
+        return new Promise<boolean>(async (resolve, reject) => {
+            try {
+                /**
+                 * Enter the iframe and check for the yt live badge.
+                 */
+                enterIFrame(this.getName(), controlledFarmingWindow).then(
+                    async (iFrame: Frame) => {
+                        /**
+                         * If it exists return true, else false.
+                         */
+                        if ((await iFrame.$("button.ytp-live-badge")) != null) {
+                            log(
+                                "MAIN",
+                                "DEBUG",
+                                `${this.getName()}: No ytp live badge found`
+                            );
+                            resolve(false);
+                        } else {
+                            log(
+                                "MAIN",
+                                "DEBUG",
+                                `${this.getName()}: Ytp live badge found`
+                            );
+                            resolve(true);
+                        }
+                    }
+                );
+            } catch (err) {
+                reject(err);
+            }
+        });
     }
 
     /**
@@ -87,7 +132,7 @@ export default class OverwatchLeague extends FarmTemplate {
                             ).jsonValue()) == ""
                         ) {
                             await frame!.click("button.ytp-large-play-button");
-                            await frame!.waitForTimeout(2000);
+                            await waitForTimeout(2000);
                         }
 
                         /**
@@ -130,12 +175,13 @@ export default class OverwatchLeague extends FarmTemplate {
                     );
 
                     /**
-                     * Check for *LIVE NOW* element.
+                     * Check for *LIVE NOW* element and ytp live badge.
                      */
                     if (
                         (await page.$(
                             "#__next > div > div > div.video-playerstyles__Container-sc-14q9if3-0.jycAff > div.video-playerstyles__VideoContainer-sc-14q9if3-5.bljChJ > div.video-playerstyles__HeadlineContainer-sc-14q9if3-3.eCpkgp > div.video-playerstyles__LiveIndicator-sc-14q9if3-7.bIaPsr > div"
-                        )) !== null
+                        )) !== null &&
+                        (await this.checkForYTLiveBadge(page))
                     ) {
                         log(
                             "MAIN",
@@ -274,7 +320,7 @@ export default class OverwatchLeague extends FarmTemplate {
                     this.updateStatus("farming");
                     resolve(undefined);
                 } else {
-                    await page.waitForTimeout(2000);
+                    await waitForTimeout(2000);
 
                     /**
                      * Check for *LIVE NOW* element.

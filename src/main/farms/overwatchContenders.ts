@@ -1,6 +1,6 @@
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../util/logger";
-import { getBrowserConnection } from "../util/puppeteer";
+import { getBrowserConnection, waitForTimeout } from "../util/puppeteer";
 import FarmTemplate from "./template";
 
 export default class OverwatchContenders extends FarmTemplate {
@@ -43,7 +43,7 @@ export default class OverwatchContenders extends FarmTemplate {
                 }
 
                 await page.waitForNetworkIdle();
-                await page.waitForTimeout(2000);
+                await waitForTimeout(2000);
 
                 /**
                  * Check if not logged in logged in.
@@ -203,7 +203,7 @@ export default class OverwatchContenders extends FarmTemplate {
                                 );
 
                                 await farmingWindowPage.waitForNetworkIdle();
-                                await farmingWindowPage.waitForTimeout(2000);
+                                await waitForTimeout(2000);
 
                                 /**
                                  * Click on the first video element which is found.
