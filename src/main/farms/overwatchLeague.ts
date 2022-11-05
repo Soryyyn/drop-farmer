@@ -38,16 +38,16 @@ export default class OverwatchLeague extends FarmTemplate {
                             log(
                                 "MAIN",
                                 "DEBUG",
-                                `${this.getName()}: No ytp live badge found`
+                                `${this.getName()}: Ytp live badge found`
                             );
-                            resolve(false);
+                            resolve(true);
                         } else {
                             log(
                                 "MAIN",
                                 "DEBUG",
-                                `${this.getName()}: Ytp live badge found`
+                                `${this.getName()}: No ytp live badge found`
                             );
-                            resolve(true);
+                            resolve(false);
                         }
                     }
                 );
