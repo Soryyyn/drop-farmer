@@ -1,8 +1,10 @@
+import Modal from "@components/global/Modal";
+import Tooltip from "@components/global/Tooltip";
+import Settings from "@components/Settings";
 import { faBars, faGear, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import ButtonDropdown from "../ButtonDropdown";
 import ButtonNolabel from "../ButtonNoLabel";
-import Tooltip from "../global/Tooltip";
 import ModalManager from "../ModalManager";
 import ModelAnimation from "../ModelAnimation";
 import Sidebar from "../Sidebar";
