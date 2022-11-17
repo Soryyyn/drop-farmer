@@ -46,37 +46,65 @@ export default class OverwatchContenders extends FarmTemplate {
                 await waitForTimeout(2000);
 
                 /**
-                 * Check if not logged in logged in.
+                 * Move to signin route.
+                 *
+                 * If user end back up at the previous page, he is logged in.
+                 * If he ends up on the sign in page, he needs to sign in.
                  */
-                if (
-                    (await page.$("#buttons > ytd-button-renderer > a")) != null
-                ) {
-                    /**
-                     * Login needed.
-                     */
-                    await page.click("#buttons > ytd-button-renderer > a");
-                    await page.waitForNetworkIdle();
+                await page.goto("https://www.youtube.com/signin");
 
+                const finishedSelector = await Promise.race([
+                    page.waitForSelector("input[type=email]"),
+                    page.waitForSelector("div.ytd-topbar-logo-renderer")
+                ]);
+
+                /**
+                 * Returns either `DIV` if at home route or `INPUT` if at login.
+                 */
+                const element = await page.evaluate(
+                    (element) => element!.tagName,
+                    finishedSelector
+                );
+
+                if (element === "DIV") {
+                    log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
+                    resolve(undefined);
+                } else if (element === "INPUT") {
                     log(
                         "MAIN",
                         "DEBUG",
                         `${this.getName()}: Login is needed by user`
                     );
-
                     /**
                      * Open checker window for user login.
                      */
                     window.show();
                     window.focus();
 
+                    try {
+                        page.waitForSelector("div.T4LgNb").then(async () => {
+                            log(
+                                "MAIN",
+                                "DEBUG",
+                                `${this.getName()}: Moving back to yt`
+                            );
+
+                            await page.goto(this.getCheckerWebsite());
+                        });
+                    } catch (error) {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Ended up at right place`
+                        );
+                    }
+
                     /**
-                     * Wait until user is back at account page by waiting for
-                     * the yt banner.
+                     * Wait until the yt logo is back.
                      */
-                    page.waitForSelector(
-                        "#contentContainer > div.banner-visible-area.style-scope.ytd-c4-tabbed-header-renderer",
-                        { timeout: 0 }
-                    ).then(() => {
+                    page.waitForSelector("div.ytd-topbar-logo-renderer", {
+                        timeout: 0
+                    }).then(() => {
                         log(
                             "MAIN",
                             "DEBUG",
@@ -85,16 +113,6 @@ export default class OverwatchContenders extends FarmTemplate {
                         window.hide();
                         resolve(undefined);
                     });
-                } else {
-                    /**
-                     * Login not needed.
-                     */
-                    log(
-                        "MAIN",
-                        "DEBUG",
-                        `${this.getName()}: User already logged in, continuing`
-                    );
-                    resolve(undefined);
                 }
             } catch (err) {
                 reject(err);

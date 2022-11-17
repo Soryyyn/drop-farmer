@@ -11,7 +11,7 @@ let currentConfig: any;
 const autoLauncher = new AutoLaunch({
     name: "drop-farmer"
 });
-const configVersion = 1.0;
+const configVersion = 1.1;
 
 export function initConfig(): void {
     createDefaultConfig();
@@ -147,14 +147,15 @@ function migrateToNewerConfigVersion(configFile: ConfigFile): ConfigFile {
     /**
      * Default to change.
      */
-    let migrated: any = {
+    let migrated: ConfigFile = {
         version: configVersion.toFixed(1).toString(),
         farms: convertFarmsIntoCached(),
         settings: convertSettingsIntoCached()
     };
 
     if (parseFloat(configFile.version) == 1.0) {
-        migrated = configFile;
+        migrated.farms = configFile.farms;
+        migrated.settings = configFile.settings;
     }
 
     return migrated;

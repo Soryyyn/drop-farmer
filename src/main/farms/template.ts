@@ -44,8 +44,6 @@ export default abstract class FarmTemplate {
             this._name,
             "checkingSchedule"
         ).value as number;
-        this._checkerWebsite = getSpecificSetting(this._name, "checkerWebsite")
-            .value as string;
         this._enabled = getSpecificSetting(this._name, "enabled")
             .value as boolean;
 
@@ -86,12 +84,6 @@ export default abstract class FarmTemplate {
         this.updateSchedule(
             getSpecificSetting(this._name, "checkingSchedule").value as number
         );
-
-        /**
-         * Set checker website.
-         */
-        this._checkerWebsite = getSpecificSetting(this._name, "checkerWebsite")
-            .value as string;
 
         log("MAIN", "DEBUG", `${this._name}: Applied new settings`);
     }
@@ -525,8 +517,8 @@ export default abstract class FarmTemplate {
 
             this.createCheckerWindow()
                 .then(async (checkerWindow) => {
-                    await this.windowsStillFarming(checkerWindow);
                     await this.login(checkerWindow);
+                    await this.windowsStillFarming(checkerWindow);
                     await this.startFarming(checkerWindow);
 
                     /**

@@ -72,7 +72,7 @@ function addCustomFarms(): void {
 }
 
 /**
- * Chache all available farms.
+ * Cache all available farms.
  */
 function cacheAvailableFarms(): void {
     /**
@@ -152,15 +152,6 @@ function createSpecificFarmSettings(farm: FarmTemplate): Setting[] {
             description: "Enable or disable this farm.",
             value: farm.isEnabled(),
             defaultValue: false
-        },
-        {
-            name: "checkerWebsite",
-            shownName: "Checking website",
-            description:
-                "The website drop-farmer checks for the schedule, live matches, etc. to start farming.",
-            value: farm.getCheckerWebsite(),
-            defaultValue: farm.getCheckerWebsite(),
-            changingDisabled: true
         },
         {
             name: "checkingSchedule",

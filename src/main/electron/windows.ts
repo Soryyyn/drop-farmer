@@ -143,10 +143,9 @@ export async function createWindow(url: string, gameName?: string) {
     muteWindow(window);
 
     /**
-     * Changed loading of url to puppeteer to hopefully prevent errors.
+     * Load the url.
      */
-    let page = await getPage(getBrowserConnection(), window, true);
-    await page.goto(url);
+    await window.loadURL(url);
 
     /**
      * Decide if the windows is for a farm or just a general window.
