@@ -3,6 +3,7 @@ import Home from "@components/Home";
 import React, { useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { HashRouter, Route, Routes } from "react-router-dom";
+import "./tailwind.css";
 
 export default function App() {
     /**

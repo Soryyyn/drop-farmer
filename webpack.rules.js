@@ -45,5 +45,24 @@ module.exports = [
         test: /\.s[ac]ss$/i,
         exclude: /\.module.(s[ac]ss)$/,
         use: ["style-loader", "css-loader", "sass-loader"]
+    },
+    {
+        test: /\.css$/i,
+        use: [
+            "style-loader",
+            "css-loader",
+            "sass-loader",
+            {
+                loader: "postcss-loader",
+                options: {
+                    postcssOptions: {
+                        plugins: [
+                            require("tailwindcss"),
+                            require("autoprefixer")
+                        ]
+                    }
+                }
+            }
+        ]
     }
 ];
