@@ -7,7 +7,7 @@ export default class OverwatchLeague extends FarmTemplate {
     constructor() {
         super(
             "overwatch-league",
-            "https://www.youtube.com/@overwatchleague",
+            "https://www.youtube.com/c/overwatchleague",
             "default"
         );
     }
@@ -182,6 +182,12 @@ export default class OverwatchLeague extends FarmTemplate {
             try {
                 let page = await getPage(getBrowserConnection(), window);
                 await page.waitForNetworkIdle();
+
+                /**
+                 * Re-route to checker route for safety.
+                 */
+                await page.goto(this.getCheckerWebsite());
+                await waitForTimeout(2000);
 
                 /**
                  * Check if farming windows exist, if yes don't try to check for new stream.
