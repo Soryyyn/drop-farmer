@@ -81,13 +81,13 @@ export function enterIFrame(gameName: string, controlledPage: Page) {
 export function waitForElementToAppear(
     elementSelector: string,
     controlledPage: Page,
-    timeToWait?: number
+    timeToWait: number = 30000
 ) {
     return new Promise<boolean>(async (resolve, reject) => {
         try {
             try {
                 await controlledPage.waitForSelector(elementSelector, {
-                    timeout: timeToWait ?? 0
+                    timeout: timeToWait
                 });
                 resolve(true);
             } catch (err) {
