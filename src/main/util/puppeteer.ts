@@ -69,3 +69,32 @@ export function enterIFrame(gameName: string, controlledPage: Page) {
         }
     });
 }
+
+/**
+ * Wait for a specific element to appear (or not) on the page.
+ * Return either true if the element has appeared, or false if it hasn't.
+ *
+ * @param {string} elementSelector The element selector to wait to appear.
+ * @param {Page} controlledPage The page which is already controlled.
+ * @param {number} timeToWait The number of milliseconds to wait for the element to appear.
+ */
+export function waitForElementToAppear(
+    elementSelector: string,
+    controlledPage: Page,
+    timeToWait: number = 30000
+) {
+    return new Promise<boolean>(async (resolve, reject) => {
+        try {
+            try {
+                await controlledPage.waitForSelector(elementSelector, {
+                    timeout: timeToWait
+                });
+                resolve(true);
+            } catch (err) {
+                resolve(false);
+            }
+        } catch (err) {
+            reject(err);
+        }
+    });
+}

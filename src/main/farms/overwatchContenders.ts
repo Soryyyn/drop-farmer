@@ -1,6 +1,10 @@
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../util/logger";
-import { getBrowserConnection, waitForTimeout } from "../util/puppeteer";
+import {
+    getBrowserConnection,
+    waitForElementToAppear,
+    waitForTimeout
+} from "../util/puppeteer";
 import FarmTemplate from "./template";
 
 export default class OverwatchContenders extends FarmTemplate {
@@ -187,7 +191,7 @@ export default class OverwatchContenders extends FarmTemplate {
                  * Re-route to checker route for safety.
                  */
                 await page.goto(this.getCheckerWebsite());
-                await waitForTimeout(2000);
+                await waitForTimeout(1000);
 
                 /**
                  * Check if farming windows exist, if yes don't try to check for new stream.
@@ -202,33 +206,28 @@ export default class OverwatchContenders extends FarmTemplate {
                     this.updateStatus("farming");
                     resolve(undefined);
                 } else {
-                    /**
-                     * Check if there is a "LIVE" element / current livestream.
-                     */
-                    if (
-                        (await page.$(
-                            "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]"
-                        )) != null
-                    ) {
-                        log(
-                            "MAIN",
-                            "DEBUG",
-                            `${this.getName()}: Found livestream`
-                        );
-
-                        /**
-                         * Create the farming window and open the livestream.
-                         */
-                        this.createFarmingWindow(this.getCheckerWebsite()).then(
-                            async (farmingWindow) => {
+                    await waitForElementToAppear(
+                        "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]",
+                        page
+                    ).then((appeared) => {
+                        if (appeared) {
+                            log(
+                                "MAIN",
+                                "DEBUG",
+                                `${this.getName()}: Found livestream`
+                            );
+                            /**
+                             * Create the farming window and open the livestream.
+                             */
+                            this.createFarmingWindow(
+                                this.getCheckerWebsite()
+                            ).then(async (farmingWindow) => {
                                 let farmingWindowPage = await getPage(
                                     getBrowserConnection(),
                                     farmingWindow
                                 );
-
                                 await farmingWindowPage.waitForNetworkIdle();
                                 await waitForTimeout(2000);
-
                                 /**
                                  * Click on the first video element which is found.
                                  * In case of a livestream it is always the
@@ -237,7 +236,6 @@ export default class OverwatchContenders extends FarmTemplate {
                                 await farmingWindowPage.click(
                                     "#contents > ytd-video-renderer"
                                 );
-
                                 log(
                                     "MAIN",
                                     "DEBUG",
@@ -245,23 +243,20 @@ export default class OverwatchContenders extends FarmTemplate {
                                         this.getFarmingWindows().length
                                     }\" windows`
                                 );
-
                                 this.timerAction("start");
-
                                 this.updateStatus("farming");
                                 resolve(undefined);
-                            }
-                        );
-                    } else {
-                        log(
-                            "MAIN",
-                            "DEBUG",
-                            `${this.getName()}: No livestream found, no need to farm`
-                        );
-                        this.updateStatus("idle");
-
-                        resolve(undefined);
-                    }
+                            });
+                        } else {
+                            log(
+                                "MAIN",
+                                "DEBUG",
+                                `${this.getName()}: No livestream found, no need to farm`
+                            );
+                            this.updateStatus("idle");
+                            resolve(undefined);
+                        }
+                    });
                 }
             } catch (err) {
                 reject(err);
