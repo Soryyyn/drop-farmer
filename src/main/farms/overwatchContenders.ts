@@ -184,6 +184,12 @@ export default class OverwatchContenders extends FarmTemplate {
                 await page.waitForNetworkIdle();
 
                 /**
+                 * Re-route to checker route for safety.
+                 */
+                await page.goto(this.getCheckerWebsite());
+                await waitForTimeout(2000);
+
+                /**
                  * Check if farming windows exist, if yes don't try to check for new stream.
                  */
                 if (this.getFarmingWindows().length > 0) {

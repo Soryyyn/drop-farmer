@@ -4,7 +4,7 @@ import { getPage } from "puppeteer-in-electron";
 import { getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
-import { getBrowserConnection } from "../util/puppeteer";
+import { getBrowserConnection, waitForTimeout } from "../util/puppeteer";
 import { getSpecificSetting } from "../util/settings";
 
 /**
@@ -144,8 +144,11 @@ export async function createWindow(url: string, gameName?: string) {
 
     /**
      * Load the url.
+     * (Reloading to route for safety)
      */
     await window.loadURL(url);
+    let page = await getPage(getBrowserConnection(), window);
+    await page.goto(url);
 
     /**
      * Decide if the windows is for a farm or just a general window.
