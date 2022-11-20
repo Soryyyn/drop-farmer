@@ -6,11 +6,6 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 require("dotenv").config();
 
-// rules.push({
-//     test: /\.css$/,
-//     use: [{ loader: "style-loader" }, { loader: "css-loader" }]
-// });
-
 module.exports = {
     module: {
         rules
