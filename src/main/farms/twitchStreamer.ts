@@ -9,7 +9,7 @@ export default class TwitchStreamer extends FarmTemplate {
      * which is different from each farm.
      */
     constructor(name: string, twitchURL: string) {
-        super(name, twitchURL, "custom");
+        super(name, twitchURL, "custom", true);
     }
 
     login(window: Electron.BrowserWindow): Promise<any> {
@@ -86,7 +86,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     );
                     resolve(undefined);
                 } else {
-                    let page = await getPage(getBrowserConnection(), window);
+                    const page = await getPage(getBrowserConnection(), window);
 
                     /**
                      * Check for *LIVE* text on profile of streamer.
@@ -123,7 +123,7 @@ export default class TwitchStreamer extends FarmTemplate {
     startFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                let page = await getPage(getBrowserConnection(), window);
+                const page = await getPage(getBrowserConnection(), window);
 
                 if (this.getFarmingWindows().length > 0) {
                     log(
@@ -162,9 +162,9 @@ export default class TwitchStreamer extends FarmTemplate {
                                 log(
                                     "MAIN",
                                     "DEBUG",
-                                    `${this.getName()}: Farming with \"${
+                                    `${this.getName()}: Farming with "${
                                         this.getFarmingWindows().length
-                                    }\" windows`
+                                    }" windows`
                                 );
 
                                 this.timerAction("start");

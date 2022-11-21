@@ -147,13 +147,13 @@ export async function createWindow(url: string, gameName?: string) {
      * (Reloading to route for safety)
      */
     await window.loadURL(url);
-    let page = await getPage(getBrowserConnection(), window);
+    const page = await getPage(getBrowserConnection(), window);
     await page.goto(url);
 
     /**
      * Decide if the windows is for a farm or just a general window.
      */
-    if (gameName) log("MAIN", "DEBUG", `Created window for \"${gameName}\"`);
+    if (gameName) log("MAIN", "DEBUG", `Created window for "${gameName}"`);
     else log("MAIN", "DEBUG", "Created general window");
     return window;
 }

@@ -1,9 +1,9 @@
 import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useOutsideAlterter } from "@hooks/useOutsideAlerter";
 import clsx from "clsx";
 import React, { useCallback, useRef, useState } from "react";
 import { animated, easings, useTransition } from "react-spring";
-import { useOutsideAlterter } from "../hooks";
 import styles from "../styles/ButtonDropdown.module.scss";
 
 interface Props {

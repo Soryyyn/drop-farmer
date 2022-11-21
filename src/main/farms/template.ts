@@ -17,6 +17,7 @@ export default abstract class FarmTemplate {
     private _name: string;
     private _checkerWebsite: string;
     private _enabled: boolean = false;
+    private _singleWindowFarm: boolean;
     private _type: FarmType = "default";
     private _currentStatus: FarmStatus = "disabled";
     private _checkingSchedule: number = 30;
@@ -26,11 +27,17 @@ export default abstract class FarmTemplate {
     private _taskManager: CrontabManager = new CrontabManager();
     private _uptimeTimer: UptimeTimer | undefined = undefined;
 
-    constructor(name: string, checkerWebsite: string, type: FarmType) {
+    constructor(
+        name: string,
+        checkerWebsite: string,
+        type: FarmType,
+        singleWindowFarm: boolean
+    ) {
         this._name = name;
         this._checkerWebsite = checkerWebsite;
         this._uptimeTimer = new UptimeTimer(`${name} (timer)`);
         this._type = type;
+        this._singleWindowFarm = singleWindowFarm;
     }
 
     /**
@@ -119,7 +126,7 @@ export default abstract class FarmTemplate {
          * Handle when other farms change but this one doesn't so it uses the
          * last status.
          */
-        let lastStatus = this._currentStatus;
+        const lastStatus = this._currentStatus;
         if (this._currentStatus === "disabled" && this._enabled) {
             this.updateStatus("idle");
         } else {
@@ -518,8 +525,40 @@ export default abstract class FarmTemplate {
             this.createCheckerWindow()
                 .then(async (checkerWindow) => {
                     await this.login(checkerWindow);
-                    await this.windowsStillFarming(checkerWindow);
-                    await this.startFarming(checkerWindow);
+
+                    if (this._farmingWindows.length > 0) {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this._name}: Checking if farm can stop farming`
+                        );
+                        await this.windowsStillFarming(checkerWindow);
+                    }
+
+                    if (this._singleWindowFarm) {
+                        if (this._farmingWindows.length === 0) {
+                            log(
+                                "MAIN",
+                                "DEBUG",
+                                `${this._name}: Checking if farm can start farming`
+                            );
+                            await this.startFarming(checkerWindow);
+                        } else {
+                            log(
+                                "MAIN",
+                                "DEBUG",
+                                `${this._name}: Already farming`
+                            );
+                            this.updateStatus("farming");
+                        }
+                    } else {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this._name}: Checking if more farming can be done`
+                        );
+                        await this.startFarming(checkerWindow);
+                    }
 
                     /**
                      * Destroy the checker window.

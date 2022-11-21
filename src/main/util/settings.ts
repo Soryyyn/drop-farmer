@@ -46,7 +46,7 @@ export const applicationSettings: Setting[] = [
 /**
  * All of the settings set by key of owner.
  */
-let settings: Settings = {
+const settings: Settings = {
     application: applicationSettings
 };
 
@@ -104,7 +104,7 @@ export function updateSettings(
  * Convert a cached setting to the setting usable by the app.
  */
 export function loadCachedIntoSettings(): void {
-    let cachedSettings: CachedSettings = getConfigKey("settings");
+    const cachedSettings: CachedSettings = getConfigKey("settings");
 
     /**
      * Go through each setting and find the cached one.
@@ -135,7 +135,7 @@ export function loadCachedIntoSettings(): void {
  * Save or override the runtime settings to the config file for caching.
  */
 export function convertSettingsIntoCached(): CachedSettings {
-    let converted: CachedSettings = {};
+    const converted: CachedSettings = {};
 
     for (const [key, value] of Object.entries(settings)) {
         /**
@@ -173,7 +173,7 @@ export function getSpecificSetting(
     settingOwner: string,
     nameOfSetting: string
 ): Setting {
-    let index = settings[settingOwner].findIndex((setting) => {
+    const index = settings[settingOwner].findIndex((setting) => {
         return setting.name === nameOfSetting;
     });
 

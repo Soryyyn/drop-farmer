@@ -4,7 +4,7 @@
         {
             "type": "shell",
             "label": "Build application",
-            "command": "yarn run make || npm make",
+            "command": "yarn make || npm run make",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
@@ -17,7 +17,7 @@
         {
             "type": "shell",
             "label": "Start",
-            "command": "yarn run start || npm start",
+            "command": "yarn start || npm run start",
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,
@@ -27,7 +27,17 @@
         {
             "type": "shell",
             "label": "Start fresh",
-            "command": "yarn run start:fresh || npm start:fresh",
+            "command": "yarn start:fresh || npm run start:fresh",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Lint",
+            "command": "yarn lint || npm run lint",
             "problemMatcher": [],
             "presentation": {
                 "showReuseMessage": false,

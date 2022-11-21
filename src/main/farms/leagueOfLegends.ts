@@ -6,7 +6,7 @@ import FarmTemplate from "./template";
 
 export default class LeagueOfLegends extends FarmTemplate {
     constructor() {
-        super("league-of-legends", "https://lolesports.com/", "default");
+        super("league-of-legends", "https://lolesports.com/", "default", false);
     }
 
     /**
@@ -266,7 +266,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * Go through each url and redirect it to the correct one.
                      */
                     for (const liveMatch of currentLiveMatches) {
-                        let href: string = liveMatch;
+                        const href: string = liveMatch;
 
                         /**
                          * Check if the window needs to be created or if it already
@@ -316,9 +316,9 @@ export default class LeagueOfLegends extends FarmTemplate {
                     log(
                         "MAIN",
                         "DEBUG",
-                        `${this.getName()}: Farming with \"${
+                        `${this.getName()}: Farming with "${
                             this.getFarmingWindows().length
-                        }\" windows`
+                        }" windows`
                     );
 
                     this.timerAction("start");

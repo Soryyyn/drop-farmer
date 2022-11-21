@@ -4,10 +4,10 @@ import {
     faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useSendAndWait } from "@hooks/useSendAndWait";
 import clsx from "clsx";
 import { cloneDeep, isEqual } from "lodash";
 import React, { useState } from "react";
-import { useSendAndWait } from "../../hooks";
 import SettingItem from "./SettingItem";
 import styles from "./Settings.module.scss";
 
@@ -44,7 +44,7 @@ export default function Settings({ handleClosing }: Props) {
                 <button
                     key="resetSettingsToDefault"
                     onClick={() => {
-                        let copy = cloneDeep(settings!);
+                        const copy = cloneDeep(settings!);
 
                         /**
                          * Go through each setting and reset it to the default.
@@ -150,8 +150,8 @@ export default function Settings({ handleClosing }: Props) {
                                          * Then set the settings as the just
                                          * changed copy.
                                          */
-                                        let copyOfSettings = { ...settings };
-                                        let newFarmSetting = { ...setting };
+                                        const copyOfSettings = { ...settings };
+                                        const newFarmSetting = { ...setting };
 
                                         copyOfSettings[
                                             currentlySelected

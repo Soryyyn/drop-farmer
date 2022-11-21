@@ -20,9 +20,8 @@ export function initConfig(): void {
     /**
      * Update some settings which are needed on startup.
      */
-    if (Boolean(getConfigKey("settings.application.debugLogs")))
-        enableDebugLogs(true);
-    if (Boolean(getConfigKey("settings.application.launchOnStartup")))
+    if (getConfigKey("settings.application.debugLogs")) enableDebugLogs(true);
+    if (getConfigKey("settings.application.launchOnStartup"))
         launchOnStartup(true);
 
     log("MAIN", "DEBUG", "Initialized config");
@@ -37,7 +36,7 @@ function createDefaultConfig(): void {
      * Default config file with the basic settings applied.
      * NOTE: The farms are empty here, because they are not yet initialized.
      */
-    let defaultConfig: ConfigFile = {
+    const defaultConfig: ConfigFile = {
         version: configVersion.toFixed(1).toString(),
         farms: convertFarmsIntoCached(),
         settings: convertSettingsIntoCached()
@@ -147,7 +146,7 @@ function migrateToNewerConfigVersion(configFile: ConfigFile): ConfigFile {
     /**
      * Default to change.
      */
-    let migrated: ConfigFile = {
+    const migrated: ConfigFile = {
         version: configVersion.toFixed(1).toString(),
         farms: convertFarmsIntoCached(),
         settings: convertSettingsIntoCached()

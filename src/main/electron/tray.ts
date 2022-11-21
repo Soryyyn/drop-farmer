@@ -74,6 +74,6 @@ export function destroyTray(): void {
         tray.destroy();
         log("MAIN", "DEBUG", "Destroyed tray");
     } catch (err) {
-        log("MAIN", "ERROR", `Failed destroying tray. \"${err}\"`);
+        log("MAIN", "ERROR", `Failed destroying tray. "${err}"`);
     }
 }

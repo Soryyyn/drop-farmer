@@ -1,7 +1,9 @@
 import { getPage } from "puppeteer-in-electron";
 import { log } from "../util/logger";
 import {
+    doesElementExist,
     getBrowserConnection,
+    pageUrlContains,
     waitForElementToAppear,
     waitForTimeout
 } from "../util/puppeteer";
@@ -12,116 +14,9 @@ export default class OverwatchContenders extends FarmTemplate {
         super(
             "overwatch-contenders",
             "https://www.youtube.com/c/OverwatchContenders",
-            "default"
+            "default",
+            true
         );
-    }
-
-    /**
-     * Login on the yt website for drops.
-     *
-     * @param {Electron.BrowserWindow} window The window to control.
-     */
-    login(window: Electron.BrowserWindow): Promise<any> {
-        return new Promise<any>(async (resolve, reject) => {
-            try {
-                let page = await getPage(getBrowserConnection(), window);
-                await page.waitForNetworkIdle();
-
-                /**
-                 * Check if user agreement acception is needed.
-                 */
-                if (
-                    (await page.$(
-                        "#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb"
-                    )) != null
-                ) {
-                    await page.click(
-                        "#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb"
-                    );
-                    log(
-                        "MAIN",
-                        "INFO",
-                        `${this.getName()}: Accepted user agreement`
-                    );
-                    await page.waitForNavigation();
-                }
-
-                await page.waitForNetworkIdle();
-                await waitForTimeout(2000);
-
-                /**
-                 * Move to signin route.
-                 *
-                 * If user end back up at the previous page, he is logged in.
-                 * If he ends up on the sign in page, he needs to sign in.
-                 */
-                await page.goto("https://www.youtube.com/signin");
-
-                const finishedSelector = await Promise.race([
-                    page.waitForSelector("input[type=email]"),
-                    page.waitForSelector("div.ytd-topbar-logo-renderer")
-                ]);
-
-                /**
-                 * Returns either `DIV` if at home route or `INPUT` if at login.
-                 */
-                const element = await page.evaluate(
-                    (element) => element!.tagName,
-                    finishedSelector
-                );
-
-                if (element === "DIV") {
-                    log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
-                    resolve(undefined);
-                } else if (element === "INPUT") {
-                    log(
-                        "MAIN",
-                        "DEBUG",
-                        `${this.getName()}: Login is needed by user`
-                    );
-                    /**
-                     * Open checker window for user login.
-                     */
-                    window.show();
-                    window.focus();
-
-                    try {
-                        page.waitForSelector("div.T4LgNb").then(async () => {
-                            log(
-                                "MAIN",
-                                "DEBUG",
-                                `${this.getName()}: Moving back to yt`
-                            );
-
-                            await page.goto(this.getCheckerWebsite());
-                        });
-                    } catch (error) {
-                        log(
-                            "MAIN",
-                            "DEBUG",
-                            `${this.getName()}: Ended up at right place`
-                        );
-                    }
-
-                    /**
-                     * Wait until the yt logo is back.
-                     */
-                    page.waitForSelector("div.ytd-topbar-logo-renderer", {
-                        timeout: 0
-                    }).then(() => {
-                        log(
-                            "MAIN",
-                            "DEBUG",
-                            `${this.getName()}: Login completed`
-                        );
-                        window.hide();
-                        resolve(undefined);
-                    });
-                }
-            } catch (err) {
-                reject(err);
-            }
-        });
     }
 
     /**
@@ -132,43 +27,133 @@ export default class OverwatchContenders extends FarmTemplate {
     windowsStillFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                if (this.getFarmingWindows().length === 0) {
+                const page = await getPage(getBrowserConnection(), window);
+                await page.waitForNetworkIdle();
+
+                /**
+                 * Check if there are any video elements with a live element
+                 * attached to it.
+                 */
+                if (
+                    await doesElementExist(
+                        page,
+                        "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]"
+                    )
+                ) {
                     log(
                         "MAIN",
                         "DEBUG",
-                        `${this.getName()}: No farming windows, skipping checking step`
+                        `${this.getName()}: Stream still live, continuing farming`
                     );
                     resolve(undefined);
                 } else {
-                    let page = await getPage(getBrowserConnection(), window);
-                    await page.waitForNetworkIdle();
+                    /**
+                     * Close the farming window.
+                     */
+                    this.removeFarmingWindowFromArray(0);
+
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: Stream not live anymore, stopping farming`
+                    );
+                    resolve(undefined);
+                }
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
+    /**
+     * Login on the yt website for drops.
+     *
+     * @param {Electron.BrowserWindow} window The window to control.
+     */
+    login(window: Electron.BrowserWindow): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                const page = await getPage(getBrowserConnection(), window);
+                await page.waitForNetworkIdle();
+
+                /**
+                 * Check if user agreement is shown.
+                 */
+                const userAgreementSelector =
+                    "#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb";
+
+                if (await doesElementExist(page, userAgreementSelector)) {
+                    await page.click(userAgreementSelector);
+                    await page.waitForNavigation();
+
+                    log(
+                        "MAIN",
+                        "INFO",
+                        `${this.getName()}: Accepted user agreement`
+                    );
+                }
+
+                /**
+                 * Small timeout for safety.
+                 */
+                await page.waitForNetworkIdle();
+                await waitForTimeout(1000);
+
+                /**
+                 * Move to signin route.
+                 * If after navigation the user ends up at login screen, login
+                 * is needed, else login is finished.
+                 */
+                const signinRoute = "https://www.youtube.com/signin";
+                await page.goto(signinRoute);
+                await waitForTimeout(3000);
+                log(
+                    "MAIN",
+                    "DEBUG",
+                    `${this.getName()}: Navigation to login route`
+                );
+
+                if (await pageUrlContains(page, "accounts.google.com")) {
+                    log(
+                        "MAIN",
+                        "DEBUG",
+                        `${this.getName()}: Login is needed by user`
+                    );
+
+                    window.show();
+                    window.focus();
 
                     /**
-                     * Check if there are any livestreams.
-                     * If there are none, close the farming window.
+                     * Wait infinitely for signin input element or the yt logo
+                     * element to appear.
                      */
-                    if (
-                        (await page.$(
-                            "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]"
-                        )) != null
-                    ) {
+                    const ytLogoSelector = "div.ytd-topbar-logo-renderer";
+                    const googleAccountSelector = "div.T4LgNb";
+                    void (await Promise.race([
+                        waitForElementToAppear(page, ytLogoSelector, 0),
+                        waitForElementToAppear(page, googleAccountSelector, 0)
+                    ]));
+
+                    if (!(await pageUrlContains(page, "accounts.google.com"))) {
                         log(
                             "MAIN",
                             "DEBUG",
-                            `${this.getName()}: Stream still live, continue farming`
+                            `${this.getName()}: Login completed`
                         );
                         resolve(undefined);
                     } else {
-                        this.removeFarmingWindowFromArray(0);
-
+                        await page.goto(this.getCheckerWebsite());
+                        await page.waitForNavigation();
                         log(
                             "MAIN",
                             "DEBUG",
-                            `${this.getName()}: Stream not live anymore, stopping farming`
+                            `${this.getName()}: Login completed`
                         );
-
                         resolve(undefined);
                     }
+                } else {
+                    log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
+                    resolve(undefined);
                 }
             } catch (err) {
                 reject(err);
@@ -184,7 +169,7 @@ export default class OverwatchContenders extends FarmTemplate {
     startFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                let page = await getPage(getBrowserConnection(), window);
+                const page = await getPage(getBrowserConnection(), window);
                 await page.waitForNetworkIdle();
 
                 /**
@@ -194,70 +179,65 @@ export default class OverwatchContenders extends FarmTemplate {
                 await waitForTimeout(1000);
 
                 /**
-                 * Check if farming windows exist, if yes don't try to check for new stream.
+                 * Check if any live indicator is shown before 10seconds expire.
                  */
-                if (this.getFarmingWindows().length > 0) {
-                    log(
-                        "MAIN",
-                        "DEBUG",
-                        `${this.getName()}: Already farming, no need to start again`
-                    );
-
-                    this.updateStatus("farming");
-                    resolve(undefined);
-                } else {
-                    await waitForElementToAppear(
-                        "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]",
-                        page
-                    ).then((appeared) => {
-                        if (appeared) {
-                            log(
-                                "MAIN",
-                                "DEBUG",
-                                `${this.getName()}: Found livestream`
-                            );
-                            /**
-                             * Create the farming window and open the livestream.
-                             */
-                            this.createFarmingWindow(
-                                this.getCheckerWebsite()
-                            ).then(async (farmingWindow) => {
-                                let farmingWindowPage = await getPage(
+                const liveIndicatorSelector =
+                    "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]";
+                await waitForElementToAppear(
+                    page,
+                    liveIndicatorSelector,
+                    10000
+                ).then((appeared) => {
+                    if (appeared) {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: Found livestream`
+                        );
+                        /**
+                         * Create the farming window and open the livestream.
+                         */
+                        this.createFarmingWindow(this.getCheckerWebsite()).then(
+                            async (farmingWindow) => {
+                                const farmingWindowPage = await getPage(
                                     getBrowserConnection(),
                                     farmingWindow
                                 );
                                 await farmingWindowPage.waitForNetworkIdle();
                                 await waitForTimeout(2000);
+
                                 /**
                                  * Click on the first video element which is found.
                                  * In case of a livestream it is always the
                                  * first one.
                                  */
+                                const firstVideoSelector =
+                                    "#contents > ytd-video-renderer";
                                 await farmingWindowPage.click(
-                                    "#contents > ytd-video-renderer"
+                                    firstVideoSelector
                                 );
                                 log(
                                     "MAIN",
                                     "DEBUG",
-                                    `${this.getName()}: Farming with \"${
+                                    `${this.getName()}: Farming with "${
                                         this.getFarmingWindows().length
-                                    }\" windows`
+                                    }" windows`
                                 );
                                 this.timerAction("start");
                                 this.updateStatus("farming");
                                 resolve(undefined);
-                            });
-                        } else {
-                            log(
-                                "MAIN",
-                                "DEBUG",
-                                `${this.getName()}: No livestream found, no need to farm`
-                            );
-                            this.updateStatus("idle");
-                            resolve(undefined);
-                        }
-                    });
-                }
+                            }
+                        );
+                    } else {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            `${this.getName()}: No livestream found, no need to farm`
+                        );
+                        this.updateStatus("idle");
+                        resolve(undefined);
+                    }
+                });
             } catch (err) {
                 reject(err);
             }

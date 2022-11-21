@@ -25,7 +25,7 @@ export function createFile(fileName: string, data: string | Buffer): void {
             writeFileSync(join(APP_PATH, fileName), data);
         } catch (err) {
             throw new Error(
-                `Could not create file \"${fileName}\" at \"${APP_PATH}\". Reason: \"${err}\"`
+                `Could not create file "${fileName}" at "${APP_PATH}". Reason: "${err}"`
             );
         }
     }
@@ -41,14 +41,14 @@ export function createFile(fileName: string, data: string | Buffer): void {
 export function readFile(fileName: string): string {
     if (!existsSync(join(APP_PATH, fileName))) {
         throw new Error(
-            `Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`
+            `Could not read file "${fileName}" at "${APP_PATH}", because it doesn't exist.`
         );
     } else {
         try {
             return readFileSync(join(APP_PATH, fileName)).toString();
         } catch (err) {
             throw new Error(
-                `Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`
+                `Could not read file "${fileName}" at "${APP_PATH}". Reason: ${err}`
             );
         }
     }
@@ -69,14 +69,14 @@ export function writeToFile(
 ): void {
     if (!existsSync(join(APP_PATH, fileName))) {
         throw new Error(
-            `Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`
+            `Could not read file "${fileName}" at "${APP_PATH}", because it doesn't exist.`
         );
     } else {
         try {
             writeFileSync(join(APP_PATH, fileName), data, { flag: flag });
         } catch (err) {
             throw new Error(
-                `Could not write to file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`
+                `Could not write to file "${fileName}" at "${APP_PATH}". Reason: ${err}`
             );
         }
     }
@@ -95,7 +95,7 @@ export function deleteFile(fileName: string): void {
             rmSync(join(APP_PATH, fileName));
         } catch (err) {
             throw new Error(
-                `Could not delete file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`
+                `Could not delete file "${fileName}" at "${APP_PATH}". Reason: ${err}`
             );
         }
     }

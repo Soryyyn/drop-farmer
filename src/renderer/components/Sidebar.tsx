@@ -1,5 +1,6 @@
+import { useHandleOneWay } from "@hooks/useHandleOneWay";
+import { useSendAndWait } from "@hooks/useSendAndWait";
 import React, { useState } from "react";
-import { useHandleOneWay, useSendAndWait } from "../hooks";
 import styles from "../styles/Sidebar.module.scss";
 import FarmItem from "./FarmItem";
 

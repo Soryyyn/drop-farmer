@@ -18,7 +18,8 @@
         "paths": {
             "*": ["node_modules/*"],
             "@assets/*": ["src/renderer/assets/*"],
-            "@components/*": ["src/renderer/components/*"]
+            "@components/*": ["src/renderer/components/*"],
+            "@hooks/*": ["src/renderer/hooks/*"]
         },
         "typeRoots": ["./node_modules/@types", "./types"]
     },

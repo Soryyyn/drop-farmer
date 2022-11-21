@@ -1,5 +1,6 @@
 import { app } from "electron";
-import puppeteer, { Browser, Frame, Page } from "puppeteer-core";
+import { resolve } from "path";
+import puppeteer, { Browser, ElementHandle, Frame, Page } from "puppeteer-core";
 import { connect, initialize } from "puppeteer-in-electron";
 import { log } from "./logger";
 
@@ -74,27 +75,115 @@ export function enterIFrame(gameName: string, controlledPage: Page) {
  * Wait for a specific element to appear (or not) on the page.
  * Return either true if the element has appeared, or false if it hasn't.
  *
- * @param {string} elementSelector The element selector to wait to appear.
  * @param {Page} controlledPage The page which is already controlled.
- * @param {number} timeToWait The number of milliseconds to wait for the element to appear.
+ * @param {string} elementSelector The element selector to wait to appear.
+ * @param {number} timeToWait The number of milliseconds to wait for the element
+ * to appear. 0 is infinite.
  */
 export function waitForElementToAppear(
-    elementSelector: string,
     controlledPage: Page,
+    elementSelector: string,
     timeToWait: number = 30000
 ) {
+    return new Promise<ElementHandle<Element> | undefined>(
+        async (resolve, reject) => {
+            try {
+                try {
+                    const element = await controlledPage.waitForSelector(
+                        elementSelector,
+                        {
+                            timeout: timeToWait
+                        }
+                    );
+                    resolve(element ?? undefined);
+                } catch (err) {
+                    resolve(undefined);
+                }
+            } catch (err) {
+                reject(err);
+            }
+        }
+    );
+}
+
+/**
+ * Get a property from an element.
+ *
+ * @param element The element to get the property from.
+ * @param property The property to get.
+ */
+export function getElementProperty(
+    element: ElementHandle<any>,
+    property: string
+) {
+    return new Promise<string>(async (resolve, reject) => {
+        try {
+            resolve(await (await element.getProperty(property)).jsonValue());
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
+
+/**
+ * Check if an element exists at this point in time.
+ *
+ * @param controlledPage The controlled page.
+ * @param selector The selector to check for.
+ */
+export function doesElementExist(
+    controlledPage: Page,
+    selector: string
+): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
         try {
             try {
-                await controlledPage.waitForSelector(elementSelector, {
-                    timeout: timeToWait
-                });
-                resolve(true);
-            } catch (err) {
+                const exists = (await controlledPage.$(selector)) !== null;
+                resolve(exists);
+            } catch (error) {
                 resolve(false);
             }
         } catch (err) {
             reject(err);
+        }
+    });
+}
+
+export function pageUrlContains(
+    controlledPage: Page,
+    contains: string
+): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+        try {
+            resolve(controlledPage.url().includes(contains));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+export function pageTitleContains(
+    controlledPage: Page,
+    contains: string
+): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+        try {
+            resolve((await controlledPage.title()).includes(contains));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+export function getElementTagName(
+    controlledPage: Page,
+    element: ElementHandle<Element>
+) {
+    return new Promise<string>(async (resolve, reject) => {
+        try {
+            resolve(controlledPage.evaluate((el) => el!.tagName, element));
+        } catch (error) {
+            reject(error);
         }
     });
 }

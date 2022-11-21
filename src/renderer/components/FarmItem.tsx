@@ -55,7 +55,7 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                                     onClickAction={() => {
                                         window.api.log(
                                             "DEBUG",
-                                            `Clicked restart farm button on \"${name}\"`
+                                            `Clicked restart farm button on "${name}"`
                                         );
                                         window.api.sendOneWay(
                                             window.api.channels
@@ -70,7 +70,7 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                                     onClickAction={() => {
                                         window.api.log(
                                             "DEBUG",
-                                            `Clicked button to clear cache on \"${name}\"`
+                                            `Clicked button to clear cache on "${name}"`
                                         );
                                         window.api.sendOneWay(
                                             window.api.channels.clearCache,
@@ -95,7 +95,7 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                         ) {
                             window.api.log(
                                 "DEBUG",
-                                `Clicked \"eye\"-icon on \"${name}\", setting to \"${showing}\"`
+                                `Clicked "eye"-icon on "${name}", setting to "${showing}"`
                             );
                             setShowingWindows(showing);
 

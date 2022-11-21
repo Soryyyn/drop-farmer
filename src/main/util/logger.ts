@@ -53,7 +53,7 @@ function createLogEntry(
     type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
     message: string
 ): string {
-    let currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
+    const currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
     return `[${type}] (${origin}) ${currentTimeStamp} - ${message}\n`;
 }
 
@@ -70,7 +70,7 @@ function createTerminalLogEntry(
     type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
     message: string
 ): string {
-    let currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
+    const currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
 
     /**
      * Decide type text color.
@@ -96,12 +96,12 @@ function createTerminalLogEntry(
     /**
      * Timestamp color
      */
-    let timeStampText = color.gray(`${currentTimeStamp}`);
+    const timeStampText = color.gray(`${currentTimeStamp}`);
 
     /**
      * Actual message color.
      */
-    let messageText = color.white(`${message}`);
+    const messageText = color.white(`${message}`);
 
     /**
      * Build the text from blocks.
@@ -121,8 +121,8 @@ export function log(
     type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
     message: any
 ): void {
-    let entry: string = createLogEntry(origin, type, message);
-    let terminalEntry: string = createTerminalLogEntry(origin, type, message);
+    const entry: string = createLogEntry(origin, type, message);
+    const terminalEntry: string = createTerminalLogEntry(origin, type, message);
 
     /**
      * Add log to recent entries for crash log.

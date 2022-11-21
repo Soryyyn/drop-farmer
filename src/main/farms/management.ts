@@ -19,7 +19,7 @@ const DEFAULT_FARMS: FarmTemplate[] = [
 /**
  * The currently usable farms.
  */
-let currentFarms: FarmTemplate[] = [];
+const currentFarms: FarmTemplate[] = [];
 
 export function initFarms(): void {
     addDefaultFarms();
@@ -50,7 +50,7 @@ function addDefaultFarms(): void {
  * Add the custom farms found from the config file.
  */
 function addCustomFarms(): void {
-    let cachedFarms: CachedFarms = getConfigKey("farms");
+    const cachedFarms: CachedFarms = getConfigKey("farms");
 
     /**
      * Find the none default farms in the farms object.
@@ -64,8 +64,8 @@ function addCustomFarms(): void {
         /**
          * Add the farm if `foundDefault` is set to false.
          */
-        if (!foundDefault) {
-        }
+        // if (!foundDefault) {
+        // }
     }
 
     log("MAIN", "DEBUG", "Added custom farms");
@@ -124,7 +124,7 @@ export function getFarmByName(name: string): FarmTemplate {
  * to the config file.
  */
 export function convertFarmsIntoCached(): CachedFarms {
-    let converted: CachedFarms = {};
+    const converted: CachedFarms = {};
 
     /**
      * Create a object entry for each farm with the values wanted.
@@ -170,13 +170,13 @@ function createSpecificFarmSettings(farm: FarmTemplate): Setting[] {
  * Convert the farm settings to cached for writing to config.
  */
 export function convertFarmSettingsIntoCached(): Setting[] {
-    let settings: Setting[] = [];
+    const settings: Setting[] = [];
 
     /**
      * Load the current setting from each farm into the settings array for caching.
      */
     currentFarms.forEach((farm) => {
-        let tempObject: any = {};
+        const tempObject: any = {};
         set(tempObject, farm.getName(), createSpecificFarmSettings(farm));
 
         settings.push(tempObject);
