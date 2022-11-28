@@ -2,11 +2,15 @@ import Dragbar from "@components/Dragbar";
 import Home from "@components/Home";
 import { useHandleOneWay } from "@hooks/useHandleOneWay";
 import { useSendAndWait } from "@hooks/useSendAndWait";
+import {
+    InternetConnectionContext,
+    ModalContext,
+    SettingsContext
+} from "@util/contexts";
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import "./tailwind.css";
-import { InternetConnectionContext, SettingsContext } from "./util/contexts";
 
 export default function App() {
     const [settingsContext, setSettingsContext] = useState<Settings>();
@@ -125,13 +129,15 @@ export default function App() {
                 value={internetConnectionContext}
             >
                 <SettingsContext.Provider value={settingsContext}>
-                    <div className="p-8 flex flex-col h-screen">
-                        <HashRouter>
-                            <Routes>
-                                <Route path="/" element={<Home />} />
-                            </Routes>
-                        </HashRouter>
-                    </div>
+                    <ModalContext.Provider value={undefined}>
+                        <div className="p-8 flex flex-col h-screen">
+                            <HashRouter>
+                                <Routes>
+                                    <Route path="/" element={<Home />} />
+                                </Routes>
+                            </HashRouter>
+                        </div>
+                    </ModalContext.Provider>
                 </SettingsContext.Provider>
             </InternetConnectionContext.Provider>
         </>

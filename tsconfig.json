@@ -19,7 +19,8 @@
             "*": ["node_modules/*"],
             "@assets/*": ["src/renderer/assets/*"],
             "@components/*": ["src/renderer/components/*"],
-            "@hooks/*": ["src/renderer/hooks/*"]
+            "@hooks/*": ["src/renderer/hooks/*"],
+            "@util/*": ["src/renderer/util/*"]
         },
         "typeRoots": ["./node_modules/@types", "./types"]
     },
