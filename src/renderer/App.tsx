@@ -1,11 +1,33 @@
 import Dragbar from "@components/Dragbar";
 import Home from "@components/Home";
-import React, { useEffect } from "react";
+import { useHandleOneWay } from "@hooks/useHandleOneWay";
+import { useSendAndWait } from "@hooks/useSendAndWait";
+import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import "./tailwind.css";
+import { InternetConnectionContext, SettingsContext } from "./util/contexts";
 
 export default function App() {
+    const [settingsContext, setSettingsContext] = useState<Settings>();
+    useSendAndWait(window.api.channels.getSettings, null, (err, settings) => {
+        if (err) {
+            window.api.log("ERROR", err);
+        } else {
+            setSettingsContext(settings);
+        }
+    });
+
+    const [internetConnectionContext, setInternetConnectContext] =
+        useState<boolean>(true);
+    useHandleOneWay(
+        window.api.channels.internet,
+        null,
+        (event, internetConnection) => {
+            setInternetConnectContext(internetConnection);
+        }
+    );
+
     /**
      * React to toast signals coming from main.
      */
@@ -99,20 +121,19 @@ export default function App() {
                     }
                 }}
             />
-            <div
-                style={{
-                    padding: "2rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100vh"
-                }}
+            <InternetConnectionContext.Provider
+                value={internetConnectionContext}
             >
-                <HashRouter>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                    </Routes>
-                </HashRouter>
-            </div>
+                <SettingsContext.Provider value={settingsContext}>
+                    <div className="p-8 flex flex-col h-screen">
+                        <HashRouter>
+                            <Routes>
+                                <Route path="/" element={<Home />} />
+                            </Routes>
+                        </HashRouter>
+                    </div>
+                </SettingsContext.Provider>
+            </InternetConnectionContext.Provider>
         </>
     );
 }
