@@ -10,11 +10,18 @@ import { log } from "./logger";
 let browserConnection: puppeteer.Browser;
 
 /**
+ * (Re-) Connect the puppeteer controller to the electron app.
+ */
+export async function connectToElectron() {
+    browserConnection = await connect(app, puppeteer);
+}
+
+/**
  * Connects the puppeteer to the application devtools.
  */
 export async function initPuppeteerConnection() {
     await initialize(app);
-    browserConnection = await connect(app, puppeteer);
+    connectToElectron();
     log("MAIN", "DEBUG", "Connected puppeteer to electron application");
 }
 
