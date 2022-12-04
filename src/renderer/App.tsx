@@ -1,4 +1,4 @@
-import Dragbar from "@components/Dragbar";
+import Dragbar from "@components/global/Dragbar";
 import ToastNotifications from "@components/global/ToastNotifications";
 import Home from "@components/Home";
 import { useHandleOneWay } from "@hooks/useHandleOneWay";
@@ -10,7 +10,7 @@ import {
 } from "@util/contexts";
 import React, { useState } from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
-import "./tailwind.css";
+import "./global.css";
 
 export default function App() {
     /**
