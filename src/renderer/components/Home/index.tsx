@@ -97,7 +97,7 @@ export default function Home() {
                 modalToShow={modalData.modalToShow}
                 handleClosing={() => setShowingModal(false)}
             />
-            <div className={styles.divider}>
+            <div className="flex flex-row h-full gap-8">
                 <Sidebar />
                 <div className={styles.mainContainer}>
                     <div className={styles.content}>

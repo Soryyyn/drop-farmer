@@ -1,6 +1,7 @@
 export type MenuEntry = {
     label: string;
     disabled?: boolean;
+    caution?: boolean;
     onClick: () => void;
 };
 
