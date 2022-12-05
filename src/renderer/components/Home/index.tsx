@@ -1,7 +1,16 @@
+import Menu from "@components/global/Menu";
+import { Alignment } from "@components/global/Menu/types";
 import Modal from "@components/global/Modal";
 import Tooltip from "@components/global/Tooltip";
 import Settings from "@components/Settings";
-import { faBars, faGear, faGlobe } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBars,
+    faColonSign,
+    faEllipsis,
+    faGear,
+    faGlobe
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import ButtonDropdown from "../ButtonDropdown";
 import ButtonNolabel from "../ButtonNoLabel";
@@ -92,6 +101,33 @@ export default function Home() {
                 <Sidebar />
                 <div className={styles.mainContainer}>
                     <div className={styles.content}>
+                        <Menu
+                            button={{
+                                className: "p-4 bg-red-400",
+                                element: (
+                                    <FontAwesomeIcon
+                                        icon={faEllipsis}
+                                        size="1x"
+                                        fixedWidth={true}
+                                    />
+                                )
+                            }}
+                            alignment={Alignment.BottomLeft}
+                            entries={[
+                                {
+                                    label: "Entry 1",
+                                    onClick: () => {}
+                                },
+                                {
+                                    label: "Entry 2",
+                                    onClick: () => {}
+                                },
+                                {
+                                    label: "Entry 3",
+                                    onClick: () => {}
+                                }
+                            ]}
+                        />
                         <ModelAnimation
                             animationDisabled={animationsDisabled}
                             animationSrc="../assets/crate-falling.webm"
