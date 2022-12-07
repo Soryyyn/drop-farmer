@@ -17,7 +17,7 @@ import ButtonNolabel from "../ButtonNoLabel";
 import ModalManager from "../ModalManager";
 import ModelAnimation from "../ModelAnimation";
 import Sidebar from "../Sidebar";
-import styles from "./index.module.scss";
+// import styles from "./index.module.scss";
 
 /**
  * The route for the main page of the application.
@@ -99,9 +99,9 @@ export default function Home() {
             />
             <div className="flex flex-row h-full gap-8">
                 <Sidebar />
-                <div className={styles.mainContainer}>
-                    <div className={styles.content}>
-                        <Menu
+                <div className="flex grow justify-center items-center !min-w-[60%]">
+                    <div className="flex flex-col">
+                        {/* <Menu
                             button={{
                                 className: "p-4 bg-red-400",
                                 element: (
@@ -127,16 +127,18 @@ export default function Home() {
                                     onClick: () => {}
                                 }
                             ]}
-                        />
+                        /> */}
                         <ModelAnimation
                             animationDisabled={animationsDisabled}
                             animationSrc="../assets/crate-falling.webm"
                         />
-                        <h1 className={styles.title}>DROP-FARMER</h1>
-                        <p className={styles.desc}>
+                        <h1 className="-mt-5 text-center font-bold text-5xl text-[#181a29]">
+                            DROP-FARMER
+                        </h1>
+                        <p className="text-center text-[#181a29] text-xl">
                             Stream drops farmer application
                         </p>
-                        <div className={styles.buttonsContainer}>
+                        <div className="mt-8 flex items-center justify-center">
                             <ButtonDropdown
                                 icon={faBars}
                                 primary={true}
@@ -214,28 +216,31 @@ export default function Home() {
                                 }}
                             />
                         </div>
-                        <div className={styles.additionalData}>
-                            <p>Version: {applicationVersion}</p>
-                            <p>Copyright © Soryn</p>
-                            {updateAvailable && (
-                                <Tooltip
-                                    placement="top"
-                                    tooltipText="Will get installed on restart"
+                        <div className="mt-4 flex flex-col items-center">
+                            <p className="w-fit text-[#181a2980] text-center mt-1">
+                                Version: {applicationVersion}
+                            </p>
+                            <p className="w-fit text-[#181a2980] text-center mt-1">
+                                Copyright © Soryn
+                            </p>
+                            {/* {updateAvailable && ( */}
+                            <Tooltip
+                                placement="top"
+                                tooltipText="Will get installed on restart"
+                            >
+                                <p
+                                    // className={styles.installUpdate}
+                                    onClick={() => {
+                                        window.api.sendOneWay(
+                                            window.api.channels.installUpdate
+                                        );
+                                    }}
                                 >
-                                    <p
-                                        className={styles.installUpdate}
-                                        onClick={() => {
-                                            window.api.sendOneWay(
-                                                window.api.channels
-                                                    .installUpdate
-                                            );
-                                        }}
-                                    >
-                                        Update available! Click here to update
-                                        <br />
-                                    </p>
-                                </Tooltip>
-                            )}
+                                    Update available! Click here to update
+                                    <br />
+                                </p>
+                            </Tooltip>
+                            {/* )} */}
                         </div>
                     </div>
                 </div>
