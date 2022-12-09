@@ -1,28 +1,25 @@
+import Modal from "@components/global/Modal";
 import { useHandleOneWay } from "@hooks/useHandleOneWay";
 import { useSendAndWait } from "@hooks/useSendAndWait";
 import { cloneDeep, isEqual } from "lodash";
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import Settings from "../modals/Settings/Settings";
 import { Modals } from "./modals";
 
 /**
  * Contexts
  */
-export const SettingsContext = createContext<
-    | {
-          settings: Settings | undefined;
-          setNewSettings: (newSettings: Settings) => void;
-      }
-    | undefined
->(undefined);
+export const SettingsContext = createContext<{
+    settings: Settings | undefined;
+    setNewSettings: (newSettings: Settings) => void;
+}>({ settings: undefined, setNewSettings() {} });
+
 export const InternetConnectionContext = createContext<boolean>(true);
-export const ModalContext = createContext<
-    | {
-          currentModal: Modals | undefined;
-          setCurrentModal: (modal: Modals | undefined) => void;
-      }
-    | undefined
->(undefined);
+
+export const ModalContext = createContext<{
+    currentModal: Modals | undefined;
+    setCurrentModal: (modal: Modals | undefined) => void;
+}>({ currentModal: undefined, setCurrentModal: () => {} });
 
 interface Props {
     children: JSX.Element | JSX.Element[];
@@ -90,8 +87,27 @@ export function ModalContextProvider({ children }: Props) {
         undefined
     );
 
+    /**
+     * This renders the wanted modal based on, if the current modal matches one
+     * in the enum.
+     */
+    function renderModal() {
+        if (currentModal === Modals.Settings) {
+            return (
+                <Settings handleClosing={() => setCurrentModal(undefined)} />
+            );
+        } else {
+            return <></>;
+        }
+    }
+
     return (
         <ModalContext.Provider value={{ currentModal, setCurrentModal }}>
+            {currentModal !== undefined && (
+                <Modal isShowing={currentModal !== undefined}>
+                    {renderModal()}
+                </Modal>
+            )}
             {children}
         </ModalContext.Provider>
     );

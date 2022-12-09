@@ -11,7 +11,9 @@ import {
     faGlobe
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import { ModalContext } from "@util/contexts";
+import { Modals } from "@util/modals";
+import React, { useContext, useEffect, useState } from "react";
 import ButtonDropdown from "../ButtonDropdown";
 import ButtonNolabel from "../ButtonNoLabel";
 import ModalManager from "../ModalManager";
@@ -35,6 +37,8 @@ export default function Home() {
     }>({
         modalToShow: "settings"
     });
+
+    const { currentModal, setCurrentModal } = useContext(ModalContext);
 
     /**
      * On site load, get internet connection
@@ -241,6 +245,11 @@ export default function Home() {
                                 </p>
                             </Tooltip>
                             {/* )} */}
+                            <button
+                                onClick={() => setCurrentModal(Modals.Settings)}
+                            >
+                                test
+                            </button>
                         </div>
                     </div>
                 </div>
