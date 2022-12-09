@@ -86,6 +86,15 @@ export function ModalContextProvider({ children }: Props) {
     const [currentModal, setCurrentModal] = useState<Modals | undefined>(
         undefined
     );
+    const [showingModal, setShowingModal] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (currentModal !== undefined) {
+            setShowingModal(true);
+        } else {
+            setShowingModal(false);
+        }
+    }, [currentModal]);
 
     /**
      * This renders the wanted modal based on, if the current modal matches one
@@ -103,11 +112,7 @@ export function ModalContextProvider({ children }: Props) {
 
     return (
         <ModalContext.Provider value={{ currentModal, setCurrentModal }}>
-            {currentModal !== undefined && (
-                <Modal isShowing={currentModal !== undefined}>
-                    {renderModal()}
-                </Modal>
-            )}
+            <Modal showing={showingModal}>{renderModal()}</Modal>
             {children}
         </ModalContext.Provider>
     );
