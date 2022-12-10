@@ -1,4 +1,4 @@
-import { app, Menu, Tray } from "electron";
+import { app, Menu, NativeImage, nativeImage, Tray } from "electron";
 import { resolve } from "path";
 import { log } from "../util/logger";
 import { getMainWindow, setAppQuitting, showWindow } from "./windows";
@@ -14,12 +14,7 @@ let tray: Tray;
  * @param {boolean} isProd If the app is run in production environment.
  */
 export function createTray(isProd: boolean): void {
-    tray = new Tray(
-        resolve(
-            __dirname,
-            `resources/icon.${process.platform != "linux" ? "ico" : "png"}`
-        )
-    );
+    tray = new Tray(getTrayicon());
 
     const contextMenu = Menu.buildFromTemplate([
         {
@@ -75,5 +70,26 @@ export function destroyTray(): void {
         log("MAIN", "DEBUG", "Destroyed tray");
     } catch (err) {
         log("MAIN", "ERROR", `Failed destroying tray. "${err}"`);
+    }
+}
+
+/**
+ * Get the approriate image for the tray depending on os.
+ */
+function getTrayicon(): NativeImage {
+    const iconPath = "resources/icon";
+
+    if (process.platform === "win32") {
+        return nativeImage.createFromPath(
+            resolve(__dirname, `${iconPath}.ico`)
+        );
+    } else if (process.platform === "darwin") {
+        return nativeImage.createFromPath(
+            resolve(__dirname, `${iconPath}Template.png`)
+        );
+    } else {
+        return nativeImage.createFromPath(
+            resolve(__dirname, `${iconPath}.png`)
+        );
     }
 }
