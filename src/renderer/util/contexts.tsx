@@ -1,9 +1,10 @@
 import Overlay from "@components/global/Overlay";
+import Settings from "@components/Settings";
 import { useHandleOneWay } from "@hooks/useHandleOneWay";
 import { useSendAndWait } from "@hooks/useSendAndWait";
 import { cloneDeep, isEqual } from "lodash";
 import React, { createContext, useEffect, useState } from "react";
-import Settings from "../modals/Settings/Settings";
+// import Settings from "../modals/Settings/Settings";
 import { Overlays } from "./overlays";
 
 /**
@@ -101,9 +102,11 @@ export function ModalContextProvider({ children }: Props) {
      * in the enum.
      */
     function renderModal() {
-        if (undefined === Overlays.Settings) {
+        if (currentOverlay === Overlays.Settings) {
             return (
-                <Settings handleClosing={() => setCurrentOverlay(undefined)} />
+                // <Settings handleClosing={() => setCurrentOverlay(undefined)}
+                // />
+                <Settings />
             );
         } else {
             return <></>;

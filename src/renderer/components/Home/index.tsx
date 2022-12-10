@@ -12,7 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ModalContext } from "@util/contexts";
-import { Modals } from "@util/overlays";
+import { Overlays } from "@util/overlays";
 import React, { useContext, useEffect, useState } from "react";
 import ButtonDropdown from "../ButtonDropdown";
 import ButtonNolabel from "../ButtonNoLabel";
@@ -38,7 +38,7 @@ export default function Home() {
         modalToShow: "settings"
     });
 
-    const { currentModal, setCurrentModal } = useContext(ModalContext);
+    const { currentOverlay, setCurrentOverlay } = useContext(ModalContext);
 
     /**
      * On site load, get internet connection
@@ -246,7 +246,9 @@ export default function Home() {
                             </Tooltip>
                             {/* )} */}
                             <button
-                                onClick={() => setCurrentModal(Modals.Settings)}
+                                onClick={() =>
+                                    setCurrentOverlay(Overlays.Settings)
+                                }
                             >
                                 test
                             </button>

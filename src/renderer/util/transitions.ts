@@ -17,7 +17,7 @@ export const OpacityScaleTransition = {
         height: "90%"
     },
     config: {
-        duration: 1000,
+        duration: 100,
         easing: easings.easeInOutQuad
     }
 };
