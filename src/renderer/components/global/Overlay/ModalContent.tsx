@@ -1,22 +1,15 @@
-import PropTypes, { InferProps } from "prop-types";
 import React from "react";
-import styles from "./ModalContent.module.scss";
 
-function ModalContent({
-    children,
-    buttons
-}: InferProps<typeof ModalContent.propTypes>) {
+interface Props {
+    children: JSX.Element;
+    buttons: JSX.Element | JSX.Element[];
+}
+
+export default function ModalContent({ children, buttons }: Props) {
     return (
-        <div className={styles.container}>
+        <div>
             <div>{buttons}</div>
             <div>{children}</div>
         </div>
     );
 }
-
-ModalContent.propTypes = {
-    children: PropTypes.element.isRequired,
-    buttons: PropTypes.arrayOf(PropTypes.element).isRequired
-};
-
-export default ModalContent;
