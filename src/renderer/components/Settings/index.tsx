@@ -1,4 +1,4 @@
-import ModalContent from "@components/global/Modal/ModalContent";
+import ModalContent from "@components/global/Overlay/ModalContent";
 import PropTypes, { InferProps } from "prop-types";
 import React from "react";
 

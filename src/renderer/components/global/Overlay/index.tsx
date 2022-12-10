@@ -7,7 +7,7 @@ interface Props {
     showing: boolean;
 }
 
-export default function Modal({ children, showing }: Props) {
+export default function Overlay({ children, showing }: Props) {
     return useTransition(
         showing,
         OpacityScaleTransition

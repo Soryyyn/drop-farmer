@@ -1,6 +1,6 @@
 import Menu from "@components/global/Menu";
 import { Alignment } from "@components/global/Menu/types";
-import Modal from "@components/global/Modal";
+import Modal from "@components/global/Overlay";
 import Tooltip from "@components/global/Tooltip";
 import Settings from "@components/Settings";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ModalContext } from "@util/contexts";
-import { Modals } from "@util/modals";
+import { Modals } from "@util/overlays";
 import React, { useContext, useEffect, useState } from "react";
 import ButtonDropdown from "../ButtonDropdown";
 import ButtonNolabel from "../ButtonNoLabel";
