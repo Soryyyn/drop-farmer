@@ -2,11 +2,14 @@ import React from "react";
 import styles from "../styles/ModelAnimation.module.scss";
 
 interface Props {
-    animationSrc: string
+    animationSrc: string;
     animationDisabled: boolean;
 }
 
-export default function ModelAnimation({ animationSrc, animationDisabled }: Props) {
+export default function ModelAnimation({
+    animationSrc,
+    animationDisabled
+}: Props) {
     if (animationDisabled)
         return (
             <video className={styles.video} loop>

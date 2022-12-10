@@ -1,11 +1,11 @@
 import { BrowserWindow } from "electron";
 import { resolve } from "path";
 import { getPage } from "puppeteer-in-electron";
-import { getApplicationSettings } from "../config";
 import { getFarms } from "../farms/management";
 import type FarmTemplate from "../farms/template";
 import { log } from "../util/logger";
-import { getBrowserConnection } from "../util/puppeteer";
+import { getBrowserConnection, waitForTimeout } from "../util/puppeteer";
+import { getSpecificSetting } from "../util/settings";
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -32,24 +32,28 @@ let appQuitting: boolean = false;
  */
 export function createMainWindow(isProd: boolean): void {
     mainWindow = new BrowserWindow({
-        icon: resolve(__dirname, "resources/icon.ico"),
+        icon: resolve(
+            __dirname,
+            `resources/icon.${process.platform != "linux" ? "ico" : "png"}`
+        ),
         height: 800,
         width: 1200,
         center: true,
         maximizable: false,
         resizable: false,
-        show: false,
+        show: process.platform === "linux" ? true : false,
         title: "drop-farmer",
         autoHideMenuBar: true,
         titleBarStyle: "hidden",
         titleBarOverlay: {
             color: "#c8def5",
-            symbolColor: "#000000",
+            symbolColor: "#000000"
         },
         webPreferences: {
             preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-            devTools: !isProd
-        },
+            devTools: !isProd,
+            sandbox: false
+        }
     });
 
     /**
@@ -61,12 +65,26 @@ export function createMainWindow(isProd: boolean): void {
      * Show when the window is ready.
      */
     mainWindow.on("ready-to-show", () => {
-        if (getApplicationSettings().showMainWindowOnLaunch) {
-            log("MAIN", "DEBUG", `Created main window (shown) ${(!isProd ? "in dev mode" : "")}`);
+        if (
+            Boolean(
+                getSpecificSetting("application", "showMainWindowOnLaunch")
+                    .value
+            ) ||
+            process.platform == "linux"
+        ) {
+            log(
+                "MAIN",
+                "DEBUG",
+                `Created main window (shown) ${!isProd ? "in dev mode" : ""}`
+            );
             mainWindow.show();
             mainWindow.focus();
         } else {
-            log("MAIN", "DEBUG", `Created main window (hidden) ${(!isProd ? "in dev mode" : "")}`);
+            log(
+                "MAIN",
+                "DEBUG",
+                `Created main window (hidden) ${!isProd ? "in dev mode" : ""}`
+            );
         }
     });
 
@@ -84,7 +102,7 @@ export function createMainWindow(isProd: boolean): void {
              */
             getFarms().forEach((farm: FarmTemplate) => {
                 farm.hideAllWindows();
-            })
+            });
         } else {
             destroyWindow(mainWindow);
         }
@@ -106,7 +124,10 @@ export function getMainWindow(): BrowserWindow {
  */
 export async function createWindow(url: string, gameName?: string) {
     const window = new BrowserWindow({
-        icon: resolve(__dirname, "resources/icon.ico"),
+        icon: resolve(
+            __dirname,
+            `resources/icon.${process.platform != "linux" ? "ico" : "png"}`
+        ),
         height: 1080,
         width: 1920,
         show: false,
@@ -117,26 +138,25 @@ export async function createWindow(url: string, gameName?: string) {
     });
 
     /**
-     * Changed loading of url to puppeteer to hopefully prevent errors.
-     */
-    let page = await getPage(getBrowserConnection(), window, true);
-    await page.goto(url);
-
-    /**
      * Mute window.
      */
     muteWindow(window);
 
     /**
+     * Load the url.
+     * (Reloading to route for safety)
+     */
+    await window.loadURL(url);
+    const page = await getPage(getBrowserConnection(), window);
+    await page.goto(url);
+
+    /**
      * Decide if the windows is for a farm or just a general window.
      */
-    if (gameName)
-        log("MAIN", "DEBUG", `Created window for \"${gameName}\"`);
-    else
-        log("MAIN", "DEBUG", "Created general window");
+    if (gameName) log("MAIN", "DEBUG", `Created window for "${gameName}"`);
+    else log("MAIN", "DEBUG", "Created general window");
     return window;
 }
-
 
 /**
  * Destroy the wanted window.
@@ -154,8 +174,15 @@ export function destroyWindow(window: Electron.BrowserWindow): void {
  * @param {Electron.BrowserWindow} window The window to show.
  * @param {boolean} isMainWindow If the window is the main application window.
  */
-export function showWindow(window: Electron.BrowserWindow, isMainWindow: boolean): void {
-    log("MAIN", "DEBUG", `Showing window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`)
+export function showWindow(
+    window: Electron.BrowserWindow,
+    isMainWindow: boolean
+): void {
+    log(
+        "MAIN",
+        "DEBUG",
+        `Showing window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`
+    );
     window.show();
     window.focus();
 }
@@ -166,8 +193,15 @@ export function showWindow(window: Electron.BrowserWindow, isMainWindow: boolean
  * @param {Electron.BrowserWindow} window The window to show.
  * @param {boolean} isMainWindow If the window is the main application window.
  */
-export function hideWindow(window: Electron.BrowserWindow, isMainWindow: boolean): void {
-    log("MAIN", "DEBUG", `Hidding window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`)
+export function hideWindow(
+    window: Electron.BrowserWindow,
+    isMainWindow: boolean
+): void {
+    log(
+        "MAIN",
+        "DEBUG",
+        `Hidding window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`
+    );
     window.hide();
 }
 

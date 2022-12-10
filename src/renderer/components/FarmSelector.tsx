@@ -3,9 +3,9 @@ import React from "react";
 import styles from "../styles/FarmSelector.module.scss";
 
 interface Props {
-    selectorName: string,
-    handleClick: () => void,
-    currentlySelected: string
+    selectorName: string;
+    handleClick: () => void;
+    currentlySelected: string;
 }
 
 /**
@@ -13,13 +13,20 @@ interface Props {
  *
  * @param props The selector name and the click event handler  for the component;
  */
-export default function FarmSelector({ selectorName, handleClick, currentlySelected }: Props) {
+export default function FarmSelector({
+    selectorName,
+    handleClick,
+    currentlySelected
+}: Props) {
     return (
         <div
-            className={clsx(styles.container, ((currentlySelected === selectorName) ? styles.selected : null))}
+            className={clsx(
+                styles.container,
+                currentlySelected === selectorName ? styles.selected : null
+            )}
             onClick={handleClick}
         >
             {selectorName}
-        </div >
+        </div>
     );
 }

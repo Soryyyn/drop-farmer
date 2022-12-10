@@ -1,4 +1,5 @@
 .container {
+    min-width: 345px !important;
     width: 100%;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -22,14 +23,26 @@
             flex-direction: column;
             flex-grow: 1;
             white-space: nowrap;
+            width: 80%;
 
-            .title {
-                text-overflow: ellipsis;
-                color: #0c0e16;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                font-weight: bold;
-                flex-grow: 1;
+            .titleRow {
+                display: flex;
+                flex-direction: row;
+                column-gap: 0.3rem;
+
+                .typeIcon {
+                    color: #0c0e16;
+                    filter: opacity(0.4);
+                }
+
+                .title {
+                    text-overflow: ellipsis;
+                    color: #0c0e16;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-weight: bold;
+                    flex-grow: 1;
+                }
             }
         }
 

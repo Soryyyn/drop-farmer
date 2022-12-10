@@ -47,5 +47,6 @@ contextBridge.exposeInMainWorld("api", {
      *
      * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
      */
-    log: (type, message) => ipcRenderer.send(Channels.log, { type: type, message: message })
+    log: (type, message) =>
+        ipcRenderer.send(Channels.log, { type: type, message: message })
 });

@@ -7,7 +7,6 @@ export enum Channels {
     farmStatusChange = "farm-status-change",
     farmWindowsVisibility = "farm-windows-visibility",
     getSettings = "get-settings",
-    internetChange = "internet-change",
     log = "log",
     saveNewSettings = "save-new-settings",
     get3DAnimationsDisabled = "get-3D-animations-disabled",
@@ -15,5 +14,14 @@ export enum Channels {
     clearCache = "clear-cache",
     restartScheduler = "restart-scheduler",
     shutdown = "shutdown",
-    toast = "toast",
+    toastSuccess = "toast-success",
+    toastError = "toast-error",
+    toastLoading = "toast-loading",
+    toastForcedType = "toast-forced-type",
+    updateCheck = "update-check",
+    updateAvailable = "update-available",
+    installUpdate = "install-update",
+    restart = "restart",
+    deleteFarm = "delete-farm",
+    internet = "internet"
 }

@@ -1,65 +1,33 @@
-import React, { useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import Dragbar from "@components/global/Dragbar";
+import ToastNotifications from "@components/global/ToastNotifications";
+import Home from "@components/Home";
+import {
+    InternetConnectionContextProvider,
+    ModalContextProvider,
+    SettingsContextProvider
+} from "@util/contexts";
+import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
-import Dragbar from "./components/Dragbar";
-import Home from "./sites/Home";
-import Settings from "./sites/Settings";
-import styles from "./styles/App.module.scss";
+import "./global.css";
 
 export default function App() {
-    /**
-     * React to toast signals.
-     */
-    useEffect(() => {
-        window.api.handleOneWay(window.api.channels.toast, (event, toastNotification) => {
-            window.api.log("DEBUG", "Displaying toast");
-
-            if (toastNotification.type === "error")
-                toast.error(toastNotification.body, {
-                    id: toastNotification.id,
-                    duration: toastNotification.duration
-                });
-            else if (toastNotification.type === "success")
-                toast.success(toastNotification.body, {
-                    id: toastNotification.id,
-                    duration: toastNotification.duration
-                });
-        });
-
-        return () => {
-            window.api.removeAllListeners(window.api.channels.toast);
-        };
-    }, []);
-
     return (
         <>
             <Dragbar />
-            <Toaster
-                position={"bottom-center"}
-                toastOptions={{
-                    className: styles.toastNotification,
-                    success: {
-                        iconTheme: {
-                            primary: "rgb(33, 219, 135)",
-                            secondary: "rgb(16, 18, 27)",
-                        }
-                    },
-                    error: {
-                        iconTheme: {
-                            primary: "rgb(231, 75, 101)",
-                            secondary: "rgb(16, 18, 27)"
-                        }
-                    }
-                }}
-            />
-            <div className={styles.spacer}>
-                <HashRouter>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/settings" element={<Settings />} />
-                    </Routes>
-                </HashRouter>
-            </div>
+            <ToastNotifications />
+            <InternetConnectionContextProvider>
+                <SettingsContextProvider>
+                    <ModalContextProvider>
+                        <div className="p-8 flex flex-col h-screen">
+                            <HashRouter>
+                                <Routes>
+                                    <Route path="/" element={<Home />} />
+                                </Routes>
+                            </HashRouter>
+                        </div>
+                    </ModalContextProvider>
+                </SettingsContextProvider>
+            </InternetConnectionContextProvider>
         </>
     );
 }

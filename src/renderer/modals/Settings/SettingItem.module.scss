@@ -1,0 +1,108 @@
+.settingItem {
+    width: 100%;
+    transition: all 0.1s;
+    padding: 1rem;
+    list-style: none;
+    border-radius: 5px;
+
+    background: #1f2233;
+    box-shadow: 5px 5px 15px rgba(31, 34, 51, 0.5);
+
+    display: flex;
+    flex-direction: row;
+
+    .changingDisabled {
+        align-self: center;
+        text-transform: uppercase;
+        background: red;
+        padding: 0.2rem 2rem;
+        font-family: "Rubik";
+        border-radius: 5px;
+        background: #181b2b;
+        color: rgba(186, 213, 241, 0.5);
+    }
+
+    .details {
+        width: 75% !important;
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+
+        .title {
+            color: #bad5f1;
+
+            i {
+                margin-left: 0.25rem;
+                color: rgba(186, 213, 241, 0.3);
+                text-transform: uppercase;
+            }
+        }
+
+        .desc {
+            color: rgba(186, 213, 241, 0.5);
+        }
+    }
+
+    .action {
+        width: 25%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        input {
+            width: 85%;
+            transition: all 0.1s;
+            padding: 0.5rem 0.5rem;
+
+            background: #2b3246;
+            color: #bad5f1;
+            border: none;
+            border-radius: 5px;
+            font-family: "Rubik";
+
+            &:focus {
+                outline: none;
+                background: #3c445a;
+            }
+
+            &:active:enabled,
+            &:hover:enabled {
+                background: #3c445a;
+            }
+        }
+
+        .inputNumberContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            column-gap: 0.25rem;
+
+            input {
+                width: 30%;
+                text-align: center;
+            }
+
+            button {
+                transition: all 0.1s;
+                min-height: 31px;
+                background: #2b3246;
+                color: #bad5f1;
+                border: none;
+                border-radius: 5px;
+                padding-block: 0.1rem;
+                aspect-ratio: 1 / 1;
+                padding: 0.25rem;
+                height: 100%;
+
+                &:hover,
+                &:focus,
+                &:active {
+                    cursor: pointer;
+                    outline: none;
+                    background: #3c445a;
+                }
+            }
+        }
+    }
+}

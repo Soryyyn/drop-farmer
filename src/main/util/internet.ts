@@ -3,7 +3,7 @@ import { Channels } from "../common/channels";
 import { sendOneWay } from "../electron/ipc";
 import { getMainWindow } from "../electron/windows";
 import { log } from "./logger";
-import { sendToast } from "./toast";
+import { sendForcedTypeToast } from "./toast";
 
 /**
  * The current internet connection.
@@ -17,18 +17,20 @@ export function internetConnectionChecker(): void {
     isOnline()
         .then((connection: boolean) => {
             internetConnection = connection;
-            sendOneWay(getMainWindow(), Channels.internetChange, connection);
 
             /**
              * If user has no internet connection, notify via toast.
              */
-            if (!connection)
-                sendToast({
+            if (!connection) {
+                sendForcedTypeToast({
                     id: "no-internet",
                     type: "error",
-                    body: "No internet connection.",
-                    duration: Infinity
+                    text: "No internet connection.",
+                    duration: 4000
                 });
+
+                sendOneWay(getMainWindow(), Channels.internet, false);
+            }
         })
         .catch((err) => {
             log("MAIN", "FATAL", `Error checking internet connection. ${err}`);

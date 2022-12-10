@@ -3,28 +3,8 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "drop-farmer: Start application (with cache)",
-            "command": "yarn run start || npm start",
-            "problemMatcher": [],
-            "presentation": {
-                "showReuseMessage": false,
-                "clear": false,
-            }
-        },
-        {
-            "type": "shell",
-            "label": "drop-farmer: Start application (as fresh/new user)",
-            "command": "yarn run start:fresh || npm start:fresh",
-            "problemMatcher": [],
-            "presentation": {
-                "showReuseMessage": false,
-                "clear": false,
-            }
-        },
-        {
-            "type": "shell",
-            "label": "drop-farmer: Build application",
-            "command": "yarn run make || npm make",
+            "label": "Build application",
+            "command": "yarn make || npm run make",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
@@ -36,16 +16,33 @@
         },
         {
             "type": "shell",
-            "label": "drop-farmer: Package application",
-            "command": "yarn run package || npm package",
+            "label": "Start",
+            "command": "yarn start || npm run start",
             "problemMatcher": [],
             "presentation": {
-                "reveal": "silent",
                 "showReuseMessage": false,
-                "clear": true,
-                "revealProblems": "onProblem",
-                "close": false
+                "clear": false
             }
         },
+        {
+            "type": "shell",
+            "label": "Start fresh",
+            "command": "yarn start:fresh || npm run start:fresh",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Lint",
+            "command": "yarn lint || npm run lint",
+            "problemMatcher": [],
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": false
+            }
+        }
     ]
 }

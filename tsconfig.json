@@ -1,11 +1,7 @@
 {
     "compilerOptions": {
         "target": "ES5",
-        "lib": [
-            "DOM",
-            "DOM.Iterable",
-            "ESNext"
-        ],
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
         "allowJs": true,
         "module": "ESNext",
         "skipLibCheck": true,
@@ -20,18 +16,13 @@
         "resolveJsonModule": true,
         "jsx": "react",
         "paths": {
-            "*": [
-                "node_modules/*"
-            ]
+            "*": ["node_modules/*"],
+            "@assets/*": ["src/renderer/assets/*"],
+            "@components/*": ["src/renderer/components/*"],
+            "@hooks/*": ["src/renderer/hooks/*"],
+            "@util/*": ["src/renderer/util/*"]
         },
-        "typeRoots": [
-            "./node_modules/@types",
-            "./types",
-        ]
+        "typeRoots": ["./node_modules/@types", "./types"]
     },
-    "include": [
-        "src/**/*",
-        "types/common/renderer.d.ts",
-        "types/common/declarations.d.ts",
-    ]
+    "include": ["src/**/*", "types/*.d.ts"]
 }

@@ -8,7 +8,10 @@ import { log } from "../util/logger";
  * The userData (roaming/drop-farmer) directory in production mode.
  * Changes to current root directory when in dev mode.
  */
-export const APP_PATH: string = (process.env.NODE_ENV === "production") ? app.getPath("userData") : join(__dirname, "../../");
+export const APP_PATH: string =
+    process.env.NODE_ENV === "production"
+        ? app.getPath("userData")
+        : join(__dirname, "../../");
 
 /**
  * Creates a file with given name and data at the app root path.
@@ -21,7 +24,9 @@ export function createFile(fileName: string, data: string | Buffer): void {
         try {
             writeFileSync(join(APP_PATH, fileName), data);
         } catch (err) {
-            throw new Error(`Could not create file \"${fileName}\" at \"${APP_PATH}\". Reason: \"${err}\"`);
+            throw new Error(
+                `Could not create file "${fileName}" at "${APP_PATH}". Reason: "${err}"`
+            );
         }
     }
 }
@@ -35,12 +40,16 @@ export function createFile(fileName: string, data: string | Buffer): void {
  */
 export function readFile(fileName: string): string {
     if (!existsSync(join(APP_PATH, fileName))) {
-        throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
+        throw new Error(
+            `Could not read file "${fileName}" at "${APP_PATH}", because it doesn't exist.`
+        );
     } else {
         try {
             return readFileSync(join(APP_PATH, fileName)).toString();
         } catch (err) {
-            throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+            throw new Error(
+                `Could not read file "${fileName}" at "${APP_PATH}". Reason: ${err}`
+            );
         }
     }
 }
@@ -53,14 +62,22 @@ export function readFile(fileName: string): string {
  * @param {string} data Data which is written to the file.
  * @param {"a"|"w"} flag Flag which determines *how* to write to the file. (a=append / w=write)
  */
-export function writeToFile(fileName: string, data: string, flag: "a" | "w"): void {
+export function writeToFile(
+    fileName: string,
+    data: string,
+    flag: "a" | "w"
+): void {
     if (!existsSync(join(APP_PATH, fileName))) {
-        throw new Error(`Could not read file \"${fileName}\" at \"${APP_PATH}\", because it doesn't exist.`);
+        throw new Error(
+            `Could not read file "${fileName}" at "${APP_PATH}", because it doesn't exist.`
+        );
     } else {
         try {
-            writeFileSync(join(APP_PATH, fileName), data, { flag: flag })
+            writeFileSync(join(APP_PATH, fileName), data, { flag: flag });
         } catch (err) {
-            throw new Error(`Could not write to file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+            throw new Error(
+                `Could not write to file "${fileName}" at "${APP_PATH}". Reason: ${err}`
+            );
         }
     }
 }
@@ -77,7 +94,9 @@ export function deleteFile(fileName: string): void {
         try {
             rmSync(join(APP_PATH, fileName));
         } catch (err) {
-            throw new Error(`Could not delete file \"${fileName}\" at \"${APP_PATH}\". Reason: ${err}`);
+            throw new Error(
+                `Could not delete file "${fileName}" at "${APP_PATH}". Reason: ${err}`
+            );
         }
     }
 }

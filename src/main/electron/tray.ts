@@ -14,7 +14,12 @@ let tray: Tray;
  * @param {boolean} isProd If the app is run in production environment.
  */
 export function createTray(isProd: boolean): void {
-    tray = new Tray(resolve(__dirname, "resources/icon.ico"));
+    tray = new Tray(
+        resolve(
+            __dirname,
+            `resources/icon.${process.platform != "linux" ? "ico" : "png"}`
+        )
+    );
 
     const contextMenu = Menu.buildFromTemplate([
         {
@@ -58,7 +63,7 @@ export function createTray(isProd: boolean): void {
         showWindow(getMainWindow(), true);
     });
 
-    log("MAIN", "INFO", "Created system tray");
+    log("MAIN", "DEBUG", "Created system tray");
 }
 
 /**
@@ -67,8 +72,8 @@ export function createTray(isProd: boolean): void {
 export function destroyTray(): void {
     try {
         tray.destroy();
-        log("MAIN", "INFO", "Destroyed tray");
+        log("MAIN", "DEBUG", "Destroyed tray");
     } catch (err) {
-        log("MAIN", "ERROR", `Failed destroying tray. \"${err}\"`);
+        log("MAIN", "ERROR", `Failed destroying tray. "${err}"`);
     }
 }
