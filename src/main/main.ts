@@ -147,3 +147,10 @@ app.on("before-quit", () => {
 app.on("quit", () => {
     log("MAIN", "INFO", "Quitting application");
 });
+
+/**
+ * Handle darwin quits.
+ */
+app.on("window-all-closed", () => {
+    app.quit();
+});
