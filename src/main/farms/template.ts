@@ -7,6 +7,7 @@ import {
     getMainWindow
 } from "../electron/windows";
 import { log } from "../util/logger";
+import { connectToElectron } from "../util/puppeteer";
 import { getSpecificSetting } from "../util/settings";
 import { UptimeTimer } from "./timer";
 
@@ -522,6 +523,8 @@ export default abstract class FarmTemplate {
              */
             this.timerAction("pause");
 
+            let canDestroyCheckerWindow: boolean = false;
+
             this.createCheckerWindow()
                 .then(async (checkerWindow) => {
                     await this.login(checkerWindow);
@@ -543,6 +546,7 @@ export default abstract class FarmTemplate {
                                 `${this._name}: Checking if farm can start farming`
                             );
                             await this.startFarming(checkerWindow);
+                            canDestroyCheckerWindow = true;
                         } else {
                             log(
                                 "MAIN",
@@ -550,6 +554,7 @@ export default abstract class FarmTemplate {
                                 `${this._name}: Already farming`
                             );
                             this.updateStatus("farming");
+                            canDestroyCheckerWindow = true;
                         }
                     } else {
                         log(
@@ -558,24 +563,47 @@ export default abstract class FarmTemplate {
                             `${this._name}: Checking if more farming can be done`
                         );
                         await this.startFarming(checkerWindow);
+                        canDestroyCheckerWindow = true;
                     }
 
                     /**
                      * Destroy the checker window.
                      */
-                    this.destroyCheckerWindow();
+                    if (canDestroyCheckerWindow) {
+                        this.destroyCheckerWindow();
+                    }
 
                     if (!this._enabled) {
                         this.updateStatus("disabled");
                     }
                 })
                 .catch((err) => {
-                    log(
-                        "MAIN",
-                        "ERROR",
-                        `${this._name}: Error occurred while checking the farm. ${err}`
-                    );
-                    this.updateStatus("attention-required");
+                    /**
+                     * Check if just the connection to the browserwindow has
+                     * been lost or not.
+                     */
+                    if (
+                        err ==
+                        "Unable to find puppeteer Page from BrowserWindow. Please report this."
+                    ) {
+                        log(
+                            "MAIN",
+                            "DEBUG",
+                            "Lost connection to BrowserWindow, reconnecting and closing all windows"
+                        );
+
+                        this.destroyAllFarmingWindows();
+                        this.destroyCheckerWindow();
+
+                        connectToElectron();
+                    } else {
+                        log(
+                            "MAIN",
+                            "ERROR",
+                            `${this._name}: Error occurred while checking the farm. ${err}`
+                        );
+                        this.updateStatus("attention-required");
+                    }
                 });
         }
     }

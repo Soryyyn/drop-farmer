@@ -4,7 +4,6 @@ import {
     faRotateRight,
     faXmark
 } from "@fortawesome/free-solid-svg-icons";
-import { DEFAULT_SELECTED_SETTING } from "@util/constants";
 import { SettingsContext } from "@util/contexts";
 import React, { useContext, useState } from "react";
 import { ActionButton } from "./ActionButton";
@@ -17,7 +16,7 @@ interface Props {
 export default function Settings({ onClose }: Props) {
     const { settings, setNewSettings, resetToDefaultSettings } =
         useContext(SettingsContext);
-    const [selected, setSelected] = useState<string>(DEFAULT_SELECTED_SETTING);
+    const [selected, setSelected] = useState<string>("application");
 
     return (
         <OverlayContent
