@@ -4,7 +4,6 @@ import { useHandleOneWay } from "@hooks/useHandleOneWay";
 import { useSendAndWait } from "@hooks/useSendAndWait";
 import { cloneDeep, isEqual } from "lodash";
 import React, { createContext, useEffect, useState } from "react";
-// import Settings from "../modals/Settings/Settings";
 import { Overlays } from "./overlays";
 
 /**
@@ -13,7 +12,8 @@ import { Overlays } from "./overlays";
 export const SettingsContext = createContext<{
     settings: Settings | undefined;
     setNewSettings: (newSettings: Settings) => void;
-}>({ settings: undefined, setNewSettings() {} });
+    resetToDefaultSettings: () => void;
+}>({ settings: undefined, setNewSettings() {}, resetToDefaultSettings() {} });
 
 export const InternetConnectionContext = createContext<boolean>(true);
 
@@ -57,8 +57,27 @@ export function SettingsContextProvider({ children }: Props) {
         }
     }
 
+    /**
+     * Reset the settings to the default values.
+     */
+    function resetToDefaultSettings() {
+        const copy = cloneDeep(settings!);
+
+        for (const [key] of Object.entries(copy)) {
+            for (const [setting, settingValues] of Object.entries(copy[key])) {
+                settingValues.value = settingValues.defaultValue;
+            }
+        }
+
+        window.api.sendOneWay(window.api.channels.saveNewSettings, copy);
+        setSettings(copy);
+        setOldSettings(copy);
+    }
+
     return (
-        <SettingsContext.Provider value={{ settings, setNewSettings }}>
+        <SettingsContext.Provider
+            value={{ settings, setNewSettings, resetToDefaultSettings }}
+        >
             {children}
         </SettingsContext.Provider>
     );
@@ -103,11 +122,7 @@ export function ModalContextProvider({ children }: Props) {
      */
     function renderModal() {
         if (currentOverlay === Overlays.Settings) {
-            return (
-                // <Settings handleClosing={() => setCurrentOverlay(undefined)}
-                // />
-                <Settings />
-            );
+            return <Settings onClose={() => setCurrentOverlay(undefined)} />;
         } else {
             return <></>;
         }

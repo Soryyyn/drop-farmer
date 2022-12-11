@@ -15,10 +15,11 @@ export function ActionButton({ icon, tooltip, onClick }: Props) {
             {tooltip ? (
                 <Tooltip tooltipText={tooltip} placement="bottom">
                     <div
-                        className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-3"
+                        className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-2.5"
                         onClick={onClick}
                     >
                         <FontAwesomeIcon
+                            fixedWidth={true}
                             icon={icon}
                             size="1x"
                             className="text-snow-500"
@@ -27,10 +28,11 @@ export function ActionButton({ icon, tooltip, onClick }: Props) {
                 </Tooltip>
             ) : (
                 <div
-                    className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-3"
+                    className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-2.5"
                     onClick={onClick}
                 >
                     <FontAwesomeIcon
+                        fixedWidth={true}
                         icon={icon}
                         size="1x"
                         className="text-snow-500"

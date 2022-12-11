@@ -1,28 +1,40 @@
 import OverlayContent from "@components/global/Overlay/OverlayContent";
-import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
-import PropTypes, { InferProps } from "prop-types";
-import React from "react";
+import {
+    faFloppyDisk,
+    faRotateRight,
+    faXmark
+} from "@fortawesome/free-solid-svg-icons";
+import { SettingsContext } from "@util/contexts";
+import React, { useContext, useState } from "react";
 import { ActionButton } from "./ActionButton";
 
-function Settings({ title }: InferProps<typeof Settings.propTypes>) {
+interface Props {
+    onClose: () => void;
+}
+
+export default function Settings({ onClose }: Props) {
+    const { settings, setNewSettings, resetToDefaultSettings } =
+        useContext(SettingsContext);
+
     return (
         <OverlayContent
             buttons={[
                 <ActionButton
-                    key="test"
+                    key="reset"
                     icon={faRotateRight}
-                    tooltip="noice"
-                    onClick={() => console.log("pressed")}
-                />
+                    tooltip="Reset settings to default"
+                    onClick={resetToDefaultSettings}
+                />,
+                <ActionButton
+                    key="save"
+                    icon={faFloppyDisk}
+                    tooltip="Save settings"
+                    onClick={() => {}}
+                />,
+                <ActionButton key="close" icon={faXmark} onClick={onClose} />
             ]}
         >
             <p>test1</p>
         </OverlayContent>
     );
 }
-
-Settings.propTypes = {
-    title: PropTypes.string
-};
-
-export default Settings;
