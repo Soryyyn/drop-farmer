@@ -17,6 +17,7 @@ export default function Settings({ onClose }: Props) {
     const { settings, setNewSettings, resetToDefaultSettings } =
         useContext(SettingsContext);
     const [selected, setSelected] = useState<string>("application");
+    const [currentSettings, setCurrentSettings] = useState(settings);
 
     return (
         <OverlayContent
@@ -31,26 +32,27 @@ export default function Settings({ onClose }: Props) {
                     key="save"
                     icon={faFloppyDisk}
                     tooltip="Save settings"
-                    onClick={() => {}}
+                    onClick={() => setNewSettings(currentSettings!)}
                 />,
                 <ActionButton key="close" icon={faXmark} onClick={onClose} />
             ]}
         >
             <div className="flex flex-row h-full w-full gap-8">
                 {/* Selectors */}
-                <ul className="min-w-1/4 flex flex-col gap-1 list-none">
+                <ul className="min-w-fit max-w-[25%] flex flex-col gap-2 list-none">
                     {Object.keys(settings!).map((selector) => {
                         return (
                             <Selector
                                 key={selector}
                                 label={selector}
+                                isSelected={selector === selected}
                                 onClick={() => setSelected(selector)}
                             />
                         );
                     })}
                 </ul>
 
-                {/* Setting */}
+                {/* Settings */}
                 <ul className="grow flex flex-col gap-4">
                     {settings![selected].map((setting) => {
                         return <p key={setting.name}>{setting.name}</p>;
