@@ -4,15 +4,15 @@ module.exports = [
         // We're specifying native_modules in the test because the asset relocator loader generates a
         // "fake" .node file which is really a cjs file.
         test: /native_modules\/.+\.node$/,
-        use: "node-loader"
+        use: 'node-loader'
     },
     {
         test: /\.(m?js|node)$/,
         parser: { amd: false },
         use: {
-            loader: "@vercel/webpack-asset-relocator-loader",
+            loader: '@vercel/webpack-asset-relocator-loader',
             options: {
-                outputAssetBase: "native_modules"
+                outputAssetBase: 'native_modules'
             }
         }
     },
@@ -20,7 +20,7 @@ module.exports = [
         test: /\.tsx?$/,
         exclude: /(node_modules|\.webpack)/,
         use: {
-            loader: "ts-loader",
+            loader: 'ts-loader',
             options: {
                 transpileOnly: true
             }
@@ -29,36 +29,36 @@ module.exports = [
     {
         test: /\.module.s[ac]ss$/i,
         use: [
-            "style-loader",
+            'style-loader',
             {
-                loader: "css-loader",
+                loader: 'css-loader',
                 options: {
                     modules: true,
                     sourceMap: true,
                     importLoaders: 1
                 }
             },
-            "sass-loader"
+            'sass-loader'
         ]
     },
     {
         test: /\.s[ac]ss$/i,
         exclude: /\.module.(s[ac]ss)$/,
-        use: ["style-loader", "css-loader", "sass-loader"]
+        use: ['style-loader', 'css-loader', 'sass-loader']
     },
     {
         test: /\.css$/i,
         use: [
-            "style-loader",
-            "css-loader",
-            "sass-loader",
+            'style-loader',
+            'css-loader',
+            'sass-loader',
             {
-                loader: "postcss-loader",
+                loader: 'postcss-loader',
                 options: {
                     postcssOptions: {
                         plugins: [
-                            require("tailwindcss"),
-                            require("autoprefixer")
+                            require('tailwindcss'),
+                            require('autoprefixer')
                         ]
                     }
                 }

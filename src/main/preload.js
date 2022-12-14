@@ -1,5 +1,5 @@
-const { contextBridge, ipcRenderer } = require("electron");
-import { Channels } from "./common/channels";
+const { contextBridge, ipcRenderer } = require('electron');
+import { Channels } from './common/channels';
 
 /**
  * Expose functionality from main to renderer process.
@@ -7,7 +7,7 @@ import { Channels } from "./common/channels";
  * Use the the context bridge via "window.api" and then the exposed methods / objects.
  * Ex. window.api.callMain()
  */
-contextBridge.exposeInMainWorld("api", {
+contextBridge.exposeInMainWorld('api', {
     /**
      * The channels for ipc communication.
      */

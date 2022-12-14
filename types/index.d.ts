@@ -1,10 +1,10 @@
 type FarmStatus =
-    | "farming"
-    | "idle"
-    | "checking"
-    | "disabled"
-    | "attention-required";
-type FarmType = "default" | "custom";
+    | 'farming'
+    | 'idle'
+    | 'checking'
+    | 'disabled'
+    | 'attention-required';
+type FarmType = 'default' | 'custom';
 
 type FarmingWindowObject = {
     window: Electron.BrowserWindow;
@@ -28,7 +28,7 @@ type PromiseToast = {
 
 type ForcedTypeToast = {
     id: string;
-    type: "success" | "error";
+    type: 'success' | 'error';
     text: string;
     duration: number;
 };
@@ -37,11 +37,11 @@ type ToastFromMain = {
     id: string;
     text: string;
     duration: number;
-    type?: "success" | "error";
+    type?: 'success' | 'error';
 };
 
 type DropdownItem = {
-    type: "label" | "seperator";
+    type: 'label' | 'seperator';
     label?: string;
     disabled?: boolean;
     action?: () => void;

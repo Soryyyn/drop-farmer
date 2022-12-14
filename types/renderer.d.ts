@@ -1,4 +1,4 @@
-import { Channels } from "src/main/common/channels";
+import { Channels } from 'src/main/common/channels';
 
 /**
  * Declare the types for the renderer process to understand the preload file.
@@ -13,7 +13,7 @@ export interface API {
     ) => void;
     removeAllListeners: (channel: string) => void;
     log: (
-        type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
+        type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
         message: any
     ) => void;
 }

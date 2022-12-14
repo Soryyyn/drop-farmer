@@ -1,10 +1,10 @@
-const rules = require("./webpack.rules");
-const plugins = require("./webpack.plugins");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const path = require("path");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-require("dotenv").config();
+const rules = require('./webpack.rules');
+const plugins = require('./webpack.plugins');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const path = require('path');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+require('dotenv').config();
 
 module.exports = {
     module: {
@@ -28,14 +28,14 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    from: path.resolve(__dirname, "src", "renderer", "assets"),
-                    to: path.resolve(__dirname, ".webpack/renderer", "assets")
+                    from: path.resolve(__dirname, 'src', 'renderer', 'assets'),
+                    to: path.resolve(__dirname, '.webpack/renderer', 'assets')
                 }
             ]
         })
     ],
     resolve: {
         plugins: [new TsconfigPathsPlugin()],
-        extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".scss"]
+        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss']
     }
 };
