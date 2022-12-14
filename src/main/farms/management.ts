@@ -1,11 +1,11 @@
-import set from "lodash.set";
-import { getConfigKey, updateKeyValue } from "../config";
-import { log } from "../util/logger";
-import { loadCachedIntoSettings, updateSettings } from "../util/settings";
-import LeagueOfLegends from "./leagueOfLegends";
-import OverwatchContenders from "./overwatchContenders";
-import OverwatchLeague from "./overwatchLeague";
-import FarmTemplate from "./template";
+import set from 'lodash.set';
+import { getConfigKey, updateKeyValue } from '../config';
+import { log } from '../util/logger';
+import { loadCachedIntoSettings, updateSettings } from '../util/settings';
+import LeagueOfLegends from './leagueOfLegends';
+import OverwatchContenders from './overwatchContenders';
+import OverwatchLeague from './overwatchLeague';
+import FarmTemplate from './template';
 
 /**
  * All default farms which are added by default.
@@ -35,7 +35,7 @@ export function initFarms(): void {
     loadSettingsIntoFarms();
     startFarms();
 
-    log("MAIN", "DEBUG", "Initialized farms");
+    log('MAIN', 'DEBUG', 'Initialized farms');
 }
 
 /**
@@ -43,14 +43,14 @@ export function initFarms(): void {
  */
 function addDefaultFarms(): void {
     currentFarms.push(...DEFAULT_FARMS);
-    log("MAIN", "DEBUG", "Added default farms");
+    log('MAIN', 'DEBUG', 'Added default farms');
 }
 
 /**
  * Add the custom farms found from the config file.
  */
 function addCustomFarms(): void {
-    const cachedFarms: CachedFarms = getConfigKey("farms");
+    const cachedFarms: CachedFarms = getConfigKey('farms');
 
     /**
      * Find the none default farms in the farms object.
@@ -68,7 +68,7 @@ function addCustomFarms(): void {
         // }
     }
 
-    log("MAIN", "DEBUG", "Added custom farms");
+    log('MAIN', 'DEBUG', 'Added custom farms');
 }
 
 /**
@@ -86,7 +86,7 @@ function cacheAvailableFarms(): void {
     /**
      * Also manually update the cached farms.
      */
-    updateKeyValue("farms", convertFarmsIntoCached());
+    updateKeyValue('farms', convertFarmsIntoCached());
 }
 
 /**
@@ -97,7 +97,7 @@ export function startFarms(): void {
     currentFarms.forEach((farm) => {
         farm.start();
     });
-    log("MAIN", "DEBUG", "Started enabled farms");
+    log('MAIN', 'DEBUG', 'Started enabled farms');
 }
 
 /**
@@ -147,17 +147,17 @@ export function convertFarmsIntoCached(): CachedFarms {
 function createSpecificFarmSettings(farm: FarmTemplate): Setting[] {
     return [
         {
-            name: "enabled",
-            shownName: "Farm enabled",
-            description: "Enable or disable this farm.",
+            name: 'enabled',
+            shownName: 'Farm enabled',
+            description: 'Enable or disable this farm.',
             value: farm.isEnabled(),
             defaultValue: false
         },
         {
-            name: "checkingSchedule",
-            shownName: "Checking schedule",
+            name: 'checkingSchedule',
+            shownName: 'Checking schedule',
             description:
-                "The schedule (in minutes) on which drop-farmer will check if farming is possible.",
+                'The schedule (in minutes) on which drop-farmer will check if farming is possible.',
             value: farm.getCheckingSchedule(),
             defaultValue: 30,
             max: 60,
@@ -197,7 +197,7 @@ export function loadSettingsIntoFarms(): void {
         farm.initializeData();
     });
 
-    log("MAIN", "DEBUG", "Loaded cached data into farmss");
+    log('MAIN', 'DEBUG', 'Loaded cached data into farmss');
 }
 
 /**
@@ -222,7 +222,7 @@ export function destroyAllFarmWindows(): void {
         farm.destroyCheckerWindow();
     });
 
-    log("MAIN", "DEBUG", "Destroyed all farm windows");
+    log('MAIN', 'DEBUG', 'Destroyed all farm windows');
 }
 
 /**
@@ -232,5 +232,5 @@ export function stopFarmJobs(): void {
     currentFarms.forEach((farm) => {
         farm.stopAllTasks();
     });
-    log("MAIN", "DEBUG", "Stopped all farm jobs");
+    log('MAIN', 'DEBUG', 'Stopped all farm jobs');
 }

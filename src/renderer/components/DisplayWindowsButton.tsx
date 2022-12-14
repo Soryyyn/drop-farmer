@@ -1,7 +1,7 @@
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
-import styles from "../styles/DisplayWindowsButton.module.scss";
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import styles from '../styles/DisplayWindowsButton.module.scss';
 
 interface Props {
     showing: boolean;

@@ -1,43 +1,43 @@
-import get from "lodash.get";
-import isEqual from "lodash.isequal";
-import set from "lodash.set";
-import { getConfigKey, launchOnStartup } from "../config";
-import { getFarmByName, getFarms } from "../farms/management";
-import { log } from "./logger";
+import get from 'lodash.get';
+import isEqual from 'lodash.isequal';
+import set from 'lodash.set';
+import { getConfigKey, launchOnStartup } from '../config';
+import { getFarmByName, getFarms } from '../farms/management';
+import { log } from './logger';
 
 /**
  * The settings for the application.
  */
 export const applicationSettings: Setting[] = [
     {
-        name: "launchOnStartup",
-        shownName: "Launch on startup",
+        name: 'launchOnStartup',
+        shownName: 'Launch on startup',
         description:
-            "Enable or disable if drop-farmer should be started when your PC has finished booting.",
+            'Enable or disable if drop-farmer should be started when your PC has finished booting.',
         value: undefined,
         defaultValue: false
     },
     {
-        name: "showMainWindowOnLaunch",
-        shownName: "Show main window on launch",
+        name: 'showMainWindowOnLaunch',
+        shownName: 'Show main window on launch',
         description:
-            "If the main window should be shown when drop-farmer starts.",
+            'If the main window should be shown when drop-farmer starts.',
         value: undefined,
         defaultValue: true
     },
     {
-        name: "disable3DModelAnimation",
-        shownName: "Disable 3D model animation",
+        name: 'disable3DModelAnimation',
+        shownName: 'Disable 3D model animation',
         description:
-            "Disable the 3D models animation on various page. Will be visible on restart.",
+            'Disable the 3D models animation on various page. Will be visible on restart.',
         value: undefined,
         defaultValue: false
     },
     {
-        name: "debugLogs",
-        shownName: "Enable debug logs",
+        name: 'debugLogs',
+        shownName: 'Enable debug logs',
         description:
-            "Enable the debug logs. Use for debugging or reporting errors.",
+            'Enable the debug logs. Use for debugging or reporting errors.',
         value: undefined,
         defaultValue: false
     }
@@ -88,14 +88,14 @@ export function updateSettings(
              */
             launchOnStartup(
                 Boolean(
-                    getSpecificSetting("application", "launchOnStartup").value
+                    getSpecificSetting('application', 'launchOnStartup').value
                 )
             );
 
             /**
              * Preemptively apply the new settings to the farms.
              */
-            if (key != "application") getFarmByName(key).applyNewSettings();
+            if (key != 'application') getFarmByName(key).applyNewSettings();
         }
     }
 }
@@ -104,7 +104,7 @@ export function updateSettings(
  * Convert a cached setting to the setting usable by the app.
  */
 export function loadCachedIntoSettings(): void {
-    const cachedSettings: CachedSettings = getConfigKey("settings");
+    const cachedSettings: CachedSettings = getConfigKey('settings');
 
     /**
      * Go through each setting and find the cached one.
@@ -128,7 +128,7 @@ export function loadCachedIntoSettings(): void {
         }
     }
 
-    log("MAIN", "DEBUG", "Loaded cached settings into runtime settings");
+    log('MAIN', 'DEBUG', 'Loaded cached settings into runtime settings');
 }
 
 /**

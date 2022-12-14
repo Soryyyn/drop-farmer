@@ -1,10 +1,10 @@
-import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useOutsideAlterter } from "@hooks/useOutsideAlerter";
-import clsx from "clsx";
-import React, { useCallback, useRef, useState } from "react";
-import { animated, easings, useTransition } from "react-spring";
-import styles from "../styles/ButtonDropdown.module.scss";
+import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useOutsideAlterter } from '@hooks/useOutsideAlerter';
+import clsx from 'clsx';
+import React, { useCallback, useRef, useState } from 'react';
+import { animated, easings, useTransition } from 'react-spring';
+import styles from '../styles/ButtonDropdown.module.scss';
 
 interface Props {
     icon: IconDefinition;
@@ -33,7 +33,7 @@ export default function ButtonDropdown({
     const dropdownYOffset = useCallback(() => {
         let temp = 0;
         dropdownItems.forEach((item) => {
-            if (item.type === "label") temp += 12;
+            if (item.type === 'label') temp += 12;
             else temp += 4;
         });
         return -temp;
@@ -43,12 +43,12 @@ export default function ButtonDropdown({
      * The to render dropdown items.
      */
     const dropdownItemsList = dropdownItems.map((item, index) => {
-        return item.type === "label" ? (
+        return item.type === 'label' ? (
             <li
                 key={index}
                 className={clsx(
                     styles.dropdownItemLabel,
-                    item.disabled ? styles.dropdownItemDisabled : ""
+                    item.disabled ? styles.dropdownItemDisabled : ''
                 )}
                 onClick={() => {
                     if (!item.disabled) item.action!();

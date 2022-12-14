@@ -1,17 +1,17 @@
-import * as color from "ansi-colors";
-import dayjs from "dayjs";
-import { app } from "electron";
-import { existsSync } from "fs";
-import { join } from "path";
+import * as color from 'ansi-colors';
+import dayjs from 'dayjs';
+import { app } from 'electron';
+import { existsSync } from 'fs';
+import { join } from 'path';
 import {
     APP_PATH,
     createFile,
     deleteFile,
     writeToFile
-} from "../files/handling";
+} from '../files/handling';
 
-const FILE_NAME: string = ".log";
-const CRASHLOG_FILE_NAME = "crash.log";
+const FILE_NAME: string = '.log';
+const CRASHLOG_FILE_NAME = 'crash.log';
 const recentLogs: string[] = [];
 let debugLogsEnabled: boolean = false;
 
@@ -32,10 +32,10 @@ function createLogFile(): void {
     try {
         createFile(
             FILE_NAME,
-            createLogEntry("MAIN", "INFO", "Created logfile")
+            createLogEntry('MAIN', 'INFO', 'Created logfile')
         );
     } catch (err) {
-        log("MAIN", "FATAL", `Failed creating logfile. ${err}`);
+        log('MAIN', 'FATAL', `Failed creating logfile. ${err}`);
     }
 }
 
@@ -49,11 +49,11 @@ function createLogFile(): void {
  * @returns {string} Prepared log entry.
  */
 function createLogEntry(
-    origin: "MAIN" | "RENDERER",
-    type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
+    origin: 'MAIN' | 'RENDERER',
+    type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
     message: string
 ): string {
-    const currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
+    const currentTimeStamp = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS');
     return `[${type}] (${origin}) ${currentTimeStamp} - ${message}\n`;
 }
 
@@ -66,21 +66,21 @@ function createLogEntry(
  * @returns {string} Prepared log entry.
  */
 function createTerminalLogEntry(
-    origin: "MAIN" | "RENDERER",
-    type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
+    origin: 'MAIN' | 'RENDERER',
+    type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
     message: string
 ): string {
-    const currentTimeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss.SSS");
+    const currentTimeStamp = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS');
 
     /**
      * Decide type text color.
      */
     let typeText: string;
-    if (type === "FATAL" || type === "ERROR") {
+    if (type === 'FATAL' || type === 'ERROR') {
         typeText = color.bold.red(`[${type}]`);
-    } else if (type === "WARN") {
+    } else if (type === 'WARN') {
         typeText = color.bold.yellow(`[${type}]`);
-    } else if (type === "DEBUG") {
+    } else if (type === 'DEBUG') {
         typeText = color.bold.cyan(`[${type}]`);
     } else {
         typeText = color.bold.blue(`[${type}]`);
@@ -90,7 +90,7 @@ function createTerminalLogEntry(
      * Process color.
      */
     let originText: string;
-    if (origin === "MAIN") originText = color.bold.green(`(${origin})`);
+    if (origin === 'MAIN') originText = color.bold.green(`(${origin})`);
     else originText = color.bold.magenta(`(${origin})`);
 
     /**
@@ -117,8 +117,8 @@ function createTerminalLogEntry(
  * @param {string} message Message to log.
  */
 export function log(
-    origin: "MAIN" | "RENDERER",
-    type: "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG",
+    origin: 'MAIN' | 'RENDERER',
+    type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
     message: any
 ): void {
     const entry: string = createLogEntry(origin, type, message);
@@ -132,14 +132,14 @@ export function log(
     /**
      * If in production environment disable debug-type loggings.
      */
-    if (!debugLogsEnabled && type === "DEBUG") return;
+    if (!debugLogsEnabled && type === 'DEBUG') return;
 
     try {
         /**
          * Only log to the file if it exists.
          */
         if (existsSync(join(APP_PATH, FILE_NAME)))
-            writeToFile(FILE_NAME, `${entry}`, "a");
+            writeToFile(FILE_NAME, `${entry}`, 'a');
 
         console.log(terminalEntry);
 
@@ -147,7 +147,7 @@ export function log(
          * After logging, check if the type is "FATAL".
          * If it is, then soft quit the application.
          */
-        if (type === "FATAL") {
+        if (type === 'FATAL') {
             createCrashLog();
             app.quit();
         }
@@ -166,7 +166,7 @@ function createCrashLog(): void {
     if (existsSync(join(APP_PATH, CRASHLOG_FILE_NAME)))
         deleteFile(CRASHLOG_FILE_NAME);
 
-    createFile(CRASHLOG_FILE_NAME, "".concat(...recentLogs));
+    createFile(CRASHLOG_FILE_NAME, ''.concat(...recentLogs));
 }
 
 /**

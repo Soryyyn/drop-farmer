@@ -1,14 +1,14 @@
-import Dragbar from "@components/global/Dragbar";
-import ToastNotifications from "@components/global/ToastNotifications";
-import Home from "@components/Home";
+import Dragbar from '@components/global/Dragbar';
+import ToastNotifications from '@components/global/ToastNotifications';
+import Home from '@components/Home';
 import {
     InternetConnectionContextProvider,
     ModalContextProvider,
     SettingsContextProvider
-} from "@util/contexts";
-import React from "react";
-import { HashRouter, Route, Routes } from "react-router-dom";
-import "./global.css";
+} from '@util/contexts';
+import React from 'react';
+import { HashRouter, Route, Routes } from 'react-router-dom';
+import './global.css';
 
 export default function App() {
     return (

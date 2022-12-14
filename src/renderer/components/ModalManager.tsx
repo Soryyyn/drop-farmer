@@ -1,10 +1,10 @@
-import React, { useCallback, useState } from "react";
-import { animated, easings, useTransition } from "react-spring";
-import Settings from "../modals/Settings/Settings";
-import styles from "../styles/ModalManager.module.scss";
+import React, { useCallback, useState } from 'react';
+import { animated, easings, useTransition } from 'react-spring';
+import Settings from '../modals/Settings/Settings';
+import styles from '../styles/ModalManager.module.scss';
 
 interface Props {
-    modalToShow: "settings" | "add-new-farm";
+    modalToShow: 'settings' | 'add-new-farm';
     showing: boolean;
     handleClosing: () => void;
 }
@@ -19,9 +19,9 @@ export default function ModalManager({
      * `modalToShow` prop.
      */
     const modal = useCallback(() => {
-        if (modalToShow === "settings") {
+        if (modalToShow === 'settings') {
             return <Settings handleClosing={handleClosing} />;
-        } else if (modalToShow === "add-new-farm") {
+        } else if (modalToShow === 'add-new-farm') {
             return <p>add new farm</p>;
         }
     }, []);
@@ -32,18 +32,18 @@ export default function ModalManager({
     const mountTransition = useTransition(showing, {
         from: {
             opacity: 0,
-            width: "90%",
-            height: "90%"
+            width: '90%',
+            height: '90%'
         },
         enter: {
             opacity: 1,
-            width: "100%",
-            height: "100%"
+            width: '100%',
+            height: '100%'
         },
         leave: {
             opacity: 0,
-            width: "90%",
-            height: "90%"
+            width: '90%',
+            height: '90%'
         },
         config: {
             duration: 100,

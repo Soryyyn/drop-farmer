@@ -1,12 +1,12 @@
-import { ElementHandle } from "puppeteer-core";
-import { getPage } from "puppeteer-in-electron";
-import { log } from "../util/logger";
-import { getBrowserConnection } from "../util/puppeteer";
-import FarmTemplate from "./template";
+import { ElementHandle } from 'puppeteer-core';
+import { getPage } from 'puppeteer-in-electron';
+import { log } from '../util/logger';
+import { getBrowserConnection } from '../util/puppeteer';
+import FarmTemplate from './template';
 
 export default class LeagueOfLegends extends FarmTemplate {
     constructor() {
-        super("league-of-legends", "https://lolesports.com/", "default", false);
+        super('league-of-legends', 'https://lolesports.com/', 'default', false);
     }
 
     /**
@@ -23,19 +23,19 @@ export default class LeagueOfLegends extends FarmTemplate {
                  * Move to schedule route.
                  */
                 await page.goto(
-                    "https://lolesports.com/schedule?leagues=lec,european-masters,primeleague,cblol-brazil,lck,lcl,lco,lcs,ljl-japan,lla,lpl,pcs,turkiye-sampiyonluk-ligi,worlds,all-star,cblol_academy,college_championship,esports_balkan_league,elite_series,greek_legends,hitpoint_masters,lck_academy,lck_challengers_league,lcs-academy,proving_grounds,lfl,liga_portuguesa,nlc,pg_nationals,superliga,ultraliga,lcs_amateur,msi"
+                    'https://lolesports.com/schedule?leagues=lec,european-masters,primeleague,cblol-brazil,lck,lcl,lco,lcs,ljl-japan,lla,lpl,pcs,turkiye-sampiyonluk-ligi,worlds,all-star,cblol_academy,college_championship,esports_balkan_league,elite_series,greek_legends,hitpoint_masters,lck_academy,lck_challengers_league,lcs-academy,proving_grounds,lfl,liga_portuguesa,nlc,pg_nationals,superliga,ultraliga,lcs_amateur,msi'
                 );
 
                 /**
                  * Wait until the events are found.
                  */
-                await page.waitForSelector("div.events", { timeout: 0 });
+                await page.waitForSelector('div.events', { timeout: 0 });
 
                 /**
                  * Get all elements from the schedule.
                  */
                 const matchElements: ElementHandle<any>[] = await page.$$(
-                    "a.live.event"
+                    'a.live.event'
                 );
 
                 /**
@@ -50,18 +50,18 @@ export default class LeagueOfLegends extends FarmTemplate {
                     for (const element of matchElements)
                         hrefs.push(
                             await (
-                                await element.getProperty("href")
+                                await element.getProperty('href')
                             ).jsonValue()
                         );
 
                     log(
-                        "MAIN",
-                        "DEBUG",
+                        'MAIN',
+                        'DEBUG',
                         `${this.getName()}: Got ${hrefs.length} matches`
                     );
                     resolve(hrefs);
                 } else {
-                    log("MAIN", "DEBUG", `${this.getName()}: No matches found`);
+                    log('MAIN', 'DEBUG', `${this.getName()}: No matches found`);
                     resolve([]);
                 }
             } catch (err) {
@@ -83,15 +83,15 @@ export default class LeagueOfLegends extends FarmTemplate {
                  */
                 if (this.getFarmingWindows().length === 0) {
                     log(
-                        "MAIN",
-                        "DEBUG",
+                        'MAIN',
+                        'DEBUG',
                         `${this.getName()}: No farming windows, skipping checking step`
                     );
                     resolve(undefined);
                 } else {
                     log(
-                        "MAIN",
-                        "DEBUG",
+                        'MAIN',
+                        'DEBUG',
                         `${this.getName()}: Checking if farming windows can be closed`
                     );
 
@@ -129,14 +129,14 @@ export default class LeagueOfLegends extends FarmTemplate {
 
                     if (destroyedWindowsAmount > 0)
                         log(
-                            "MAIN",
-                            "DEBUG",
+                            'MAIN',
+                            'DEBUG',
                             `${this.getName()}: No farming windows destroyed`
                         );
                     else
                         log(
-                            "MAIN",
-                            "DEBUG",
+                            'MAIN',
+                            'DEBUG',
                             `${this.getName()}: Destroyed ${destroyedWindowsAmount} farming windows`
                         );
 
@@ -161,12 +161,12 @@ export default class LeagueOfLegends extends FarmTemplate {
                 /**
                  * Check if already logged in.
                  */
-                if ((await page.$("div.riotbar-summoner-name")) === null) {
+                if ((await page.$('div.riotbar-summoner-name')) === null) {
                     /**
                      * Click the "login" button on the top right.
                      */
                     await page.click(
-                        "#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a"
+                        '#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a'
                     );
 
                     /**
@@ -179,9 +179,9 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * logged in *or* redirected to the login page.
                      */
                     const finishedSelector = await Promise.race([
-                        page.waitForSelector("div.riotbar-summoner-name"),
+                        page.waitForSelector('div.riotbar-summoner-name'),
                         page.waitForSelector(
-                            "body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input"
+                            'body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input'
                         )
                     ]);
 
@@ -193,17 +193,17 @@ export default class LeagueOfLegends extends FarmTemplate {
                         finishedSelector
                     );
 
-                    if (element === "DIV") {
+                    if (element === 'DIV') {
                         log(
-                            "MAIN",
-                            "DEBUG",
+                            'MAIN',
+                            'DEBUG',
                             `${this.getName()}: Login completed`
                         );
                         resolve(undefined);
-                    } else if (element === "INPUT") {
+                    } else if (element === 'INPUT') {
                         log(
-                            "MAIN",
-                            "DEBUG",
+                            'MAIN',
+                            'DEBUG',
                             `${this.getName()}: Login is needed by user`
                         );
 
@@ -216,12 +216,12 @@ export default class LeagueOfLegends extends FarmTemplate {
                         /**
                          * Back at main page.
                          */
-                        page.waitForSelector("div.riotbar-summoner-name", {
+                        page.waitForSelector('div.riotbar-summoner-name', {
                             timeout: 0
                         }).then(() => {
                             log(
-                                "MAIN",
-                                "DEBUG",
+                                'MAIN',
+                                'DEBUG',
                                 `${this.getName()}: Login completed`
                             );
                             window.hide();
@@ -230,8 +230,8 @@ export default class LeagueOfLegends extends FarmTemplate {
                     }
                 } else {
                     log(
-                        "MAIN",
-                        "DEBUG",
+                        'MAIN',
+                        'DEBUG',
                         `${this.getName()}: User already logged in, continuing`
                     );
                     resolve(undefined);
@@ -314,16 +314,16 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * Change status to farming.
                      */
                     log(
-                        "MAIN",
-                        "DEBUG",
+                        'MAIN',
+                        'DEBUG',
                         `${this.getName()}: Farming with "${
                             this.getFarmingWindows().length
                         }" windows`
                     );
 
-                    this.timerAction("start");
+                    this.timerAction('start');
 
-                    this.updateStatus("farming");
+                    this.updateStatus('farming');
                     resolve(undefined);
                 } else {
                     /**
@@ -331,11 +331,11 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * Set app farm status back to idle.
                      */
                     log(
-                        "MAIN",
-                        "DEBUG",
+                        'MAIN',
+                        'DEBUG',
                         `${this.getName()}: No live matches available, returning status back to idle`
                     );
-                    this.updateStatus("idle");
+                    this.updateStatus('idle');
 
                     resolve(undefined);
                 }

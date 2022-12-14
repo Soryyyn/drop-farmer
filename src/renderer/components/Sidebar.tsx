@@ -1,8 +1,8 @@
-import { useHandleOneWay } from "@hooks/useHandleOneWay";
-import { useSendAndWait } from "@hooks/useSendAndWait";
-import React, { useState } from "react";
-import styles from "../styles/Sidebar.module.scss";
-import FarmItem from "./FarmItem";
+import { useHandleOneWay } from '@hooks/useHandleOneWay';
+import { useSendAndWait } from '@hooks/useSendAndWait';
+import React, { useState } from 'react';
+import styles from '../styles/Sidebar.module.scss';
+import FarmItem from './FarmItem';
 
 /**
  * The sidebar component which displays all farms and their status.
@@ -15,7 +15,7 @@ export default function Sidebar() {
 
     useSendAndWait(window.api.channels.getFarms, null, (err, response) => {
         if (err) {
-            window.api.log("ERROR", err);
+            window.api.log('ERROR', err);
         } else {
             setFarms(response);
         }
@@ -54,7 +54,7 @@ export default function Sidebar() {
              * Set the state after going through each farm.
              */
             setFarms(tempCopy);
-            window.api.log("DEBUG", "Set new farms status");
+            window.api.log('DEBUG', 'Set new farms status');
         }
     );
 

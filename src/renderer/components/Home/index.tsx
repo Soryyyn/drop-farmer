@@ -1,24 +1,24 @@
-import Menu from "@components/global/Menu";
-import { Alignment } from "@components/global/Menu/types";
-import Modal from "@components/global/Overlay";
-import Tooltip from "@components/global/Tooltip";
-import Settings from "@components/Settings";
+import Menu from '@components/global/Menu';
+import { Alignment } from '@components/global/Menu/types';
+import Modal from '@components/global/Overlay';
+import Tooltip from '@components/global/Tooltip';
+import Settings from '@components/Settings';
 import {
     faBars,
     faColonSign,
     faEllipsis,
     faGear,
     faGlobe
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ModalContext } from "@util/contexts";
-import { Overlays } from "@util/overlays";
-import React, { useContext, useEffect, useState } from "react";
-import ButtonDropdown from "../ButtonDropdown";
-import ButtonNolabel from "../ButtonNoLabel";
-import ModalManager from "../ModalManager";
-import ModelAnimation from "../ModelAnimation";
-import Sidebar from "../Sidebar";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ModalContext } from '@util/contexts';
+import { Overlays } from '@util/overlays';
+import React, { useContext, useEffect, useState } from 'react';
+import ButtonDropdown from '../ButtonDropdown';
+import ButtonNolabel from '../ButtonNoLabel';
+import ModalManager from '../ModalManager';
+import ModelAnimation from '../ModelAnimation';
+import Sidebar from '../Sidebar';
 // import styles from "./index.module.scss";
 
 /**
@@ -28,14 +28,14 @@ export default function Home() {
     const [animationsDisabled, setAnimationsDisabled] =
         useState<boolean>(false);
     const [applicationVersion, setApplicationVersion] =
-        useState<string>("0.0.0");
+        useState<string>('0.0.0');
     const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
     const [showingModal, setShowingModal] = useState<boolean>(false);
     const [modalData, setModalData] = useState<{
-        modalToShow: "settings" | "add-new-farm";
+        modalToShow: 'settings' | 'add-new-farm';
     }>({
-        modalToShow: "settings"
+        modalToShow: 'settings'
     });
 
     const { currentOverlay, setCurrentOverlay } = useContext(ModalContext);
@@ -44,7 +44,7 @@ export default function Home() {
      * On site load, get internet connection
      */
     useEffect(() => {
-        window.api.log("DEBUG", "Rendering home page");
+        window.api.log('DEBUG', 'Rendering home page');
 
         /**
          * Update available listener
@@ -63,7 +63,7 @@ export default function Home() {
             })
             .catch((err) => {
                 window.api.log(
-                    "ERROR",
+                    'ERROR',
                     `Error when setting animations status. ${err}`
                 );
             });
@@ -78,7 +78,7 @@ export default function Home() {
             })
             .catch((err) => {
                 window.api.log(
-                    "ERROR",
+                    'ERROR',
                     `Error when setting application version. ${err}`
                 );
             });
@@ -148,11 +148,11 @@ export default function Home() {
                                 primary={true}
                                 dropdownItems={[
                                     {
-                                        type: "label",
-                                        label: "Check for update",
+                                        type: 'label',
+                                        label: 'Check for update',
                                         disabled:
                                             process.env.NODE_ENV !==
-                                            "production",
+                                            'production',
                                         action() {
                                             window.api.sendOneWay(
                                                 window.api.channels.updateCheck
@@ -160,24 +160,24 @@ export default function Home() {
                                         }
                                     },
                                     {
-                                        type: "seperator"
+                                        type: 'seperator'
                                     },
                                     {
-                                        type: "label",
-                                        label: "About",
+                                        type: 'label',
+                                        label: 'About',
                                         disabled: true
                                     },
                                     {
-                                        type: "label",
-                                        label: "Statistics",
+                                        type: 'label',
+                                        label: 'Statistics',
                                         disabled: true
                                     },
                                     {
-                                        type: "seperator"
+                                        type: 'seperator'
                                     },
                                     {
-                                        type: "label",
-                                        label: "Restart application",
+                                        type: 'label',
+                                        label: 'Restart application',
                                         disabled: false,
                                         action() {
                                             window.api.sendOneWay(
@@ -186,8 +186,8 @@ export default function Home() {
                                         }
                                     },
                                     {
-                                        type: "label",
-                                        label: "Quit application",
+                                        type: 'label',
+                                        label: 'Quit application',
                                         disabled: false,
                                         action() {
                                             window.api.sendOneWay(
@@ -204,7 +204,7 @@ export default function Home() {
                                 onClickAction={() => {
                                     window.api.sendOneWay(
                                         window.api.channels.openLinkInExternal,
-                                        "https://drop-farmer.soryn.dev"
+                                        'https://drop-farmer.soryn.dev'
                                     );
                                 }}
                             />
@@ -215,7 +215,7 @@ export default function Home() {
                                 onClickAction={() => {
                                     setShowingModal(true);
                                     setModalData({
-                                        modalToShow: "settings"
+                                        modalToShow: 'settings'
                                     });
                                 }}
                             />

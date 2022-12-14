@@ -1,10 +1,10 @@
-import Overlay from "@components/global/Overlay";
-import Settings from "@components/Settings";
-import { useHandleOneWay } from "@hooks/useHandleOneWay";
-import { useSendAndWait } from "@hooks/useSendAndWait";
-import { cloneDeep, isEqual } from "lodash";
-import React, { createContext, useEffect, useState } from "react";
-import { Overlays } from "./overlays";
+import Overlay from '@components/global/Overlay';
+import Settings from '@components/Settings';
+import { useHandleOneWay } from '@hooks/useHandleOneWay';
+import { useSendAndWait } from '@hooks/useSendAndWait';
+import { cloneDeep, isEqual } from 'lodash';
+import React, { createContext, useEffect, useState } from 'react';
+import { Overlays } from './overlays';
 
 /**
  * Contexts
@@ -35,7 +35,7 @@ export function SettingsContextProvider({ children }: Props) {
 
     useSendAndWait(window.api.channels.getSettings, null, (err, settings) => {
         if (err) {
-            window.api.log("ERROR", err);
+            window.api.log('ERROR', err);
         } else {
             setSettings(settings);
             setOldSettings(settings);

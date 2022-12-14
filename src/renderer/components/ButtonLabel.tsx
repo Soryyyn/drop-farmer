@@ -1,8 +1,8 @@
-import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import clsx from "clsx";
-import React from "react";
-import styles from "../styles/ButtonLabel.module.scss";
+import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import clsx from 'clsx';
+import React from 'react';
+import styles from '../styles/ButtonLabel.module.scss';
 
 interface Props {
     icon: IconDefinition;

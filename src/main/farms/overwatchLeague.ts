@@ -1,20 +1,20 @@
-import { getPage } from "puppeteer-in-electron";
-import { log } from "../util/logger";
+import { getPage } from 'puppeteer-in-electron';
+import { log } from '../util/logger';
 import {
     doesElementExist,
     getBrowserConnection,
     pageUrlContains,
     waitForElementToAppear,
     waitForTimeout
-} from "../util/puppeteer";
-import FarmTemplate from "./template";
+} from '../util/puppeteer';
+import FarmTemplate from './template';
 
 export default class OverwatchLeague extends FarmTemplate {
     constructor() {
         super(
-            "overwatch-league",
-            "https://www.youtube.com/c/overwatchleague",
-            "default",
+            'overwatch-league',
+            'https://www.youtube.com/c/overwatchleague',
+            'default',
             true
         );
     }
@@ -37,12 +37,12 @@ export default class OverwatchLeague extends FarmTemplate {
                 if (
                     await doesElementExist(
                         page,
-                        "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]"
+                        'ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]'
                     )
                 ) {
                     log(
-                        "MAIN",
-                        "DEBUG",
+                        'MAIN',
+                        'DEBUG',
                         `${this.getName()}: Stream still live, continuing farming`
                     );
                     resolve(undefined);
@@ -53,8 +53,8 @@ export default class OverwatchLeague extends FarmTemplate {
                     this.removeFarmingWindowFromArray(0);
 
                     log(
-                        "MAIN",
-                        "DEBUG",
+                        'MAIN',
+                        'DEBUG',
                         `${this.getName()}: Stream not live anymore, stopping farming`
                     );
                     resolve(undefined);
@@ -80,15 +80,15 @@ export default class OverwatchLeague extends FarmTemplate {
                  * Check if user agreement is shown.
                  */
                 const userAgreementSelector =
-                    "#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb";
+                    '#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb';
 
                 if (await doesElementExist(page, userAgreementSelector)) {
                     await page.click(userAgreementSelector);
                     await page.waitForNavigation();
 
                     log(
-                        "MAIN",
-                        "INFO",
+                        'MAIN',
+                        'INFO',
                         `${this.getName()}: Accepted user agreement`
                     );
                 }
@@ -104,19 +104,19 @@ export default class OverwatchLeague extends FarmTemplate {
                  * If after navigation the user ends up at login screen, login
                  * is needed, else login is finished.
                  */
-                const signinRoute = "https://www.youtube.com/signin";
+                const signinRoute = 'https://www.youtube.com/signin';
                 await page.goto(signinRoute);
                 await waitForTimeout(3000);
                 log(
-                    "MAIN",
-                    "DEBUG",
+                    'MAIN',
+                    'DEBUG',
                     `${this.getName()}: Navigation to login route`
                 );
 
-                if (await pageUrlContains(page, "accounts.google.com")) {
+                if (await pageUrlContains(page, 'accounts.google.com')) {
                     log(
-                        "MAIN",
-                        "DEBUG",
+                        'MAIN',
+                        'DEBUG',
                         `${this.getName()}: Login is needed by user`
                     );
 
@@ -127,17 +127,17 @@ export default class OverwatchLeague extends FarmTemplate {
                      * Wait infinitely for signin input element or the yt logo
                      * element to appear.
                      */
-                    const ytLogoSelector = "div.ytd-topbar-logo-renderer";
-                    const googleAccountSelector = "div.T4LgNb";
+                    const ytLogoSelector = 'div.ytd-topbar-logo-renderer';
+                    const googleAccountSelector = 'div.T4LgNb';
                     void (await Promise.race([
                         waitForElementToAppear(page, ytLogoSelector, 0),
                         waitForElementToAppear(page, googleAccountSelector, 0)
                     ]));
 
-                    if (!(await pageUrlContains(page, "accounts.google.com"))) {
+                    if (!(await pageUrlContains(page, 'accounts.google.com'))) {
                         log(
-                            "MAIN",
-                            "DEBUG",
+                            'MAIN',
+                            'DEBUG',
                             `${this.getName()}: Login completed`
                         );
                         resolve(undefined);
@@ -145,14 +145,14 @@ export default class OverwatchLeague extends FarmTemplate {
                         await page.goto(this.getCheckerWebsite());
                         await page.waitForNavigation();
                         log(
-                            "MAIN",
-                            "DEBUG",
+                            'MAIN',
+                            'DEBUG',
                             `${this.getName()}: Login completed`
                         );
                         resolve(undefined);
                     }
                 } else {
-                    log("MAIN", "DEBUG", `${this.getName()}: Login completed`);
+                    log('MAIN', 'DEBUG', `${this.getName()}: Login completed`);
                     resolve(undefined);
                 }
             } catch (err) {
@@ -182,7 +182,7 @@ export default class OverwatchLeague extends FarmTemplate {
                  * Check if any live indicator is shown before 10seconds expire.
                  */
                 const liveIndicatorSelector =
-                    "ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]";
+                    'ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]';
                 await waitForElementToAppear(
                     page,
                     liveIndicatorSelector,
@@ -190,8 +190,8 @@ export default class OverwatchLeague extends FarmTemplate {
                 ).then((appeared) => {
                     if (appeared) {
                         log(
-                            "MAIN",
-                            "DEBUG",
+                            'MAIN',
+                            'DEBUG',
                             `${this.getName()}: Found livestream`
                         );
                         /**
@@ -212,29 +212,29 @@ export default class OverwatchLeague extends FarmTemplate {
                                  * first one.
                                  */
                                 const firstVideoSelector =
-                                    "#contents > ytd-video-renderer";
+                                    '#contents > ytd-video-renderer';
                                 await farmingWindowPage.click(
                                     firstVideoSelector
                                 );
                                 log(
-                                    "MAIN",
-                                    "DEBUG",
+                                    'MAIN',
+                                    'DEBUG',
                                     `${this.getName()}: Farming with "${
                                         this.getFarmingWindows().length
                                     }" windows`
                                 );
-                                this.timerAction("start");
-                                this.updateStatus("farming");
+                                this.timerAction('start');
+                                this.updateStatus('farming');
                                 resolve(undefined);
                             }
                         );
                     } else {
                         log(
-                            "MAIN",
-                            "DEBUG",
+                            'MAIN',
+                            'DEBUG',
                             `${this.getName()}: No livestream found, no need to farm`
                         );
-                        this.updateStatus("idle");
+                        this.updateStatus('idle');
                         resolve(undefined);
                     }
                 });

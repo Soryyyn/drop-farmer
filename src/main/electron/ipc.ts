@@ -1,14 +1,14 @@
-import { app, ipcMain, shell } from "electron";
-import { Channels } from "../common/channels";
-import { getFarmByName, getSidebarItems } from "../farms/management";
-import { log } from "../util/logger";
+import { app, ipcMain, shell } from 'electron';
+import { Channels } from '../common/channels';
+import { getFarmByName, getSidebarItems } from '../farms/management';
+import { log } from '../util/logger';
 import {
     getSettings,
     getSpecificSetting,
     updateSettings
-} from "../util/settings";
-import { sendBasicToast, sendPromiseToast } from "../util/toast";
-import { setAppQuitting } from "./windows";
+} from '../util/settings';
+import { sendBasicToast, sendPromiseToast } from '../util/toast';
+import { setAppQuitting } from './windows';
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -20,7 +20,7 @@ export function handleOneWay(
     channel: Channels,
     listener: (event: Electron.IpcMainEvent, ...args: any[]) => void
 ) {
-    log("MAIN", "DEBUG", `Handling one-way signal on ${channel}`);
+    log('MAIN', 'DEBUG', `Handling one-way signal on ${channel}`);
     ipcMain.on(channel, listener);
 }
 
@@ -34,7 +34,7 @@ export function handleAndReply(
     channel: string,
     listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any
 ) {
-    log("MAIN", "DEBUG", `Handling two-way signal on ${channel}`);
+    log('MAIN', 'DEBUG', `Handling two-way signal on ${channel}`);
     ipcMain.handle(channel, listener);
 }
 
@@ -51,7 +51,7 @@ export function sendOneWay(
     ...args: any[]
 ) {
     if (window.webContents != undefined) {
-        log("MAIN", "DEBUG", `Sending one-way signal on ${channel}`);
+        log('MAIN', 'DEBUG', `Sending one-way signal on ${channel}`);
         window.webContents.send(channel, ...args);
     }
 }
@@ -60,7 +60,7 @@ export function sendOneWay(
  * Ipc events below.
  */
 handleOneWay(Channels.log, (event, { type, message }) => {
-    log("RENDERER", type, message);
+    log('RENDERER', type, message);
 });
 
 handleAndReply(Channels.getFarms, () => {
@@ -85,7 +85,7 @@ handleOneWay(Channels.shutdown, () => {
 });
 
 handleOneWay(Channels.restart, () => {
-    log("MAIN", "INFO", "Restarting application");
+    log('MAIN', 'INFO', 'Restarting application');
     app.relaunch();
 
     /**
@@ -103,10 +103,10 @@ handleAndReply(Channels.getSettings, () => {
 handleOneWay(Channels.saveNewSettings, (event, settingsToSave: Settings) => {
     sendPromiseToast(
         {
-            id: "settings-saving",
-            textOnLoading: "Saving settings...",
-            textOnSuccess: "Saved settings.",
-            textOnError: "Failed saving settings.",
+            id: 'settings-saving',
+            textOnLoading: 'Saving settings...',
+            textOnSuccess: 'Saved settings.',
+            textOnError: 'Failed saving settings.',
             duration: 4000
         },
         new Promise(async (resolve, reject) => {
@@ -123,7 +123,7 @@ handleOneWay(Channels.saveNewSettings, (event, settingsToSave: Settings) => {
 });
 
 handleAndReply(Channels.get3DAnimationsDisabled, () => {
-    return getSpecificSetting("application", "disable3DModelAnimation").value;
+    return getSpecificSetting('application', 'disable3DModelAnimation').value;
 });
 
 handleAndReply(Channels.getApplicationVersion, () => {
@@ -145,7 +145,7 @@ handleOneWay(Channels.clearCache, (event, name) => {
                     await farm.clearFarmCache();
                 });
 
-                farm.updateStatus("idle");
+                farm.updateStatus('idle');
             }
         );
     }
@@ -163,7 +163,7 @@ handleOneWay(Channels.restartScheduler, (event, name) => {
             },
             () => {
                 farm.restartScheduler();
-                farm.updateStatus("idle");
+                farm.updateStatus('idle');
             }
         );
     }

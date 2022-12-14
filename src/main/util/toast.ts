@@ -1,6 +1,6 @@
-import { Channels } from "../common/channels";
-import { sendOneWay } from "../electron/ipc";
-import { getMainWindow } from "../electron/windows";
+import { Channels } from '../common/channels';
+import { sendOneWay } from '../electron/ipc';
+import { getMainWindow } from '../electron/windows';
 
 /**
  * Send a toast to the renderer.

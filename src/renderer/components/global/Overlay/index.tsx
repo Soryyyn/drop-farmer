@@ -1,6 +1,6 @@
-import { OpacityScaleTransition } from "@util/transitions";
-import React from "react";
-import { animated, useTransition } from "react-spring";
+import { OpacityScaleTransition } from '@util/transitions';
+import React from 'react';
+import { animated, useTransition } from 'react-spring';
 
 interface Props {
     children: JSX.Element;

@@ -1,39 +1,39 @@
-import ElectronShutdownHandler from "@paymoapp/electron-shutdown-handler";
-import { app, session } from "electron";
+import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
+import { app, session } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS
-} from "electron-devtools-installer";
-import { initConfig, updateConfigFile } from "./config";
-import { createTray, destroyTray } from "./electron/tray";
+} from 'electron-devtools-installer';
+import { initConfig, updateConfigFile } from './config';
+import { createTray, destroyTray } from './electron/tray';
 import {
     createMainWindow,
     getMainWindow,
     setAppQuitting
-} from "./electron/windows";
+} from './electron/windows';
 import {
     destroyAllFarmWindows,
     initFarms,
     stopFarmJobs
-} from "./farms/management";
-import { internetConnectionChecker } from "./util/internet";
-import { initLogger, log } from "./util/logger";
-import { initPuppeteerConnection } from "./util/puppeteer";
+} from './farms/management';
+import { internetConnectionChecker } from './util/internet';
+import { initLogger, log } from './util/logger';
+import { initPuppeteerConnection } from './util/puppeteer';
 /**
  * If application is in run in production environment.
  */
-const inProd: boolean = process.env.NODE_ENV === "production";
+const inProd: boolean = process.env.NODE_ENV === 'production';
 
 /**
  * Handling the creating/deletion of shortcuts when installing/uninstalling via squirrel.
  */
-if (require("electron-squirrel-startup")) {
+if (require('electron-squirrel-startup')) {
     app.quit();
 }
 
 /**
  * Update checking / downloading.
  */
-require("./electron/update");
+require('./electron/update');
 
 /**
  * Initialize all drop-farmer background functions.
@@ -55,8 +55,8 @@ app.whenReady().then(() => {
     /**
      * Check if app needs to clear cache.
      */
-    if (process.env.CLEAR_CACHE && process.env.CLEAR_CACHE!.trim() == "1") {
-        log("MAIN", "WARN", "Cleared application session data");
+    if (process.env.CLEAR_CACHE && process.env.CLEAR_CACHE!.trim() == '1') {
+        log('MAIN', 'WARN', 'Cleared application session data');
         session.defaultSession.clearStorageData();
     }
 
@@ -66,10 +66,10 @@ app.whenReady().then(() => {
     if (!inProd) {
         installExtension(REACT_DEVELOPER_TOOLS)
             .then((extensionName: string) => {
-                log("MAIN", "DEBUG", `Installed ${extensionName} extension`);
+                log('MAIN', 'DEBUG', `Installed ${extensionName} extension`);
             })
             .catch((err) => {
-                log("MAIN", "ERROR", `Failed adding extension. ${err}`);
+                log('MAIN', 'ERROR', `Failed adding extension. ${err}`);
             });
     }
 
@@ -95,7 +95,7 @@ app.whenReady().then(() => {
     /**
      * Load all ipc listeners when the app is ready.
      */
-    require("./electron/ipc");
+    require('./electron/ipc');
 
     /**
      * Block the shutdown process.
@@ -106,17 +106,17 @@ app.whenReady().then(() => {
         getMainWindow().getNativeWindowHandle()
     );
     log(
-        "MAIN",
-        "DEBUG",
-        "Preventing system from shutting down before application savely quits"
+        'MAIN',
+        'DEBUG',
+        'Preventing system from shutting down before application savely quits'
     );
-    ElectronShutdownHandler.blockShutdown("Please wait for graceful shutdown");
+    ElectronShutdownHandler.blockShutdown('Please wait for graceful shutdown');
 
     /**
      * React to the windows shutdown event firing.
      */
-    ElectronShutdownHandler.on("shutdown", () => {
-        log("MAIN", "INFO", "Received shutdown event, shutting down now");
+    ElectronShutdownHandler.on('shutdown', () => {
+        log('MAIN', 'INFO', 'Received shutdown event, shutting down now');
 
         /**
          * Stop all cron jobs, to prevent unfulfilled promises.
@@ -135,7 +135,7 @@ app.whenReady().then(() => {
 /**
  * Quitting routine.
  */
-app.on("before-quit", () => {
+app.on('before-quit', () => {
     updateConfigFile();
     destroyTray();
     destroyAllFarmWindows();
@@ -144,13 +144,13 @@ app.on("before-quit", () => {
 /**
  * When quitting routine has finished.
  */
-app.on("quit", () => {
-    log("MAIN", "INFO", "Quitting application");
+app.on('quit', () => {
+    log('MAIN', 'INFO', 'Quitting application');
 });
 
 /**
  * Handle darwin quits.
  */
-app.on("window-all-closed", () => {
+app.on('window-all-closed', () => {
     app.quit();
 });

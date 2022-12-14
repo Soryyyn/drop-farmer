@@ -1,7 +1,7 @@
-import { app, Menu, NativeImage, nativeImage, Tray } from "electron";
-import { resolve } from "path";
-import { log } from "../util/logger";
-import { getMainWindow, setAppQuitting, showWindow } from "./windows";
+import { app, Menu, NativeImage, nativeImage, Tray } from 'electron';
+import { resolve } from 'path';
+import { log } from '../util/logger';
+import { getMainWindow, setAppQuitting, showWindow } from './windows';
 
 /**
  * The tray object reference.
@@ -19,25 +19,25 @@ export function createTray(isProd: boolean): void {
     const contextMenu = Menu.buildFromTemplate([
         {
             label: `Current version: ${app.getVersion()}`,
-            type: "normal",
+            type: 'normal',
             enabled: false
         },
         {
-            type: "separator"
+            type: 'separator'
         },
         {
-            label: "Show Window",
-            type: "normal",
+            label: 'Show Window',
+            type: 'normal',
             click: () => {
                 showWindow(getMainWindow(), true);
             }
         },
         {
-            type: "separator"
+            type: 'separator'
         },
         {
-            label: "Quit drop-farmer",
-            type: "normal",
+            label: 'Quit drop-farmer',
+            type: 'normal',
             click: () => {
                 setAppQuitting(true);
                 app.quit();
@@ -48,17 +48,17 @@ export function createTray(isProd: boolean): void {
     /**
      * Set tooltip and context menu.
      */
-    tray.setToolTip(`drop-farmer ${!isProd ? "(dev environment)" : ""}`);
+    tray.setToolTip(`drop-farmer ${!isProd ? '(dev environment)' : ''}`);
     tray.setContextMenu(contextMenu);
 
     /**
      * On double click, show the main window.
      */
-    tray.on("double-click", () => {
+    tray.on('double-click', () => {
         showWindow(getMainWindow(), true);
     });
 
-    log("MAIN", "DEBUG", "Created system tray");
+    log('MAIN', 'DEBUG', 'Created system tray');
 }
 
 /**
@@ -67,9 +67,9 @@ export function createTray(isProd: boolean): void {
 export function destroyTray(): void {
     try {
         tray.destroy();
-        log("MAIN", "DEBUG", "Destroyed tray");
+        log('MAIN', 'DEBUG', 'Destroyed tray');
     } catch (err) {
-        log("MAIN", "ERROR", `Failed destroying tray. "${err}"`);
+        log('MAIN', 'ERROR', `Failed destroying tray. "${err}"`);
     }
 }
 
@@ -77,13 +77,13 @@ export function destroyTray(): void {
  * Get the approriate image for the tray depending on os.
  */
 function getTrayicon(): NativeImage {
-    const iconPath = "resources/icon";
+    const iconPath = 'resources/icon';
 
-    if (process.platform === "win32") {
+    if (process.platform === 'win32') {
         return nativeImage.createFromPath(
             resolve(__dirname, `${iconPath}.ico`)
         );
-    } else if (process.platform === "darwin") {
+    } else if (process.platform === 'darwin') {
         return nativeImage.createFromPath(
             resolve(__dirname, `${iconPath}Template.png`)
         );

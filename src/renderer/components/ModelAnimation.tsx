@@ -1,5 +1,5 @@
-import React from "react";
-import styles from "../styles/ModelAnimation.module.scss";
+import React from 'react';
+import styles from '../styles/ModelAnimation.module.scss';
 
 interface Props {
     animationSrc: string;

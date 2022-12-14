@@ -1,8 +1,8 @@
-import { app } from "electron";
-import { resolve } from "path";
-import puppeteer, { Browser, ElementHandle, Frame, Page } from "puppeteer-core";
-import { connect, initialize } from "puppeteer-in-electron";
-import { log } from "./logger";
+import { app } from 'electron';
+import { resolve } from 'path';
+import puppeteer, { Browser, ElementHandle, Frame, Page } from 'puppeteer-core';
+import { connect, initialize } from 'puppeteer-in-electron';
+import { log } from './logger';
 
 /**
  * The connection to the electron application.
@@ -22,7 +22,7 @@ export async function connectToElectron() {
 export async function initPuppeteerConnection() {
     await initialize(app);
     connectToElectron();
-    log("MAIN", "DEBUG", "Connected puppeteer to electron application");
+    log('MAIN', 'DEBUG', 'Connected puppeteer to electron application');
 }
 
 /**
@@ -53,10 +53,10 @@ export function enterIFrame(gameName: string, controlledPage: Page) {
             /**
              * Reload the page if the iframe is not found.
              */
-            while ((await controlledPage.$("iframe")) == null) {
+            while ((await controlledPage.$('iframe')) == null) {
                 log(
-                    "MAIN",
-                    "DEBUG",
+                    'MAIN',
+                    'DEBUG',
                     `${gameName}: Page needs to reload because iframe is not loaded`
                 );
                 await controlledPage.reload();
@@ -66,10 +66,10 @@ export function enterIFrame(gameName: string, controlledPage: Page) {
              * Enter the iframe element.
              */
             await controlledPage
-                .waitForSelector("iframe")
+                .waitForSelector('iframe')
                 .then(async (iframeHandle) => {
                     await controlledPage.waitForNetworkIdle();
-                    log("MAIN", "DEBUG", `${gameName}: Endered iframe element`);
+                    log('MAIN', 'DEBUG', `${gameName}: Endered iframe element`);
                     resolve(await iframeHandle!.contentFrame());
                 });
         } catch (err) {

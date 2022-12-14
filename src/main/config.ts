@@ -1,15 +1,15 @@
-import AutoLaunch from "auto-launch";
-import get from "lodash.get";
-import set from "lodash.set";
-import { convertFarmsIntoCached } from "./farms/management";
-import { createFile, readFile, writeToFile } from "./files/handling";
-import { enableDebugLogs, log } from "./util/logger";
-import { convertSettingsIntoCached } from "./util/settings";
+import AutoLaunch from 'auto-launch';
+import get from 'lodash.get';
+import set from 'lodash.set';
+import { convertFarmsIntoCached } from './farms/management';
+import { createFile, readFile, writeToFile } from './files/handling';
+import { enableDebugLogs, log } from './util/logger';
+import { convertSettingsIntoCached } from './util/settings';
 
-const FILE_NAME = "config.json";
+const FILE_NAME = 'config.json';
 let currentConfig: any;
 const autoLauncher = new AutoLaunch({
-    name: "drop-farmer"
+    name: 'drop-farmer'
 });
 const configVersion = 1.1;
 
@@ -20,11 +20,11 @@ export function initConfig(): void {
     /**
      * Update some settings which are needed on startup.
      */
-    if (getConfigKey("settings.application.debugLogs")) enableDebugLogs(true);
-    if (getConfigKey("settings.application.launchOnStartup"))
+    if (getConfigKey('settings.application.debugLogs')) enableDebugLogs(true);
+    if (getConfigKey('settings.application.launchOnStartup'))
         launchOnStartup(true);
 
-    log("MAIN", "DEBUG", "Initialized config");
+    log('MAIN', 'DEBUG', 'Initialized config');
 }
 
 /**
@@ -48,7 +48,7 @@ function createDefaultConfig(): void {
          */
         createFile(FILE_NAME, JSON.stringify(defaultConfig, null, 4));
     } catch (err) {
-        log("MAIN", "FATAL", `Failed creating config file. ${err}`);
+        log('MAIN', 'FATAL', `Failed creating config file. ${err}`);
     }
 }
 
@@ -59,7 +59,7 @@ function readConfig() {
     try {
         return JSON.parse(readFile(FILE_NAME));
     } catch (err) {
-        log("MAIN", "FATAL", `Failed reading config file. ${err}`);
+        log('MAIN', 'FATAL', `Failed reading config file. ${err}`);
     }
 }
 
@@ -80,7 +80,7 @@ export function getConfigKey(key: string): any {
  */
 export function updateKeyValue(key: string, value: any): void {
     set(currentConfig, key, value);
-    log("MAIN", "DEBUG", `Updated ${key} in runtime config`);
+    log('MAIN', 'DEBUG', `Updated ${key} in runtime config`);
 }
 
 /**
@@ -89,10 +89,10 @@ export function updateKeyValue(key: string, value: any): void {
 export function updateConfigFile(): void {
     try {
         cacheAllData();
-        writeToFile(FILE_NAME, JSON.stringify(currentConfig, null, 4), "w");
-        log("MAIN", "DEBUG", "Updated config file with runtime config");
+        writeToFile(FILE_NAME, JSON.stringify(currentConfig, null, 4), 'w');
+        log('MAIN', 'DEBUG', 'Updated config file with runtime config');
     } catch (err) {
-        log("MAIN", "ERROR", `Failed to write runtime config to file. ${err}`);
+        log('MAIN', 'ERROR', `Failed to write runtime config to file. ${err}`);
     }
 }
 
@@ -108,19 +108,19 @@ export function launchOnStartup(launchOnStartup: boolean): void {
             if (launchOnStartup) {
                 if (!isEnabled) {
                     autoLauncher.enable();
-                    log("MAIN", "INFO", "Enabled launch on startup");
+                    log('MAIN', 'INFO', 'Enabled launch on startup');
                 }
             } else {
                 if (isEnabled) {
                     autoLauncher.disable();
-                    log("MAIN", "INFO", "Disabled launch on startup");
+                    log('MAIN', 'INFO', 'Disabled launch on startup');
                 }
             }
         })
         .catch((err) => {
             log(
-                "MAIN",
-                "ERROR",
+                'MAIN',
+                'ERROR',
                 `Failed to change the launch on startup setting. ${err}`
             );
         });
@@ -130,12 +130,12 @@ function cacheAllData(): void {
     /**
      * Update farms.
      */
-    updateKeyValue("farms", convertFarmsIntoCached());
+    updateKeyValue('farms', convertFarmsIntoCached());
 
     /**
      * Update settings.
      */
-    updateKeyValue("settings", convertSettingsIntoCached());
+    updateKeyValue('settings', convertSettingsIntoCached());
 }
 
 /**
@@ -166,7 +166,7 @@ function migrateToNewerConfigVersion(configFile: ConfigFile): ConfigFile {
 function checkConfigUpdate(configFile: ConfigFile): ConfigFile {
     let updated: any = configFile;
 
-    if (!configFile.hasOwnProperty("version")) {
+    if (!configFile.hasOwnProperty('version')) {
         /**
          * If no version key is found inside the config file, reset the file,
          * and set the default config.
@@ -174,20 +174,20 @@ function checkConfigUpdate(configFile: ConfigFile): ConfigFile {
          * NOTE: While resetting, viewing the actual file will appear empty.
          */
         log(
-            "MAIN",
-            "INFO",
-            "Version key inside config file not found. Resetting config file."
+            'MAIN',
+            'INFO',
+            'Version key inside config file not found. Resetting config file.'
         );
-        writeToFile(FILE_NAME, "", "w");
+        writeToFile(FILE_NAME, '', 'w');
         updated = {
             version: configVersion.toFixed(1).toString(),
             farms: convertFarmsIntoCached(),
             settings: convertSettingsIntoCached()
         };
-        writeToFile(FILE_NAME, JSON.stringify(updated, null, 4), "w");
+        writeToFile(FILE_NAME, JSON.stringify(updated, null, 4), 'w');
     } else if (parseFloat(configFile.version) < configVersion) {
         updated = migrateToNewerConfigVersion(configFile);
-        log("MAIN", "INFO", "Migrated to a newer config file version");
+        log('MAIN', 'INFO', 'Migrated to a newer config file version');
     }
 
     return updated;

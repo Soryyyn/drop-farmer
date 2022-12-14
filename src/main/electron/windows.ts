@@ -1,11 +1,11 @@
-import { BrowserWindow } from "electron";
-import { resolve } from "path";
-import { getPage } from "puppeteer-in-electron";
-import { getFarms } from "../farms/management";
-import type FarmTemplate from "../farms/template";
-import { log } from "../util/logger";
-import { getBrowserConnection, waitForTimeout } from "../util/puppeteer";
-import { getSpecificSetting } from "../util/settings";
+import { BrowserWindow } from 'electron';
+import { resolve } from 'path';
+import { getPage } from 'puppeteer-in-electron';
+import { getFarms } from '../farms/management';
+import type FarmTemplate from '../farms/template';
+import { log } from '../util/logger';
+import { getBrowserConnection, waitForTimeout } from '../util/puppeteer';
+import { getSpecificSetting } from '../util/settings';
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -34,20 +34,20 @@ export function createMainWindow(isProd: boolean): void {
     mainWindow = new BrowserWindow({
         icon: resolve(
             __dirname,
-            `resources/icon.${process.platform != "linux" ? "ico" : "png"}`
+            `resources/icon.${process.platform != 'linux' ? 'ico' : 'png'}`
         ),
         height: 800,
         width: 1200,
         center: true,
         maximizable: false,
         resizable: false,
-        show: process.platform === "linux" ? true : false,
-        title: "drop-farmer",
+        show: process.platform === 'linux' ? true : false,
+        title: 'drop-farmer',
         autoHideMenuBar: true,
-        titleBarStyle: "hidden",
+        titleBarStyle: 'hidden',
         titleBarOverlay: {
-            color: "#c8def5",
-            symbolColor: "#000000"
+            color: '#c8def5',
+            symbolColor: '#000000'
         },
         webPreferences: {
             preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
@@ -64,26 +64,26 @@ export function createMainWindow(isProd: boolean): void {
     /**
      * Show when the window is ready.
      */
-    mainWindow.on("ready-to-show", () => {
+    mainWindow.on('ready-to-show', () => {
         if (
             Boolean(
-                getSpecificSetting("application", "showMainWindowOnLaunch")
+                getSpecificSetting('application', 'showMainWindowOnLaunch')
                     .value
             ) ||
-            process.platform == "linux"
+            process.platform == 'linux'
         ) {
             log(
-                "MAIN",
-                "DEBUG",
-                `Created main window (shown) ${!isProd ? "in dev mode" : ""}`
+                'MAIN',
+                'DEBUG',
+                `Created main window (shown) ${!isProd ? 'in dev mode' : ''}`
             );
             mainWindow.show();
             mainWindow.focus();
         } else {
             log(
-                "MAIN",
-                "DEBUG",
-                `Created main window (hidden) ${!isProd ? "in dev mode" : ""}`
+                'MAIN',
+                'DEBUG',
+                `Created main window (hidden) ${!isProd ? 'in dev mode' : ''}`
             );
         }
     });
@@ -92,7 +92,7 @@ export function createMainWindow(isProd: boolean): void {
      * When close button on main windows is clicked.
      * Prevent default electron action from close.
      */
-    mainWindow.on("close", (event) => {
+    mainWindow.on('close', (event) => {
         event.preventDefault();
         if (!appQuitting) {
             hideWindow(mainWindow, true);
@@ -126,14 +126,14 @@ export async function createWindow(url: string, gameName?: string) {
     const window = new BrowserWindow({
         icon: resolve(
             __dirname,
-            `resources/icon.${process.platform != "linux" ? "ico" : "png"}`
+            `resources/icon.${process.platform != 'linux' ? 'ico' : 'png'}`
         ),
         height: 1080,
         width: 1920,
         show: false,
         closable: false,
         webPreferences: {
-            devTools: !(process.env.NODE_ENV === "production")
+            devTools: !(process.env.NODE_ENV === 'production')
         }
     });
 
@@ -153,8 +153,8 @@ export async function createWindow(url: string, gameName?: string) {
     /**
      * Decide if the windows is for a farm or just a general window.
      */
-    if (gameName) log("MAIN", "DEBUG", `Created window for "${gameName}"`);
-    else log("MAIN", "DEBUG", "Created general window");
+    if (gameName) log('MAIN', 'DEBUG', `Created window for "${gameName}"`);
+    else log('MAIN', 'DEBUG', 'Created general window');
     return window;
 }
 
@@ -164,7 +164,7 @@ export async function createWindow(url: string, gameName?: string) {
  * @param {Electron.BrowserWindow} window The window to destroy.
  */
 export function destroyWindow(window: Electron.BrowserWindow): void {
-    log("MAIN", "DEBUG", `Destroyed window(${window.id})`);
+    log('MAIN', 'DEBUG', `Destroyed window(${window.id})`);
     window.destroy();
 }
 
@@ -179,9 +179,9 @@ export function showWindow(
     isMainWindow: boolean
 ): void {
     log(
-        "MAIN",
-        "DEBUG",
-        `Showing window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`
+        'MAIN',
+        'DEBUG',
+        `Showing window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
     );
     window.show();
     window.focus();
@@ -198,9 +198,9 @@ export function hideWindow(
     isMainWindow: boolean
 ): void {
     log(
-        "MAIN",
-        "DEBUG",
-        `Hidding window ${isMainWindow ? "(main)" : "(" + window.id + ")"}`
+        'MAIN',
+        'DEBUG',
+        `Hidding window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
     );
     window.hide();
 }
@@ -211,7 +211,7 @@ export function hideWindow(
  * @param {Electron.BrowserWindow} window The window to mute.
  */
 function muteWindow(window: Electron.BrowserWindow): void {
-    log("MAIN", "DEBUG", `Muted window(${window.id})`);
+    log('MAIN', 'DEBUG', `Muted window(${window.id})`);
     window.webContents.setAudioMuted(true);
 }
 
@@ -221,7 +221,7 @@ function muteWindow(window: Electron.BrowserWindow): void {
  * @param {Electron.BrowserWindow} window The window to reload.
  */
 export function reloadWindow(window: Electron.BrowserWindow): void {
-    log("MAIN", "DEBUG", `Reloaded window(${window.id})`);
+    log('MAIN', 'DEBUG', `Reloaded window(${window.id})`);
     window.reload();
 }
 

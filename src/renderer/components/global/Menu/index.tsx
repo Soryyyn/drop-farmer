@@ -1,7 +1,7 @@
-import { Menu as HeadlessMenu } from "@headlessui/react";
-import clsx from "clsx";
-import React from "react";
-import { Alignment, MenuEntry } from "./types";
+import { Menu as HeadlessMenu } from '@headlessui/react';
+import clsx from 'clsx';
+import React from 'react';
+import { Alignment, MenuEntry } from './types';
 
 interface Props {
     button: {
@@ -17,7 +17,7 @@ export default function Menu({ button, entries, alignment }: Props) {
         <HeadlessMenu as="div" className="relative w-fit box-border">
             <HeadlessMenu.Button
                 className={clsx(
-                    "aspect-square flex justify-center items-center p-2",
+                    'aspect-square flex justify-center items-center p-2',
                     button.className
                 )}
             >
@@ -27,13 +27,13 @@ export default function Menu({ button, entries, alignment }: Props) {
             <HeadlessMenu.Items
                 as="div"
                 className={clsx(
-                    "w-max absolute my-2 p-2 flex flex-col gap-2 box-border bg-blue-700",
-                    alignment === Alignment.BottomLeft && "left-0",
-                    alignment === Alignment.BottomRight && "right-0",
+                    'w-max absolute my-2 p-2 flex flex-col gap-2 box-border bg-blue-700',
+                    alignment === Alignment.BottomLeft && 'left-0',
+                    alignment === Alignment.BottomRight && 'right-0',
                     alignment === Alignment.TopLeft &&
-                        "left-0 top-0 -translate-y-full",
+                        'left-0 top-0 -translate-y-full',
                     alignment === Alignment.TopRight &&
-                        "right-0 top-0 -translate-y-full"
+                        'right-0 top-0 -translate-y-full'
                 )}
             >
                 {entries.map((entry) => (

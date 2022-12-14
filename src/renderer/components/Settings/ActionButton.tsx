@@ -1,7 +1,7 @@
-import Tooltip from "@components/global/Tooltip";
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import Tooltip from '@components/global/Tooltip';
+import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
 
 interface Props {
     icon: IconDefinition;

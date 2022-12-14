@@ -1,13 +1,14 @@
-import OverlayContent from "@components/global/Overlay/OverlayContent";
+import OverlayContent from '@components/global/Overlay/OverlayContent';
 import {
     faFloppyDisk,
     faRotateRight,
     faXmark
-} from "@fortawesome/free-solid-svg-icons";
-import { SettingsContext } from "@util/contexts";
-import React, { useContext, useState } from "react";
-import { ActionButton } from "./ActionButton";
-import Selector from "./Selector";
+} from '@fortawesome/free-solid-svg-icons';
+import { SettingsContext } from '@util/contexts';
+import React, { useContext, useState } from 'react';
+import { ActionButton } from './ActionButton';
+import Selector from './Selector';
+import Setting from './Setting';
 
 interface Props {
     onClose: () => void;
@@ -16,7 +17,7 @@ interface Props {
 export default function Settings({ onClose }: Props) {
     const { settings, setNewSettings, resetToDefaultSettings } =
         useContext(SettingsContext);
-    const [selected, setSelected] = useState<string>("application");
+    const [selected, setSelected] = useState<string>('application');
     const [currentSettings, setCurrentSettings] = useState(settings);
 
     return (
@@ -55,7 +56,15 @@ export default function Settings({ onClose }: Props) {
                 {/* Settings */}
                 <ul className="grow flex flex-col gap-4">
                     {settings![selected].map((setting) => {
-                        return <p key={setting.name}>{setting.name}</p>;
+                        return (
+                            <Setting
+                                key={setting.name}
+                                setting={setting}
+                                onChange={(updated) => {
+                                    console.log(updated);
+                                }}
+                            />
+                        );
                     })}
                 </ul>
             </div>

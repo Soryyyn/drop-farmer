@@ -1,8 +1,8 @@
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useRef } from "react";
-import Switch from "react-switch";
-import styles from "./SettingItem.module.scss";
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useRef } from 'react';
+import Switch from 'react-switch';
+import styles from './SettingItem.module.scss';
 
 interface Props {
     setting: Setting;
@@ -16,7 +16,7 @@ export default function SettingItem({ setting, onChanged }: Props) {
      * Decide which action to display based on type of the setting value.
      */
     function renderAction() {
-        if (typeof setting.value == "boolean") {
+        if (typeof setting.value == 'boolean') {
             return (
                 <Switch
                     onChange={(checked: boolean) => {
@@ -38,7 +38,7 @@ export default function SettingItem({ setting, onChanged }: Props) {
                     disabled={setting.changingDisabled}
                 />
             );
-        } else if (typeof setting.value === "number") {
+        } else if (typeof setting.value === 'number') {
             return (
                 <div className={styles.inputNumberContainer}>
                     <button
@@ -70,8 +70,8 @@ export default function SettingItem({ setting, onChanged }: Props) {
                             /**
                              * Check for NaN.
                              */
-                            if (event.currentTarget.value == "")
-                                event.currentTarget.value = "1";
+                            if (event.currentTarget.value == '')
+                                event.currentTarget.value = '1';
 
                             let value = parseInt(event.currentTarget.value);
 
@@ -109,7 +109,7 @@ export default function SettingItem({ setting, onChanged }: Props) {
                     </button>
                 </div>
             );
-        } else if (typeof setting.value === "string") {
+        } else if (typeof setting.value === 'string') {
             return (
                 <input
                     disabled={setting.changingDisabled}
@@ -127,9 +127,9 @@ export default function SettingItem({ setting, onChanged }: Props) {
         <li className={styles.settingItem}>
             <div className={styles.details}>
                 <p className={styles.title}>
-                    {setting.shownName}{" "}
+                    {setting.shownName}{' '}
                     <i>
-                        {setting.changingDisabled ? "(changing disabled)" : ""}
+                        {setting.changingDisabled ? '(changing disabled)' : ''}
                     </i>
                 </p>
                 <p className={styles.desc}>{setting.description}</p>

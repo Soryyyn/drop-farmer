@@ -27,7 +27,7 @@
     },
     "plugins": ["react", "@typescript-eslint"],
     "rules": {
-        "quotes": ["error", "double"],
+        "quotes": ["error", "single"],
         "semi": ["error", "always"],
         "no-unused-vars": "off",
         "no-async-promise-executor": "off",

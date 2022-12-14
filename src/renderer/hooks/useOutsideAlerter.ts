@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 /**
  * Handle a click outside of a reference.
@@ -13,9 +13,9 @@ export function useOutsideAlterter(ref: any, callback: () => void) {
             if (ref.current && !ref.current.contains(event.target)) callback();
         }
 
-        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [ref]);
 }

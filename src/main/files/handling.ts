@@ -1,17 +1,17 @@
-import { app } from "electron";
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import { rmSync } from "original-fs";
-import { join } from "path";
-import { log } from "../util/logger";
+import { app } from 'electron';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { rmSync } from 'original-fs';
+import { join } from 'path';
+import { log } from '../util/logger';
 
 /**
  * The userData (roaming/drop-farmer) directory in production mode.
  * Changes to current root directory when in dev mode.
  */
 export const APP_PATH: string =
-    process.env.NODE_ENV === "production"
-        ? app.getPath("userData")
-        : join(__dirname, "../../");
+    process.env.NODE_ENV === 'production'
+        ? app.getPath('userData')
+        : join(__dirname, '../../');
 
 /**
  * Creates a file with given name and data at the app root path.
@@ -65,7 +65,7 @@ export function readFile(fileName: string): string {
 export function writeToFile(
     fileName: string,
     data: string,
-    flag: "a" | "w"
+    flag: 'a' | 'w'
 ): void {
     if (!existsSync(join(APP_PATH, fileName))) {
         throw new Error(
@@ -89,7 +89,7 @@ export function writeToFile(
  */
 export function deleteFile(fileName: string): void {
     if (!existsSync(join(APP_PATH, fileName))) {
-        log("MAIN", "WARN", "Can't delete file which doesn't exist");
+        log('MAIN', 'WARN', "Can't delete file which doesn't exist");
     } else {
         try {
             rmSync(join(APP_PATH, fileName));

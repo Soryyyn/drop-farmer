@@ -2,14 +2,14 @@ import {
     faFloppyDisk,
     faRotateRight,
     faXmark
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSendAndWait } from "@hooks/useSendAndWait";
-import clsx from "clsx";
-import { cloneDeep, isEqual } from "lodash";
-import React, { useState } from "react";
-import SettingItem from "./SettingItem";
-import styles from "./Settings.module.scss";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSendAndWait } from '@hooks/useSendAndWait';
+import clsx from 'clsx';
+import { cloneDeep, isEqual } from 'lodash';
+import React, { useState } from 'react';
+import SettingItem from './SettingItem';
+import styles from './Settings.module.scss';
 
 interface Props {
     handleClosing: () => void;
@@ -17,7 +17,7 @@ interface Props {
 
 export default function Settings({ handleClosing }: Props) {
     const [currentlySelected, setCurrentlySelected] =
-        useState<string>("application");
+        useState<string>('application');
     const [selectors, setSelectors] = useState<string[]>([]);
     const [settings, setSettings] = useState<Settings>();
 
