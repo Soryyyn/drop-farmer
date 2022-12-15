@@ -21,11 +21,11 @@ export default function Setting({ setting, onChange }: Props) {
 
     return (
         <li className="w-full p-4 list-none rounded-md bg-pepper-500 flex flex-row gap-4 text-snow-300">
-            <div className="w-3/4 flex flex-col gap-2">
+            <div className="!w-3/4 flex flex-col gap-2">
                 <p>{setting.shownName}</p>
                 <p className="text-snow-300/50">{setting.description}</p>
             </div>
-            <div className="w-1/4 flex justify-center items-center bg-snow-500">
+            <div className="!w-1/4 flex justify-center items-center">
                 {actionRender()}
             </div>
         </li>
