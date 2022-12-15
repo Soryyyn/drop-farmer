@@ -17,6 +17,10 @@ module.exports = {
             snow: {
                 300: '#bad5f1',
                 500: '#c8def5'
+            },
+            blood: {
+                500: '#ff0044',
+                700: '#fad2dd'
             }
         },
         extend: {
