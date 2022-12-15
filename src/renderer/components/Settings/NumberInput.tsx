@@ -27,30 +27,15 @@ export default function NumberInput({ setting, onChange }: Props) {
             </button>
             <input
                 ref={numberInputRef}
-                className="w-1/3 text-center bg-pepper-700 px-2 py-1 rounded focus:outline-none hover:bg-pepper-800 focus:bg-pepper-800"
-                value={setting.value?.toString()}
+                className="w-2/3 text-center bg-pepper-700 px-2 py-1 rounded focus:outline-none hover:bg-pepper-800 focus:bg-pepper-800"
+                value={setting.value as number}
                 disabled={setting.changingDisabled}
                 type="number"
-                onInput={(event) => {
-                    /**
-                     * Check for NaN.
-                     */
-                    if (event.currentTarget.value == '')
-                        event.currentTarget.value = setting.min!.toString();
-
-                    let value = parseInt(event.currentTarget.value);
-
-                    /**
-                     * Check for min and max values.
-                     */
-                    if (value < setting.min!) {
-                        value = setting.min!;
-                    } else if (value > setting.max!) {
-                        value = setting.max!;
-                    }
-
-                    onChange(value);
-                }}
+                max={setting.max}
+                min={setting.min}
+                onInput={(event) =>
+                    onChange(parseInt(event.currentTarget.value))
+                }
             />
             <button
                 className="flex justify-center items-center  bg-pepper-700 rounded cursor-pointer aspect-square px-2 text-snow-300 hover:bg-pepper-800"
