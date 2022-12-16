@@ -38,7 +38,6 @@ export function SettingsContextProvider({ children }: Props) {
             window.api.log('ERROR', err);
         } else {
             setSettings(settings);
-            setOldSettings(settings);
         }
     });
 
