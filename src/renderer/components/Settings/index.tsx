@@ -61,7 +61,17 @@ export default function Settings({ onClose }: Props) {
                                 key={setting.name}
                                 setting={setting}
                                 onChange={(updated) => {
-                                    console.log(updated);
+                                    const copyOfSettings = { ...settings };
+                                    const newFarmSetting = { ...setting };
+
+                                    copyOfSettings[selected].forEach((s) => {
+                                        if (newFarmSetting.name === s.name) {
+                                            s.value = updated;
+                                            s = newFarmSetting;
+                                        }
+                                    });
+
+                                    setCurrentSettings(copyOfSettings);
                                 }}
                             />
                         );
