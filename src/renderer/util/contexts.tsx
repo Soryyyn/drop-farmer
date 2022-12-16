@@ -6,6 +6,10 @@ import { cloneDeep, isEqual } from 'lodash';
 import React, { createContext, useEffect, useState } from 'react';
 import { Overlays } from './overlays';
 
+interface Props {
+    children: JSX.Element | JSX.Element[];
+}
+
 /**
  * Contexts
  */
@@ -22,10 +26,6 @@ export const ModalContext = createContext<{
     setCurrentOverlay: (modal: Overlays | undefined) => void;
 }>({ currentOverlay: undefined, setCurrentOverlay: () => {} });
 
-interface Props {
-    children: JSX.Element | JSX.Element[];
-}
-
 /**
  * Provider components
  */
@@ -38,6 +38,7 @@ export function SettingsContextProvider({ children }: Props) {
             window.api.log('ERROR', err);
         } else {
             setSettings(settings);
+            setOldSettings(cloneDeep(settings));
         }
     });
 
@@ -52,6 +53,7 @@ export function SettingsContextProvider({ children }: Props) {
                 newSettings
             );
 
+            setSettings(newSettings);
             setOldSettings(cloneDeep(newSettings));
         }
     }
@@ -60,17 +62,15 @@ export function SettingsContextProvider({ children }: Props) {
      * Reset the settings to the default values.
      */
     function resetToDefaultSettings() {
-        const copy = cloneDeep(settings!);
+        const appliedChanges = cloneDeep(settings!);
 
-        for (const [key] of Object.entries(copy)) {
-            for (const [setting, settingValues] of Object.entries(copy[key])) {
-                settingValues.value = settingValues.defaultValue;
-            }
+        for (const [key, value] of Object.entries(appliedChanges!)) {
+            value.forEach((setting, index) => {
+                appliedChanges[key][index].value = setting.defaultValue;
+            });
         }
 
-        window.api.sendOneWay(window.api.channels.saveNewSettings, copy);
-        setSettings(copy);
-        setOldSettings(copy);
+        setNewSettings(appliedChanges);
     }
 
     return (
