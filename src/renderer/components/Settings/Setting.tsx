@@ -25,7 +25,7 @@ export default function Setting({ setting, onChange }: Props) {
                 <p>{setting.shownName}</p>
                 <p className="text-snow-300/50">{setting.description}</p>
             </div>
-            <div className="!w-1/4 flex justify-center items-center">
+            <div className="!w-1/4 h-14 flex justify-center items-center">
                 {actionRender()}
             </div>
         </li>
