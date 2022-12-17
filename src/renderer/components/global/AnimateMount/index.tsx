@@ -1,28 +1,34 @@
-import React from 'react';
-import { animated, useTransition } from 'react-spring';
+import { CustomTransition } from '@util/transitions';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useRef } from 'react';
 
 interface Props {
     children: JSX.Element;
-    showing: Boolean;
-    transition: Object;
-    containerClassName?: string;
+    showing: boolean;
+    transition: CustomTransition;
+    className?: string;
 }
 
 export default function AnimateMount({
     children,
     showing,
     transition,
-    containerClassName
+    className
 }: Props) {
-    return useTransition(
-        showing,
-        transition
-    )(
-        (styles, shouldBeShown) =>
-            shouldBeShown && (
-                <animated.div style={styles} className={containerClassName}>
+    return (
+        <AnimatePresence>
+            {showing && (
+                <motion.div
+                    layout={true}
+                    className={className}
+                    initial={transition.initial}
+                    animate={transition.animate}
+                    exit={transition.exit}
+                    transition={transition.transition}
+                >
                     {children}
-                </animated.div>
-            )
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 }

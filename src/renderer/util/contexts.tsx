@@ -3,7 +3,7 @@ import Settings from '@components/Settings';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import { cloneDeep, isEqual } from 'lodash';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useState } from 'react';
 import { Overlays } from './overlays';
 
 interface Props {
@@ -23,8 +23,13 @@ export const InternetConnectionContext = createContext<boolean>(true);
 
 export const ModalContext = createContext<{
     currentOverlay: Overlays | undefined;
-    setCurrentOverlay: (modal: Overlays | undefined) => void;
-}>({ currentOverlay: undefined, setCurrentOverlay: () => {} });
+    setCurrentOverlay: (modal: Overlays) => void;
+    toggleOverlay: () => void;
+}>({
+    currentOverlay: undefined,
+    setCurrentOverlay: () => {},
+    toggleOverlay: () => {}
+});
 
 /**
  * Provider components
@@ -105,15 +110,11 @@ export function ModalContextProvider({ children }: Props) {
     const [currentOverlay, setCurrentOverlay] = useState<Overlays | undefined>(
         undefined
     );
-    const [showingOverlay, setShowingOverlay] = useState<boolean>(false);
+    const [showing, setShowing] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (currentOverlay !== undefined) {
-            setShowingOverlay(true);
-        } else {
-            setShowingOverlay(false);
-        }
-    }, [currentOverlay]);
+    function toggleOverlay() {
+        setShowing(!showing);
+    }
 
     /**
      * This renders the wanted modal based on, if the current modal matches one
@@ -121,15 +122,18 @@ export function ModalContextProvider({ children }: Props) {
      */
     function renderModal() {
         if (currentOverlay === Overlays.Settings) {
-            return <Settings onClose={() => setCurrentOverlay(undefined)} />;
-        } else {
-            return <></>;
+            return <Settings onClose={toggleOverlay} />;
         }
+
+        return <></>;
     }
 
     return (
-        <ModalContext.Provider value={{ currentOverlay, setCurrentOverlay }}>
-            <Overlay showing={showingOverlay}>{renderModal()}</Overlay>
+        <ModalContext.Provider
+            value={{ currentOverlay, setCurrentOverlay, toggleOverlay }}
+        >
+            <Overlay showing={showing}>{renderModal()}</Overlay>
+
             {children}
         </ModalContext.Provider>
     );

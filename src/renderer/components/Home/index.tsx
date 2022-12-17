@@ -19,7 +19,6 @@ import ButtonNolabel from '../ButtonNoLabel';
 import ModalManager from '../ModalManager';
 import ModelAnimation from '../ModelAnimation';
 import Sidebar from '../Sidebar';
-// import styles from "./index.module.scss";
 
 /**
  * The route for the main page of the application.
@@ -38,7 +37,8 @@ export default function Home() {
         modalToShow: 'settings'
     });
 
-    const { currentOverlay, setCurrentOverlay } = useContext(ModalContext);
+    const { currentOverlay, setCurrentOverlay, toggleOverlay } =
+        useContext(ModalContext);
 
     /**
      * On site load, get internet connection
@@ -246,9 +246,10 @@ export default function Home() {
                             </Tooltip>
                             {/* )} */}
                             <button
-                                onClick={() =>
-                                    setCurrentOverlay(Overlays.Settings)
-                                }
+                                onClick={() => {
+                                    setCurrentOverlay(Overlays.Settings);
+                                    toggleOverlay();
+                                }}
                             >
                                 test
                             </button>

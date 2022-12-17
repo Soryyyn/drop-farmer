@@ -1,23 +1,34 @@
-import { easings } from 'react-spring';
+import { Transition } from 'framer-motion';
 
-export const OpacityScaleTransition = {
-    from: {
-        opacity: 0,
-        width: '90%',
-        height: '90%'
+export type CustomTransition = {
+    transition: Transition;
+    initial: {
+        [x: string]: any;
+    };
+    animate: {
+        [x: string]: any;
+    };
+    exit?: {
+        [x: string]: any;
+    };
+};
+
+export const OpacityScaleTransition: CustomTransition = {
+    transition: {
+        duration: 0.1,
+        ease: 'easeIn'
     },
-    enter: {
-        opacity: 1,
+    initial: {
+        width: '95%',
+        height: '95%'
+    },
+    animate: {
         width: '100%',
         height: '100%'
     },
-    leave: {
-        opacity: 0,
+    exit: {
         width: '90%',
-        height: '90%'
-    },
-    config: {
-        duration: 100,
-        easing: easings.easeInOutQuad
+        height: '90%',
+        opacity: 0
     }
 };
