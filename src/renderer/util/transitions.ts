@@ -19,16 +19,22 @@ export const OpacityScaleTransition: CustomTransition = {
         ease: 'easeIn'
     },
     initial: {
-        width: '95%',
-        height: '95%'
+        opacity: 0,
+        height: '98%',
+        width: '98%'
     },
     animate: {
-        width: '100%',
-        height: '100%'
+        opacity: 1,
+        height: '100%',
+        width: '100%'
     },
     exit: {
-        width: '90%',
-        height: '90%',
-        opacity: 0
+        opacity: 0,
+        height: '60%',
+        width: '60%',
+        transition: {
+            duration: 0.1,
+            ease: 'easeOut'
+        }
     }
 };

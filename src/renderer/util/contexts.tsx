@@ -3,7 +3,7 @@ import Settings from '@components/Settings';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import { cloneDeep, isEqual } from 'lodash';
-import React, { createContext, useState } from 'react';
+import React, { createContext, useCallback, useState } from 'react';
 import { Overlays } from './overlays';
 
 interface Props {
@@ -120,20 +120,19 @@ export function ModalContextProvider({ children }: Props) {
      * This renders the wanted modal based on, if the current modal matches one
      * in the enum.
      */
-    function renderModal() {
+    const renderModal = useCallback(() => {
         if (currentOverlay === Overlays.Settings) {
             return <Settings onClose={toggleOverlay} />;
         }
 
         return <></>;
-    }
+    }, [currentOverlay]);
 
     return (
         <ModalContext.Provider
             value={{ currentOverlay, setCurrentOverlay, toggleOverlay }}
         >
             <Overlay showing={showing}>{renderModal()}</Overlay>
-
             {children}
         </ModalContext.Provider>
     );
