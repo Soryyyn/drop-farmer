@@ -2,6 +2,7 @@ export type MenuEntry = {
     label: string;
     disabled?: boolean;
     caution?: boolean;
+    styling?: string;
     onClick: () => void;
 };
 

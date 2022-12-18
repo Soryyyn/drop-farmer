@@ -12,7 +12,7 @@ export default function Overlay({ children, showing }: Props) {
         <AnimatePresence>
             {showing && (
                 <motion.div
-                    className="z-50 absolute h-full w-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-all origin-center"
+                    className="z-50 absolute h-full w-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-all"
                     initial={OpacityScaleTransition.initial}
                     animate={OpacityScaleTransition.animate}
                     exit={OpacityScaleTransition.exit}

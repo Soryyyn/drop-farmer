@@ -40,7 +40,7 @@ export default function Menu({ button, entries, alignment }: Props) {
                     <HeadlessMenu.Item
                         key={entry.label}
                         as="div"
-                        className="bg-green-400"
+                        className={clsx('bg-green-400', entry.styling)}
                     >
                         {entry.label}
                     </HeadlessMenu.Item>
