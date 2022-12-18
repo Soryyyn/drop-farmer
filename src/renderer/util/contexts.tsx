@@ -1,10 +1,10 @@
 import Overlay from '@components/global/Overlay';
+import { Overlays } from '@components/global/Overlay/types';
 import Settings from '@components/Settings';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import { cloneDeep, isEqual } from 'lodash';
 import React, { createContext, useCallback, useState } from 'react';
-import { Overlays } from './overlays';
 
 interface Props {
     children: JSX.Element | JSX.Element[];
@@ -29,6 +29,19 @@ export const ModalContext = createContext<{
     currentOverlay: undefined,
     setCurrentOverlay: () => {},
     toggleOverlay: () => {}
+});
+
+export const UpdateContext = createContext<{
+    status: UpdateStatus | undefined;
+    checkForUpdate: () => void;
+    installUpdate: () => void;
+}>({
+    status: {
+        status: 'updateUnavailable',
+        shown: 'Update unavailable'
+    },
+    checkForUpdate: () => {},
+    installUpdate: () => {}
 });
 
 /**
@@ -135,5 +148,27 @@ export function ModalContextProvider({ children }: Props) {
             <Overlay showing={showing}>{renderModal()}</Overlay>
             {children}
         </ModalContext.Provider>
+    );
+}
+
+export function UpdateContextProvider({ children }: Props) {
+    const [currentStatus, setCurrentStatus] = useState<UpdateStatus>({
+        status: 'updateUnavailable',
+        shown: 'Update unavailable'
+    });
+
+    useHandleOneWay(window.api.channels.update, null, (event, status) => {
+        setCurrentStatus(status);
+    });
+
+    function checkForUpdate() {}
+    function installUpdate() {}
+
+    return (
+        <UpdateContext.Provider
+            value={{ status: currentStatus, checkForUpdate, installUpdate }}
+        >
+            {children}
+        </UpdateContext.Provider>
     );
 }

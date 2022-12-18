@@ -103,3 +103,8 @@ type ConfigFile = {
     farms: CachedFarms;
     settings: CachedSettings;
 };
+
+type UpdateStatus = {
+    status: 'updateUnavailable' | 'updateAvailable' | 'checkingForUpdate';
+    shown: 'Update unavailable' | 'Update available' | 'Checking for update...';
+};

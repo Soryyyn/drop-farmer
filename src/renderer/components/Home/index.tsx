@@ -1,6 +1,8 @@
 import Menu from '@components/global/Menu';
 import { Alignment } from '@components/global/Menu/types';
+import Navigation from '@components/global/Navigation';
 import Modal from '@components/global/Overlay';
+import { Overlays } from '@components/global/Overlay/types';
 import Tooltip from '@components/global/Tooltip';
 import Settings from '@components/Settings';
 import {
@@ -12,7 +14,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ModalContext } from '@util/contexts';
-import { Overlays } from '@util/overlays';
 import React, { useContext, useEffect, useState } from 'react';
 import ButtonDropdown from '../ButtonDropdown';
 import ButtonNolabel from '../ButtonNoLabel';
@@ -142,6 +143,7 @@ export default function Home() {
                         <p className="text-center text-[#181a29] text-xl">
                             Stream drops farmer application
                         </p>
+                        <Navigation />
                         <div className="mt-8 flex items-center justify-center">
                             <ButtonDropdown
                                 icon={faBars}
@@ -179,11 +181,7 @@ export default function Home() {
                                         type: 'label',
                                         label: 'Restart application',
                                         disabled: false,
-                                        action() {
-                                            window.api.sendOneWay(
-                                                window.api.channels.restart
-                                            );
-                                        }
+                                        action() {}
                                     },
                                     {
                                         type: 'label',

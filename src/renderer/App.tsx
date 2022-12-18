@@ -4,7 +4,8 @@ import Home from '@components/Home';
 import {
     InternetConnectionContextProvider,
     ModalContextProvider,
-    SettingsContextProvider
+    SettingsContextProvider,
+    UpdateContextProvider
 } from '@util/contexts';
 import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
@@ -16,17 +17,19 @@ export default function App() {
             <Dragbar />
             <ToastNotifications />
             <InternetConnectionContextProvider>
-                <SettingsContextProvider>
-                    <ModalContextProvider>
-                        <div className="p-8 flex flex-col h-screen">
-                            <HashRouter>
-                                <Routes>
-                                    <Route path="/" element={<Home />} />
-                                </Routes>
-                            </HashRouter>
-                        </div>
-                    </ModalContextProvider>
-                </SettingsContextProvider>
+                <UpdateContextProvider>
+                    <SettingsContextProvider>
+                        <ModalContextProvider>
+                            <div className="p-8 flex flex-col h-screen">
+                                <HashRouter>
+                                    <Routes>
+                                        <Route path="/" element={<Home />} />
+                                    </Routes>
+                                </HashRouter>
+                            </div>
+                        </ModalContextProvider>
+                    </SettingsContextProvider>
+                </UpdateContextProvider>
             </InternetConnectionContextProvider>
         </>
     );

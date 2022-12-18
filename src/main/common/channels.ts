@@ -23,5 +23,6 @@ export enum Channels {
     installUpdate = 'install-update',
     restart = 'restart',
     deleteFarm = 'delete-farm',
-    internet = 'internet'
+    internet = 'internet',
+    update = 'update'
 }

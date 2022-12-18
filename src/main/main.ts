@@ -31,11 +31,6 @@ if (require('electron-squirrel-startup')) {
 }
 
 /**
- * Update checking / downloading.
- */
-require('./electron/update');
-
-/**
  * Initialize all drop-farmer background functions.
  */
 initLogger();
@@ -46,6 +41,11 @@ initFarms();
  * Puppeteer connection to electron application must happen before the app is ready.
  */
 initPuppeteerConnection();
+
+/**
+ * Update checking / downloading.
+ */
+require('./electron/update');
 
 /**
  * Gets executed when electron has finished starting.
