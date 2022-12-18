@@ -243,14 +243,6 @@ export default function Home() {
                                 </p>
                             </Tooltip>
                             {/* )} */}
-                            <button
-                                onClick={() => {
-                                    setCurrentOverlay(Overlays.Settings);
-                                    toggleOverlay();
-                                }}
-                            >
-                                test
-                            </button>
                         </div>
                     </div>
                 </div>

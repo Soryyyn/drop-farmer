@@ -5,14 +5,14 @@ import {
     faPowerOff,
     faRotate
 } from '@fortawesome/free-solid-svg-icons';
-import { UpdateContext } from '@util/contexts';
+import { ModalContext, SettingsContext, UpdateContext } from '@util/contexts';
 import React, { useContext } from 'react';
+import { Overlays } from '../Overlay/types';
 import NavigationItem from './NavigationItem';
 
 export default function Navigation() {
     const { status, checkForUpdate, installUpdate } = useContext(UpdateContext);
-
-    console.log(status);
+    const { setCurrentOverlay, toggleOverlay } = useContext(ModalContext);
 
     return (
         <div className="flex flex-row items-center justify-center gap-3">
@@ -20,13 +20,13 @@ export default function Navigation() {
                 <NavigationItem
                     icon={faDownload}
                     tooltip="Install update"
-                    onClick={() => {}}
+                    onClick={installUpdate}
                 />
             ) : (
                 <NavigationItem
                     icon={faRotate}
                     tooltip="Check for updates"
-                    onClick={() => {}}
+                    onClick={checkForUpdate}
                 />
             )}
             <NavigationItem
@@ -42,7 +42,10 @@ export default function Navigation() {
             <NavigationItem
                 icon={faGear}
                 tooltip="Settings"
-                onClick={() => {}}
+                onClick={() => {
+                    setCurrentOverlay(Overlays.Settings);
+                    toggleOverlay();
+                }}
             />
             <NavigationItem
                 icon={faPowerOff}
