@@ -19,18 +19,20 @@ export const OpacityScaleTransition: CustomTransition = {
         ease: 'easeIn'
     },
     initial: {
-        height: '98%',
-        width: '98%'
+        position: 'absolute',
+        transformOrigin: 'center',
+        top: '0',
+        left: '0',
+        scale: 0.9
     },
     animate: {
-        height: '100%',
-        width: '100%'
+        scale: 1
     },
     exit: {
-        height: '80%',
-        width: '80%',
+        scale: 0.5,
+        opacity: 0,
         transition: {
-            duration: 0.15,
+            duration: 0.1,
             ease: 'easeOut'
         }
     }
