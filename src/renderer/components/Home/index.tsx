@@ -106,7 +106,7 @@ export default function Home() {
             <div className="flex flex-row h-full gap-8">
                 <Sidebar />
                 <div className="flex grow justify-center items-center !min-w-[60%]">
-                    <div className="flex flex-col">
+                    <div className="flex flex-col gap-4">
                         {/* <Menu
                             button={{
                                 className: "p-4 bg-red-400",
@@ -138,14 +138,14 @@ export default function Home() {
                             animationDisabled={animationsDisabled}
                             animationSrc="../assets/crate-falling.webm"
                         />
-                        <h1 className="-mt-5 text-center font-bold text-5xl text-[#181a29]">
+                        <h1 className="text-center font-bold text-5xl text-[#181a29]">
                             DROP-FARMER
                         </h1>
                         <p className="text-center text-[#181a29] text-xl">
                             Stream drops farmer application
                         </p>
                         <Navigation />
-                        <div className="mt-8 flex items-center justify-center">
+                        {/* <div className="mt-8 flex items-center justify-center">
                             <ButtonDropdown
                                 icon={faBars}
                                 primary={true}
@@ -218,7 +218,7 @@ export default function Home() {
                                     });
                                 }}
                             />
-                        </div>
+                        </div> */}
                         <div className="mt-4 flex flex-col items-center">
                             <p className="w-fit text-[#181a2980] text-center mt-1">
                                 Version: {applicationVersion}
