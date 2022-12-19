@@ -11,12 +11,13 @@ import { Overlays } from '../Overlay/types';
 import NavigationItem from './NavigationItem';
 
 export default function Navigation() {
-    const { status, checkForUpdate, installUpdate } = useContext(UpdateContext);
+    const { updateAvailable, checkForUpdate, installUpdate } =
+        useContext(UpdateContext);
     const { setCurrentOverlay, toggleOverlay } = useContext(ModalContext);
 
     return (
         <div className="flex flex-row items-center justify-center gap-3">
-            {status?.status === 'updateAvailable' ? (
+            {updateAvailable ? (
                 <NavigationItem
                     icon={faDownload}
                     tooltip="Install update"

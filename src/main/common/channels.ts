@@ -18,11 +18,12 @@ export enum Channels {
     toastError = 'toast-error',
     toastLoading = 'toast-loading',
     toastForcedType = 'toast-forced-type',
-    updateCheck = 'update-check',
     updateAvailable = 'update-available',
-    installUpdate = 'install-update',
     restart = 'restart',
     deleteFarm = 'delete-farm',
     internet = 'internet',
-    update = 'update'
+    update = 'update-status',
+    installUpdate = 'install-update',
+    updateCheck = 'update-check',
+    updateStatus = 'update-status'
 }

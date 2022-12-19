@@ -8,8 +8,6 @@ interface Props {
 }
 
 export default function Overlay({ children, showing }: Props) {
-    console.log(showing);
-
     return (
         <AnimatePresence>
             {showing && (

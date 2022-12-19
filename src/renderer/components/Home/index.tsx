@@ -10,48 +10,14 @@ import Sidebar from '../Sidebar';
  * The route for the main page of the application.
  */
 export default function Home() {
-    const [animationsDisabled, setAnimationsDisabled] =
-        useState<boolean>(false);
     const [applicationVersion, setApplicationVersion] =
         useState<string>('0.0.0');
-    const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
-
-    const [showingModal, setShowingModal] = useState<boolean>(false);
-    const [modalData, setModalData] = useState<{
-        modalToShow: 'settings' | 'add-new-farm';
-    }>({
-        modalToShow: 'settings'
-    });
-
-    const { settings, getSetting } = useContext(SettingsContext);
 
     /**
      * On site load, get internet connection
      */
     useEffect(() => {
         window.api.log('DEBUG', 'Rendering home page');
-
-        /**
-         * Update available listener
-         */
-        window.api.handleOneWay(window.api.channels.updateAvailable, () => {
-            setUpdateAvailable(true);
-        });
-
-        /**
-         * 3D-Animations disabled?
-         */
-        window.api
-            .sendAndWait(window.api.channels.get3DAnimationsDisabled)
-            .then((disabled: any) => {
-                setAnimationsDisabled(disabled);
-            })
-            .catch((err) => {
-                window.api.log(
-                    'ERROR',
-                    `Error when setting animations status. ${err}`
-                );
-            });
 
         /**
          * Application version.
@@ -69,10 +35,6 @@ export default function Home() {
             });
 
         return () => {
-            window.api.removeAllListeners(window.api.channels.updateAvailable);
-            window.api.removeAllListeners(
-                window.api.channels.get3DAnimationsEnabled
-            );
             window.api.removeAllListeners(
                 window.api.channels.getApplicationVersion
             );
@@ -81,159 +43,31 @@ export default function Home() {
 
     return (
         <>
-            <ModalManager
-                showing={showingModal}
-                modalToShow={modalData.modalToShow}
-                handleClosing={() => setShowingModal(false)}
-            />
             <div className="flex flex-row h-full gap-8">
                 <Sidebar />
                 <div className="flex grow justify-center items-center !min-w-[60%]">
-                    <div className="flex flex-col gap-4">
-                        {/* <Menu
-                            button={{
-                                className: "p-4 bg-red-400",
-                                element: (
-                                    <FontAwesomeIcon
-                                        icon={faEllipsis}
-                                        size="1x"
-                                        fixedWidth={true}
-                                    />
-                                )
-                            }}
-                            alignment={Alignment.BottomLeft}
-                            entries={[
-                                {
-                                    label: "Entry 1",
-                                    onClick: () => {}
-                                },
-                                {
-                                    label: "Entry 2",
-                                    onClick: () => {}
-                                },
-                                {
-                                    label: "Entry 3",
-                                    onClick: () => {}
-                                }
-                            ]}
-                        /> */}
-                        <div className="w-2/3 self-center -mb-6">
+                    <div className="flex flex-col gap-3">
+                        <div className="w-2/3 self-center -mb-5">
                             <Model
                                 src="../assets/crate-falling.webm"
                                 type="video/webm"
                                 loop={true}
-                                disabled={
-                                    getSetting('application', 'reducedMotion')
-                                        ?.value as boolean
-                                }
                             />
                         </div>
-                        <h1 className="text-center font-bold text-5xl text-[#181a29]">
+                        <h1 className="text-center font-bold text-5xl text-pepper-200">
                             DROP-FARMER
                         </h1>
-                        <p className="text-center text-[#181a29] text-xl">
+                        <p className="text-center text-pepper-200 text-xl">
                             Stream drops farmer application
                         </p>
                         <Navigation />
-                        {/* <div className="mt-8 flex items-center justify-center">
-                            <ButtonDropdown
-                                icon={faBars}
-                                primary={true}
-                                dropdownItems={[
-                                    {
-                                        type: 'label',
-                                        label: 'Check for update',
-                                        disabled:
-                                            process.env.NODE_ENV !==
-                                            'production',
-                                        action() {
-                                            window.api.sendOneWay(
-                                                window.api.channels.updateCheck
-                                            );
-                                        }
-                                    },
-                                    {
-                                        type: 'seperator'
-                                    },
-                                    {
-                                        type: 'label',
-                                        label: 'About',
-                                        disabled: true
-                                    },
-                                    {
-                                        type: 'label',
-                                        label: 'Statistics',
-                                        disabled: true
-                                    },
-                                    {
-                                        type: 'seperator'
-                                    },
-                                    {
-                                        type: 'label',
-                                        label: 'Restart application',
-                                        disabled: false,
-                                        action() {}
-                                    },
-                                    {
-                                        type: 'label',
-                                        label: 'Quit application',
-                                        disabled: false,
-                                        action() {
-                                            window.api.sendOneWay(
-                                                window.api.channels.shutdown
-                                            );
-                                        }
-                                    }
-                                ]}
-                            />
-                            <ButtonNolabel
-                                icon={faGlobe}
-                                primary={true}
-                                text="Website"
-                                onClickAction={() => {
-                                    window.api.sendOneWay(
-                                        window.api.channels.openLinkInExternal,
-                                        'https://drop-farmer.soryn.dev'
-                                    );
-                                }}
-                            />
-                            <ButtonNolabel
-                                icon={faGear}
-                                primary={true}
-                                text="Settings"
-                                onClickAction={() => {
-                                    setShowingModal(true);
-                                    setModalData({
-                                        modalToShow: 'settings'
-                                    });
-                                }}
-                            />
-                        </div> */}
-                        <div className="mt-4 flex flex-col items-center">
-                            <p className="w-fit text-[#181a2980] text-center mt-1">
+                        <div className="flex flex-col items-center">
+                            <p className="w-fit text-pepper-200/60 text-center">
                                 Version: {applicationVersion}
                             </p>
-                            <p className="w-fit text-[#181a2980] text-center mt-1">
+                            <p className="w-fit text-pepper-200/60 text-center">
                                 Copyright © Soryn
                             </p>
-                            {/* {updateAvailable && ( */}
-                            <Tooltip
-                                placement="top"
-                                text="Will get installed on restart"
-                            >
-                                <p
-                                    // className={styles.installUpdate}
-                                    onClick={() => {
-                                        window.api.sendOneWay(
-                                            window.api.channels.installUpdate
-                                        );
-                                    }}
-                                >
-                                    Update available! Click here to update
-                                    <br />
-                                </p>
-                            </Tooltip>
-                            {/* )} */}
                         </div>
                     </div>
                 </div>

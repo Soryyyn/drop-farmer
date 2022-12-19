@@ -1,14 +1,16 @@
-import React from 'react';
+import { SettingsContext } from '@util/contexts';
+import React, { useContext } from 'react';
 
 interface Props {
     src: string;
     type: string;
-    disabled: boolean;
     loop?: boolean;
 }
 
-export default function Model({ src, type, disabled, loop }: Props) {
-    if (disabled) {
+export default function Model({ src, type, loop }: Props) {
+    const { getSetting } = useContext(SettingsContext);
+
+    if (getSetting('application', 'reducedMotion')?.value as boolean) {
         return (
             <video loop={loop}>
                 <source src={src} type={type} />

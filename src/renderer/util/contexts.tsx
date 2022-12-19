@@ -40,14 +40,11 @@ export const ModalContext = createContext<{
 });
 
 export const UpdateContext = createContext<{
-    status: UpdateStatus | undefined;
+    updateAvailable: boolean;
     checkForUpdate: () => void;
     installUpdate: () => void;
 }>({
-    status: {
-        status: 'updateUnavailable',
-        shown: 'Update unavailable'
-    },
+    updateAvailable: false,
     checkForUpdate: () => {},
     installUpdate: () => {}
 });
@@ -172,21 +169,25 @@ export function ModalContextProvider({ children }: Props) {
 }
 
 export function UpdateContextProvider({ children }: Props) {
-    const [currentStatus, setCurrentStatus] = useState<UpdateStatus>({
-        status: 'updateUnavailable',
-        shown: 'Update unavailable'
-    });
+    const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
-    useHandleOneWay(window.api.channels.update, null, (event, status) => {
-        setCurrentStatus(status);
-    });
+    useHandleOneWay(
+        window.api.channels.updateStatus,
+        null,
+        (event, status: boolean) => {
+            setUpdateAvailable(status);
+        }
+    );
 
-    function checkForUpdate() {}
+    function checkForUpdate() {
+        window.api.sendOneWay(window.api.channels.updateCheck);
+    }
+
     function installUpdate() {}
 
     return (
         <UpdateContext.Provider
-            value={{ status: currentStatus, checkForUpdate, installUpdate }}
+            value={{ updateAvailable, checkForUpdate, installUpdate }}
         >
             {children}
         </UpdateContext.Provider>

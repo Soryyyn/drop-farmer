@@ -51,14 +51,19 @@ export default function ToastNotifications() {
     useHandleOneWay(
         window.api.channels.toastForcedType,
         null,
-        (event, toastSettings) => {
-            if (toastSettings.type === 'error')
+        (event, toastSettings: ForcedTypeToast) => {
+            if (toastSettings.type === 'success')
                 toast.success(toastSettings.text, {
                     id: toastSettings.id,
                     duration: toastSettings.duration
                 });
-            else
+            else if (toastSettings.type === 'error')
                 toast.error(toastSettings.text, {
+                    id: toastSettings.id,
+                    duration: toastSettings.duration
+                });
+            else
+                toast.loading(toastSettings.text, {
                     id: toastSettings.id,
                     duration: toastSettings.duration
                 });

@@ -28,7 +28,7 @@ type PromiseToast = {
 
 type ForcedTypeToast = {
     id: string;
-    type: 'success' | 'error';
+    type: 'success' | 'error' | 'loading';
     text: string;
     duration: number;
 };
@@ -102,9 +102,4 @@ type ConfigFile = {
     version: string;
     farms: CachedFarms;
     settings: CachedSettings;
-};
-
-type UpdateStatus = {
-    status: 'updateUnavailable' | 'updateAvailable' | 'checkingForUpdate';
-    shown: 'Update unavailable' | 'Update available' | 'Checking for update...';
 };
