@@ -34,6 +34,22 @@ export const applicationSettings: Setting[] = [
         defaultValue: false
     },
     {
+        name: 'checkForUpdates',
+        shownName: 'Automatically check for updates',
+        description:
+            "Enable to automatically check for updates. If you don't wan't to update, disable this setting.",
+        value: undefined,
+        defaultValue: true
+    },
+    {
+        name: 'reducedMotion',
+        shownName: 'Prefer reduced motion',
+        description:
+            'Enable this setting to keep animations & transitions to the minimum.',
+        value: undefined,
+        defaultValue: false
+    },
+    {
         name: 'debugLogs',
         shownName: 'Enable debug logs',
         description:

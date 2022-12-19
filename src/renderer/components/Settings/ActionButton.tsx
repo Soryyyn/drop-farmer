@@ -23,7 +23,7 @@ export function ActionButton({ icon, tooltip, onClick }: Props) {
                 </Tooltip>
             ) : (
                 <div
-                    className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-2.5 cursor-pointer"
+                    className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-2.5 cursor-pointer text-snow-500"
                     onClick={onClick}
                 >
                     <Icon sprite={icon} size="1x" />

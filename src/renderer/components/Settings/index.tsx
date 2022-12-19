@@ -44,7 +44,7 @@ export default function Settings({ onClose }: Props) {
                     />
                 ]}
             >
-                <div className="flex flex-row h-full w-full gap-8">
+                <div className="flex flex-row h-full w-full gap-8 overflow-y-auto">
                     {/* Selectors */}
                     <ul className="min-w-fit max-w-[25%] flex flex-col gap-2 list-none">
                         {Object.keys(settings!).map((selector) => {
@@ -60,7 +60,7 @@ export default function Settings({ onClose }: Props) {
                     </ul>
 
                     {/* Settings */}
-                    <ul className="grow flex flex-col gap-4">
+                    <ul className="grow flex flex-col gap-4 overflow-y-auto">
                         {settings![selected].map((setting) => {
                             return (
                                 <Setting

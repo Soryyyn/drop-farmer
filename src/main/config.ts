@@ -11,7 +11,7 @@ let currentConfig: any;
 const autoLauncher = new AutoLaunch({
     name: 'drop-farmer'
 });
-const configVersion = 1.1;
+const configVersion = 1.2;
 
 export function initConfig(): void {
     createDefaultConfig();

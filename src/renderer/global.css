@@ -45,21 +45,17 @@ body {
 }
 
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 12px;
 }
 
 ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 10px 10px transparent;
+    border: solid 3px transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    pointer-events: initial;
-    background: #bad5f1;
-    border-radius: 2px;
-    border: 4px #bad5f1 solid;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #bad5f1;
+    box-shadow: inset 0 0 11px 11px #bad5f1;
+    border: solid 5px transparent;
 }
 
 input[type='number']::-webkit-inner-spin-button {
