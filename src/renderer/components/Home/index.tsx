@@ -1,25 +1,9 @@
-import { Icon } from '@components/global/Icon';
-import Menu from '@components/global/Menu';
-import { Alignment } from '@components/global/Menu/types';
+import Model from '@components/global/Model';
 import Navigation from '@components/global/Navigation';
-import Modal from '@components/global/Overlay';
-import { Overlays } from '@components/global/Overlay/types';
 import Tooltip from '@components/global/Tooltip';
-import Settings from '@components/Settings';
-import {
-    faBars,
-    faColonSign,
-    faEllipsis,
-    faGear,
-    faGlobe
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ModalContext } from '@util/contexts';
+import { SettingsContext } from '@util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
-import ButtonDropdown from '../ButtonDropdown';
-import ButtonNolabel from '../ButtonNoLabel';
 import ModalManager from '../ModalManager';
-import ModelAnimation from '../ModelAnimation';
 import Sidebar from '../Sidebar';
 
 /**
@@ -39,8 +23,7 @@ export default function Home() {
         modalToShow: 'settings'
     });
 
-    const { currentOverlay, setCurrentOverlay, toggleOverlay } =
-        useContext(ModalContext);
+    const { settings, getSetting } = useContext(SettingsContext);
 
     /**
      * On site load, get internet connection
@@ -134,10 +117,17 @@ export default function Home() {
                                 }
                             ]}
                         /> */}
-                        <ModelAnimation
-                            animationDisabled={animationsDisabled}
-                            animationSrc="../assets/crate-falling.webm"
-                        />
+                        <div className="w-2/3 self-center -mb-6">
+                            <Model
+                                src="../assets/crate-falling.webm"
+                                type="video/webm"
+                                loop={true}
+                                disabled={
+                                    getSetting('application', 'reducedMotion')
+                                        ?.value as boolean
+                                }
+                            />
+                        </div>
                         <h1 className="text-center font-bold text-5xl text-[#181a29]">
                             DROP-FARMER
                         </h1>

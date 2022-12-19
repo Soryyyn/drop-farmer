@@ -17,7 +17,15 @@ export const SettingsContext = createContext<{
     settings: Settings | undefined;
     setNewSettings: (newSettings: Settings) => void;
     resetToDefaultSettings: () => void;
-}>({ settings: undefined, setNewSettings() {}, resetToDefaultSettings() {} });
+    getSetting: (settingOwner: string, setting: string) => Setting | undefined;
+}>({
+    settings: undefined,
+    setNewSettings() {},
+    resetToDefaultSettings() {},
+    getSetting() {
+        return undefined;
+    }
+});
 
 export const InternetConnectionContext = createContext<boolean>(true);
 
@@ -91,9 +99,21 @@ export function SettingsContextProvider({ children }: Props) {
         setNewSettings(appliedChanges);
     }
 
+    /**
+     * Get a specific setting or the settings of the owner, ex. application.
+     */
+    function getSetting(settingOwner: string, setting: string) {
+        return settings?.[settingOwner].find((s) => s.name === setting);
+    }
+
     return (
         <SettingsContext.Provider
-            value={{ settings, setNewSettings, resetToDefaultSettings }}
+            value={{
+                settings,
+                setNewSettings,
+                resetToDefaultSettings,
+                getSetting
+            }}
         >
             {children}
         </SettingsContext.Provider>
