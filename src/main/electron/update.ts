@@ -88,8 +88,6 @@ autoUpdater.on('checking-for-update', () => {
 autoUpdater.on('update-not-available', () => {
     log('MAIN', 'INFO', 'No update available');
 
-    log('MAIN', 'WARN', `Display toasts: ${displayToasts}`);
-
     sendOneWay(getMainWindow(), Channels.updateStatus, false);
 
     if (displayToasts) {
