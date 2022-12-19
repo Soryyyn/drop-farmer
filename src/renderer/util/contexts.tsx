@@ -183,7 +183,9 @@ export function UpdateContextProvider({ children }: Props) {
         window.api.sendOneWay(window.api.channels.updateCheck);
     }
 
-    function installUpdate() {}
+    function installUpdate() {
+        window.api.sendOneWay(window.api.channels.installUpdate);
+    }
 
     return (
         <UpdateContext.Provider

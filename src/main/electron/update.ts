@@ -57,6 +57,11 @@ handleOneWay(Channels.updateCheck, () => {
     displayToasts = true;
 });
 
+handleOneWay(Channels.installUpdate, () => {
+    setAppQuitting(true);
+    autoUpdater.quitAndInstall();
+});
+
 autoUpdater.on('checking-for-update', () => {
     log('MAIN', 'INFO', 'Currently checking if application can update');
 
@@ -133,19 +138,4 @@ autoUpdater.on('error', (err) => {
     }
 
     displayToasts = false;
-});
-
-/**
- * If the user wants to manually check for updates.
- */
-handleOneWay(Channels.updateCheck, () => {
-    autoUpdater.checkForUpdates();
-});
-
-/**
- * If the user wants to manually install the update.
- */
-handleOneWay(Channels.installUpdate, () => {
-    setAppQuitting(true);
-    autoUpdater.quitAndInstall();
 });
