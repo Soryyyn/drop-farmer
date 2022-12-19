@@ -8,17 +8,13 @@ import Tooltip from './global/Tooltip';
 
 interface Props {
     icon: IconDefinition;
-    tooltipText: string;
+    text: string;
     onClickAction: () => void;
 }
 
-export default function ExtraButton({
-    icon,
-    tooltipText,
-    onClickAction
-}: Props) {
+export default function ExtraButton({ icon, text, onClickAction }: Props) {
     return (
-        <Tooltip tooltipText={tooltipText} placement="bottom">
+        <Tooltip text={text} placement="bottom">
             <div className={styles.container} onClick={onClickAction}>
                 <FontAwesomeIcon
                     icon={icon}

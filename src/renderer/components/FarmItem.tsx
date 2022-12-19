@@ -51,7 +51,7 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                             <div className={styles.extraButtons}>
                                 <ExtraButton
                                     icon={faRotate}
-                                    tooltipText="Restart farm"
+                                    text="Restart farm"
                                     onClickAction={() => {
                                         window.api.log(
                                             'DEBUG',
@@ -66,7 +66,7 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                                 />
                                 <ExtraButton
                                     icon={faTrash}
-                                    tooltipText="Clear cache of the farm. User login is required again after clearing."
+                                    text="Clear cache of the farm. User login is required again after clearing."
                                     onClickAction={() => {
                                         window.api.log(
                                             'DEBUG',

@@ -29,7 +29,7 @@ export default function IndicatorTag({ status }: Props) {
     /**
      *
      */
-    const getTooltipText: (status: FarmStatus) => any = useCallback(
+    const gettext: (status: FarmStatus) => any = useCallback(
         (status: FarmStatus) => {
             if (status === 'disabled')
                 return "This farm is currently disabled and won't farm. Enable it in the settings.";
@@ -46,7 +46,7 @@ export default function IndicatorTag({ status }: Props) {
     );
 
     return (
-        <Tooltip placement="bottom" tooltipText={getTooltipText(status)}>
+        <Tooltip placement="bottom" text={gettext(status)}>
             <div className={clsx(styles.container, getIndicatorClass(status))}>
                 {status}
             </div>

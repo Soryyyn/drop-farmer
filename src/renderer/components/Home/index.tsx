@@ -1,3 +1,4 @@
+import { Icon } from '@components/global/Icon';
 import Menu from '@components/global/Menu';
 import { Alignment } from '@components/global/Menu/types';
 import Navigation from '@components/global/Navigation';
@@ -198,7 +199,7 @@ export default function Home() {
                             <ButtonNolabel
                                 icon={faGlobe}
                                 primary={true}
-                                tooltipText="Website"
+                                text="Website"
                                 onClickAction={() => {
                                     window.api.sendOneWay(
                                         window.api.channels.openLinkInExternal,
@@ -209,7 +210,7 @@ export default function Home() {
                             <ButtonNolabel
                                 icon={faGear}
                                 primary={true}
-                                tooltipText="Settings"
+                                text="Settings"
                                 onClickAction={() => {
                                     setShowingModal(true);
                                     setModalData({
@@ -228,7 +229,7 @@ export default function Home() {
                             {/* {updateAvailable && ( */}
                             <Tooltip
                                 placement="top"
-                                tooltipText="Will get installed on restart"
+                                text="Will get installed on restart"
                             >
                                 <p
                                     // className={styles.installUpdate}

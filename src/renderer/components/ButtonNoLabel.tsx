@@ -8,18 +8,18 @@ import Tooltip from './global/Tooltip';
 interface Props {
     icon: IconDefinition;
     primary: boolean;
-    tooltipText: string;
+    text: string;
     onClickAction: () => void;
 }
 
 export default function ButtonNolabel({
     icon,
     primary,
-    tooltipText,
+    text,
     onClickAction
 }: Props) {
     return (
-        <Tooltip tooltipText={tooltipText} placement="bottom">
+        <Tooltip text={text} placement="bottom">
             <div
                 className={clsx(
                     styles.buttonContainer,

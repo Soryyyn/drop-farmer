@@ -13,7 +13,7 @@ export function ActionButton({ icon, tooltip, onClick }: Props) {
     return (
         <>
             {tooltip ? (
-                <Tooltip tooltipText={tooltip} placement="bottom">
+                <Tooltip text={tooltip} placement="bottom">
                     <div
                         className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-2.5 cursor-pointer"
                         onClick={onClick}

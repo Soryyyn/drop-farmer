@@ -4,14 +4,14 @@ import 'tippy.js/dist/tippy.css';
 
 interface Props {
     children: JSX.Element;
-    tooltipText: string;
+    text: string;
     placement: any;
 }
 
-export default function Tooltip({ children, tooltipText, placement }: Props) {
+export default function Tooltip({ children, text, placement }: Props) {
     return (
         <Tippy
-            content={tooltipText}
+            content={text}
             placement={placement}
             delay={[500, 0]}
             duration={[0, 0]}
