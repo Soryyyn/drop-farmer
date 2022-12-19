@@ -54,7 +54,17 @@ if (!checkIfFirstRun()) {
 
 handleOneWay(Channels.updateCheck, () => {
     autoUpdater.checkForUpdates();
+
     displayToasts = true;
+
+    if (displayToasts) {
+        sendForcedTypeToast({
+            id: 'update-checking-toast',
+            text: 'Checking if update is available...',
+            duration: Infinity,
+            type: 'loading'
+        });
+    }
 });
 
 handleOneWay(Channels.installUpdate, () => {
@@ -77,6 +87,8 @@ autoUpdater.on('checking-for-update', () => {
 
 autoUpdater.on('update-not-available', () => {
     log('MAIN', 'INFO', 'No update available');
+
+    log('MAIN', 'WARN', `Display toasts: ${displayToasts}`);
 
     sendOneWay(getMainWindow(), Channels.updateStatus, false);
 
@@ -128,10 +140,12 @@ autoUpdater.on('error', (err) => {
 
     sendOneWay(getMainWindow(), Channels.updateStatus, false);
 
+    displayToasts = true;
+
     if (displayToasts) {
         sendForcedTypeToast({
             id: 'update-checking-toast',
-            text: 'Error occurd while checking for update. Please check the logfile.',
+            text: 'Error occured while checking for update. Please check the logfile.',
             duration: 4000,
             type: 'error'
         });
