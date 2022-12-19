@@ -1,6 +1,6 @@
+import { Icon } from '@components/global/Icon';
 import Tooltip from '@components/global/Tooltip';
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
 interface Props {
@@ -15,15 +15,10 @@ export function ActionButton({ icon, tooltip, onClick }: Props) {
             {tooltip ? (
                 <Tooltip text={tooltip} placement="bottom">
                     <div
-                        className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-2.5 cursor-pointer"
+                        className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-2.5 cursor-pointer text-snow-500"
                         onClick={onClick}
                     >
-                        <FontAwesomeIcon
-                            fixedWidth={true}
-                            icon={icon}
-                            size="1x"
-                            className="text-snow-500"
-                        />
+                        <Icon sprite={icon} size="1x" />
                     </div>
                 </Tooltip>
             ) : (
@@ -31,12 +26,7 @@ export function ActionButton({ icon, tooltip, onClick }: Props) {
                     className="flex justify-center items-center aspect-square bg-pepper-700 hover:bg-pepper-800 rounded-md p-2.5 cursor-pointer"
                     onClick={onClick}
                 >
-                    <FontAwesomeIcon
-                        fixedWidth={true}
-                        icon={icon}
-                        size="1x"
-                        className="text-snow-500"
-                    />
+                    <Icon sprite={icon} size="1x" />
                 </div>
             )}
         </>

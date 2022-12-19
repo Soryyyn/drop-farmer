@@ -1,6 +1,6 @@
+import { Icon } from '@components/global/Icon';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 interface Props {
     setting: Setting;
     onChange: (updated: any) => void;
@@ -23,7 +23,7 @@ export default function NumberInput({ setting, onChange }: Props) {
                         }
                 }}
             >
-                <FontAwesomeIcon icon={faPlus} size="sm" fixedWidth={true} />
+                <Icon sprite={faPlus} size="sm" />
             </button>
             <input
                 ref={numberInputRef}
@@ -64,7 +64,7 @@ export default function NumberInput({ setting, onChange }: Props) {
                         }
                 }}
             >
-                <FontAwesomeIcon icon={faMinus} size="sm" fixedWidth={true} />
+                <Icon sprite={faMinus} size="sm" />
             </button>
         </div>
     );
