@@ -5,6 +5,7 @@ import installExtension, {
 } from 'electron-devtools-installer';
 import { initConfig, updateConfigFile } from './config';
 import { createTray, destroyTray } from './electron/tray';
+import { initUpdater } from './electron/update';
 import {
     createMainWindow,
     getMainWindow,
@@ -45,7 +46,7 @@ initPuppeteerConnection();
 /**
  * Update checking / downloading.
  */
-require('./electron/update');
+initUpdater();
 
 /**
  * Gets executed when electron has finished starting.

@@ -1,9 +1,10 @@
 import { app, autoUpdater } from 'electron';
 import { Channels } from '../common/channels';
+import { Toasts } from '../common/constants';
 import { updateConfigFile } from '../config';
 import { destroyAllFarmWindows } from '../farms/management';
 import { log } from '../util/logger';
-import { getSettings, getSpecificSetting } from '../util/settings';
+import { getSpecificSetting } from '../util/settings';
 import { sendForcedTypeToast } from '../util/toast';
 import { handleOneWay, sendOneWay } from './ipc';
 import { destroyTray } from './tray';
@@ -11,47 +12,57 @@ import { getMainWindow, setAppQuitting } from './windows';
 
 let displayToasts: boolean = false;
 
-app.setAppUserModelId('com.squirrel.soryn.DropFarmer');
+export function initUpdater() {
+    autoUpdater.setFeedURL({
+        url: `https://drop-farmer-release-server.vercel.app/update/${
+            process.platform
+        }/${app.getVersion()}`
+    });
+    app.setAppUserModelId('com.squirrel.soryn.DropFarmer');
 
-const updateURL: string = `https://drop-farmer-release-server.vercel.app/update/${
-    process.platform
-}/${app.getVersion()}`;
-autoUpdater.setFeedURL({ url: updateURL });
-
-/**
- * Check if "--squirrel-firstrun" is in startup args, and don't auto-update.
- */
-function checkIfFirstRun(): boolean {
-    return process.argv.indexOf('--squirrel-firstrun') > -1;
+    setupAppLaunchUpdateRouting();
 }
 
 /**
- * Only start the auto-checking for updates after the first run.
+ * Function gets ran on app launch and decides if auto update checking needs to
+ * be enabled based on the configured settings.
+ *
+ * TODO: Maybe create a cron job for stopping and starting the routine for live
+ * chaning via settings?
  */
-if (!checkIfFirstRun()) {
-    if (process.env.NODE_ENV === 'production') {
-        if (
-            getSpecificSetting('application', 'checkForUpdates')
-                .value as boolean
-        ) {
-            log('MAIN', 'DEBUG', 'Auto-update-checking is enabled');
-            setInterval(() => {
-                autoUpdater.checkForUpdates();
-            }, 900000);
+function setupAppLaunchUpdateRouting() {
+    if (!(process.argv.indexOf('--squirrel-firstrun') > -1)) {
+        if (process.env.NODE_ENV === 'production') {
+            if (
+                getSpecificSetting('application', 'checkForUpdates')
+                    .value as boolean
+            ) {
+                log('MAIN', 'DEBUG', 'Auto-update-checking is enabled');
+                setInterval(() => {
+                    autoUpdater.checkForUpdates();
+                }, 900000);
+            } else {
+                log('MAIN', 'WARN', 'Auto-update-checking is disabled');
+            }
         } else {
-            log('MAIN', 'WARN', 'Auto-update-checking is disabled');
+            log(
+                'MAIN',
+                'WARN',
+                'Auto-update-checking is disabled, because of DEV'
+            );
         }
     } else {
-        log('MAIN', 'WARN', 'Auto-update-checking is disabled, because of DEV');
+        log(
+            'MAIN',
+            'WARN',
+            'First run of application after install/update. No automatic update checking enabled'
+        );
     }
-} else {
-    log(
-        'MAIN',
-        'WARN',
-        'First run of application after install/update. No automatic update checking enabled'
-    );
 }
 
+/**
+ * React to user wanted actions.
+ */
 handleOneWay(Channels.updateCheck, () => {
     autoUpdater.checkForUpdates();
 
@@ -59,19 +70,21 @@ handleOneWay(Channels.updateCheck, () => {
 
     if (displayToasts) {
         sendForcedTypeToast({
-            id: 'update-checking-toast',
+            id: Toasts.UpdateChecking,
             text: 'Checking if update is available...',
             duration: Infinity,
             type: 'loading'
         });
     }
 });
-
 handleOneWay(Channels.installUpdate, () => {
     setAppQuitting(true);
     autoUpdater.quitAndInstall();
 });
 
+/**
+ * Listening for events.
+ */
 autoUpdater.on('checking-for-update', () => {
     log('MAIN', 'INFO', 'Currently checking if application can update');
 
@@ -129,10 +142,6 @@ autoUpdater.on('before-quit-for-update', () => {
     destroyAllFarmWindows();
 });
 
-/**
- * If an error happens during any step of updating, checking for updates,
- * downloading updates, etc.
- */
 autoUpdater.on('error', (err) => {
     log('MAIN', 'ERROR', `Failed downloading / installing update. ${err}`);
 
