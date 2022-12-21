@@ -1,5 +1,6 @@
 import { FarmContextProvider, FarmsContext } from '@util/contexts';
 import React, { useContext } from 'react';
+import SidebarItem from './SidebarItem';
 
 export default function Sidebar() {
     const { farms } = useContext(FarmsContext);
@@ -9,7 +10,7 @@ export default function Sidebar() {
             {farms.map((farm) => {
                 return (
                     <FarmContextProvider farm={farm} key={farm.name}>
-                        <p>{farm.name}</p>
+                        <SidebarItem />
                     </FarmContextProvider>
                 );
             })}
