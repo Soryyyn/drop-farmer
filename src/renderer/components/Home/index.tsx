@@ -17,27 +17,24 @@ export default function Home() {
      * On site load, get internet connection
      */
     useEffect(() => {
-        window.api.log('DEBUG', 'Rendering home page');
+        api.log('DEBUG', 'Rendering home page');
 
         /**
          * Application version.
          */
-        window.api
-            .sendAndWait(window.api.channels.getApplicationVersion)
+        api.sendAndWait(api.channels.getApplicationVersion)
             .then((version: any) => {
                 setApplicationVersion(version);
             })
             .catch((err) => {
-                window.api.log(
+                api.log(
                     'ERROR',
                     `Error when setting application version. ${err}`
                 );
             });
 
         return () => {
-            window.api.removeAllListeners(
-                window.api.channels.getApplicationVersion
-            );
+            api.removeAllListeners(api.channels.getApplicationVersion);
         };
     }, []);
 

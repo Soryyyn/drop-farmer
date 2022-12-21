@@ -6,50 +6,38 @@ export default function ToastNotifications() {
     /**
      * Handle a toast success notification.
      */
-    useHandleOneWay(
-        window.api.channels.toastSuccess,
-        null,
-        (event, toastSettings) => {
-            toast.success(toastSettings.text, {
-                id: toastSettings.id,
-                duration: toastSettings.duration
-            });
-        }
-    );
+    useHandleOneWay(api.channels.toastSuccess, null, (event, toastSettings) => {
+        toast.success(toastSettings.text, {
+            id: toastSettings.id,
+            duration: toastSettings.duration
+        });
+    });
 
     /**
      * Handle an error toast notification.
      */
-    useHandleOneWay(
-        window.api.channels.toastError,
-        null,
-        (event, toastSettings) => {
-            toast.error(toastSettings.text, {
-                id: toastSettings.id,
-                duration: toastSettings.duration
-            });
-        }
-    );
+    useHandleOneWay(api.channels.toastError, null, (event, toastSettings) => {
+        toast.error(toastSettings.text, {
+            id: toastSettings.id,
+            duration: toastSettings.duration
+        });
+    });
 
     /**
      * Handle a loading toast notification.
      */
-    useHandleOneWay(
-        window.api.channels.toastLoading,
-        null,
-        (event, toastSettings) => {
-            toast.loading(toastSettings.text, {
-                id: toastSettings.id,
-                duration: toastSettings.duration
-            });
-        }
-    );
+    useHandleOneWay(api.channels.toastLoading, null, (event, toastSettings) => {
+        toast.loading(toastSettings.text, {
+            id: toastSettings.id,
+            duration: toastSettings.duration
+        });
+    });
 
     /**
      * Handle a forced type toast notification.
      */
     useHandleOneWay(
-        window.api.channels.toastForcedType,
+        api.channels.toastForcedType,
         null,
         (event, toastSettings: ForcedTypeToast) => {
             if (toastSettings.type === 'success')

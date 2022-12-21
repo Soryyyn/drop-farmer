@@ -9,17 +9,17 @@ import { useEffect } from 'react';
  * from the ipc event.
  */
 export function useHandleOneWay(
-    channel: string,
+    channel: any,
     dependency: any,
     callback: (event: any, response: any) => void
 ) {
     useEffect(() => {
-        window.api.handleOneWay(channel, (event: any, response: any) => {
+        api.handleOneWay(channel, (event: any, response: any) => {
             callback(event, response);
         });
 
         return () => {
-            window.api.removeAllListeners(channel);
+            api.removeAllListeners(channel);
         };
     }, [dependency]);
 }

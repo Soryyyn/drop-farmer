@@ -7,13 +7,12 @@ import { useEffect } from 'react';
  * @param {any} args The arguments to pass to with the signal.
  */
 export function useSendAndWait(
-    channel: string,
+    channel: any,
     args: any,
     callback: (err: any, response: any) => void
 ) {
     useEffect(() => {
-        window.api
-            .sendAndWait(channel, args)
+        api.sendAndWait(channel, args)
             .then((result) => {
                 callback(undefined, result);
             })
@@ -25,7 +24,7 @@ export function useSendAndWait(
             });
 
         return () => {
-            window.api.removeAllListeners(channel);
+            api.removeAllListeners(channel);
         };
     }, []);
 }

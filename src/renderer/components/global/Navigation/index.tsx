@@ -34,8 +34,8 @@ export default function Navigation() {
                 icon={faGlobe}
                 tooltip="Website"
                 onClick={() =>
-                    window.api.sendOneWay(
-                        window.api.channels.openLinkInExternal,
+                    api.sendOneWay(
+                        api.channels.openLinkInExternal,
                         'https://drop-farmer.soryn.dev'
                     )
                 }
@@ -51,9 +51,7 @@ export default function Navigation() {
             <NavigationItem
                 icon={faPowerOff}
                 tooltip="Shutdown application"
-                onClick={() =>
-                    window.api.sendOneWay(window.api.channels.shutdown)
-                }
+                onClick={() => api.sendOneWay(api.channels.shutdown)}
             />
         </div>
     );

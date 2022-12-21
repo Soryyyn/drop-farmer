@@ -30,7 +30,7 @@ export default function Settings({ handleClosing }: Props) {
     /**
      * Get the settings file data from main process.
      */
-    useSendAndWait(window.api.channels.getSettings, null, (err, response) => {
+    useSendAndWait(api.channels.getSettings, null, (err, response) => {
         if (!err) {
             setSelectors(Object.keys(response));
             setSettings(response);
@@ -64,10 +64,7 @@ export default function Settings({ handleClosing }: Props) {
                         /**
                          * Save the reset.
                          */
-                        window.api.sendOneWay(
-                            window.api.channels.saveNewSettings,
-                            settings
-                        );
+                        api.sendOneWay(api.channels.saveNewSettings, settings);
                         setOriginalSettings(cloneDeep(settings));
                     }}
                     className={styles.topBarButton}
@@ -86,8 +83,8 @@ export default function Settings({ handleClosing }: Props) {
                          * Only send the ipc signal if changing is needed.
                          */
                         if (!isEqual(settings, originalSettings)) {
-                            window.api.sendOneWay(
-                                window.api.channels.saveNewSettings,
+                            api.sendOneWay(
+                                api.channels.saveNewSettings,
                                 settings
                             );
                             setOriginalSettings(cloneDeep(settings));

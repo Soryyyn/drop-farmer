@@ -1,52 +1,19 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 import { Channels } from './main/common/channels';
+import { IpcChannels } from './main/common/constants';
 
 export default {
-    /**
-     * The channels for ipc communication.
-     */
-    channels: Channels,
-    /**
-     * Call the main process to execute functions on main process without
-     * waiting for a response.
-     *
-     * @param {Channels} channel The channel to call on main.
-     * @param  {...any} args Arguments / data to send to main.
-     */
-    sendOneWay: (channel: Channels, ...args: any[]) =>
+    channels: IpcChannels,
+    sendOneWay: (channel: IpcChannels, ...args: any[]) =>
         ipcRenderer.send(channel, ...args),
-    /**
-     * Call the main process to execute functions on main process and
-     * wait for a response.
-     *
-     * @param {Channels} channel The channel to call on main.
-     * @param  {...any} args Arguments / data to send to main.
-     */
-    sendAndWait: (channel: Channels, ...args: any[]) =>
+    sendAndWait: (channel: IpcChannels, ...args: any[]) =>
         ipcRenderer.invoke(channel, ...args),
-    /**
-     * React to a call from main process without giving a response.
-     *
-     * @param {Channels} channel The channel to answer from main.
-     * @param {any} callback Function/'s to execute when replying to main.
-     */
     handleOneWay: (
-        channel: Channels,
+        channel: IpcChannels,
         listener: (event: IpcRendererEvent, ...args: any[]) => void
     ) => ipcRenderer.on(channel, listener),
-    /**
-     * Remove all the listeners of a specific event listener.
-     * NOTE: Use this method in a component to prevent multiple fires.
-     *
-     * @param {Channels} channel The channel to remove all the listeners of.
-     */
-    removeAllListeners: (channel: Channels) =>
+    removeAllListeners: (channel: IpcChannels) =>
         ipcRenderer.removeAllListeners(channel),
-    /**
-     * Log with the process "RENDERER" to the console and logfile.
-     *
-     * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
-     */
     log: (
         type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
         message: string

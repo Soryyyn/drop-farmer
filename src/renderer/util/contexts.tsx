@@ -56,9 +56,9 @@ export function SettingsContextProvider({ children }: Props) {
     const [settings, setSettings] = useState<Settings>();
     const [oldSettings, setOldSettings] = useState<Settings>();
 
-    useSendAndWait(window.api.channels.getSettings, null, (err, settings) => {
+    useSendAndWait(api.channels.getSettings, null, (err, settings) => {
         if (err) {
-            window.api.log('ERROR', err);
+            api.log('ERROR', err);
         } else {
             setSettings(settings);
             setOldSettings(cloneDeep(settings));
@@ -71,10 +71,7 @@ export function SettingsContextProvider({ children }: Props) {
      */
     function setNewSettings(newSettings: Settings) {
         if (!isEqual(newSettings, oldSettings)) {
-            window.api.sendOneWay(
-                window.api.channels.saveNewSettings,
-                newSettings
-            );
+            api.sendOneWay(api.channels.saveNewSettings, newSettings);
 
             setSettings(newSettings);
             setOldSettings(cloneDeep(newSettings));
@@ -122,7 +119,7 @@ export function InternetConnectionContextProvider({ children }: Props) {
         useState<boolean>(true);
 
     useHandleOneWay(
-        window.api.channels.internet,
+        api.channels.internet,
         null,
         (event, internetConnection) => {
             setInternetConnectContext(internetConnection);
@@ -172,7 +169,7 @@ export function UpdateContextProvider({ children }: Props) {
     const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
     useHandleOneWay(
-        window.api.channels.updateStatus,
+        api.channels.updateStatus,
         null,
         (event, status: boolean) => {
             setUpdateAvailable(status);
@@ -180,11 +177,11 @@ export function UpdateContextProvider({ children }: Props) {
     );
 
     function checkForUpdate() {
-        window.api.sendOneWay(window.api.channels.updateCheck);
+        api.sendOneWay(api.channels.updateCheck);
     }
 
     function installUpdate() {
-        window.api.sendOneWay(window.api.channels.installUpdate);
+        api.sendOneWay(api.channels.installUpdate);
     }
 
     return (

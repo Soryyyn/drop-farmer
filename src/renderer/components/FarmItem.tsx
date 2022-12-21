@@ -5,6 +5,7 @@ import {
     faTrash
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import React, { useState } from 'react';
 import styles from '../styles/FarmItem.module.scss';
 import DisplayWindowsButton from './DisplayWindowsButton';
@@ -53,13 +54,12 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                                     icon={faRotate}
                                     text="Restart farm"
                                     onClickAction={() => {
-                                        window.api.log(
+                                        api.log(
                                             'DEBUG',
                                             `Clicked restart farm button on "${name}"`
                                         );
-                                        window.api.sendOneWay(
-                                            window.api.channels
-                                                .restartScheduler,
+                                        api.sendOneWay(
+                                            api.channels.restartScheduler,
                                             name
                                         );
                                     }}
@@ -68,12 +68,12 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                                     icon={faTrash}
                                     text="Clear cache of the farm. User login is required again after clearing."
                                     onClickAction={() => {
-                                        window.api.log(
+                                        api.log(
                                             'DEBUG',
                                             `Clicked button to clear cache on "${name}"`
                                         );
-                                        window.api.sendOneWay(
-                                            window.api.channels.clearCache,
+                                        api.sendOneWay(
+                                            api.channels.clearCache,
                                             name
                                         );
                                     }}
@@ -93,7 +93,7 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                             status === 'farming' ||
                             status === 'attention-required'
                         ) {
-                            window.api.log(
+                            api.log(
                                 'DEBUG',
                                 `Clicked "eye"-icon on "${name}", setting to "${showing}"`
                             );
@@ -102,13 +102,10 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                             /**
                              * When the eye symbol is pressed and the windows should be showed or hidden.
                              */
-                            window.api.sendOneWay(
-                                window.api.channels.farmWindowsVisibility,
-                                {
-                                    name: name,
-                                    showing: showing
-                                }
-                            );
+                            api.sendOneWay(api.channels.farmWindowsVisibility, {
+                                name: name,
+                                showing: showing
+                            });
                         }
                     }}
                 />
@@ -119,15 +116,15 @@ export default function FarmItem({ name, type, status }: SidebarFarmItem) {
                     <FarmActionButton
                         label="Clear cache"
                         handleClick={() => {
-                            window.api.log("DEBUG", `Clicked button to reset clear cache on \"${name}\"`);
-                            window.api.sendOneWay(window.api.channels.clearCache, (name));
+                            api.log("DEBUG", `Clicked button to reset clear cache on \"${name}\"`);
+                            api.sendOneWay(api.channels.clearCache, (name));
                         }}
                     />
                     <FarmActionButton
                         label="Restart Farm"
                         handleClick={() => {
-                            window.api.log("DEBUG", `Clicked restart farm button on \"${name}\"`);
-                            window.api.sendOneWay(window.api.channels.restartScheduler, (name));
+                            api.log("DEBUG", `Clicked restart farm button on \"${name}\"`);
+                            api.sendOneWay(api.channels.restartScheduler, (name));
                         }}
                     />
                 </div>
