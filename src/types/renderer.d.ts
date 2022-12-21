@@ -1,5 +1,3 @@
-import { Channels } from 'src/main/common/channels';
-
 /**
  * Declare the types for the renderer process to understand the preload file.
  */

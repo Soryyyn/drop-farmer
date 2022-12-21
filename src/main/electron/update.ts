@@ -147,8 +147,6 @@ autoUpdater.on('error', (err) => {
 
     sendOneWay(getMainWindow(), Channels.updateStatus, false);
 
-    displayToasts = true;
-
     if (displayToasts) {
         sendForcedTypeToast({
             id: 'update-checking-toast',
@@ -157,6 +155,4 @@ autoUpdater.on('error', (err) => {
             type: 'error'
         });
     }
-
-    displayToasts = false;
 });

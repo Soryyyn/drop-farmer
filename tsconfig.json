@@ -22,7 +22,7 @@
             "@hooks/*": ["src/renderer/hooks/*"],
             "@util/*": ["src/renderer/util/*"]
         },
-        "typeRoots": ["./node_modules/@types", "./types"]
+        "typeRoots": ["./node_modules/@types", "src/types"]
     },
-    "include": ["src/**/*", "types/*.d.ts"]
+    "include": ["src/**/*", "src/types/*.d.ts"]
 }

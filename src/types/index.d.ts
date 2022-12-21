@@ -103,3 +103,8 @@ type ConfigFile = {
     farms: CachedFarms;
     settings: CachedSettings;
 };
+
+/**
+ * For renderer to know the preload types.
+ */
+declare const api: typeof import('../api').default;
