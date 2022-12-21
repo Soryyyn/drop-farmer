@@ -2,6 +2,7 @@ import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
 import Home from '@components/Home';
 import {
+    FarmsContextProvider,
     InternetConnectionContextProvider,
     ModalContextProvider,
     SettingsContextProvider,
@@ -19,15 +20,20 @@ export default function App() {
             <InternetConnectionContextProvider>
                 <UpdateContextProvider>
                     <SettingsContextProvider>
-                        <ModalContextProvider>
-                            <div className="p-8 flex flex-col h-screen">
-                                <HashRouter>
-                                    <Routes>
-                                        <Route path="/" element={<Home />} />
-                                    </Routes>
-                                </HashRouter>
-                            </div>
-                        </ModalContextProvider>
+                        <FarmsContextProvider>
+                            <ModalContextProvider>
+                                <div className="p-8 flex flex-col h-screen">
+                                    <HashRouter>
+                                        <Routes>
+                                            <Route
+                                                path="/"
+                                                element={<Home />}
+                                            />
+                                        </Routes>
+                                    </HashRouter>
+                                </div>
+                            </ModalContextProvider>
+                        </FarmsContextProvider>
                     </SettingsContextProvider>
                 </UpdateContextProvider>
             </InternetConnectionContextProvider>

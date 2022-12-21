@@ -4,7 +4,8 @@ import Tooltip from '@components/global/Tooltip';
 import { SettingsContext } from '@util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
 import ModalManager from '../ModalManager';
-import Sidebar from '../Sidebar';
+import Sidebar from './Sidebar';
+// import Sidebar from '../Sidebar';
 
 /**
  * The route for the main page of the application.
@@ -41,6 +42,7 @@ export default function Home() {
     return (
         <>
             <div className="flex flex-row h-full gap-8">
+                {/* <Sidebar /> */}
                 <Sidebar />
                 <div className="flex grow justify-center items-center !min-w-[60%]">
                     <div className="flex flex-col gap-3">

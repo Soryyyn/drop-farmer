@@ -6,7 +6,7 @@ import { useSendAndWait } from '@hooks/useSendAndWait';
 import { cloneDeep, isEqual } from 'lodash';
 import React, { createContext, useCallback, useState } from 'react';
 
-interface Props {
+interface DefaultProps {
     children: JSX.Element | JSX.Element[];
 }
 
@@ -49,10 +49,28 @@ export const UpdateContext = createContext<{
     installUpdate: () => {}
 });
 
+export const FarmsContext = createContext<{
+    farms: SidebarFarmItem[];
+}>({
+    farms: []
+});
+
+export const FarmContext = createContext<{
+    farm: SidebarFarmItem | undefined;
+    setWindowsVisibility: (shouldBeShown: boolean) => void;
+    restartSchedule: () => void;
+    clearCache: () => void;
+}>({
+    farm: undefined,
+    setWindowsVisibility: () => {},
+    restartSchedule: () => {},
+    clearCache: () => {}
+});
+
 /**
  * Provider components
  */
-export function SettingsContextProvider({ children }: Props) {
+export function SettingsContextProvider({ children }: DefaultProps) {
     const [settings, setSettings] = useState<Settings>();
     const [oldSettings, setOldSettings] = useState<Settings>();
 
@@ -114,7 +132,7 @@ export function SettingsContextProvider({ children }: Props) {
     );
 }
 
-export function InternetConnectionContextProvider({ children }: Props) {
+export function InternetConnectionContextProvider({ children }: DefaultProps) {
     const [internetConnectionContext, setInternetConnectContext] =
         useState<boolean>(true);
 
@@ -133,7 +151,7 @@ export function InternetConnectionContextProvider({ children }: Props) {
     );
 }
 
-export function ModalContextProvider({ children }: Props) {
+export function ModalContextProvider({ children }: DefaultProps) {
     const [currentOverlay, setCurrentOverlay] = useState<Overlays | undefined>(
         undefined
     );
@@ -165,7 +183,7 @@ export function ModalContextProvider({ children }: Props) {
     );
 }
 
-export function UpdateContextProvider({ children }: Props) {
+export function UpdateContextProvider({ children }: DefaultProps) {
     const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
     useHandleOneWay(
@@ -190,5 +208,49 @@ export function UpdateContextProvider({ children }: Props) {
         >
             {children}
         </UpdateContext.Provider>
+    );
+}
+
+export function FarmsContextProvider({ children }: DefaultProps) {
+    const [farms, setFarms] = useState<SidebarFarmItem[]>([]);
+
+    useSendAndWait(
+        api.channels.getFarms,
+        null,
+        (err, response: SidebarFarmItem[]) => {
+            if (!err) setFarms(response);
+        }
+    );
+
+    return (
+        <FarmsContext.Provider value={{ farms }}>
+            {children}
+        </FarmsContext.Provider>
+    );
+}
+
+export function FarmContextProvider({
+    children,
+    farm
+}: DefaultProps & {
+    farm: SidebarFarmItem;
+}) {
+    const [trackedFarm, setTrackedFarm] = useState<SidebarFarmItem>(farm);
+
+    function setWindowsVisibility(shouldBeShown: boolean) {}
+    function restartSchedule() {}
+    function clearCache() {}
+
+    return (
+        <FarmContext.Provider
+            value={{
+                farm: trackedFarm,
+                setWindowsVisibility,
+                restartSchedule,
+                clearCache
+            }}
+        >
+            {children}
+        </FarmContext.Provider>
     );
 }
