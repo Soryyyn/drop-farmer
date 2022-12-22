@@ -237,9 +237,33 @@ export function FarmContextProvider({
 }) {
     const [trackedFarm, setTrackedFarm] = useState<SidebarFarmItem>(farm);
 
-    function setWindowsVisibility(shouldBeShown: boolean) {}
-    function restartSchedule() {}
-    function clearCache() {}
+    /**
+     * Update the status if the status update is the tracked farm.
+     */
+    useHandleOneWay(
+        api.channels.farmStatusChange,
+        null,
+        (event, newFarmStatus: SidebarFarmItem) => {
+            if (newFarmStatus.name === trackedFarm.name) {
+                setTrackedFarm(newFarmStatus);
+            }
+        }
+    );
+
+    function setWindowsVisibility(shouldBeShown: boolean) {
+        api.sendOneWay(api.channels.farmWindowsVisibility, {
+            name: trackedFarm.name,
+            showing: shouldBeShown
+        });
+    }
+
+    function restartSchedule() {
+        api.sendOneWay(api.channels.restartScheduler, trackedFarm.name);
+    }
+
+    function clearCache() {
+        api.sendOneWay(api.channels.clearCache, trackedFarm.name);
+    }
 
     return (
         <FarmContext.Provider

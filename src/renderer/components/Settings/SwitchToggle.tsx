@@ -16,7 +16,7 @@ export default function SwitchToggle({ setting, onChange }: Props) {
                 'relative w-16 flex items-center rounded-md p-1 transition-all',
                 {
                     'bg-pepper-700': !setting.value as boolean,
-                    'bg-blood-600': setting.value as boolean
+                    'bg-blood-500': setting.value as boolean
                 }
             )}
         >
