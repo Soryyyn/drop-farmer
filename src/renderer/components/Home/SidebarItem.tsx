@@ -1,6 +1,5 @@
 import { Icon } from '@components/global/Icon';
-import Menu from '@components/global/Menu';
-import { Alignment } from '@components/global/Menu/types';
+import Menu, { Alignment } from '@components/global/Menu';
 import {
     faEllipsisVertical,
     faEye,
@@ -20,7 +19,7 @@ export default function SidebarItem() {
     return (
         <div className="w-full pl-2 py-2 pr-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
             <StatusIndicator status={farm!.status} />
-            <div className="py-2 pl-1 leading-none text-pepper-100 text-lg grow capitalize tracking-wider">
+            <div className="py-2 pl-1 leading-none text-pepper-100 text-lg grow capitalize">
                 {farm?.name}
             </div>
 
@@ -32,7 +31,7 @@ export default function SidebarItem() {
                 }
                 alignment={Alignment.BottomRight}
                 containerStyling="z-50 mt-1 bg-pepper-600/95 backdrop-blur-2xl rounded-md p-2 gap-1"
-                entryItemsStyling="gap-2 rounded leading-none py-1.5 pr-2 hover:bg-pepper-500 active:bg-pepper-400 text-snow-500"
+                entryItemsStyling="gap-2 rounded leading-none py-1.5 pr-2 hover:bg-pepper-500 active:bg-pepper-400 text-snow-500 cursor-pointer"
                 entries={[
                     {
                         label: displayingWindows
