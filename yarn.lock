@@ -157,12 +157,27 @@
     cross-zip "^4.0.0"
     fs-extra "^10.0.0"
 
+"@electron-forge/plugin-auto-unpack-natives@^6.0.4":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@electron-forge/plugin-auto-unpack-natives/-/plugin-auto-unpack-natives-6.0.4.tgz#d0bbd649eaa90a57d397d8abc2298073f0e5f7b3"
+  integrity sha512-8Re9CMt8i8AvEuNK044rqmKxnwbsMht2KYJBKsreb9vtTcDhj6Cmop0cUd9UdmXQsudA9JR4d4bgt/1nmOkKNQ==
+  dependencies:
+    "@electron-forge/plugin-base" "^6.0.4"
+    "@electron-forge/shared-types" "^6.0.4"
+
 "@electron-forge/plugin-base@6.0.0":
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/@electron-forge/plugin-base/-/plugin-base-6.0.0.tgz#6363357006bf79bb6293bb29a804799534acfe5f"
   integrity sha512-0PVEz0cFL0KKlBfyCaLVKfdOkdaSlJu+vl3oGLZoDVyOw3wNu5Tk2o84gKgkgtZ1jZTH3dmxUhimdWSMYl0QYA==
   dependencies:
     "@electron-forge/shared-types" "6.0.0"
+
+"@electron-forge/plugin-base@^6.0.4":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@electron-forge/plugin-base/-/plugin-base-6.0.4.tgz#a3b62e006632dab66d35f845ca61e09745ccbb82"
+  integrity sha512-iILzbFzmUIGggsTNL9PO1ma6e4OuuhKunNnOkpkoyg6jIaz8Oh1WSHhOALMztlBn2FhreabZnBRy7JsvHVDXlg==
+  dependencies:
+    "@electron-forge/shared-types" "^6.0.4"
 
 "@electron-forge/plugin-webpack@^6.0.0":
   version "6.0.0"
@@ -216,6 +231,15 @@
     electron-packager "^17.1.1"
     listr2 "^5.0.3"
     ora "^5.0.0"
+
+"@electron-forge/shared-types@^6.0.4":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@electron-forge/shared-types/-/shared-types-6.0.4.tgz#f8cdcf453459caa156d513582054b8e81057584f"
+  integrity sha512-lILLKcGZqfJYVI1x6RssVh37E934rCOaSdBQ9I7LypdfI2NWL+5PLLoUqvXbok1V28m3/O5JrXdigwEIZdhjzQ==
+  dependencies:
+    "@electron/rebuild" "^3.2.10"
+    electron-packager "^17.1.1"
+    listr2 "^5.0.3"
 
 "@electron-forge/template-base@6.0.0":
   version "6.0.0"

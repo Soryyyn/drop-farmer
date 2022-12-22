@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = {
     packagerConfig: {
-        icon: 'resources/icon'
+        icon: 'resources/icon',
+        asar: true
     },
     makers: [
         {
@@ -66,6 +67,10 @@ module.exports = {
                     ]
                 }
             }
+        },
+        {
+            name: '@electron-forge/plugin-auto-unpack-natives',
+            config: {}
         }
     ]
 };
