@@ -1,5 +1,6 @@
 export type MenuEntry = {
     label: string;
+    icon?: JSX.Element;
     disabled?: boolean;
     caution?: boolean;
     styling?: string;

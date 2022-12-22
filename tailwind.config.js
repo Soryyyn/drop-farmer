@@ -20,8 +20,21 @@ module.exports = {
                 500: '#c8def5'
             },
             blood: {
-                500: '#ff0044',
+                500: '#e74b65',
+                600: '#ff0044',
                 700: '#fad2dd'
+            },
+            sky: {
+                500: '#347bff'
+            },
+            amber: {
+                500: '#f1851f'
+            },
+            pineapple: {
+                500: '#f8e059'
+            },
+            leaf: {
+                500: '#21db87'
             }
         },
         extend: {

@@ -4,30 +4,29 @@ import React from 'react';
 import { Alignment, MenuEntry } from './types';
 
 interface Props {
-    button: {
-        element: JSX.Element | string;
-        className: string;
-    };
-    entries: MenuEntry[];
+    button: JSX.Element;
     alignment: Alignment;
+    containerStyling?: string;
+    entryItemsStyling?: string;
+    entries: MenuEntry[];
 }
 
-export default function Menu({ button, entries, alignment }: Props) {
+export default function Menu({
+    button,
+    entries,
+    containerStyling,
+    entryItemsStyling,
+    alignment
+}: Props) {
     return (
         <HeadlessMenu as="div" className="relative w-fit box-border">
-            <HeadlessMenu.Button
-                className={clsx(
-                    'aspect-square flex justify-center items-center p-2',
-                    button.className
-                )}
-            >
-                {button.element}
-            </HeadlessMenu.Button>
+            <HeadlessMenu.Button>{button}</HeadlessMenu.Button>
 
             <HeadlessMenu.Items
                 as="div"
                 className={clsx(
-                    'w-max absolute my-2 p-2 flex flex-col gap-2 box-border bg-blue-700',
+                    containerStyling,
+                    'w-max absolute flex flex-col box-border',
                     alignment === Alignment.BottomLeft && 'left-0',
                     alignment === Alignment.BottomRight && 'right-0',
                     alignment === Alignment.TopLeft &&
@@ -40,9 +39,15 @@ export default function Menu({ button, entries, alignment }: Props) {
                     <HeadlessMenu.Item
                         key={entry.label}
                         as="div"
-                        className={clsx('bg-green-400', entry.styling)}
+                        className={clsx(
+                            'flex flex-row',
+                            entryItemsStyling,
+                            entry.styling
+                        )}
+                        onClick={entry.onClick}
                     >
-                        {entry.label}
+                        {entry.icon}
+                        <span>{entry.label}</span>
                     </HeadlessMenu.Item>
                 ))}
             </HeadlessMenu.Items>

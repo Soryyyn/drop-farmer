@@ -8,26 +8,26 @@
 }
 
 .attention-required {
-    background: rgb(52, 123, 255);
+    background: #347bff;
     box-shadow: 0 0 10px rgba(52, 123, 255, 0.5);
 }
 
 .disabled {
-    background: rgb(231, 75, 101);
+    background: #e74b65;
     box-shadow: 0 0 10px rgba(231, 75, 101, 0.5);
 }
 
 .idle {
-    background: rgba(241, 133, 31, 1);
+    background: #f1851f;
     box-shadow: 0 0 10px rgba(241, 133, 31, 0.5);
 }
 
 .checking {
-    background: rgba(248, 224, 89, 0.9);
+    background: #f8e059e6;
     box-shadow: 0 0 10px rgba(248, 224, 89, 0.5);
 }
 
 .farming {
-    background: rgba(33, 219, 135, 0.9);
+    background: #21db87e6;
     box-shadow: 0 0 10px rgba(33, 219, 135, 0.5);
 }
