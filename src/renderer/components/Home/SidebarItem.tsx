@@ -63,6 +63,7 @@ export default function SidebarItem() {
                     },
                     {
                         label: 'Clear cache',
+                        caution: true,
                         icon: (
                             <Icon sprite={faTrash} size="1x" className="mx-1" />
                         ),

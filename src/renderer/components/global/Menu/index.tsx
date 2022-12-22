@@ -42,6 +42,9 @@ export default function Menu({
                         className={clsx(
                             'flex flex-row',
                             entryItemsStyling,
+                            {
+                                'text-blood-400': entry.caution
+                            },
                             entry.styling
                         )}
                         onClick={entry.onClick}
