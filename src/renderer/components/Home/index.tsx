@@ -1,11 +1,7 @@
 import Model from '@components/global/Model';
 import Navigation from '@components/global/Navigation';
-import Tooltip from '@components/global/Tooltip';
-import { SettingsContext } from '@util/contexts';
-import React, { useContext, useEffect, useState } from 'react';
-import ModalManager from '../ModalManager';
+import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
-// import Sidebar from '../Sidebar';
 
 /**
  * The route for the main page of the application.
