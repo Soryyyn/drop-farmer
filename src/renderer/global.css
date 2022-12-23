@@ -4,6 +4,8 @@
 
 @font-face {
     font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 300 900;
     src: url('./assets/fonts/Rubik-VariableFont_wght.ttf');
 }
 

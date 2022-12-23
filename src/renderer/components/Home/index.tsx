@@ -38,7 +38,6 @@ export default function Home() {
     return (
         <>
             <div className="flex flex-row h-full gap-8">
-                {/* <Sidebar /> */}
                 <Sidebar />
                 <div className="flex grow justify-center items-center !min-w-[60%]">
                     <div className="flex flex-col gap-3">
@@ -49,10 +48,10 @@ export default function Home() {
                                 loop={true}
                             />
                         </div>
-                        <h1 className="text-center font-bold text-5xl text-pepper-200">
+                        <h1 className="text-center font-semibold text-5xl text-pepper-200 leading-none">
                             DROP-FARMER
                         </h1>
-                        <p className="text-center text-pepper-200 text-xl">
+                        <p className="text-center text-pepper-200/60 text-xl font-medium leading-none mb-2 -mt-2">
                             Stream drops farmer application
                         </p>
                         <Navigation />
