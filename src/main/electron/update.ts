@@ -90,7 +90,7 @@ autoUpdater.on('checking-for-update', () => {
 
     if (displayToasts) {
         sendForcedTypeToast({
-            id: 'update-checking-toast',
+            id: Toasts.UpdateChecking,
             text: 'Checking if update is available...',
             duration: Infinity,
             type: 'loading'
@@ -105,7 +105,7 @@ autoUpdater.on('update-not-available', () => {
 
     if (displayToasts) {
         sendForcedTypeToast({
-            id: 'update-checking-toast',
+            id: Toasts.UpdateChecking,
             text: 'No update available.',
             duration: 4000,
             type: 'error'
@@ -126,7 +126,7 @@ autoUpdater.on('update-downloaded', () => {
 
     if (displayToasts) {
         sendForcedTypeToast({
-            id: 'update-checking-toast',
+            id: Toasts.UpdateChecking,
             text: 'Update available.',
             duration: 4000,
             type: 'success'
@@ -149,7 +149,7 @@ autoUpdater.on('error', (err) => {
 
     if (displayToasts) {
         sendForcedTypeToast({
-            id: 'update-checking-toast',
+            id: Toasts.UpdateChecking,
             text: 'Error occured while checking for update. Please check the logfile.',
             duration: 4000,
             type: 'error'
