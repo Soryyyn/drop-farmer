@@ -41,9 +41,21 @@ body {
     z-index: 100000000000000000000;
 }
 
-.tippy-box[data-theme~='dark'] .tippy-arrow::before {
+.tippy-box[data-theme~='dark'][data-placement^='top'] > .tippy-arrow::before {
+    border-top-color: #222536;
+}
+
+.tippy-box[data-theme~='dark'][data-placement^='bottom']
+    > .tippy-arrow::before {
     border-bottom-color: #222536;
-    border-top-color: rgb(34, 37, 54);
+}
+
+.tippy-box[data-theme~='dark'][data-placement^='left'] > .tippy-arrow::before {
+    border-left-color: #222536;
+}
+
+.tippy-box[data-theme~='dark'][data-placement^='right'] > .tippy-arrow::before {
+    border-right-color: #222536;
 }
 
 ::-webkit-scrollbar {

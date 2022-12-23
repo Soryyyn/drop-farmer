@@ -17,15 +17,16 @@ export default function SidebarItem() {
     const [displayingWindows, setDisplayingWindows] = useState<boolean>(false);
 
     return (
-        <div className="w-full pl-2 py-2 pr-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
-            <StatusIndicator status={farm!.status} />
-            <div className="py-2 pl-1 leading-none text-pepper-200 text-lg grow capitalize font-medium">
+        <div className="w-full p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
+            <div className="leading-none text-pepper-200 text-lg grow capitalize font-medium">
                 {farm?.name}
             </div>
 
+            <StatusIndicator status={farm!.status} />
+
             <Menu
                 button={
-                    <div className="flex items-center justify-center text-pepper-200 hover:bg-pepper-800/50 active:bg-pepper-800 active:text-snow-500 aspect-square p-1 rounded cursor-pointer">
+                    <div className="h-full flex items-center justify-items-center text-pepper-200 hover:bg-pepper-800/50 active:bg-pepper-800 active:text-snow-500 aspect-square p-1 rounded cursor-pointer">
                         <Icon sprite={faEllipsisVertical} size="lg" />
                     </div>
                 }

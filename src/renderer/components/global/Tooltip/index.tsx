@@ -1,5 +1,6 @@
 import Tippy from '@tippyjs/react';
 import React from 'react';
+import 'tippy.js/animations/shift-away-subtle.css';
 import 'tippy.js/dist/tippy.css';
 
 interface Props {
@@ -14,8 +15,8 @@ export default function Tooltip({ children, text, placement }: Props) {
             content={text}
             placement={placement}
             delay={[500, 0]}
-            duration={[0, 0]}
             theme="dark"
+            animation="shift-away-subtle"
         >
             {children}
         </Tippy>
