@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     packagerConfig: {
         icon: 'resources/icon',
-        asar: true
+        asar: process.platform !== 'linux'
     },
     makers: [
         {
@@ -19,13 +19,6 @@ module.exports = {
         },
         {
             name: '@electron-forge/maker-deb',
-            platforms: ['linux'],
-            config: {
-                icon: path.resolve(__dirname, 'resources', 'icon.png')
-            }
-        },
-        {
-            name: '@electron-forge/maker-rpm',
             platforms: ['linux'],
             config: {
                 icon: path.resolve(__dirname, 'resources', 'icon.png')
