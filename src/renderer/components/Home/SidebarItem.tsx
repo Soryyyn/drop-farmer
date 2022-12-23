@@ -45,6 +45,9 @@ export default function SidebarItem() {
                                 className="mx-1"
                             />
                         ),
+                        disabled:
+                            farm!.status === 'disabled' ||
+                            farm!.status === 'idle',
                         onClick: () => {
                             setDisplayingWindows(!displayingWindows);
                             setWindowsVisibility(!displayingWindows);

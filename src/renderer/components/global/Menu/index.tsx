@@ -66,7 +66,7 @@ export default function Menu({
                                     entry.disabled && entry.caution
                             }
                         )}
-                        onClick={entry.onClick}
+                        onClick={entry.disabled ? undefined : entry.onClick}
                     >
                         {entry.icon}
                         <span>{entry.label}</span>
