@@ -1,5 +1,5 @@
 import { app, ipcMain, shell } from 'electron';
-import { IpcChannels } from '../common/IpcChannels';
+import { IpcChannels } from '../common/constants';
 import { getFarmByName, getSidebarItems } from '../farms/management';
 import { log } from '../util/logger';
 import {

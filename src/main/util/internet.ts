@@ -1,5 +1,5 @@
 import isOnline from 'is-online';
-import { IpcChannels } from '../common/IpcChannels';
+import { IpcChannels } from '../common/constants';
 import { sendOneWay } from '../electron/ipc';
 import { getMainWindow } from '../electron/windows';
 import { log } from './logger';

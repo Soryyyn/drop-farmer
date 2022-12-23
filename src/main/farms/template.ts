@@ -1,5 +1,5 @@
 import CrontabManager from 'cron-job-manager';
-import { IpcChannels } from '../common/IpcChannels';
+import { IpcChannels } from '../common/constants';
 import { sendOneWay } from '../electron/ipc';
 import {
     createWindow,
