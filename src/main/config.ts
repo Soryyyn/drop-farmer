@@ -1,4 +1,5 @@
 import AutoLaunch from 'auto-launch';
+import { app } from 'electron';
 import get from 'lodash.get';
 import set from 'lodash.set';
 import { convertFarmsIntoCached } from './farms/management';
@@ -11,7 +12,7 @@ let currentConfig: any;
 const autoLauncher = new AutoLaunch({
     name: 'drop-farmer'
 });
-const configVersion = 1.2;
+const configVersion = 1.3;
 
 export function initConfig(): void {
     createDefaultConfig();

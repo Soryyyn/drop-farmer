@@ -1,5 +1,5 @@
 import isOnline from 'is-online';
-import { Channels } from '../common/channels';
+import { IpcChannels } from '../common/IpcChannels';
 import { sendOneWay } from '../electron/ipc';
 import { getMainWindow } from '../electron/windows';
 import { log } from './logger';
@@ -29,7 +29,7 @@ export function internetConnectionChecker(): void {
                     duration: 4000
                 });
 
-                sendOneWay(getMainWindow(), Channels.internet, false);
+                sendOneWay(getMainWindow(), IpcChannels.internet, false);
             }
         })
         .catch((err) => {

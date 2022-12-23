@@ -48,7 +48,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     window.focus();
 
                     /**
-                     * Wait until the followed channels are showing.
+                     * Wait until the followed IpcChannels are showing.
                      */
                     page.waitForSelector('.top-name__menu', {
                         timeout: 0

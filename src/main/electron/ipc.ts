@@ -1,5 +1,5 @@
 import { app, ipcMain, shell } from 'electron';
-import { Channels } from '../common/channels';
+import { IpcChannels } from '../common/IpcChannels';
 import { getFarmByName, getSidebarItems } from '../farms/management';
 import { log } from '../util/logger';
 import {
@@ -13,11 +13,11 @@ import { setAppQuitting } from './windows';
 /**
  * Function for handling a one-way signal coming from the renderer process.
  *
- * @param {Channels} channel IPC channel to listen on.
+ * @param {IpcChannels} channel IPC channel to listen on.
  * @param {(event: IpcMainEvent, ...args: any[]) => void} listener Callback when event has been received.
  */
 export function handleOneWay(
-    channel: Channels,
+    channel: IpcChannels,
     listener: (event: Electron.IpcMainEvent, ...args: any[]) => void
 ) {
     log('MAIN', 'DEBUG', `Handling one-way signal on ${channel}`);
@@ -27,7 +27,7 @@ export function handleOneWay(
 /**
  * Function for handling a signal coming from the renderer process and return a response.
  *
- * @param {Channels} channel IPC channel to listen on.
+ * @param {IpcChannels} channel IPC channel to listen on.
  * @param {(event: IpcMainEvent, ...args: any[]) => void} listener Callback to execute when event has been received.
  */
 export function handleAndReply(
@@ -42,7 +42,7 @@ export function handleAndReply(
  * Send a one-way signal to the wanted window.
  *
  * @param {Electron.BrowserWindow} window The window to send the ipc signal too.
- * @param {Channels} channel The ipc channel to send the signal too.
+ * @param {IpcChannels} channel The ipc channel to send the signal too.
  * @param {...any[]} args The data to send with the signal.
  */
 export function sendOneWay(
@@ -59,15 +59,15 @@ export function sendOneWay(
 /**
  * Ipc events below.
  */
-handleOneWay(Channels.log, (event, { type, message }) => {
+handleOneWay(IpcChannels.log, (event, { type, message }) => {
     log('RENDERER', type, message);
 });
 
-handleAndReply(Channels.getFarms, () => {
+handleAndReply(IpcChannels.getFarms, () => {
     return getSidebarItems();
 });
 
-handleOneWay(Channels.farmWindowsVisibility, (event, { name, showing }) => {
+handleOneWay(IpcChannels.farmWindowsVisibility, (event, { name, showing }) => {
     const farm = getFarmByName(name);
     if (farm != undefined) {
         if (showing) farm.showAllWindows();
@@ -75,16 +75,16 @@ handleOneWay(Channels.farmWindowsVisibility, (event, { name, showing }) => {
     }
 });
 
-handleOneWay(Channels.openLinkInExternal, (event, link: string) => {
+handleOneWay(IpcChannels.openLinkInExternal, (event, link: string) => {
     shell.openExternal(link);
 });
 
-handleOneWay(Channels.shutdown, () => {
+handleOneWay(IpcChannels.shutdown, () => {
     setAppQuitting(true);
     app.quit();
 });
 
-handleOneWay(Channels.restart, () => {
+handleOneWay(IpcChannels.restart, () => {
     log('MAIN', 'INFO', 'Restarting application');
     app.relaunch();
 
@@ -96,11 +96,11 @@ handleOneWay(Channels.restart, () => {
     app.quit();
 });
 
-handleAndReply(Channels.getSettings, () => {
+handleAndReply(IpcChannels.getSettings, () => {
     return getSettings();
 });
 
-handleOneWay(Channels.saveNewSettings, (event, settingsToSave: Settings) => {
+handleOneWay(IpcChannels.saveNewSettings, (event, settingsToSave: Settings) => {
     sendPromiseToast(
         {
             id: 'settings-saving',
@@ -122,15 +122,11 @@ handleOneWay(Channels.saveNewSettings, (event, settingsToSave: Settings) => {
     );
 });
 
-handleAndReply(Channels.get3DAnimationsDisabled, () => {
-    return getSpecificSetting('application', 'disable3DModelAnimation').value;
-});
-
-handleAndReply(Channels.getApplicationVersion, () => {
+handleAndReply(IpcChannels.getApplicationVersion, () => {
     return app.getVersion();
 });
 
-handleOneWay(Channels.clearCache, (event, name) => {
+handleOneWay(IpcChannels.clearCache, (event, name) => {
     const farm = getFarmByName(name);
     if (farm != undefined) {
         sendBasicToast(
@@ -151,7 +147,7 @@ handleOneWay(Channels.clearCache, (event, name) => {
     }
 });
 
-handleOneWay(Channels.restartScheduler, (event, name) => {
+handleOneWay(IpcChannels.restartScheduler, (event, name) => {
     const farm = getFarmByName(name);
     if (farm != undefined) {
         sendBasicToast(

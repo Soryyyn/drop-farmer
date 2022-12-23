@@ -1,6 +1,6 @@
 import { app, autoUpdater } from 'electron';
-import { Channels } from '../common/channels';
 import { Toasts } from '../common/constants';
+import { IpcChannels } from '../common/IpcChannels';
 import { updateConfigFile } from '../config';
 import { destroyAllFarmWindows } from '../farms/management';
 import { log } from '../util/logger';
@@ -63,7 +63,7 @@ function setupAppLaunchUpdateRouting() {
 /**
  * React to user wanted actions.
  */
-handleOneWay(Channels.updateCheck, () => {
+handleOneWay(IpcChannels.updateCheck, () => {
     autoUpdater.checkForUpdates();
 
     displayToasts = true;
@@ -77,7 +77,7 @@ handleOneWay(Channels.updateCheck, () => {
         });
     }
 });
-handleOneWay(Channels.installUpdate, () => {
+handleOneWay(IpcChannels.installUpdate, () => {
     setAppQuitting(true);
     autoUpdater.quitAndInstall();
 });
@@ -101,7 +101,7 @@ autoUpdater.on('checking-for-update', () => {
 autoUpdater.on('update-not-available', () => {
     log('MAIN', 'INFO', 'No update available');
 
-    sendOneWay(getMainWindow(), Channels.updateStatus, false);
+    sendOneWay(getMainWindow(), IpcChannels.updateStatus, false);
 
     if (displayToasts) {
         sendForcedTypeToast({
@@ -122,7 +122,7 @@ autoUpdater.on('update-available', () => {
 autoUpdater.on('update-downloaded', () => {
     log('MAIN', 'INFO', 'Update has finished downloading!');
 
-    sendOneWay(getMainWindow(), Channels.updateStatus, true);
+    sendOneWay(getMainWindow(), IpcChannels.updateStatus, true);
 
     if (displayToasts) {
         sendForcedTypeToast({
@@ -145,7 +145,7 @@ autoUpdater.on('before-quit-for-update', () => {
 autoUpdater.on('error', (err) => {
     log('MAIN', 'ERROR', `Failed downloading / installing update. ${err}`);
 
-    sendOneWay(getMainWindow(), Channels.updateStatus, false);
+    sendOneWay(getMainWindow(), IpcChannels.updateStatus, false);
 
     if (displayToasts) {
         sendForcedTypeToast({

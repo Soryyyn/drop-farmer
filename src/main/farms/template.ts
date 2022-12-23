@@ -1,5 +1,5 @@
 import CrontabManager from 'cron-job-manager';
-import { Channels } from '../common/channels';
+import { IpcChannels } from '../common/IpcChannels';
 import { sendOneWay } from '../electron/ipc';
 import {
     createWindow,
@@ -199,7 +199,7 @@ export default abstract class FarmTemplate {
         /**
          * Send the signal to the main window that a farms status has changed.
          */
-        sendOneWay(getMainWindow(), Channels.farmStatusChange, {
+        sendOneWay(getMainWindow(), IpcChannels.farmStatusChange, {
             name: this._name,
             type: this._type,
             status: this._currentStatus

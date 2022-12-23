@@ -1,5 +1,4 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron';
-import { Channels } from './main/common/channels';
 import { IpcChannels } from './main/common/constants';
 
 export default {
@@ -17,5 +16,5 @@ export default {
     log: (
         type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
         message: string
-    ) => ipcRenderer.send(Channels.log, { type: type, message: message })
+    ) => ipcRenderer.send(IpcChannels.log, { type: type, message: message })
 };

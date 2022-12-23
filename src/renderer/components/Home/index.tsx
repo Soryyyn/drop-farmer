@@ -1,39 +1,14 @@
 import Model from '@components/global/Model';
 import Navigation from '@components/global/Navigation';
-import React, { useEffect, useState } from 'react';
+import { useAppVersion } from '@hooks/useAppVersion';
+import React from 'react';
 import Sidebar from './Sidebar';
 
 /**
  * The route for the main page of the application.
  */
 export default function Home() {
-    const [applicationVersion, setApplicationVersion] =
-        useState<string>('0.0.0');
-
-    /**
-     * On site load, get internet connection
-     */
-    useEffect(() => {
-        api.log('DEBUG', 'Rendering home page');
-
-        /**
-         * Application version.
-         */
-        api.sendAndWait(api.channels.getApplicationVersion)
-            .then((version: any) => {
-                setApplicationVersion(version);
-            })
-            .catch((err) => {
-                api.log(
-                    'ERROR',
-                    `Error when setting application version. ${err}`
-                );
-            });
-
-        return () => {
-            api.removeAllListeners(api.channels.getApplicationVersion);
-        };
-    }, []);
+    const appVersion = useAppVersion();
 
     return (
         <>
@@ -57,7 +32,7 @@ export default function Home() {
                         <Navigation />
                         <div className="flex flex-col items-center">
                             <p className="w-fit text-pepper-200/60 text-center">
-                                Version: {applicationVersion}
+                                Version: {appVersion}
                             </p>
                             <p className="w-fit text-pepper-200/60 text-center">
                                 Copyright © Soryn
