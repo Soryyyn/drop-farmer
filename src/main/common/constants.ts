@@ -28,3 +28,8 @@ export enum IpcChannels {
     updateCheck = 'update-check',
     updateStatus = 'update-status'
 }
+
+export enum EventChannels {
+    PCWentToSleep = 'pc-went-to-sleep',
+    PCWokeUp = 'pc-woke-up'
+}

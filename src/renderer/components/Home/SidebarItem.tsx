@@ -18,8 +18,13 @@ export default function SidebarItem() {
 
     return (
         <div className="w-full p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
-            <div className="leading-none text-pepper-200 text-lg grow capitalize font-medium">
-                {farm?.name}
+            <div className="leading-none grow flex flex-col">
+                <span className="text-pepper-200 text-lg capitalize font-medium">
+                    {farm?.name}
+                </span>
+                {/* <span className="text-pepper-200/60">
+                    asdasasddaas | asasdsd
+                </span> */}
             </div>
 
             <StatusIndicator status={farm!.status} />
