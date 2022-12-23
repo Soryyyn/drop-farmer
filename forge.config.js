@@ -1,9 +1,23 @@
 const path = require('path');
 
+/**
+ * If asar compressing should be enabled.
+ *
+ * NOTE: Currently, asar packaging does not work on raspberry pi via the github
+ * build.
+ */
+function allowAsar() {
+    if (process.platform === 'linux') {
+        return false;
+    }
+
+    return true;
+}
+
 module.exports = {
     packagerConfig: {
         icon: 'resources/icon',
-        asar: process.platform !== 'linux'
+        asar: allowAsar()
     },
     makers: [
         {

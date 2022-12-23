@@ -33,13 +33,6 @@ type ForcedTypeToast = {
     duration: number;
 };
 
-type ToastFromMain = {
-    id: string;
-    text: string;
-    duration: number;
-    type?: 'success' | 'error';
-};
-
 type DropdownItem = {
     type: 'label' | 'seperator';
     label?: string;
