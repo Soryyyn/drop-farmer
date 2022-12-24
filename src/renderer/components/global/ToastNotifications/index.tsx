@@ -64,29 +64,30 @@ export default function ToastNotifications() {
             toastOptions={{
                 style: {
                     minWidth: '450px',
-                    background: 'rgba(16, 18, 27, 0.75)',
-                    border: '1px solid rgba(16, 18, 27, 0.1)',
-                    boxShadow: '5px 5px 15px rgba(16, 18, 27, 0.4)',
-                    backdropFilter: 'blur(20px)',
+                    background: 'rgb(41 44 63 / 0.95)',
+                    boxShadow:
+                        '0 20px 25px -5px rgb(41 44 63 / 0.25), 0 8px 10px -6px rgb(41 44 63 / 0.25)',
+                    backdropFilter: 'blur(40px)',
                     color: 'rgb(200, 222, 245)',
-                    padding: '0.75rem'
+                    padding: '0.75rem',
+                    borderRadius: '0.75rem'
                 },
                 success: {
                     iconTheme: {
-                        primary: 'rgb(33, 219, 135)',
-                        secondary: 'rgb(16, 18, 27)'
+                        primary: '#21db87',
+                        secondary: 'rgb(41 44 63 / 0.95)'
                     }
                 },
                 loading: {
                     iconTheme: {
-                        primary: 'rgb(200, 222, 245)',
-                        secondary: 'rgb(16, 18, 27)'
+                        primary: '#c8def5',
+                        secondary: 'rgb(41 44 63 / 0.95)'
                     }
                 },
                 error: {
                     iconTheme: {
-                        primary: 'rgb(231, 75, 101)',
-                        secondary: 'rgb(16, 18, 27)'
+                        primary: '#e74b65',
+                        secondary: 'rgb(41 44 63 / 0.95)'
                     }
                 }
             }}
