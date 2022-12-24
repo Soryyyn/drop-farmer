@@ -63,10 +63,7 @@ function setupAppLaunchUpdateRouting() {
  * React to user wanted actions.
  */
 handleOneWay(IpcChannels.updateCheck, () => {
-    autoUpdater.checkForUpdates();
-
     displayToasts = true;
-
     if (displayToasts) {
         sendForcedTypeToast({
             id: Toasts.UpdateChecking,
@@ -75,6 +72,8 @@ handleOneWay(IpcChannels.updateCheck, () => {
             type: 'loading'
         });
     }
+
+    autoUpdater.checkForUpdates();
 });
 handleOneWay(IpcChannels.installUpdate, () => {
     setAppQuitting(true);
@@ -154,4 +153,6 @@ autoUpdater.on('error', (err) => {
             type: 'error'
         });
     }
+
+    displayToasts = false;
 });
