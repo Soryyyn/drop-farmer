@@ -1,5 +1,6 @@
 import { Icon } from '@components/global/Icon';
 import Menu, { Alignment } from '@components/global/Menu';
+import NotificationBadge from '@components/global/NotificationBadge';
 import {
     faEllipsisVertical,
     faEye,
@@ -31,9 +32,13 @@ export default function SidebarItem() {
 
             <Menu
                 button={
-                    <div className="h-full flex items-center justify-items-center text-pepper-200 hover:bg-pepper-800/50 active:bg-pepper-800 active:text-snow-500 aspect-square p-1 rounded cursor-pointer">
-                        <Icon sprite={faEllipsisVertical} size="lg" />
-                    </div>
+                    <NotificationBadge
+                        showing={farm!.status === 'attention-required'}
+                    >
+                        <div className="h-full flex items-center justify-items-center text-pepper-200 bg-pepper-800/50 hover:bg-pepper-800/75 active:bg-pepper-800 active:text-snow-500 aspect-square p-1 rounded cursor-pointer">
+                            <Icon sprite={faEllipsisVertical} size="lg" />
+                        </div>
+                    </NotificationBadge>
                 }
                 alignment={Alignment.BottomRight}
                 containerStyling="z-50 mt-1 bg-pepper-600/95 backdrop-blur-2xl rounded-md p-2 gap-1 shadow-xl shadow-pepper-600/25"
