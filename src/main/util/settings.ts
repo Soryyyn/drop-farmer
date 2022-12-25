@@ -26,6 +26,14 @@ export const applicationSettings: Setting[] = [
         defaultValue: true
     },
     {
+        name: 'showWindowsForLogin',
+        shownName: 'Show farm windows automatically for login',
+        description:
+            'If enabled, the window of a farm, where login is required to continue, will automatically be shown.',
+        value: undefined,
+        defaultValue: false
+    },
+    {
         name: 'checkForUpdates',
         shownName: 'Automatically check for updates',
         description:
