@@ -30,11 +30,11 @@ body {
 }
 
 .tippy-box[data-theme~='dark'] {
-    background: rgb(41 44 63 / 0.95);
-    box-shadow: 0 20px 25px -5px rgb(41 44 63 / 0.25),
-        0 8px 10px -6px rgb(41 44 63 / 0.25);
+    background: rgb(21 22 32 / 0.95);
+    box-shadow: 0 20px 25px -5px rgb(21 22 32 / 0.25),
+        0 8px 10px -6px rgb(21 22 32 / 0.25);
     backdrop-filter: blur(40px);
-    color: rgb(200 222 245);
+    color: rgb(186 213 241);
     padding: 0.5rem;
     border-radius: 8px;
     font-family: 'Rubik';
@@ -44,20 +44,20 @@ body {
 }
 
 .tippy-box[data-theme~='dark'][data-placement^='top'] > .tippy-arrow::before {
-    border-top-color: rgb(41 44 63 / 0.95);
+    border-top-color: rgb(21 22 32 / 0.95);
 }
 
 .tippy-box[data-theme~='dark'][data-placement^='bottom']
     > .tippy-arrow::before {
-    border-bottom-color: rgb(41 44 63 / 0.95);
+    border-bottom-color: rgb(21 22 32 / 0.95);
 }
 
 .tippy-box[data-theme~='dark'][data-placement^='left'] > .tippy-arrow::before {
-    border-left-color: rgb(41 44 63 / 0.95);
+    border-left-color: rgb(21 22 32 / 0.95);
 }
 
 .tippy-box[data-theme~='dark'][data-placement^='right'] > .tippy-arrow::before {
-    border-right-color: rgb(41 44 63 / 0.95);
+    border-right-color: rgb(21 22 32 / 0.95);
 }
 
 ::-webkit-scrollbar {
