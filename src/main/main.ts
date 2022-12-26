@@ -48,6 +48,8 @@ initPuppeteerConnection();
  */
 initUpdater();
 
+import './store';
+
 /**
  * Gets executed when electron has finished starting.
  * Some API's might only be available after it has started.
