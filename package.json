@@ -104,7 +104,7 @@
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-hot-toast": "^2.4.0",
-        "react-router-dom": "^6.4.3",
+        "react-router-dom": "^6.6.1",
         "react-spring": "^9.6.1",
         "react-switch": "^7.0.0",
         "timer-node": "^5.0.6",
