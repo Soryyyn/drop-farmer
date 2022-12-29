@@ -262,18 +262,9 @@ export function FarmContextProvider({
     useHandleOneWay(
         api.channels.farmLogin,
         null,
-        (
-            event,
-            {
-                id,
-                needed
-            }: {
-                id: string;
-                needed: boolean;
-            }
-        ) => {
-            if (id === farm.id) {
-                setLoginNeeded(needed);
+        (event, data: LoginForFarmObject) => {
+            if (data.id === farm.id) {
+                setLoginNeeded(data.needed);
             }
         }
     );

@@ -69,3 +69,9 @@ type FarmRendererData = {
     amountOfWindows: number;
     windowsShown: boolean;
 };
+
+type LoginForFarmObject = {
+    id: string;
+    shown: string;
+    needed: boolean;
+};

@@ -32,7 +32,8 @@ export enum IpcChannels {
 
 export enum EventChannels {
     PCWentToSleep = 'pc-went-to-sleep',
-    PCWokeUp = 'pc-woke-up'
+    PCWokeUp = 'pc-woke-up',
+    LoginForFarm = 'login-for-farm'
 }
 
 export const Constants = {

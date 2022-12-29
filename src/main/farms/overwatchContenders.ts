@@ -1,8 +1,10 @@
 import { getPage } from 'puppeteer-in-electron';
-import { IpcChannels } from '../common/constants';
+import { EventChannels, IpcChannels } from '../common/constants';
 import { sendOneWay } from '../electron/ipc';
 import { getMainWindow } from '../electron/windows';
+import { emitEvent } from '../util/events';
 import { log } from '../util/logger';
+import { createNotification } from '../util/notifications';
 import {
     doesElementExist,
     getBrowserConnection,
@@ -110,14 +112,12 @@ export default class OverwatchContenders extends FarmTemplate {
                 if (await pageUrlContains(page, 'accounts.google.com')) {
                     log('MAIN', 'DEBUG', `${this.id}: Login is needed by user`);
 
-                    /**
-                     * Display small dot notification that login is needed,
-                     * and show window if the setting is enabled.
-                     */
-                    sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
+                    emitEvent(EventChannels.LoginForFarm, {
                         id: this.id,
+                        shown: this.shown,
                         needed: true
                     });
+
                     if (
                         this.windowsCurrentlyShown ||
                         this.windowsShownByDefault
