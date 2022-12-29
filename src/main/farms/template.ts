@@ -149,6 +149,11 @@ export default abstract class FarmTemplate {
     protected updateSchedule(schedule: number): void {
         this.schedule = schedule;
         this.scheduler.update(Schedules.CheckToFarm, `*/${schedule} * * * *`);
+        sendOneWay(
+            getMainWindow(),
+            IpcChannels.farmStatusChange,
+            this.getRendererData()
+        );
     }
 
     enable(): void {
@@ -290,7 +295,11 @@ export default abstract class FarmTemplate {
         if (steps) Promise.all([steps()]);
         this.scheduler.startAll();
 
-        this.updateStatus(this.status);
+        if (this.status === 'disabled') {
+            this.updateStatus('disabled');
+        } else {
+            this.updateStatus('idle');
+        }
     }
 
     async clearCache(): Promise<any> {

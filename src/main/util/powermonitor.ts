@@ -19,4 +19,6 @@ export function initPowermonitor() {
         log('MAIN', 'INFO', 'PC woke up');
         emitEvent(EventChannels.PCWokeUp);
     });
+
+    log('MAIN', 'INFO', 'Initialized powermonitor');
 }

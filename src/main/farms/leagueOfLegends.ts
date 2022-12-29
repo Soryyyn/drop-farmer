@@ -30,6 +30,8 @@ export default class LeagueOfLegends extends FarmTemplate {
             try {
                 const page = await getPage(getBrowserConnection(), window);
 
+                waitForTimeout(2000);
+
                 /**
                  * Check if already logged in.
                  */
@@ -42,6 +44,8 @@ export default class LeagueOfLegends extends FarmTemplate {
                     await page.click(
                         '#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a'
                     );
+
+                    await page.waitForNavigation();
 
                     /**
                      * Wait for either the user has been redirected to the main page

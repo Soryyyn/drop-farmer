@@ -11,7 +11,7 @@ import {
     faWindowMaximize
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmContext } from '@util/contexts';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import StatusIndicator from './StatusIndicator';
 
 export default function SidebarItem() {
@@ -33,19 +33,25 @@ export default function SidebarItem() {
             const currentTime = new Date().getMinutes();
             let nextCheck = 0;
 
-            while (nextCheck < currentTime) nextCheck += farm?.schedule ?? 0;
+            while (nextCheck < currentTime + 1) nextCheck += farm!.schedule;
 
             if (farm?.status === 'disabled') {
                 setTimeUntilNextCheck('Never');
             } else if (farm?.status === 'checking') {
                 setTimeUntilNextCheck('Now');
+            } else if (farm?.status === 'attention-required') {
+                setTimeUntilNextCheck('Paused');
             } else if (currentTime < nextCheck) {
                 setTimeUntilNextCheck(`${nextCheck - currentTime}min(s)`);
+            } else {
+                setTimeUntilNextCheck('...');
             }
         }, 1000);
 
-        return () => clearInterval(interval);
-    }, []);
+        return () => {
+            clearInterval(interval);
+        };
+    }, [farm!.schedule]);
 
     return (
         <div className="w-full p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
