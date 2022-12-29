@@ -11,7 +11,7 @@ import {
     faWindowMaximize
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmContext } from '@util/contexts';
-import React, { useContext } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import StatusIndicator from './StatusIndicator';
 
 export default function SidebarItem() {
@@ -23,7 +23,29 @@ export default function SidebarItem() {
         restartSchedule
     } = useContext(FarmContext);
 
-    console.log(loginNeeded);
+    const [timeUntilNextCheck, setTimeUntilNextCheck] = useState<string>('...');
+
+    /**
+     * Calculate time until next check.
+     */
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const currentTime = new Date().getMinutes();
+            let nextCheck = 0;
+
+            while (nextCheck < currentTime) nextCheck += farm?.schedule ?? 0;
+
+            if (farm?.status === 'disabled') {
+                setTimeUntilNextCheck('Never');
+            } else if (farm?.status === 'checking') {
+                setTimeUntilNextCheck('Now');
+            } else if (currentTime < nextCheck) {
+                setTimeUntilNextCheck(`${nextCheck - currentTime}min(s)`);
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div className="w-full p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
@@ -62,13 +84,7 @@ export default function SidebarItem() {
                     },
                     {
                         type: 'normal',
-                        label: `Next check: ${
-                            farm?.status === 'checking'
-                                ? 'now'
-                                : farm?.status === 'disabled'
-                                ? 'never'
-                                : `${farm?.schedule}min`
-                        }`,
+                        label: `Next check: ${timeUntilNextCheck}`,
                         disabled: true,
                         icon: (
                             <Icon sprite={faClock} size="1x" className="mx-1" />
