@@ -9,13 +9,14 @@ import { log } from './logger';
  *
  * Maybe add a setting in the future to prevent the pc from going to sleep?
  */
+export function initPowermonitor() {
+    powerMonitor.on('suspend', () => {
+        log('MAIN', 'INFO', 'PC went to sleep');
+        emitEvent(EventChannels.PCWentToSleep);
+    });
 
-powerMonitor.on('suspend', () => {
-    log('MAIN', 'INFO', 'PC went to sleep');
-    emitEvent(EventChannels.PCWentToSleep);
-});
-
-powerMonitor.on('resume', () => {
-    log('MAIN', 'INFO', 'PC woke up');
-    emitEvent(EventChannels.PCWokeUp);
-});
+    powerMonitor.on('resume', () => {
+        log('MAIN', 'INFO', 'PC woke up');
+        emitEvent(EventChannels.PCWokeUp);
+    });
+}

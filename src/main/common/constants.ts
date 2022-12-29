@@ -43,5 +43,6 @@ export const Constants = {
 };
 
 export enum Schedules {
-    CheckToFarm = 'check-to-farm'
+    CheckToFarm = 'check-to-farm',
+    Update = 'update'
 }

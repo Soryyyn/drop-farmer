@@ -35,6 +35,7 @@ if (require('electron-squirrel-startup')) {
  * Create the main settings store.
  */
 import './store';
+import { initPowermonitor } from './util/powermonitor';
 
 /**
  * Create the logger and files asscociated with it.
@@ -51,6 +52,11 @@ initPuppeteerConnection();
  * Update checking / downloading.
  */
 initUpdater();
+
+/**
+ * Import powermonitor here to handle sleeping and resuming.
+ */
+initPowermonitor();
 
 /**
  * Gets executed when electron has finished starting.

@@ -1,7 +1,14 @@
+import CrontabManager from 'cron-job-manager';
 import { app, autoUpdater } from 'electron';
-import { IpcChannels, Toasts } from '../common/constants';
+import {
+    EventChannels,
+    IpcChannels,
+    Schedules,
+    Toasts
+} from '../common/constants';
 import { destroyAllFarmWindows } from '../farms/management';
 import { getSetting } from '../store';
+import { listenForEvent } from '../util/events';
 import { log } from '../util/logger';
 import { sendForcedTypeToast } from '../util/toast';
 import { handleOneWay, sendOneWay } from './ipc';
@@ -9,6 +16,12 @@ import { destroyTray } from './tray';
 import { getMainWindow, setAppQuitting } from './windows';
 
 let displayToasts: boolean = false;
+
+/**
+ * Cron update job.
+ */
+const cron = new CrontabManager();
+cron.add(Schedules.Update, '*/15 * * * *', () => autoUpdater.checkForUpdates());
 
 export function initUpdater() {
     autoUpdater.setFeedURL({
@@ -35,9 +48,7 @@ function setupAppLaunchUpdateRouting() {
                 getSetting('application', 'checkForUpdates')?.value as boolean
             ) {
                 log('MAIN', 'DEBUG', 'Auto-update-checking is enabled');
-                setInterval(() => {
-                    autoUpdater.checkForUpdates();
-                }, 900000);
+                cron.startAll();
             } else {
                 log('MAIN', 'WARN', 'Auto-update-checking is disabled');
             }
@@ -152,4 +163,18 @@ autoUpdater.on('error', (err) => {
     }
 
     displayToasts = false;
+});
+
+/**
+ * Stop and resume update job on PC sleep or resume
+ */
+listenForEvent(EventChannels.PCWentToSleep, () => {
+    cron.stopAll();
+});
+
+listenForEvent(EventChannels.PCWokeUp, () => {
+    if (getSetting('application', 'checkForUpdates')?.value as boolean) {
+        log('MAIN', 'DEBUG', 'Auto-update-checking is enabled');
+        cron.startAll();
+    }
 });
