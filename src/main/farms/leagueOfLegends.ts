@@ -30,7 +30,8 @@ export default class LeagueOfLegends extends FarmTemplate {
             try {
                 const page = await getPage(getBrowserConnection(), window);
 
-                waitForTimeout(2000);
+                const headerElement = 'div.riotbar-header';
+                await waitForElementToAppear(page, headerElement);
 
                 /**
                  * Check if already logged in.

@@ -35,11 +35,11 @@ export default function SidebarItem() {
 
             while (nextCheck < currentTime + 1) nextCheck += farm!.schedule;
 
-            if (farm?.status === 'disabled') {
+            if (farm!.status === 'disabled') {
                 setTimeUntilNextCheck('Never');
-            } else if (farm?.status === 'checking') {
+            } else if (farm!.status === 'checking') {
                 setTimeUntilNextCheck('Now');
-            } else if (farm?.status === 'attention-required') {
+            } else if (farm!.status === 'attention-required') {
                 setTimeUntilNextCheck('Paused');
             } else if (currentTime < nextCheck) {
                 setTimeUntilNextCheck(`${nextCheck - currentTime}min(s)`);
@@ -51,7 +51,7 @@ export default function SidebarItem() {
         return () => {
             clearInterval(interval);
         };
-    }, [farm!.schedule]);
+    }, [farm!.schedule, farm!.status]);
 
     return (
         <div className="w-full p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
