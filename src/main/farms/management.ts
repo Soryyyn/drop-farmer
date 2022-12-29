@@ -1,6 +1,9 @@
+import { app } from 'electron';
 import { EventChannels } from '../common/constants';
+import { setAppQuitting } from '../electron/windows';
 import { listenForEvent } from '../util/events';
 import { log } from '../util/logger';
+import { connectToElectron, initPuppeteerConnection } from '../util/puppeteer';
 import LeagueOfLegends from './leagueOfLegends';
 import OverwatchContenders from './overwatchContenders';
 import OverwatchLeague from './overwatchLeague';
@@ -60,7 +63,16 @@ listenForEvent(EventChannels.PCWentToSleep, () => {
 
 listenForEvent(EventChannels.PCWentToSleep, () => {
     log('MAIN', 'WARN', 'Restarting farms because PC woke back up');
+    connectToElectron();
     farms.forEach((farm) => {
         farm.restartScheduler();
     });
+    // app.relaunch();
+
+    // /**
+    //  * We have to quit the app here, because `app.relaunch()` doesn't quit
+    //  * the app automatically.
+    //  */
+    // setAppQuitting(true);
+    // app.quit();
 });
