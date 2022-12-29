@@ -1,18 +1,12 @@
 import { app, ipcMain, shell } from 'electron';
 import { IpcChannels } from '../common/constants';
 import {
-    applyNewSettingsToFarms,
+    applySettingsToFarms,
     getFarmById,
     getFarmsRendererData
 } from '../farms/management';
 import { getSettings, updateSettings } from '../store';
-// import { getFarmByName, getSidebarItems } from '../farms/management';
 import { log } from '../util/logger';
-// import {
-//     getSettings,
-//     getSpecificSetting,
-//     updateSettings
-// } from '../util/settings';
 import { sendBasicToast, sendPromiseToast } from '../util/toast';
 import { setAppQuitting } from './windows';
 
@@ -120,7 +114,7 @@ handleOneWay(
             new Promise(async (resolve, reject) => {
                 try {
                     updateSettings(settingsToSave);
-                    applyNewSettingsToFarms();
+                    applySettingsToFarms();
                     resolve(undefined);
                 } catch (err) {
                     reject(err);

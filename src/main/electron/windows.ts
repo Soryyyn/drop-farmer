@@ -3,12 +3,9 @@ import { resolve } from 'path';
 import { getPage } from 'puppeteer-in-electron';
 import { getFarms } from '../farms/management';
 import FarmTemplate from '../farms/template';
-// import { getFarms } from '../farms/management';
-// import type FarmTemplate from '../farms/template';
 import { getSetting } from '../store';
 import { log } from '../util/logger';
 import { getBrowserConnection, waitForTimeout } from '../util/puppeteer';
-// import { getSpecificSetting } from '../util/settings';
 
 /**
  * Pick up constant from electron-forge for the main window entry and the

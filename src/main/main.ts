@@ -3,7 +3,6 @@ import { app, session } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS
 } from 'electron-devtools-installer';
-// import { initConfig, updateConfigFile } from './config';
 import { createTray, destroyTray } from './electron/tray';
 import { initUpdater } from './electron/update';
 import {
@@ -11,11 +10,6 @@ import {
     getMainWindow,
     setAppQuitting
 } from './electron/windows';
-// import {
-//     destroyAllFarmWindows,
-//     initFarms,
-//     stopFarmJobs
-// } from './farms/management';
 import {
     destroyAllFarmWindows,
     initFarmsManagement,

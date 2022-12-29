@@ -26,7 +26,7 @@ function initializeFarmSettings(): void {
     farms.forEach((farm) => farm.initialize());
 }
 
-export function applyNewSettingsToFarms(): void {
+export function applySettingsToFarms(): void {
     farms.forEach((farm) => farm.applyNewSettings());
 }
 

@@ -1,5 +1,4 @@
 import { app } from 'electron';
-import { resolve } from 'path';
 import puppeteer, { Browser, ElementHandle, Frame, Page } from 'puppeteer-core';
 import { connect, initialize } from 'puppeteer-in-electron';
 import { log } from './logger';

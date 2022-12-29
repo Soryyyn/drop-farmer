@@ -1,7 +1,6 @@
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
-import { applySettingsToFarms } from './farms/management';
 
 /**
  * The settings/config store of the app.
