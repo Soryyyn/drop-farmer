@@ -1,28 +1,19 @@
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
-import { log } from './util/logger';
+import { applyNewSettingsToFarms } from './farms/newManagement';
 
-type Setting = {
-    id: string;
-    shown: string;
-    desc: string;
-    value: string | number | boolean;
-    default: string | number | boolean;
-    min?: number;
-    max?: number;
-    disabled?: boolean;
-};
-
-type SettingsStoreSchema = {
-    settings: {
-        application: Setting[];
-        [name: string]: Setting[];
-    };
-};
-
-const store = new ElectronStore<SettingsStoreSchema>({
+/**
+ * The settings/config store of the app.
+ * After this store is created, the farm settings still need to be added.
+ */
+const store = new ElectronStore<SettingsSchema>({
     name: 'store',
+    clearInvalidConfig: true,
+    cwd:
+        process.env.NODE_ENV === 'production'
+            ? app.getPath('userData')
+            : join(__dirname, '../../'),
     defaults: {
         settings: {
             application: [
@@ -70,21 +61,83 @@ const store = new ElectronStore<SettingsStoreSchema>({
                 }
             ]
         }
-    },
-    cwd:
-        process.env.NODE_ENV === 'production'
-            ? app.getPath('userData')
-            : join(__dirname, '../../')
+    }
 });
 
-export function getSettings() {
-    return store.get('settings');
+/**
+ * Get all settings in the settings store.
+ */
+export function getSettings(): SettingsSchema {
+    return {
+        settings: store.get('settings')
+    };
 }
 
-export function getSetting(setting: string) {
-    return store.get(`settings.${setting}`);
+/**
+ * Get a specific setting of the settings store by dot notation.
+ */
+export function getSetting(owner: string, id: string): newSetting | undefined {
+    const settings: newSetting[] = store.get(`settings.${owner}`);
+    return settings.find((setting) => setting?.id === id);
 }
 
-export function setSetting(key: string, value: any) {
-    store.set(`settings.${key}`, value);
+/**
+ * Set a specific setting by key and value pair via dot notation.
+ */
+export function setSetting(owner: string, value: newSetting) {
+    if (!store.get(`settings.${owner}`)) {
+        store.set(`settings.${owner}`, []);
+    }
+
+    const settings: newSetting[] = store.get(`settings.${owner}`);
+    settings.push(value);
+    store.set(`settings.${owner}`, settings);
+}
+
+/**
+ * Checks if a specific setting exists inside an owner object
+ */
+export function doesSettingExist(owner: string, id: string): boolean {
+    const settings: newSetting[] = store.get(`settings.${owner}`);
+
+    if (settings !== undefined && Array.isArray(settings)) {
+        if (settings.find((setting) => setting?.id === id)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Update the setting if it exists.
+ */
+export function updateSetting(
+    owner: string,
+    id: string,
+    updated: newSetting
+): void {
+    if (doesSettingExist(owner, id)) {
+        /**
+         * Remove the old setting and save it's index.
+         */
+        const settings: newSetting[] = store.get(`settings.${owner}`);
+        const index = settings.findIndex((setting) => setting.id === id);
+        settings.splice(index, 1);
+
+        /**
+         * Insert updated settings at old position.
+         */
+        settings.splice(index, 0, updated);
+        store.set('settings', settings);
+    }
+}
+
+/**
+ * Update the whole settings at once.
+ */
+export function updateSettings(settings: SettingsSchema): void {
+    store.set('settings', settings.settings);
 }

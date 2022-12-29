@@ -1,9 +1,11 @@
 import { app, autoUpdater } from 'electron';
 import { IpcChannels, Toasts } from '../common/constants';
-import { updateConfigFile } from '../config';
-import { destroyAllFarmWindows } from '../farms/management';
+import { destroyAllFarmWindows } from '../farms/newManagement';
+import { getSetting } from '../store';
+// import { updateConfigFile } from '../config';
+// import { destroyAllFarmWindows } from '../farms/management';
 import { log } from '../util/logger';
-import { getSpecificSetting } from '../util/settings';
+// import { getSpecificSetting } from '../util/settings';
 import { sendForcedTypeToast } from '../util/toast';
 import { handleOneWay, sendOneWay } from './ipc';
 import { destroyTray } from './tray';
@@ -33,8 +35,7 @@ function setupAppLaunchUpdateRouting() {
     if (!(process.argv.indexOf('--squirrel-firstrun') > -1)) {
         if (process.env.NODE_ENV === 'production') {
             if (
-                getSpecificSetting('application', 'checkForUpdates')
-                    .value as boolean
+                getSetting('application', 'checkForUpdates')?.value as boolean
             ) {
                 log('MAIN', 'DEBUG', 'Auto-update-checking is enabled');
                 setInterval(() => {
@@ -135,7 +136,6 @@ autoUpdater.on('update-downloaded', () => {
 });
 
 autoUpdater.on('before-quit-for-update', () => {
-    updateConfigFile();
     destroyTray();
     destroyAllFarmWindows();
 });

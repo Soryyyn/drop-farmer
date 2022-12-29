@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import React from 'react';
 
 export type MenuEntry = {
+    type: 'normal' | 'seperator';
     label: string;
     icon?: JSX.Element;
     disabled?: boolean;
@@ -50,28 +51,42 @@ export default function Menu({
                         'right-0 top-0 -translate-y-full'
                 )}
             >
-                {entries.map((entry) => (
-                    <HeadlessMenu.Item
-                        key={entry.label}
-                        as="div"
-                        className={clsx(
-                            'flex flex-row',
-                            entryItemsStyling,
-                            entry.styling,
-                            {
-                                'text-blood-400': entry.caution,
-                                'text-snow-500/50 cursor-default':
-                                    entry.disabled && !entry.caution,
-                                'text-blood-400/50 cursor-default':
-                                    entry.disabled && entry.caution
-                            }
-                        )}
-                        onClick={entry.disabled ? undefined : entry.onClick}
-                    >
-                        {entry.icon}
-                        <span>{entry.label}</span>
-                    </HeadlessMenu.Item>
-                ))}
+                {entries.map((entry, index) => {
+                    if (entry.type === 'seperator') {
+                        return (
+                            <HeadlessMenu.Item
+                                key={index}
+                                as="div"
+                                className="bg-pepper-500/50 h-0.5 w-full rounded-full"
+                            />
+                        );
+                    } else {
+                        return (
+                            <HeadlessMenu.Item
+                                key={index}
+                                as="div"
+                                className={clsx(
+                                    'flex flex-row',
+                                    entryItemsStyling,
+                                    entry.styling,
+                                    {
+                                        'text-blood-400': entry.caution,
+                                        'text-snow-500/50 cursor-default':
+                                            entry.disabled && !entry.caution,
+                                        'text-blood-400/50 cursor-default':
+                                            entry.disabled && entry.caution
+                                    }
+                                )}
+                                onClick={
+                                    entry.disabled ? undefined : entry.onClick
+                                }
+                            >
+                                {entry.icon}
+                                <span>{entry.label}</span>
+                            </HeadlessMenu.Item>
+                        );
+                    }
+                })}
             </HeadlessMenu.Items>
         </HeadlessMenu>
     );

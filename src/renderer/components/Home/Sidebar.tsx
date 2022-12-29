@@ -9,7 +9,7 @@ export default function Sidebar() {
         <ul className="flex flex-col gap-4 min-w-[40%] grow bg-pepper-900/75 rounded-lg p-8">
             {farms.map((farm) => {
                 return (
-                    <FarmContextProvider farm={farm} key={farm.name}>
+                    <FarmContextProvider farm={farm} key={farm.id}>
                         <SidebarItem />
                     </FarmContextProvider>
                 );

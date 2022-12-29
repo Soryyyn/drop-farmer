@@ -14,10 +14,10 @@ interface DefaultProps {
  * Contexts
  */
 export const SettingsContext = createContext<{
-    settings: Settings | undefined;
-    setNewSettings: (newSettings: Settings) => void;
+    settings: SettingsSchema | undefined;
+    setNewSettings: (newSettings: SettingsSchema) => void;
     resetToDefaultSettings: () => void;
-    getSetting: (settingOwner: string, setting: string) => Setting | undefined;
+    getSetting: (settingOwner: string, id: string) => newSetting | undefined;
 }>({
     settings: undefined,
     setNewSettings() {},
@@ -50,18 +50,20 @@ export const UpdateContext = createContext<{
 });
 
 export const FarmsContext = createContext<{
-    farms: SidebarFarmItem[];
+    farms: FarmRendererData[];
 }>({
     farms: []
 });
 
 export const FarmContext = createContext<{
-    farm: SidebarFarmItem | undefined;
+    farm: FarmRendererData | undefined;
+    loginNeeded: boolean;
     setWindowsVisibility: (shouldBeShown: boolean) => void;
     restartSchedule: () => void;
     clearCache: () => void;
 }>({
     farm: undefined,
+    loginNeeded: false,
     setWindowsVisibility: () => {},
     restartSchedule: () => {},
     clearCache: () => {}
@@ -71,23 +73,27 @@ export const FarmContext = createContext<{
  * Provider components
  */
 export function SettingsContextProvider({ children }: DefaultProps) {
-    const [settings, setSettings] = useState<Settings>();
-    const [oldSettings, setOldSettings] = useState<Settings>();
+    const [settings, setSettings] = useState<SettingsSchema>();
+    const [oldSettings, setOldSettings] = useState<SettingsSchema>();
 
-    useSendAndWait(api.channels.getSettings, null, (err, settings) => {
-        if (err) {
-            api.log('ERROR', err);
-        } else {
-            setSettings(settings);
-            setOldSettings(cloneDeep(settings));
+    useSendAndWait(
+        api.channels.getSettings,
+        null,
+        (err, settings: SettingsSchema) => {
+            if (err) {
+                api.log('ERROR', err);
+            } else {
+                setSettings(settings);
+                setOldSettings(cloneDeep(settings));
+            }
         }
-    });
+    );
 
     /**
      * Function to save new settings in the main process.
      * Only if new changes actually happened.
      */
-    function setNewSettings(newSettings: Settings) {
+    function setNewSettings(newSettings: SettingsSchema) {
         if (!isEqual(newSettings, oldSettings)) {
             api.sendOneWay(api.channels.saveNewSettings, newSettings);
 
@@ -102,9 +108,9 @@ export function SettingsContextProvider({ children }: DefaultProps) {
     function resetToDefaultSettings() {
         const appliedChanges = cloneDeep(settings!);
 
-        for (const [key, value] of Object.entries(appliedChanges!)) {
+        for (const [key, value] of Object.entries(appliedChanges!.settings)) {
             value.forEach((setting, index) => {
-                appliedChanges[key][index].value = setting.defaultValue;
+                appliedChanges.settings[key][index].value = setting.default;
             });
         }
 
@@ -114,8 +120,10 @@ export function SettingsContextProvider({ children }: DefaultProps) {
     /**
      * Get a specific setting or the settings of the owner, ex. application.
      */
-    function getSetting(settingOwner: string, setting: string) {
-        return settings?.[settingOwner].find((s) => s.name === setting);
+    function getSetting(settingOwner: string, id: string) {
+        return settings?.settings[settingOwner].find(
+            (setting) => setting.id === id
+        );
     }
 
     return (
@@ -212,12 +220,12 @@ export function UpdateContextProvider({ children }: DefaultProps) {
 }
 
 export function FarmsContextProvider({ children }: DefaultProps) {
-    const [farms, setFarms] = useState<SidebarFarmItem[]>([]);
+    const [farms, setFarms] = useState<FarmRendererData[]>([]);
 
     useSendAndWait(
         api.channels.getFarms,
         null,
-        (err, response: SidebarFarmItem[]) => {
+        (err, response: FarmRendererData[]) => {
             if (!err) setFarms(response);
         }
     );
@@ -233,9 +241,10 @@ export function FarmContextProvider({
     children,
     farm
 }: DefaultProps & {
-    farm: SidebarFarmItem;
+    farm: FarmRendererData;
 }) {
-    const [trackedFarm, setTrackedFarm] = useState<SidebarFarmItem>(farm);
+    const [trackedFarm, setTrackedFarm] = useState<FarmRendererData>(farm);
+    const [loginNeeded, setLoginNeeded] = useState<boolean>(false);
 
     /**
      * Update the status if the status update is the tracked farm.
@@ -243,32 +252,52 @@ export function FarmContextProvider({
     useHandleOneWay(
         api.channels.farmStatusChange,
         null,
-        (event, newFarmStatus: SidebarFarmItem) => {
-            if (newFarmStatus.name === trackedFarm.name) {
+        (event, newFarmStatus: FarmRendererData) => {
+            if (newFarmStatus.id === trackedFarm.id) {
                 setTrackedFarm(newFarmStatus);
+            }
+        }
+    );
+
+    useHandleOneWay(
+        api.channels.farmLogin,
+        null,
+        (
+            event,
+            {
+                id,
+                needed
+            }: {
+                id: string;
+                needed: boolean;
+            }
+        ) => {
+            if (id === farm.id) {
+                setLoginNeeded(needed);
             }
         }
     );
 
     function setWindowsVisibility(shouldBeShown: boolean) {
         api.sendOneWay(api.channels.farmWindowsVisibility, {
-            name: trackedFarm.name,
-            showing: shouldBeShown
+            ...farm,
+            windowsShown: shouldBeShown
         });
     }
 
     function restartSchedule() {
-        api.sendOneWay(api.channels.restartScheduler, trackedFarm.name);
+        api.sendOneWay(api.channels.restartScheduler, trackedFarm.id);
     }
 
     function clearCache() {
-        api.sendOneWay(api.channels.clearCache, trackedFarm.name);
+        api.sendOneWay(api.channels.clearCache, trackedFarm.id);
     }
 
     return (
         <FarmContext.Provider
             value={{
                 farm: trackedFarm,
+                loginNeeded,
                 setWindowsVisibility,
                 restartSchedule,
                 clearCache

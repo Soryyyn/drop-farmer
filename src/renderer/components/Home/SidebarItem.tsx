@@ -2,39 +2,42 @@ import { Icon } from '@components/global/Icon';
 import Menu, { Alignment } from '@components/global/Menu';
 import NotificationBadge from '@components/global/NotificationBadge';
 import {
+    faClock,
     faEllipsisVertical,
     faEye,
     faEyeSlash,
     faRotate,
-    faTrash
+    faTrash,
+    faWindowMaximize
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmContext } from '@util/contexts';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import StatusIndicator from './StatusIndicator';
 
 export default function SidebarItem() {
-    const { farm, setWindowsVisibility, clearCache, restartSchedule } =
-        useContext(FarmContext);
-    const [displayingWindows, setDisplayingWindows] = useState<boolean>(false);
+    const {
+        farm,
+        loginNeeded,
+        setWindowsVisibility,
+        clearCache,
+        restartSchedule
+    } = useContext(FarmContext);
+
+    console.log(loginNeeded);
 
     return (
         <div className="w-full p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
-            <div className="leading-none grow flex flex-col">
-                <span className="text-pepper-200 text-lg capitalize font-medium">
-                    {farm?.name}
+            <div className="grow flex flex-col gap-2">
+                <span className="text-pepper-200 text-lg capitalize font-medium leading-none">
+                    {farm?.shown}
                 </span>
-                {/* <span className="text-pepper-200/60">
-                    asdasasddaas | asasdsd
-                </span> */}
             </div>
 
             <StatusIndicator status={farm!.status} />
 
             <Menu
                 button={
-                    <NotificationBadge
-                        showing={farm!.status === 'attention-required'}
-                    >
+                    <NotificationBadge showing={loginNeeded}>
                         <div className="h-full flex items-center justify-items-center text-pepper-200 bg-pepper-800/50 hover:bg-pepper-800/75 active:bg-pepper-800 active:text-snow-500 aspect-square p-1 rounded cursor-pointer">
                             <Icon sprite={faEllipsisVertical} size="lg" />
                         </div>
@@ -45,25 +48,57 @@ export default function SidebarItem() {
                 entryItemsStyling="gap-2 rounded leading-none py-1.5 pr-2 hover:bg-pepper-500 active:bg-pepper-400 text-snow-500 cursor-pointer"
                 entries={[
                     {
-                        label: displayingWindows
-                            ? 'Hide windows'
-                            : 'Show windows',
+                        type: 'normal',
+                        label: `Amount of windows: ${farm?.amountOfWindows}`,
+                        disabled: true,
                         icon: (
                             <Icon
-                                sprite={displayingWindows ? faEyeSlash : faEye}
+                                sprite={faWindowMaximize}
                                 size="1x"
                                 className="mx-1"
                             />
                         ),
-                        disabled:
-                            farm!.status === 'disabled' ||
-                            farm!.status === 'idle',
+                        onClick: () => {}
+                    },
+                    {
+                        type: 'normal',
+                        label: `Next check: ${
+                            farm?.status === 'checking'
+                                ? 'now'
+                                : farm?.status === 'disabled'
+                                ? 'never'
+                                : `${farm?.schedule}min`
+                        }`,
+                        disabled: true,
+                        icon: (
+                            <Icon sprite={faClock} size="1x" className="mx-1" />
+                        ),
+                        onClick: () => {}
+                    },
+                    {
+                        type: 'seperator',
+                        label: '',
+                        onClick: () => {}
+                    },
+                    {
+                        type: 'normal',
+                        label: farm?.windowsShown
+                            ? 'Hide windows'
+                            : 'Show windows',
+                        icon: (
+                            <Icon
+                                sprite={farm?.windowsShown ? faEyeSlash : faEye}
+                                size="1x"
+                                className="mx-1"
+                            />
+                        ),
+                        disabled: farm?.status === 'disabled',
                         onClick: () => {
-                            setDisplayingWindows(!displayingWindows);
-                            setWindowsVisibility(!displayingWindows);
+                            setWindowsVisibility(!farm?.windowsShown);
                         }
                     },
                     {
+                        type: 'normal',
                         label: 'Restart farm',
                         icon: (
                             <Icon
@@ -75,6 +110,12 @@ export default function SidebarItem() {
                         onClick: () => restartSchedule()
                     },
                     {
+                        type: 'seperator',
+                        label: '',
+                        onClick: () => {}
+                    },
+                    {
+                        type: 'normal',
                         label: 'Clear cache',
                         caution: true,
                         icon: (

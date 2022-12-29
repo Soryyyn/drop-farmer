@@ -3,17 +3,19 @@ import dayjs from 'dayjs';
 import { app } from 'electron';
 import { existsSync } from 'fs';
 import { join } from 'path';
+import { Constants } from '../common/constants';
 import {
     APP_PATH,
     createFile,
     deleteFile,
     writeToFile
 } from '../files/handling';
+import { getSetting } from '../store';
 
-const FILE_NAME: string = '.log';
-const CRASHLOG_FILE_NAME = 'crash.log';
-const recentLogs: string[] = [];
-let debugLogsEnabled: boolean = false;
+/**
+ * Stores the recent log entries in case of a crash.
+ */
+const recentLogEntries: string[] = [];
 
 /**
  * Create the `.log` file.
@@ -25,13 +27,10 @@ export function initLogger(): void {
     createLogFile();
 }
 
-/**
- * Create the logfile.
- */
 function createLogFile(): void {
     try {
         createFile(
-            FILE_NAME,
+            Constants.LogFileName,
             createLogEntry('MAIN', 'INFO', 'Created logfile')
         );
     } catch (err) {
@@ -39,35 +38,18 @@ function createLogFile(): void {
     }
 }
 
-/**
- * Creates an appropriate log entry for the log file with timestamp,
- * type and message.
- *
- * @param {"MAIN" | "RENDERER"} origin From which origin the log is coming from.
- * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
- * @param {string} message Message to include in log entry.
- * @returns {string} Prepared log entry.
- */
 function createLogEntry(
-    origin: 'MAIN' | 'RENDERER',
-    type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
+    origin: LogOrigin,
+    type: LogLevel,
     message: string
 ): string {
     const currentTimeStamp = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS');
     return `[${type}] (${origin}) ${currentTimeStamp} - ${message}\n`;
 }
 
-/**
- * Creates an appropriate log entry for the the terminal with colors.
- *
- * @param {"MAIN" | "RENDERER"} origin From which origin the log is coming from.
- * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
- * @param {string} message Message to include in log entry.
- * @returns {string} Prepared log entry.
- */
 function createTerminalLogEntry(
-    origin: 'MAIN' | 'RENDERER',
-    type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
+    origin: LogOrigin,
+    type: LogLevel,
     message: string
 ): string {
     const currentTimeStamp = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS');
@@ -109,37 +91,30 @@ function createTerminalLogEntry(
     return `${typeText} ${originText} ${timeStampText} - ${messageText}`;
 }
 
-/**
- * Logs (writes) a log entry into the ".log" file in the app dir.
- *
- * @param {"MAIN" | "RENDERER"} origin From which origin the log is coming from.
- * @param {"FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG"} type Type of log entry to make.
- * @param {string} message Message to log.
- */
-export function log(
-    origin: 'MAIN' | 'RENDERER',
-    type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
-    message: any
-): void {
+export function log(origin: LogOrigin, type: LogLevel, message: any): void {
     const entry: string = createLogEntry(origin, type, message);
     const terminalEntry: string = createTerminalLogEntry(origin, type, message);
 
     /**
      * Add log to recent entries for crash log.
      */
-    recentLogs.push(entry);
+    recentLogEntries.push(entry);
 
     /**
      * If in production environment disable debug-type loggings.
      */
-    if (!debugLogsEnabled && type === 'DEBUG') return;
+    if (
+        (!getSetting('application', 'debugLogs')?.value as boolean) &&
+        type === 'DEBUG'
+    )
+        return;
 
     try {
         /**
          * Only log to the file if it exists.
          */
-        if (existsSync(join(APP_PATH, FILE_NAME)))
-            writeToFile(FILE_NAME, `${entry}`, 'a');
+        if (existsSync(join(APP_PATH, Constants.LogFileName)))
+            writeToFile(Constants.LogFileName, `${entry}`, 'a');
 
         console.log(terminalEntry);
 
@@ -163,17 +138,8 @@ function createCrashLog(): void {
     /**
      * Delete the file if its exists.
      */
-    if (existsSync(join(APP_PATH, CRASHLOG_FILE_NAME)))
-        deleteFile(CRASHLOG_FILE_NAME);
+    if (existsSync(join(APP_PATH, Constants.CrashLogFileName)))
+        deleteFile(Constants.CrashLogFileName);
 
-    createFile(CRASHLOG_FILE_NAME, ''.concat(...recentLogs));
-}
-
-/**
- * Enable or disable the debug logs.
- *
- * @param {boolean} enabled Value for the new debug logs.
- */
-export function enableDebugLogs(enabled: boolean): void {
-    debugLogsEnabled = enabled;
+    createFile(Constants.CrashLogFileName, ''.concat(...recentLogEntries));
 }

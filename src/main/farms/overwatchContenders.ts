@@ -1,4 +1,7 @@
 import { getPage } from 'puppeteer-in-electron';
+import { IpcChannels } from '../common/constants';
+import { sendOneWay } from '../electron/ipc';
+import { getMainWindow } from '../electron/windows';
 import { log } from '../util/logger';
 import {
     doesElementExist,
@@ -7,15 +10,14 @@ import {
     waitForElementToAppear,
     waitForTimeout
 } from '../util/puppeteer';
-import FarmTemplate from './template';
+import NewFarmTemplate from './newTemplate';
 
-export default class OverwatchContenders extends FarmTemplate {
+export default class OverwatchContenders extends NewFarmTemplate {
     constructor() {
         super(
             'overwatch-contenders',
-            'https://www.youtube.com/c/OverwatchContenders',
-            'default',
-            true
+            'Overwatch: Contenders',
+            'https://www.youtube.com/c/OverwatchContenders'
         );
     }
 
@@ -24,7 +26,7 @@ export default class OverwatchContenders extends FarmTemplate {
      *
      * @param {Electron.BrowserWindow} window The window to control.
      */
-    windowsStillFarming(window: Electron.BrowserWindow): Promise<any> {
+    stillFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
                 const page = await getPage(getBrowserConnection(), window);
@@ -43,19 +45,19 @@ export default class OverwatchContenders extends FarmTemplate {
                     log(
                         'MAIN',
                         'DEBUG',
-                        `${this.getName()}: Stream still live, continuing farming`
+                        `${this.id}: Stream still live, continuing farming`
                     );
                     resolve(undefined);
                 } else {
                     /**
                      * Close the farming window.
                      */
-                    this.removeFarmingWindowFromArray(0);
+                    this.destroyWindowFromArray(this.farmers, window);
 
                     log(
                         'MAIN',
                         'DEBUG',
-                        `${this.getName()}: Stream not live anymore, stopping farming`
+                        `${this.id}: Stream not live anymore, stopping farming`
                     );
                     resolve(undefined);
                 }
@@ -86,11 +88,7 @@ export default class OverwatchContenders extends FarmTemplate {
                     await page.click(userAgreementSelector);
                     await page.waitForNavigation();
 
-                    log(
-                        'MAIN',
-                        'INFO',
-                        `${this.getName()}: Accepted user agreement`
-                    );
+                    log('MAIN', 'INFO', `${this.id}: Accepted user agreement`);
                 }
 
                 /**
@@ -107,21 +105,26 @@ export default class OverwatchContenders extends FarmTemplate {
                 const signinRoute = 'https://www.youtube.com/signin';
                 await page.goto(signinRoute);
                 await waitForTimeout(3000);
-                log(
-                    'MAIN',
-                    'DEBUG',
-                    `${this.getName()}: Navigation to login route`
-                );
+                log('MAIN', 'DEBUG', `${this.id}: Navigation to login route`);
 
                 if (await pageUrlContains(page, 'accounts.google.com')) {
-                    log(
-                        'MAIN',
-                        'DEBUG',
-                        `${this.getName()}: Login is needed by user`
-                    );
+                    log('MAIN', 'DEBUG', `${this.id}: Login is needed by user`);
 
-                    window.show();
-                    window.focus();
+                    /**
+                     * Display small dot notification that login is needed,
+                     * and show window if the setting is enabled.
+                     */
+                    sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
+                        id: this.id,
+                        needed: true
+                    });
+                    if (
+                        this.windowsCurrentlyShown ||
+                        this.windowsShownByDefault
+                    ) {
+                        window.show();
+                        window.focus();
+                    }
 
                     /**
                      * Wait infinitely for signin input element or the yt logo
@@ -135,24 +138,28 @@ export default class OverwatchContenders extends FarmTemplate {
                     ]));
 
                     if (!(await pageUrlContains(page, 'accounts.google.com'))) {
-                        log(
-                            'MAIN',
-                            'DEBUG',
-                            `${this.getName()}: Login completed`
-                        );
+                        log('MAIN', 'DEBUG', `${this.id}: Login completed`);
+                        sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
+                            id: this.id,
+                            needed: false
+                        });
                         resolve(undefined);
                     } else {
-                        await page.goto(this.getCheckerWebsite());
+                        await page.goto(this.url);
                         await page.waitForNavigation();
-                        log(
-                            'MAIN',
-                            'DEBUG',
-                            `${this.getName()}: Login completed`
-                        );
+                        log('MAIN', 'DEBUG', `${this.id}: Login completed`);
+                        sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
+                            id: this.id,
+                            needed: false
+                        });
                         resolve(undefined);
                     }
                 } else {
-                    log('MAIN', 'DEBUG', `${this.getName()}: Login completed`);
+                    log('MAIN', 'DEBUG', `${this.id}: Login completed`);
+                    sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
+                        id: this.id,
+                        needed: false
+                    });
                     resolve(undefined);
                 }
             } catch (err) {
@@ -175,7 +182,7 @@ export default class OverwatchContenders extends FarmTemplate {
                 /**
                  * Re-route to checker route for safety.
                  */
-                await page.goto(this.getCheckerWebsite());
+                await page.goto(this.url);
                 await waitForTimeout(1000);
 
                 /**
@@ -189,15 +196,11 @@ export default class OverwatchContenders extends FarmTemplate {
                     10000
                 ).then((appeared) => {
                     if (appeared) {
-                        log(
-                            'MAIN',
-                            'DEBUG',
-                            `${this.getName()}: Found livestream`
-                        );
+                        log('MAIN', 'DEBUG', `${this.id}: Found livestream`);
                         /**
                          * Create the farming window and open the livestream.
                          */
-                        this.createFarmingWindow(this.getCheckerWebsite()).then(
+                        this.createArrayWindow(this.url, this.farmers).then(
                             async (farmingWindow) => {
                                 const farmingWindowPage = await getPage(
                                     getBrowserConnection(),
@@ -219,11 +222,8 @@ export default class OverwatchContenders extends FarmTemplate {
                                 log(
                                     'MAIN',
                                     'DEBUG',
-                                    `${this.getName()}: Farming with "${
-                                        this.getFarmingWindows().length
-                                    }" windows`
+                                    `${this.id}: Farming with "${this.farmers.length}" windows`
                                 );
-                                this.timerAction('start');
                                 this.updateStatus('farming');
                                 resolve(undefined);
                             }
@@ -232,7 +232,7 @@ export default class OverwatchContenders extends FarmTemplate {
                         log(
                             'MAIN',
                             'DEBUG',
-                            `${this.getName()}: No livestream found, no need to farm`
+                            `${this.id}: No livestream found, no need to farm`
                         );
                         this.updateStatus('idle');
                         resolve(undefined);

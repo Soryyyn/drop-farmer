@@ -1,12 +1,18 @@
 import { app, ipcMain, shell } from 'electron';
 import { IpcChannels } from '../common/constants';
-import { getFarmByName, getSidebarItems } from '../farms/management';
-import { log } from '../util/logger';
 import {
-    getSettings,
-    getSpecificSetting,
-    updateSettings
-} from '../util/settings';
+    applyNewSettingsToFarms,
+    getFarmById,
+    getFarmsRendererData
+} from '../farms/newManagement';
+import { getSettings, updateSettings } from '../store';
+// import { getFarmByName, getSidebarItems } from '../farms/management';
+import { log } from '../util/logger';
+// import {
+//     getSettings,
+//     getSpecificSetting,
+//     updateSettings
+// } from '../util/settings';
 import { sendBasicToast, sendPromiseToast } from '../util/toast';
 import { setAppQuitting } from './windows';
 
@@ -64,16 +70,16 @@ handleOneWay(IpcChannels.log, (event, { type, message }) => {
 });
 
 handleAndReply(IpcChannels.getFarms, () => {
-    return getSidebarItems();
+    return getFarmsRendererData();
 });
 
-handleOneWay(IpcChannels.farmWindowsVisibility, (event, { name, showing }) => {
-    const farm = getFarmByName(name);
-    if (farm != undefined) {
-        if (showing) farm.showAllWindows();
-        else farm.hideAllWindows();
+handleOneWay(
+    IpcChannels.farmWindowsVisibility,
+    (event, updated: FarmRendererData) => {
+        const farm = getFarmById(updated.id);
+        farm?.toggleWindowsVisibility();
     }
-});
+);
 
 handleOneWay(IpcChannels.openLinkInExternal, (event, link: string) => {
     shell.openExternal(link);
@@ -100,66 +106,65 @@ handleAndReply(IpcChannels.getSettings, () => {
     return getSettings();
 });
 
-handleOneWay(IpcChannels.saveNewSettings, (event, settingsToSave: Settings) => {
-    sendPromiseToast(
-        {
-            id: 'settings-saving',
-            textOnLoading: 'Saving settings...',
-            textOnSuccess: 'Saved settings.',
-            textOnError: 'Failed saving settings.',
-            duration: 4000
-        },
-        new Promise(async (resolve, reject) => {
-            try {
-                for (const [key, value] of Object.entries(settingsToSave)) {
-                    updateSettings(key, value);
+handleOneWay(
+    IpcChannels.saveNewSettings,
+    (event, settingsToSave: SettingsSchema) => {
+        sendPromiseToast(
+            {
+                id: 'settings-saving',
+                textOnLoading: 'Saving settings...',
+                textOnSuccess: 'Saved settings.',
+                textOnError: 'Failed saving settings.',
+                duration: 4000
+            },
+            new Promise(async (resolve, reject) => {
+                try {
+                    updateSettings(settingsToSave);
+                    applyNewSettingsToFarms();
+                    resolve(undefined);
+                } catch (err) {
+                    reject(err);
                 }
-                resolve(undefined);
-            } catch (err) {
-                reject(err);
-            }
-        })
-    );
-});
+            })
+        );
+    }
+);
 
 handleAndReply(IpcChannels.getApplicationVersion, () => {
     return app.getVersion();
 });
 
-handleOneWay(IpcChannels.clearCache, (event, name) => {
-    const farm = getFarmByName(name);
+handleOneWay(IpcChannels.clearCache, (event, id) => {
+    const farm = getFarmById(id);
     if (farm != undefined) {
         sendBasicToast(
             {
-                id: `cleared-cache-${farm.getName()}`,
-                textOnSuccess: `Cleared cache for ${farm.getName()}.`,
-                textOnError: `Failed clearing cache for ${farm.getName()}}.`,
+                id: `cleared-cache-${farm.id}`,
+                textOnSuccess: `Cleared cache for ${farm.id}.`,
+                textOnError: `Failed clearing cache for ${farm.id}}.`,
                 duration: 4000
             },
             () => {
                 farm.restartScheduler(async () => {
-                    await farm.clearFarmCache();
+                    await farm.clearCache();
                 });
-
-                farm.updateStatus('idle');
             }
         );
     }
 });
 
 handleOneWay(IpcChannels.restartScheduler, (event, name) => {
-    const farm = getFarmByName(name);
+    const farm = getFarmById(name);
     if (farm != undefined) {
         sendBasicToast(
             {
-                id: `restart-schedule-${farm.getName()}`,
-                textOnSuccess: `Restarted schedule for ${farm.getName()}.`,
-                textOnError: `Failed restarting schedule for ${farm.getName()}}.`,
+                id: `restart-schedule-${farm.id}`,
+                textOnSuccess: `Restarted schedule for ${farm.id}.`,
+                textOnError: `Failed restarting schedule for ${farm.id}}.`,
                 duration: 4000
             },
             () => {
                 farm.restartScheduler();
-                farm.updateStatus('idle');
             }
         );
     }

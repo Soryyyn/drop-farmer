@@ -3,7 +3,7 @@ import { app, session } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS
 } from 'electron-devtools-installer';
-import { initConfig, updateConfigFile } from './config';
+// import { initConfig, updateConfigFile } from './config';
 import { createTray, destroyTray } from './electron/tray';
 import { initUpdater } from './electron/update';
 import {
@@ -11,14 +11,20 @@ import {
     getMainWindow,
     setAppQuitting
 } from './electron/windows';
+// import {
+//     destroyAllFarmWindows,
+//     initFarms,
+//     stopFarmJobs
+// } from './farms/management';
 import {
     destroyAllFarmWindows,
-    initFarms,
-    stopFarmJobs
-} from './farms/management';
+    initFarmsManagement,
+    stopAllFarmJobs
+} from './farms/newManagement';
 import { internetConnectionChecker } from './util/internet';
 import { initLogger, log } from './util/logger';
 import { initPuppeteerConnection } from './util/puppeteer';
+
 /**
  * If application is in run in production environment.
  */
@@ -32,11 +38,15 @@ if (require('electron-squirrel-startup')) {
 }
 
 /**
- * Initialize all drop-farmer background functions.
+ * Create the main settings store.
+ */
+import './store';
+
+/**
+ * Create the logger and files asscociated with it.
  */
 initLogger();
-initConfig();
-initFarms();
+initFarmsManagement();
 
 /**
  * Puppeteer connection to electron application must happen before the app is ready.
@@ -47,8 +57,6 @@ initPuppeteerConnection();
  * Update checking / downloading.
  */
 initUpdater();
-
-import './store';
 
 /**
  * Gets executed when electron has finished starting.
@@ -124,7 +132,7 @@ app.whenReady().then(() => {
         /**
          * Stop all cron jobs, to prevent unfulfilled promises.
          */
-        stopFarmJobs();
+        stopAllFarmJobs();
 
         /**
          * Allow app to shutdown.
@@ -139,8 +147,8 @@ app.whenReady().then(() => {
  * Quitting routine.
  */
 app.on('before-quit', () => {
-    updateConfigFile();
     destroyTray();
+    stopAllFarmJobs();
     destroyAllFarmWindows();
 });
 

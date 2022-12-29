@@ -19,7 +19,7 @@ yarn-error.log*
 .husky/_/
 
 # app
-config.json
+store.json
 .log
 .webpack/
 out/

@@ -1,11 +1,14 @@
 import { BrowserWindow } from 'electron';
 import { resolve } from 'path';
 import { getPage } from 'puppeteer-in-electron';
-import { getFarms } from '../farms/management';
-import type FarmTemplate from '../farms/template';
+import { getFarms } from '../farms/newManagement';
+import NewFarmTemplate from '../farms/newTemplate';
+// import { getFarms } from '../farms/management';
+// import type FarmTemplate from '../farms/template';
+import { getSetting } from '../store';
 import { log } from '../util/logger';
 import { getBrowserConnection, waitForTimeout } from '../util/puppeteer';
-import { getSpecificSetting } from '../util/settings';
+// import { getSpecificSetting } from '../util/settings';
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -66,10 +69,8 @@ export function createMainWindow(isProd: boolean): void {
      */
     mainWindow.on('ready-to-show', () => {
         if (
-            Boolean(
-                getSpecificSetting('application', 'showMainWindowOnLaunch')
-                    .value
-            ) ||
+            (getSetting('application', 'showMainWindowOnLaunch')
+                ?.value as boolean) ||
             process.platform == 'linux'
         ) {
             log(
@@ -100,8 +101,8 @@ export function createMainWindow(isProd: boolean): void {
             /**
              * Hide all farm windows as well.
              */
-            getFarms().forEach((farm: FarmTemplate) => {
-                farm.hideAllWindows();
+            getFarms().forEach((farm: NewFarmTemplate) => {
+                farm.toggleWindowsVisibility(false);
             });
         } else {
             destroyWindow(mainWindow);
@@ -122,7 +123,11 @@ export function getMainWindow(): BrowserWindow {
  * @param {string} url The url which should load on window creation.
  * @param {string} gameName The name of the game to create the window for.
  */
-export async function createWindow(url: string, gameName?: string) {
+export async function createWindow(
+    url: string,
+    shouldBeShown: boolean,
+    gameName?: string
+) {
     const window = new BrowserWindow({
         icon: resolve(
             __dirname,
@@ -149,6 +154,15 @@ export async function createWindow(url: string, gameName?: string) {
     await window.loadURL(url);
     const page = await getPage(getBrowserConnection(), window);
     await page.goto(url);
+
+    window.on('ready-to-show', () => {
+        if (
+            shouldBeShown ||
+            (getSetting('application', 'showWindowsForLogin')?.value as boolean)
+        ) {
+            window.show();
+        }
+    });
 
     /**
      * Decide if the windows is for a farm or just a general window.

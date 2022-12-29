@@ -1,15 +1,15 @@
 import { getPage } from 'puppeteer-in-electron';
 import { log } from '../util/logger';
 import { getBrowserConnection, waitForTimeout } from '../util/puppeteer';
-import FarmTemplate from './template';
+import NewFarmTemplate from './newTemplate';
 
-export default class TwitchStreamer extends FarmTemplate {
+export default class TwitchStreamer extends NewFarmTemplate {
     /**
      * To make this farm work, we need a specific name and twitch url to load
      * which is different from each farm.
      */
-    constructor(name: string, twitchURL: string) {
-        super(name, twitchURL, 'custom', true);
+    constructor(streamerName: string, twitchURL: string) {
+        super(`twitch/${streamerName}`, streamerName, twitchURL);
     }
 
     login(window: Electron.BrowserWindow): Promise<any> {
@@ -33,11 +33,7 @@ export default class TwitchStreamer extends FarmTemplate {
                         ).jsonValue()
                     ).length != 0
                 ) {
-                    log(
-                        'MAIN',
-                        'DEBUG',
-                        `${this.getName()}: Login is needed by user`
-                    );
+                    log('MAIN', 'DEBUG', `${this.id}: Login is needed by user`);
 
                     /**
                      * Navigate to login page.
@@ -53,11 +49,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     page.waitForSelector('.top-name__menu', {
                         timeout: 0
                     }).then(() => {
-                        log(
-                            'MAIN',
-                            'DEBUG',
-                            `${this.getName()}: Login completed`
-                        );
+                        log('MAIN', 'DEBUG', `${this.id}: Login completed`);
                         window.hide();
                         resolve(undefined);
                     });
@@ -65,7 +57,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     log(
                         'MAIN',
                         'DEBUG',
-                        `${this.getName()}: User already logged in, continuing`
+                        `${this.id}: User already logged in, continuing`
                     );
                     resolve(undefined);
                 }
@@ -75,14 +67,14 @@ export default class TwitchStreamer extends FarmTemplate {
         });
     }
 
-    windowsStillFarming(window: Electron.BrowserWindow): Promise<any> {
+    stillFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                if (this.getFarmingWindows().length === 0) {
+                if (this.farmers.length === 0) {
                     log(
                         'MAIN',
                         'DEBUG',
-                        `${this.getName()}: No farming windows, skipping checking step`
+                        `${this.id}: No farming windows, skipping checking step`
                     );
                     resolve(undefined);
                 } else {
@@ -99,16 +91,16 @@ export default class TwitchStreamer extends FarmTemplate {
                         log(
                             'MAIN',
                             'DEBUG',
-                            `${this.getName()}: Stream still live, continue farming`
+                            `${this.id}: Stream still live, continue farming`
                         );
                         resolve(undefined);
                     } else {
-                        this.removeFarmingWindowFromArray(0);
+                        this.destroyWindowFromArray(this.farmers, window);
 
                         log(
                             'MAIN',
                             'DEBUG',
-                            `${this.getName()}: Stream not live anymore, stopping farming`
+                            `${this.id}: Stream not live anymore, stopping farming`
                         );
 
                         resolve(undefined);
@@ -125,11 +117,11 @@ export default class TwitchStreamer extends FarmTemplate {
             try {
                 const page = await getPage(getBrowserConnection(), window);
 
-                if (this.getFarmingWindows().length > 0) {
+                if (this.farmers.length > 0) {
                     log(
                         'MAIN',
                         'DEBUG',
-                        `${this.getName()}: Already farming, no need to start again`
+                        `${this.id}: Already farming, no need to start again`
                     );
 
                     this.updateStatus('farming');
@@ -148,26 +140,18 @@ export default class TwitchStreamer extends FarmTemplate {
                             '#live-channel-stream-information > div > div > div > div > div.Layout-sc-nxg1ff-0.wEGRY > div > div > div > a > div.Layout-sc-nxg1ff-0.ScHaloIndicator-sc-1l14b0i-1.ceXRHq.tw-halo__indicator > div > div > div > div > p'
                         )) != null
                     ) {
-                        log(
-                            'MAIN',
-                            'DEBUG',
-                            `${this.getName()}: Found livestream`
-                        );
+                        log('MAIN', 'DEBUG', `${this.id}: Found livestream`);
 
                         /**
                          * Create the farming window and open the livestream.
                          */
-                        this.createFarmingWindow(this.getCheckerWebsite()).then(
+                        this.createArrayWindow(this.url, this.farmers).then(
                             () => {
                                 log(
                                     'MAIN',
                                     'DEBUG',
-                                    `${this.getName()}: Farming with "${
-                                        this.getFarmingWindows().length
-                                    }" windows`
+                                    `${this.id}: Farming with "${this.farmers.length}" windows`
                                 );
-
-                                this.timerAction('start');
 
                                 this.updateStatus('farming');
                                 resolve(undefined);
@@ -177,7 +161,7 @@ export default class TwitchStreamer extends FarmTemplate {
                         log(
                             'MAIN',
                             'DEBUG',
-                            `${this.getName()}: Stream not live, no need to farm`
+                            `${this.id}: Stream not live, no need to farm`
                         );
                         this.updateStatus('idle');
 

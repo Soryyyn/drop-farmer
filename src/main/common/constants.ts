@@ -26,10 +26,21 @@ export enum IpcChannels {
     update = 'update-status',
     installUpdate = 'install-update',
     updateCheck = 'update-check',
-    updateStatus = 'update-status'
+    updateStatus = 'update-status',
+    farmLogin = 'farm-login'
 }
 
 export enum EventChannels {
     PCWentToSleep = 'pc-went-to-sleep',
     PCWokeUp = 'pc-woke-up'
+}
+
+export const Constants = {
+    LogFileName: '.log',
+    CrashLogFileName: 'crash.log',
+    StoreFileName: 'store'
+};
+
+export enum Schedules {
+    CheckToFarm = 'check-to-farm'
 }

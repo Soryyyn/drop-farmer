@@ -5,7 +5,7 @@ import {
     faRotateRight,
     faXmark
 } from '@fortawesome/free-solid-svg-icons';
-import { SettingsContext } from '@util/contexts';
+import { FarmsContext, SettingsContext } from '@util/contexts';
 import React, { useContext, useState } from 'react';
 import { ActionButton } from './ActionButton';
 import Selector from './Selector';
@@ -18,6 +18,7 @@ interface Props {
 export default function Settings({ onClose }: Props) {
     const { settings, setNewSettings, resetToDefaultSettings } =
         useContext(SettingsContext);
+    const { farms } = useContext(FarmsContext);
     const [selected, setSelected] = useState<string>('application');
     const [currentSettings, setCurrentSettings] = useState(settings);
 
@@ -47,13 +48,22 @@ export default function Settings({ onClose }: Props) {
                 <div className="flex flex-row h-full w-full gap-8 overflow-y-auto">
                     {/* Selectors */}
                     <ul className="min-w-fit max-w-[25%] flex flex-col gap-2 list-none">
-                        {Object.keys(settings!).map((selector) => {
+                        {/* Application setting selector */}
+                        <Selector
+                            key="application"
+                            label="Application"
+                            isSelected={'application' === selected}
+                            onClick={() => setSelected('application')}
+                        />
+
+                        {/* Farm setting selectors */}
+                        {farms.map((farm) => {
                             return (
                                 <Selector
-                                    key={selector}
-                                    label={selector}
-                                    isSelected={selector === selected}
-                                    onClick={() => setSelected(selector)}
+                                    key={farm.id}
+                                    label={farm.shown}
+                                    isSelected={farm.id === selected}
+                                    onClick={() => setSelected(farm.id)}
                                 />
                             );
                         })}
@@ -61,26 +71,23 @@ export default function Settings({ onClose }: Props) {
 
                     {/* Settings */}
                     <ul className="grow flex flex-col gap-4 overflow-y-auto">
-                        {settings![selected].map((setting) => {
+                        {settings?.settings[selected].map((setting) => {
                             return (
                                 <Setting
-                                    key={setting.name}
+                                    key={setting.id}
                                     setting={setting}
                                     onChange={(updated) => {
                                         const copyOfSettings = { ...settings };
                                         const newFarmSetting = { ...setting };
 
-                                        copyOfSettings[selected].forEach(
-                                            (s) => {
-                                                if (
-                                                    newFarmSetting.name ===
-                                                    s.name
-                                                ) {
-                                                    s.value = updated;
-                                                    s = newFarmSetting;
-                                                }
+                                        copyOfSettings.settings[
+                                            selected
+                                        ].forEach((s) => {
+                                            if (newFarmSetting.id === s.id) {
+                                                s.value = updated;
+                                                s = newFarmSetting;
                                             }
-                                        );
+                                        });
 
                                         setCurrentSettings(copyOfSettings);
                                     }}

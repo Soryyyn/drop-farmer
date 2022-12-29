@@ -2,7 +2,7 @@ import { Icon } from '@components/global/Icon';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import React, { useRef } from 'react';
 interface Props {
-    setting: Setting;
+    setting: newSetting;
     onChange: (updated: any) => void;
 }
 
@@ -13,7 +13,7 @@ export default function NumberInput({ setting, onChange }: Props) {
         <div className="flex flex-row justify-center gap-1">
             <button
                 className="flex justify-center items-center  bg-pepper-700 rounded cursor-pointer aspect-square px-2  text-snow-300 hover:bg-pepper-800"
-                disabled={setting.changingDisabled}
+                disabled={setting.disabled}
                 onClick={() => {
                     if (numberInputRef.current?.value)
                         if (parseInt(numberInputRef.current.value) < 60) {
@@ -29,7 +29,7 @@ export default function NumberInput({ setting, onChange }: Props) {
                 ref={numberInputRef}
                 className="w-1/3 text-center bg-pepper-700 px-2 py-1 rounded focus:outline-none hover:bg-pepper-800 focus:bg-pepper-800"
                 value={setting.value as number}
-                disabled={setting.changingDisabled}
+                disabled={setting.disabled}
                 type="number"
                 onInput={(event) => {
                     /**
@@ -54,7 +54,7 @@ export default function NumberInput({ setting, onChange }: Props) {
             />
             <button
                 className="flex justify-center items-center  bg-pepper-700 rounded cursor-pointer aspect-square px-2 text-snow-300 hover:bg-pepper-800"
-                disabled={setting.changingDisabled}
+                disabled={setting.disabled}
                 onClick={() => {
                     if (numberInputRef.current?.value)
                         if (parseInt(numberInputRef.current.value) > 1) {

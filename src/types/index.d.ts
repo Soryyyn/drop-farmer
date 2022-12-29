@@ -101,3 +101,41 @@ type ConfigFile = {
  * For renderer to know the preload types.
  */
 declare const api: typeof import('../api').default;
+
+/**
+ * Store.
+ */
+type newSetting = {
+    id: string;
+    shown: string;
+    desc: string;
+    value: string | number | boolean;
+    default: string | number | boolean;
+    min?: number;
+    max?: number;
+    disabled?: boolean;
+};
+
+type SettingsSchema = {
+    settings: {
+        [name: string]: newSetting[];
+    };
+};
+
+/**
+ * Logging.
+ */
+type LogOrigin = 'MAIN' | 'RENDERER';
+type LogLevel = 'FATAL' | 'ERROR' | 'WARN' | 'DEBUG' | 'INFO';
+
+/**
+ * Farms.
+ */
+type FarmRendererData = {
+    id: string;
+    shown: string;
+    status: FarmStatus;
+    schedule: number;
+    amountOfWindows: number;
+    windowsShown: boolean;
+};

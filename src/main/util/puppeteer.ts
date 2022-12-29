@@ -80,7 +80,7 @@ export function enterIFrame(gameName: string, controlledPage: Page) {
 
 /**
  * Wait for a specific element to appear (or not) on the page.
- * Return either true if the element has appeared, or false if it hasn't.
+ * Return either the element or null depending on if it appeared.
  *
  * @param {Page} controlledPage The page which is already controlled.
  * @param {string} elementSelector The element selector to wait to appear.
@@ -92,7 +92,7 @@ export function waitForElementToAppear(
     elementSelector: string,
     timeToWait: number = 30000
 ) {
-    return new Promise<ElementHandle<Element> | undefined>(
+    return new Promise<ElementHandle<Element> | null>(
         async (resolve, reject) => {
             try {
                 try {
@@ -102,9 +102,9 @@ export function waitForElementToAppear(
                             timeout: timeToWait
                         }
                     );
-                    resolve(element ?? undefined);
+                    resolve(element);
                 } catch (err) {
-                    resolve(undefined);
+                    resolve(null);
                 }
             } catch (err) {
                 reject(err);
