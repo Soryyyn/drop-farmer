@@ -1,8 +1,8 @@
 import { BrowserWindow } from 'electron';
 import { resolve } from 'path';
 import { getPage } from 'puppeteer-in-electron';
-import { getFarms } from '../farms/newManagement';
-import NewFarmTemplate from '../farms/newTemplate';
+import { getFarms } from '../farms/management';
+import FarmTemplate from '../farms/template';
 // import { getFarms } from '../farms/management';
 // import type FarmTemplate from '../farms/template';
 import { getSetting } from '../store';
@@ -101,7 +101,7 @@ export function createMainWindow(isProd: boolean): void {
             /**
              * Hide all farm windows as well.
              */
-            getFarms().forEach((farm: NewFarmTemplate) => {
+            getFarms().forEach((farm: FarmTemplate) => {
                 farm.toggleWindowsVisibility(false);
             });
         } else {

@@ -12,7 +12,7 @@ import { doesSettingExist, getSetting, setSetting } from '../store';
 import { log } from '../util/logger';
 import { connectToElectron } from '../util/puppeteer';
 
-export default abstract class NewFarmTemplate {
+export default abstract class FarmTemplate {
     id: string;
     shown: string;
     url: string;

@@ -2,7 +2,7 @@ import { Icon } from '@components/global/Icon';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import React, { useRef } from 'react';
 interface Props {
-    setting: newSetting;
+    setting: Setting;
     onChange: (updated: any) => void;
 }
 

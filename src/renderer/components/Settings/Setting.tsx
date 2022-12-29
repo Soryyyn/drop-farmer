@@ -4,7 +4,7 @@ import SwitchToggle from './SwitchToggle';
 import TextValue from './TextValue';
 
 interface Props {
-    setting: newSetting;
+    setting: Setting;
     onChange: (updated: any) => void;
 }
 

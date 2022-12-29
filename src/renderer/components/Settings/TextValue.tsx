@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface Props {
-    setting: newSetting;
+    setting: Setting;
     onChange: (updated: any) => void;
 }
 

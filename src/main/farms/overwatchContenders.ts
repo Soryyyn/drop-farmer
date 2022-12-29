@@ -10,9 +10,9 @@ import {
     waitForElementToAppear,
     waitForTimeout
 } from '../util/puppeteer';
-import NewFarmTemplate from './newTemplate';
+import FarmTemplate from './template';
 
-export default class OverwatchContenders extends NewFarmTemplate {
+export default class OverwatchContenders extends FarmTemplate {
     constructor() {
         super(
             'overwatch-contenders',

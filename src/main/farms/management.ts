@@ -2,12 +2,12 @@ import { EventChannels } from '../common/constants';
 import { listenForEvent } from '../util/events';
 import { log } from '../util/logger';
 import LeagueOfLegends from './leagueOfLegends';
-import NewFarmTemplate from './newTemplate';
 import OverwatchContenders from './overwatchContenders';
 import OverwatchLeague from './overwatchLeague';
+import FarmTemplate from './template';
 
-const farms: NewFarmTemplate[] = [];
-const defaultFarms: NewFarmTemplate[] = [
+const farms: FarmTemplate[] = [];
+const defaultFarms: FarmTemplate[] = [
     new LeagueOfLegends(),
     new OverwatchLeague(),
     new OverwatchContenders()
@@ -30,11 +30,11 @@ export function applyNewSettingsToFarms(): void {
     farms.forEach((farm) => farm.applyNewSettings());
 }
 
-export function getFarms(): NewFarmTemplate[] {
+export function getFarms(): FarmTemplate[] {
     return farms;
 }
 
-export function getFarmById(id: string): NewFarmTemplate | undefined {
+export function getFarmById(id: string): FarmTemplate | undefined {
     return farms.find((farm) => farm.id === id);
 }
 

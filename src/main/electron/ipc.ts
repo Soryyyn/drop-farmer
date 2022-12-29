@@ -4,7 +4,7 @@ import {
     applyNewSettingsToFarms,
     getFarmById,
     getFarmsRendererData
-} from '../farms/newManagement';
+} from '../farms/management';
 import { getSettings, updateSettings } from '../store';
 // import { getFarmByName, getSidebarItems } from '../farms/management';
 import { log } from '../util/logger';

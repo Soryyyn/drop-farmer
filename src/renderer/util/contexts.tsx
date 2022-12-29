@@ -17,7 +17,7 @@ export const SettingsContext = createContext<{
     settings: SettingsSchema | undefined;
     setNewSettings: (newSettings: SettingsSchema) => void;
     resetToDefaultSettings: () => void;
-    getSetting: (settingOwner: string, id: string) => newSetting | undefined;
+    getSetting: (settingOwner: string, id: string) => Setting | undefined;
 }>({
     settings: undefined,
     setNewSettings() {},

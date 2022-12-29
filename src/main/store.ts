@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
-import { applyNewSettingsToFarms } from './farms/newManagement';
+import { applySettingsToFarms } from './farms/management';
 
 /**
  * The settings/config store of the app.
@@ -76,20 +76,20 @@ export function getSettings(): SettingsSchema {
 /**
  * Get a specific setting of the settings store by dot notation.
  */
-export function getSetting(owner: string, id: string): newSetting | undefined {
-    const settings: newSetting[] = store.get(`settings.${owner}`);
+export function getSetting(owner: string, id: string): Setting | undefined {
+    const settings: Setting[] = store.get(`settings.${owner}`);
     return settings.find((setting) => setting?.id === id);
 }
 
 /**
  * Set a specific setting by key and value pair via dot notation.
  */
-export function setSetting(owner: string, value: newSetting) {
+export function setSetting(owner: string, value: Setting) {
     if (!store.get(`settings.${owner}`)) {
         store.set(`settings.${owner}`, []);
     }
 
-    const settings: newSetting[] = store.get(`settings.${owner}`);
+    const settings: Setting[] = store.get(`settings.${owner}`);
     settings.push(value);
     store.set(`settings.${owner}`, settings);
 }
@@ -98,7 +98,7 @@ export function setSetting(owner: string, value: newSetting) {
  * Checks if a specific setting exists inside an owner object
  */
 export function doesSettingExist(owner: string, id: string): boolean {
-    const settings: newSetting[] = store.get(`settings.${owner}`);
+    const settings: Setting[] = store.get(`settings.${owner}`);
 
     if (settings !== undefined && Array.isArray(settings)) {
         if (settings.find((setting) => setting?.id === id)) {
@@ -117,13 +117,13 @@ export function doesSettingExist(owner: string, id: string): boolean {
 export function updateSetting(
     owner: string,
     id: string,
-    updated: newSetting
+    updated: Setting
 ): void {
     if (doesSettingExist(owner, id)) {
         /**
          * Remove the old setting and save it's index.
          */
-        const settings: newSetting[] = store.get(`settings.${owner}`);
+        const settings: Setting[] = store.get(`settings.${owner}`);
         const index = settings.findIndex((setting) => setting.id === id);
         settings.splice(index, 1);
 

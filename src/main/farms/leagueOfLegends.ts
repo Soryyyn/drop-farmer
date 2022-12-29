@@ -12,9 +12,9 @@ import {
     waitForElementToAppear,
     waitForTimeout
 } from '../util/puppeteer';
-import NewFarmTemplate from './newTemplate';
+import FarmTemplate from './template';
 
-export default class LeagueOfLegends extends NewFarmTemplate {
+export default class LeagueOfLegends extends FarmTemplate {
     constructor() {
         super(
             'league-of-legends',

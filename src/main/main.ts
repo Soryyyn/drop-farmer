@@ -20,7 +20,7 @@ import {
     destroyAllFarmWindows,
     initFarmsManagement,
     stopAllFarmJobs
-} from './farms/newManagement';
+} from './farms/management';
 import { internetConnectionChecker } from './util/internet';
 import { initLogger, log } from './util/logger';
 import { initPuppeteerConnection } from './util/puppeteer';

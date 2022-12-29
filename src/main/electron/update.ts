@@ -1,6 +1,6 @@
 import { app, autoUpdater } from 'electron';
 import { IpcChannels, Toasts } from '../common/constants';
-import { destroyAllFarmWindows } from '../farms/newManagement';
+import { destroyAllFarmWindows } from '../farms/management';
 import { getSetting } from '../store';
 // import { updateConfigFile } from '../config';
 // import { destroyAllFarmWindows } from '../farms/management';

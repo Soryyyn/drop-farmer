@@ -1,9 +1,9 @@
 import { getPage } from 'puppeteer-in-electron';
 import { log } from '../util/logger';
 import { getBrowserConnection, waitForTimeout } from '../util/puppeteer';
-import NewFarmTemplate from './newTemplate';
+import FarmTemplate from './template';
 
-export default class TwitchStreamer extends NewFarmTemplate {
+export default class TwitchStreamer extends FarmTemplate {
     /**
      * To make this farm work, we need a specific name and twitch url to load
      * which is different from each farm.
