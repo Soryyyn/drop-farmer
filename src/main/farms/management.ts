@@ -55,24 +55,18 @@ export function stopAllFarmJobs(): void {
 
 listenForEvent(EventChannels.PCWentToSleep, () => {
     log('MAIN', 'WARN', 'Stopping farms because PC went to sleep');
-    farms.forEach((farm) => {
-        farm.scheduler.stopAll();
-        farm.destroyAllWindows();
-    });
+    stopAllFarmJobs();
+    destroyAllFarmWindows();
 });
 
 listenForEvent(EventChannels.PCWentToSleep, () => {
     log('MAIN', 'WARN', 'Restarting farms because PC woke back up');
-    connectToElectron();
-    farms.forEach((farm) => {
-        farm.restartScheduler();
-    });
-    // app.relaunch();
+    app.relaunch();
 
-    // /**
-    //  * We have to quit the app here, because `app.relaunch()` doesn't quit
-    //  * the app automatically.
-    //  */
-    // setAppQuitting(true);
-    // app.quit();
+    /**
+     * We have to quit the app here, because `app.relaunch()` doesn't quit
+     * the app automatically.
+     */
+    setAppQuitting(true);
+    app.quit();
 });

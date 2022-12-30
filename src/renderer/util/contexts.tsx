@@ -263,15 +263,17 @@ export function FarmContextProvider({
         api.channels.farmLogin,
         null,
         (event, data: LoginForFarmObject) => {
-            if (data.id === farm.id) {
+            if (data.id === trackedFarm.id) {
                 setLoginNeeded(data.needed);
             }
         }
     );
 
+    console.log(loginNeeded);
+
     function setWindowsVisibility(shouldBeShown: boolean) {
         api.sendOneWay(api.channels.farmWindowsVisibility, {
-            ...farm,
+            ...trackedFarm,
             windowsShown: shouldBeShown
         });
     }

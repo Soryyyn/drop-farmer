@@ -20,14 +20,15 @@ export function listenForEvent(
 /**
  * Events.
  */
-listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject) => {
-    sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
-        id: event.id,
-        shown: event.shown,
-        needed: event.needed
-    });
+listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
     createNotification(
-        `${event.shown} login required`,
-        `Login to farm is required for the ${event.shown} farm.`
+        `${event[0].shown} login required`,
+        `Login to farm is required for the ${event[0].shown} farm.`
     );
+
+    sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
+        id: event[0].id,
+        shown: event[0].shown,
+        needed: event[0].needed
+    });
 });
