@@ -6,10 +6,16 @@ import { createNotification } from './notifications';
 
 const em = new EventEmitter();
 
+/**
+ * Emit a main process only event.
+ */
 export function emitEvent(eventChannel: EventChannels, ...args: any[]) {
     em.emit(eventChannel, args);
 }
 
+/**
+ * Listen for a main process only event.
+ */
 export function listenForEvent(
     eventChannel: EventChannels,
     onEvent: (...args: any[]) => void
@@ -22,8 +28,8 @@ export function listenForEvent(
  */
 listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
     createNotification(
-        `${event[0].shown} login required`,
-        `Login to farm is required for the ${event[0].shown} farm.`
+        `${event[0].shown}: Login required`,
+        `Login to farm is required for the "${event[0].shown}" farm.`
     );
 
     sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
