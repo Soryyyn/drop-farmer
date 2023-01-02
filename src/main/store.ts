@@ -1,6 +1,9 @@
+import AutoLaunch from 'auto-launch';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
+
+const autoLauncher = new AutoLaunch({ name: 'drop-farmer' });
 
 /**
  * The settings/config store of the app.
@@ -131,6 +134,8 @@ export function updateSetting(
          */
         settings.splice(index, 0, updated);
         store.set('settings', settings);
+
+        toggleAutoLaunch();
     }
 }
 
@@ -139,4 +144,16 @@ export function updateSetting(
  */
 export function updateSettings(settings: SettingsSchema): void {
     store.set('settings', settings.settings);
+
+    toggleAutoLaunch();
+}
+
+function toggleAutoLaunch(): void {
+    autoLauncher.isEnabled().then((isEnabled) => {
+        const setting = getSetting('application', 'launchOnStartup')!
+            .value as boolean;
+
+        if (!isEnabled && setting) autoLauncher.enable();
+        if (isEnabled && !setting) autoLauncher.disable();
+    });
 }
