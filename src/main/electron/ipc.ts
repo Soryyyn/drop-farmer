@@ -84,18 +84,6 @@ handleOneWay(IpcChannels.shutdown, () => {
     app.quit();
 });
 
-handleOneWay(IpcChannels.restart, () => {
-    log('MAIN', 'INFO', 'Restarting application');
-    app.relaunch();
-
-    /**
-     * We have to quit the app here, because `app.relaunch()` doesn't quit
-     * the app automatically.
-     */
-    setAppQuitting(true);
-    app.quit();
-});
-
 handleAndReply(IpcChannels.getSettings, () => {
     return getSettings();
 });
