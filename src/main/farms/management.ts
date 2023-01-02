@@ -58,15 +58,3 @@ listenForEvent(EventChannels.PCWentToSleep, () => {
     stopAllFarmJobs();
     destroyAllFarmWindows();
 });
-
-listenForEvent(EventChannels.PCWentToSleep, () => {
-    log('MAIN', 'WARN', 'Restarting farms because PC woke back up');
-    app.relaunch();
-
-    /**
-     * We have to quit the app here, because `app.relaunch()` doesn't quit
-     * the app automatically.
-     */
-    setAppQuitting(true);
-    app.quit();
-});
