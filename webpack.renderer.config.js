@@ -4,7 +4,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-require('dotenv').config();
 
 module.exports = {
     module: {
