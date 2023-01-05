@@ -131,11 +131,15 @@ export default class LeagueOfLegends extends FarmTemplate {
                 const page = await getPage(getBrowserConnection(), window);
 
                 /**
-                 * Move to schedule route.
+                 * Wait for navigation to appear.
                  */
-                await page.goto(
-                    'https://lolesports.com/schedule?leagues=lec,european-masters,primeleague,cblol-brazil,lck,lcl,lco,lcs,ljl-japan,lla,lpl,pcs,turkiye-sampiyonluk-ligi,worlds,all-star,cblol_academy,college_championship,esports_balkan_league,elite_series,greek_legends,hitpoint_masters,lck_academy,lck_challengers_league,lcs-academy,proving_grounds,lfl,liga_portuguesa,nlc,pg_nationals,superliga,ultraliga,lcs_amateur,msi'
-                );
+                const desktopNavigationElement =
+                    'div.riotbar-desktop-navigation-wrapper';
+                await waitForElementToAppear(page, desktopNavigationElement);
+
+                const scheduleRouteButton =
+                    '#riotbar-center-content > div._2Jx8cIlm63mjPBNcz3mjwO.riotbar-desktop-navigation-wrapper > div:nth-child(1)';
+                await page.click(scheduleRouteButton);
 
                 /**
                  * Wait until the events are found.
