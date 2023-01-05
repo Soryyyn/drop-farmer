@@ -42,9 +42,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                     /**
                      * Click the "login" button on the top right.
                      */
-                    await page.click(
-                        '#riotbar-right-content > div.undefined.riotbar-account-reset._2f9sdDMZUGg63xLkFmv-9O.riotbar-account-container > div > a'
-                    );
+                    await page.click('a[data-riotbar-link-id="login"]');
 
                     await waitForTimeout(10000);
 
@@ -138,13 +136,24 @@ export default class LeagueOfLegends extends FarmTemplate {
                 await waitForElementToAppear(page, desktopNavigationElement);
 
                 const scheduleRouteButton =
-                    '#riotbar-center-content > div._2Jx8cIlm63mjPBNcz3mjwO.riotbar-desktop-navigation-wrapper > div:nth-child(1)';
+                    'a[data-testid="riotbar:desktopNav:link-internal-schedule"]';
                 await page.click(scheduleRouteButton);
 
                 /**
                  * Wait until the events are found.
                  */
-                await page.waitForSelector('div.events', { timeout: 0 });
+                await waitForElementToAppear(page, 'main.Schedule', 0);
+
+                /**
+                 * Select all unselected leagues.
+                 */
+                await page.$$eval(
+                    'div.leagues > button.button.league:not(.selected) > div.info',
+                    (leagues: any) =>
+                        leagues.forEach((league: HTMLDivElement) =>
+                            league.click()
+                        )
+                );
 
                 /**
                  * Get all elements from the schedule.
