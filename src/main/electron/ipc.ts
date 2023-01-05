@@ -122,8 +122,8 @@ handleOneWay(IpcChannels.clearCache, (event, id) => {
         sendBasicToast(
             {
                 id: `cleared-cache-${farm.id}`,
-                textOnSuccess: `Cleared cache for ${farm.id}.`,
-                textOnError: `Failed clearing cache for ${farm.id}}.`,
+                textOnSuccess: `Cleared cache for ${farm.shown}.`,
+                textOnError: `Failed clearing cache for ${farm.shown}}.`,
                 duration: 4000
             },
             () => {
@@ -141,8 +141,8 @@ handleOneWay(IpcChannels.restartScheduler, (event, name) => {
         sendBasicToast(
             {
                 id: `restart-schedule-${farm.id}`,
-                textOnSuccess: `Restarted schedule for ${farm.id}.`,
-                textOnError: `Failed restarting schedule for ${farm.id}}.`,
+                textOnSuccess: `Restarted schedule for ${farm.shown}.`,
+                textOnError: `Failed restarting schedule for ${farm.shown}}.`,
                 duration: 4000
             },
             () => {
