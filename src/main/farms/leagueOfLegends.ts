@@ -137,6 +137,7 @@ export default class LeagueOfLegends extends FarmTemplate {
 
                 const scheduleRouteButton =
                     'a[data-testid="riotbar:desktopNav:link-internal-schedule"]';
+                await waitForElementToAppear(page, scheduleRouteButton);
                 await page.click(scheduleRouteButton);
 
                 /**
@@ -154,6 +155,8 @@ export default class LeagueOfLegends extends FarmTemplate {
                             league.click()
                         )
                 );
+
+                await waitForTimeout(2000);
 
                 /**
                  * Get all elements from the schedule.

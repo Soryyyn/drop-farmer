@@ -213,7 +213,11 @@ export default abstract class FarmTemplate {
             if (this.checker) {
                 resolve(this.checker);
             } else {
-                createWindow(this.url, this.windowsShownByDefault, this.id)
+                createWindow(
+                    this.url,
+                    this.windowsShownByDefault || this.windowsCurrentlyShown,
+                    this.id
+                )
                     .then((window: Electron.BrowserWindow) => {
                         window.on('close', () => {
                             this.checker = undefined;
@@ -235,7 +239,11 @@ export default abstract class FarmTemplate {
         array: Electron.BrowserWindow[]
     ): Promise<Electron.BrowserWindow> {
         return new Promise<Electron.BrowserWindow>((resolve, reject) => {
-            createWindow(url, this.windowsShownByDefault, this.id)
+            createWindow(
+                url,
+                this.windowsShownByDefault || this.windowsCurrentlyShown,
+                this.id
+            )
                 .then((window: Electron.BrowserWindow) => {
                     window.on('close', () => {
                         this.destroyWindowFromArray(array, window);
