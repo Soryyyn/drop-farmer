@@ -269,8 +269,6 @@ export function FarmContextProvider({
         }
     );
 
-    console.log(loginNeeded);
-
     function setWindowsVisibility(shouldBeShown: boolean) {
         api.sendOneWay(api.channels.farmWindowsVisibility, {
             ...trackedFarm,

@@ -1,6 +1,6 @@
 import { Icon } from '@components/global/Icon';
 import Tooltip from '@components/global/Tooltip';
-import { faInfo } from '@fortawesome/free-solid-svg-icons';
+import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
 
@@ -37,7 +37,7 @@ export default function StatusIndicator({ status }: Props) {
                     }
                 )}
             >
-                <Icon sprite={faInfo} size="1x" />
+                <Icon sprite={faListCheck} size="1x" />
             </div>
         </Tooltip>
     );
