@@ -11,14 +11,14 @@ import { log } from './logger';
  */
 export function initPowermonitor() {
     powerMonitor.on('suspend', () => {
-        log('MAIN', 'INFO', 'PC went to sleep');
+        log('MAIN', 'DEBUG', 'PC went to sleep');
         emitEvent(EventChannels.PCWentToSleep);
     });
 
     powerMonitor.on('resume', () => {
-        log('MAIN', 'INFO', 'PC woke up');
+        log('MAIN', 'DEBUG', 'PC woke up');
         emitEvent(EventChannels.PCWokeUp);
     });
 
-    log('MAIN', 'INFO', 'Initialized powermonitor');
+    log('MAIN', 'DEBUG', 'Initialized powermonitor');
 }
