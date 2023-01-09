@@ -56,6 +56,8 @@ export default function Settings({ onClose }: Props) {
                             onClick={() => setSelected('application')}
                         />
 
+                        <span className="bg-pepper-500/50 h-0.5 w-[98%] rounded-full self-center" />
+
                         {/* Farm setting selectors */}
                         {farms.map((farm) => {
                             return (

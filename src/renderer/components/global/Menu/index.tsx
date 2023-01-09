@@ -57,7 +57,7 @@ export default function Menu({
                             <HeadlessMenu.Item
                                 key={index}
                                 as="div"
-                                className="bg-pepper-500/50 h-0.5 w-full rounded-full"
+                                className="bg-pepper-500/50 h-0.5 w-[98%] rounded-full self-center"
                             />
                         );
                     } else {
