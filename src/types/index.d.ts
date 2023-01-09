@@ -56,7 +56,7 @@ type SettingsSchema = {
  * Logging.
  */
 type LogOrigin = 'MAIN' | 'RENDERER';
-type LogLevel = 'FATAL' | 'ERROR' | 'WARN' | 'DEBUG' | 'INFO';
+type LogLevel = 'FATAL' | 'ERROR' | 'WARN' | 'info' | 'INFO';
 
 /**
  * Farms.

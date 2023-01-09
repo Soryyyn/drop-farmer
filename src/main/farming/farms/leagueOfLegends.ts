@@ -67,10 +67,10 @@ export default class LeagueOfLegends extends FarmTemplate {
                     );
 
                     if (tagName === 'DIV') {
-                        log('debug', `${this.id}: Login completed`);
+                        log('info', `${this.id}: Login completed`);
                         resolve(undefined);
                     } else if (tagName === 'INPUT') {
-                        log('debug', `${this.id}: Login is needed by user`);
+                        log('info', `${this.id}: Login is needed by user`);
 
                         emitEvent(EventChannels.LoginForFarm, {
                             id: this.id,
@@ -94,7 +94,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                             'div.riotbar-summoner-name',
                             0
                         ).then(() => {
-                            log('debug', `${this.id}: Login completed`);
+                            log('info', `${this.id}: Login completed`);
 
                             sendOneWay(IpcChannels.farmLogin, {
                                 id: this.id,
@@ -105,7 +105,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                     }
                 } else {
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: User already logged in, continuing`
                     );
                     resolve(undefined);
@@ -174,10 +174,10 @@ export default class LeagueOfLegends extends FarmTemplate {
                             ).jsonValue()
                         );
 
-                    log('debug', `${this.id}: Got ${hrefs.length} matches`);
+                    log('info', `${this.id}: Got ${hrefs.length} matches`);
                     resolve(hrefs);
                 } else {
-                    log('debug', `${this.id}: No matches found`);
+                    log('info', `${this.id}: No matches found`);
                     resolve([]);
                 }
             } catch (err) {
@@ -194,13 +194,13 @@ export default class LeagueOfLegends extends FarmTemplate {
                  */
                 if (this.farmers.length === 0) {
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: No farming windows, skipping checking step`
                     );
                     resolve(undefined);
                 } else {
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: Checking if farming windows can be closed`
                     );
 
@@ -240,13 +240,10 @@ export default class LeagueOfLegends extends FarmTemplate {
                     }
 
                     if (destroyedWindowsAmount > 0)
-                        log(
-                            'debug',
-                            `${this.id}: No farming windows destroyed`
-                        );
+                        log('info', `${this.id}: No farming windows destroyed`);
                     else
                         log(
-                            'debug',
+                            'info',
                             `${this.id}: Destroyed ${destroyedWindowsAmount} farming windows`
                         );
 
@@ -320,7 +317,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * Change status to farming.
                      */
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: Farming with "${this.farmers.length}" windows`
                     );
 
@@ -332,7 +329,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * Set app farm status back to idle.
                      */
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: No live matches available, returning status back to idle`
                     );
                     this.updateStatus('idle');

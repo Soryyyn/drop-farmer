@@ -39,7 +39,7 @@ export default class YoutubeStream extends FarmTemplate {
                     )
                 ) {
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: Stream still live, continuing farming`
                     );
                     resolve(undefined);
@@ -50,7 +50,7 @@ export default class YoutubeStream extends FarmTemplate {
                     this.destroyWindowFromArray(this.farmers, window);
 
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: Stream not live anymore, stopping farming`
                     );
                     resolve(undefined);
@@ -82,7 +82,7 @@ export default class YoutubeStream extends FarmTemplate {
                     await page.click(userAgreementSelector);
                     await page.waitForNavigation();
 
-                    log('debug', `${this.id}: Accepted user agreement`);
+                    log('info', `${this.id}: Accepted user agreement`);
                 }
 
                 /**
@@ -99,10 +99,10 @@ export default class YoutubeStream extends FarmTemplate {
                 const signinRoute = 'https://www.youtube.com/signin';
                 await page.goto(signinRoute);
                 await waitForTimeout(3000);
-                log('debug', `${this.id}: Navigation to login route`);
+                log('info', `${this.id}: Navigation to login route`);
 
                 if (await pageUrlContains(page, 'accounts.google.com')) {
-                    log('debug', `${this.id}: Login is needed by user`);
+                    log('info', `${this.id}: Login is needed by user`);
 
                     emitEvent(EventChannels.LoginForFarm, {
                         id: this.id,
@@ -130,7 +130,7 @@ export default class YoutubeStream extends FarmTemplate {
                     ]));
 
                     if (!(await pageUrlContains(page, 'accounts.google.com'))) {
-                        log('debug', `${this.id}: Login completed`);
+                        log('info', `${this.id}: Login completed`);
                         sendOneWay(IpcChannels.farmLogin, {
                             id: this.id,
                             needed: false
@@ -139,7 +139,7 @@ export default class YoutubeStream extends FarmTemplate {
                     } else {
                         await page.goto(this.url);
                         await page.waitForNavigation();
-                        log('debug', `${this.id}: Login completed`);
+                        log('info', `${this.id}: Login completed`);
                         sendOneWay(IpcChannels.farmLogin, {
                             id: this.id,
                             needed: false
@@ -147,7 +147,7 @@ export default class YoutubeStream extends FarmTemplate {
                         resolve(undefined);
                     }
                 } else {
-                    log('debug', `${this.id}: Login completed`);
+                    log('info', `${this.id}: Login completed`);
                     sendOneWay(IpcChannels.farmLogin, {
                         id: this.id,
                         needed: false
@@ -189,7 +189,7 @@ export default class YoutubeStream extends FarmTemplate {
                         10000
                     ).then((appeared) => {
                         if (appeared) {
-                            log('debug', `${this.id}: Found livestream`);
+                            log('info', `${this.id}: Found livestream`);
 
                             /**
                              * Create the farming window and open the livestream.
@@ -215,7 +215,7 @@ export default class YoutubeStream extends FarmTemplate {
                                     );
 
                                     log(
-                                        'debug',
+                                        'info',
                                         `${this.id}: Farming with "${this.farmers.length}" windows`
                                     );
 
@@ -225,7 +225,7 @@ export default class YoutubeStream extends FarmTemplate {
                             );
                         } else {
                             log(
-                                'debug',
+                                'info',
                                 `${this.id}: No livestream found, no need to farm`
                             );
                             this.updateStatus('idle');
@@ -234,7 +234,7 @@ export default class YoutubeStream extends FarmTemplate {
                     });
                 } else {
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: Already farming, no need to start again`
                     );
 

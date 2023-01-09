@@ -58,7 +58,7 @@ export function createTray(isProd: boolean): void {
         showWindow(getMainWindow(), true);
     });
 
-    log('debug', 'Created system tray');
+    log('info', 'Created system tray');
 }
 
 /**
@@ -67,7 +67,7 @@ export function createTray(isProd: boolean): void {
 export function destroyTray(): void {
     try {
         tray.destroy();
-        log('debug', 'Destroyed tray');
+        log('info', 'Destroyed tray');
     } catch (err) {
         log('error', `Failed destroying tray. "${err}"`);
     }

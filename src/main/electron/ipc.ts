@@ -20,7 +20,7 @@ export function handleOneWay(
     channel: IpcChannels,
     listener: (event: Electron.IpcMainEvent, ...args: any[]) => void
 ) {
-    log('debug', `Handling one-way signal on ${channel}`);
+    log('info', `Handling one-way signal on ${channel}`);
     ipcMain.on(channel, listener);
 }
 
@@ -34,7 +34,7 @@ export function handleAndReply(
     channel: string,
     listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any
 ) {
-    log('debug', `Handling two-way signal on ${channel}`);
+    log('info', `Handling two-way signal on ${channel}`);
     ipcMain.handle(channel, listener);
 }
 
@@ -48,7 +48,7 @@ export function handleAndReply(
 export function sendOneWay(channel: string, ...args: any[]) {
     const window = getMainWindow();
     if (window.webContents != undefined) {
-        log('debug', `Sending one-way signal on ${channel}`);
+        log('info', `Sending one-way signal on ${channel}`);
         window.webContents.send(channel, ...args);
     }
 }

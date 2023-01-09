@@ -21,7 +21,7 @@ export async function connectToElectron() {
 export async function initPuppeteerConnection() {
     await initialize(app);
     connectToElectron();
-    log('debug', 'Connected puppeteer to electron application');
+    log('info', 'Connected puppeteer to electron application');
 }
 
 /**
@@ -49,7 +49,7 @@ export function enterIFrame(id: string, controlledPage: Page) {
              */
             while ((await controlledPage.$('iframe')) == null) {
                 log(
-                    'debug',
+                    'info',
                     `${id}: Page needs to reload because iframe is not loaded`
                 );
                 await controlledPage.reload();
@@ -62,7 +62,7 @@ export function enterIFrame(id: string, controlledPage: Page) {
                 .waitForSelector('iframe')
                 .then(async (iframeHandle) => {
                     await controlledPage.waitForNetworkIdle();
-                    log('debug', `${id}: Endered iframe element`);
+                    log('info', `${id}: Endered iframe element`);
                     resolve(await iframeHandle!.contentFrame());
                 });
         } catch (err) {

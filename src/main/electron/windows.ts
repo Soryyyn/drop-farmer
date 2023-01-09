@@ -71,14 +71,14 @@ export function createMainWindow(isProd: boolean): void {
             process.platform == 'linux'
         ) {
             log(
-                'debug',
+                'info',
                 `Created main window (shown) ${!isProd ? 'in dev mode' : ''}`
             );
             mainWindow.show();
             mainWindow.focus();
         } else {
             log(
-                'debug',
+                'info',
                 `Created main window (hidden) ${!isProd ? 'in dev mode' : ''}`
             );
         }
@@ -152,7 +152,7 @@ export async function createWindow(url: string, shouldBeShown: boolean) {
         }
     });
 
-    log('debug', 'Created general window');
+    log('info', 'Created general window');
     return window;
 }
 
@@ -162,7 +162,7 @@ export async function createWindow(url: string, shouldBeShown: boolean) {
  * @param {Electron.BrowserWindow} window The window to destroy.
  */
 export function destroyWindow(window: Electron.BrowserWindow): void {
-    log('debug', `Destroyed window(${window.id})`);
+    log('info', `Destroyed window(${window.id})`);
     window.destroy();
 }
 
@@ -177,7 +177,7 @@ export function showWindow(
     isMainWindow: boolean
 ): void {
     log(
-        'debug',
+        'info',
         `Showing window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
     );
 
@@ -196,7 +196,7 @@ export function hideWindow(
     isMainWindow: boolean
 ): void {
     log(
-        'debug',
+        'info',
         `Hidding window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
     );
 
@@ -209,7 +209,7 @@ export function hideWindow(
  * @param {Electron.BrowserWindow} window The window to mute.
  */
 function muteWindow(window: Electron.BrowserWindow): void {
-    log('debug', `Muted window(${window.id})`);
+    log('info', `Muted window(${window.id})`);
     window.webContents.setAudioMuted(true);
 }
 

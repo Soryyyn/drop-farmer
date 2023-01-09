@@ -53,15 +53,18 @@ const store = new ElectronStore<SettingsSchema>({
                     desc: 'Enable this setting to keep animations & transitions to the minimum.',
                     value: false,
                     default: false
-                },
-                {
-                    id: 'debugLogs',
-                    shown: 'Enable debug logs',
-                    desc: 'Enable the debug logs. Use for debugging or reporting errors.',
-                    value: false,
-                    default: false
                 }
             ]
+        }
+    },
+    migrations: {
+        '0.0.1': (store) => {
+            const settings: Setting[] = store.get('settings.application');
+            const index = settings.findIndex(
+                (setting) => setting.id === 'debugLogs'
+            );
+            settings.splice(index, 1);
+            store.set('settings.application', settings);
         }
     }
 });

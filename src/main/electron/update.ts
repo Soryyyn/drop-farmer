@@ -47,10 +47,10 @@ function setupAppLaunchUpdateRouting() {
             if (
                 getSetting('application', 'checkForUpdates')?.value as boolean
             ) {
-                log('debug', 'Auto-update-checking is enabled');
+                log('info', 'Auto-update-checking is enabled');
                 cron.startAll();
             } else {
-                log('debug', 'Auto-update-checking is disabled');
+                log('info', 'Auto-update-checking is disabled');
             }
         } else {
             log('warn', 'Auto-update-checking is disabled, because of DEV');
@@ -169,7 +169,7 @@ listenForEvent(EventChannels.PCWentToSleep, () => {
 
 listenForEvent(EventChannels.PCWokeUp, () => {
     if (getSetting('application', 'checkForUpdates')?.value as boolean) {
-        log('debug', 'Auto-update-checking is enabled');
+        log('info', 'Auto-update-checking is enabled');
         cron.startAll();
     }
 });

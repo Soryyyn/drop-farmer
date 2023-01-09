@@ -40,7 +40,7 @@ export default class TwitchStreamer extends FarmTemplate {
                         )
                     ).length !== 0
                 ) {
-                    log('debug', `${this.id}: Login is needed by user`);
+                    log('info', `${this.id}: Login is needed by user`);
 
                     /**
                      * Navigate to login page.
@@ -62,12 +62,12 @@ export default class TwitchStreamer extends FarmTemplate {
                     }
 
                     await waitForElementToAppear(page, '.top-name__menu', 0);
-                    log('debug', `${this.id}: Login completed`);
+                    log('info', `${this.id}: Login completed`);
                     window.hide();
                     resolve(undefined);
                 } else {
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: User already logged in, continuing`
                     );
                     resolve(undefined);
@@ -95,14 +95,14 @@ export default class TwitchStreamer extends FarmTemplate {
                  */
                 if (element !== null) {
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: Stream still live, continue farming`
                     );
                     resolve(undefined);
                 } else {
                     this.destroyWindowFromArray(this.farmers, window);
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: Stream not live anymore, stopping farming`
                     );
                     resolve(undefined);
@@ -133,7 +133,7 @@ export default class TwitchStreamer extends FarmTemplate {
                             '#live-channel-stream-information > div > div > div > div > div.Layout-sc-nxg1ff-0.wEGRY > div > div > div > a > div.Layout-sc-nxg1ff-0.ScHaloIndicator-sc-1l14b0i-1.ceXRHq.tw-halo__indicator > div > div > div > div > p'
                         )
                     ) {
-                        log('debug', `${this.id}: Found livestream`);
+                        log('info', `${this.id}: Found livestream`);
 
                         /**
                          * Create the farming window and open the livestream.
@@ -141,7 +141,7 @@ export default class TwitchStreamer extends FarmTemplate {
                         this.createArrayWindow(this.url, this.farmers).then(
                             () => {
                                 log(
-                                    'debug',
+                                    'info',
                                     `${this.id}: Farming with "${this.farmers.length}" windows`
                                 );
 
@@ -151,7 +151,7 @@ export default class TwitchStreamer extends FarmTemplate {
                         );
                     } else {
                         log(
-                            'debug',
+                            'info',
                             `${this.id}: Stream not live, no need to farm`
                         );
                         this.updateStatus('idle');
@@ -160,7 +160,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     }
                 } else {
                     log(
-                        'debug',
+                        'info',
                         `${this.id}: Already farming, no need to start again`
                     );
 

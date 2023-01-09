@@ -82,7 +82,7 @@ export default abstract class FarmTemplate {
          */
         if (this.enabled) this.scheduler.startAll();
 
-        log('debug', `${this.id}: Initialized farm`);
+        log('info', `${this.id}: Initialized farm`);
     }
 
     applyNewSettings(): void {

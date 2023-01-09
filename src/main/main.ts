@@ -56,7 +56,7 @@ app.whenReady().then(() => {
     if (!inProd) {
         installExtension(REACT_DEVELOPER_TOOLS)
             .then((extensionName: string) => {
-                log('debug', `Installed ${extensionName} extension`);
+                log('info', `Installed ${extensionName} extension`);
             })
             .catch((err) => {
                 log('error', `Failed adding extension. ${err}`);
@@ -96,7 +96,7 @@ app.whenReady().then(() => {
         getMainWindow().getNativeWindowHandle()
     );
     log(
-        'debug',
+        'info',
         'Preventing system from shutting down before application savely quits'
     );
     ElectronShutdownHandler.blockShutdown('Please wait for graceful shutdown');
@@ -105,7 +105,7 @@ app.whenReady().then(() => {
      * React to the windows shutdown event firing.
      */
     ElectronShutdownHandler.on('shutdown', () => {
-        log('debug', 'Received shutdown event, shutting down now');
+        log('info', 'Received shutdown event, shutting down now');
 
         /**
          * Stop all cron jobs, to prevent unfulfilled promises.
@@ -134,7 +134,7 @@ app.on('before-quit', () => {
  * When quitting routine has finished.
  */
 app.on('quit', () => {
-    log('debug', 'Quitting application');
+    log('info', 'Quitting application');
 });
 
 /**
