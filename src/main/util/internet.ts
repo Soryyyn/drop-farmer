@@ -1,8 +1,7 @@
+import { IpcChannels } from '@main/common/constants';
+import { sendOneWay } from '@main/electron/ipc';
 import isOnline from 'is-online';
-import { IpcChannels } from '../common/constants';
-import { sendOneWay } from '../electron/ipc';
-import { getMainWindow } from '../electron/windows';
-import { log } from './logger';
+import { log } from './logging';
 import { sendForcedTypeToast } from './toast';
 
 /**
@@ -29,11 +28,11 @@ export function internetConnectionChecker(): void {
                     duration: 4000
                 });
 
-                sendOneWay(getMainWindow(), IpcChannels.internet, false);
+                sendOneWay(IpcChannels.internet, false);
             }
         })
         .catch((err) => {
-            log('MAIN', 'FATAL', `Error checking internet connection. ${err}`);
+            log('error', `Error checking internet connection. ${err}`);
         });
 
     /**

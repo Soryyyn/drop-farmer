@@ -5,7 +5,7 @@ import {
     faRotateRight,
     faXmark
 } from '@fortawesome/free-solid-svg-icons';
-import { FarmsContext, SettingsContext } from '@util/contexts';
+import { FarmsContext, SettingsContext } from '@renderer/util/contexts';
 import React, { useContext, useState } from 'react';
 import { ActionButton } from './ActionButton';
 import Selector from './Selector';

@@ -20,7 +20,11 @@
             "@assets/*": ["src/renderer/assets/*"],
             "@components/*": ["src/renderer/components/*"],
             "@hooks/*": ["src/renderer/hooks/*"],
-            "@util/*": ["src/renderer/util/*"]
+            "@renderer/util/*": ["src/renderer/util/*"],
+            "@main/common/*": ["src/main/common/*"],
+            "@main/electron/*": ["src/main/electron/*"],
+            "@main/farming/*": ["src/main/farming/*"],
+            "@main/util/*": ["src/main/util/*"]
         },
         "typeRoots": ["./node_modules/@types", "src/types"]
     },

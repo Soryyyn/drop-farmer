@@ -1,26 +1,20 @@
-import { getPage } from 'puppeteer-in-electron';
-import { EventChannels, IpcChannels } from '../common/constants';
-import { sendOneWay } from '../electron/ipc';
-import { getMainWindow } from '../electron/windows';
-import { emitEvent } from '../util/events';
-import { log } from '../util/logger';
-import { createNotification } from '../util/notifications';
+import { EventChannels, IpcChannels } from '@main/common/constants';
+import { sendOneWay } from '@main/electron/ipc';
+import { emitEvent } from '@main/util/events';
+import { log } from '@main/util/logging';
 import {
     doesElementExist,
     getBrowserConnection,
     pageUrlContains,
     waitForElementToAppear,
     waitForTimeout
-} from '../util/puppeteer';
-import FarmTemplate from './template';
+} from '@main/util/puppeteer';
+import { getPage } from 'puppeteer-in-electron';
+import FarmTemplate from '../template';
 
-export default class OverwatchContenders extends FarmTemplate {
-    constructor() {
-        super(
-            'overwatch-contenders',
-            'Overwatch: Contenders',
-            'https://www.youtube.com/c/OverwatchContenders'
-        );
+export default class YoutubeStream extends FarmTemplate {
+    constructor(id: string, shown: string, url: string) {
+        super(`youtube/${id}`, shown, url);
     }
 
     /**
@@ -45,8 +39,7 @@ export default class OverwatchContenders extends FarmTemplate {
                     )
                 ) {
                     log(
-                        'MAIN',
-                        'DEBUG',
+                        'debug',
                         `${this.id}: Stream still live, continuing farming`
                     );
                     resolve(undefined);
@@ -57,8 +50,7 @@ export default class OverwatchContenders extends FarmTemplate {
                     this.destroyWindowFromArray(this.farmers, window);
 
                     log(
-                        'MAIN',
-                        'DEBUG',
+                        'debug',
                         `${this.id}: Stream not live anymore, stopping farming`
                     );
                     resolve(undefined);
@@ -90,7 +82,7 @@ export default class OverwatchContenders extends FarmTemplate {
                     await page.click(userAgreementSelector);
                     await page.waitForNavigation();
 
-                    log('MAIN', 'INFO', `${this.id}: Accepted user agreement`);
+                    log('debug', `${this.id}: Accepted user agreement`);
                 }
 
                 /**
@@ -107,10 +99,10 @@ export default class OverwatchContenders extends FarmTemplate {
                 const signinRoute = 'https://www.youtube.com/signin';
                 await page.goto(signinRoute);
                 await waitForTimeout(3000);
-                log('MAIN', 'DEBUG', `${this.id}: Navigation to login route`);
+                log('debug', `${this.id}: Navigation to login route`);
 
                 if (await pageUrlContains(page, 'accounts.google.com')) {
-                    log('MAIN', 'DEBUG', `${this.id}: Login is needed by user`);
+                    log('debug', `${this.id}: Login is needed by user`);
 
                     emitEvent(EventChannels.LoginForFarm, {
                         id: this.id,
@@ -138,8 +130,8 @@ export default class OverwatchContenders extends FarmTemplate {
                     ]));
 
                     if (!(await pageUrlContains(page, 'accounts.google.com'))) {
-                        log('MAIN', 'DEBUG', `${this.id}: Login completed`);
-                        sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
+                        log('debug', `${this.id}: Login completed`);
+                        sendOneWay(IpcChannels.farmLogin, {
                             id: this.id,
                             needed: false
                         });
@@ -147,16 +139,16 @@ export default class OverwatchContenders extends FarmTemplate {
                     } else {
                         await page.goto(this.url);
                         await page.waitForNavigation();
-                        log('MAIN', 'DEBUG', `${this.id}: Login completed`);
-                        sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
+                        log('debug', `${this.id}: Login completed`);
+                        sendOneWay(IpcChannels.farmLogin, {
                             id: this.id,
                             needed: false
                         });
                         resolve(undefined);
                     }
                 } else {
-                    log('MAIN', 'DEBUG', `${this.id}: Login completed`);
-                    sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
+                    log('debug', `${this.id}: Login completed`);
+                    sendOneWay(IpcChannels.farmLogin, {
                         id: this.id,
                         needed: false
                     });
@@ -176,68 +168,79 @@ export default class OverwatchContenders extends FarmTemplate {
     startFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                const page = await getPage(getBrowserConnection(), window);
-                await page.waitForNetworkIdle();
+                if (this.farmers.length === 0) {
+                    const page = await getPage(getBrowserConnection(), window);
+                    await page.waitForNetworkIdle();
 
-                /**
-                 * Re-route to checker route for safety.
-                 */
-                await page.goto(this.url);
-                await waitForTimeout(1000);
+                    /**
+                     * Re-route to checker route for safety.
+                     */
+                    await page.goto(this.url);
+                    await waitForTimeout(1000);
 
-                /**
-                 * Check if any live indicator is shown before 10seconds expire.
-                 */
-                const liveIndicatorSelector =
-                    'ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]';
-                await waitForElementToAppear(
-                    page,
-                    liveIndicatorSelector,
-                    10000
-                ).then((appeared) => {
-                    if (appeared) {
-                        log('MAIN', 'DEBUG', `${this.id}: Found livestream`);
-                        /**
-                         * Create the farming window and open the livestream.
-                         */
-                        this.createArrayWindow(this.url, this.farmers).then(
-                            async (farmingWindow) => {
-                                const farmingWindowPage = await getPage(
-                                    getBrowserConnection(),
-                                    farmingWindow
-                                );
-                                await farmingWindowPage.waitForNetworkIdle();
-                                await waitForTimeout(2000);
+                    /**
+                     * Check if any live indicator is shown before 10seconds expire.
+                     */
+                    const liveIndicatorSelector =
+                        'ytd-thumbnail-overlay-time-status-renderer[overlay-style=LIVE]';
+                    waitForElementToAppear(
+                        page,
+                        liveIndicatorSelector,
+                        10000
+                    ).then((appeared) => {
+                        if (appeared) {
+                            log('debug', `${this.id}: Found livestream`);
 
-                                /**
-                                 * Click on the first video element which is found.
-                                 * In case of a livestream it is always the
-                                 * first one.
-                                 */
-                                const firstVideoSelector =
-                                    '#contents > ytd-video-renderer';
-                                await farmingWindowPage.click(
-                                    firstVideoSelector
-                                );
-                                log(
-                                    'MAIN',
-                                    'DEBUG',
-                                    `${this.id}: Farming with "${this.farmers.length}" windows`
-                                );
-                                this.updateStatus('farming');
-                                resolve(undefined);
-                            }
-                        );
-                    } else {
-                        log(
-                            'MAIN',
-                            'DEBUG',
-                            `${this.id}: No livestream found, no need to farm`
-                        );
-                        this.updateStatus('idle');
-                        resolve(undefined);
-                    }
-                });
+                            /**
+                             * Create the farming window and open the livestream.
+                             */
+                            this.createArrayWindow(this.url, this.farmers).then(
+                                async (farmingWindow) => {
+                                    const farmingWindowPage = await getPage(
+                                        getBrowserConnection(),
+                                        farmingWindow
+                                    );
+                                    await farmingWindowPage.waitForNetworkIdle();
+                                    await waitForTimeout(2000);
+
+                                    /**
+                                     * Click on the first video element which is found.
+                                     * In case of a livestream it is always the
+                                     * first one.
+                                     */
+                                    const firstVideoSelector =
+                                        '#contents > ytd-video-renderer';
+                                    await farmingWindowPage.click(
+                                        firstVideoSelector
+                                    );
+
+                                    log(
+                                        'debug',
+                                        `${this.id}: Farming with "${this.farmers.length}" windows`
+                                    );
+
+                                    this.updateStatus('farming');
+                                    resolve(undefined);
+                                }
+                            );
+                        } else {
+                            log(
+                                'debug',
+                                `${this.id}: No livestream found, no need to farm`
+                            );
+                            this.updateStatus('idle');
+                            resolve(undefined);
+                        }
+                    });
+                } else {
+                    log(
+                        'debug',
+                        `${this.id}: Already farming, no need to start again`
+                    );
+
+                    this.updateStatus('farming');
+                    resolve(undefined);
+                }
             } catch (err) {
                 reject(err);
             }

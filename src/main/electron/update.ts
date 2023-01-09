@@ -1,19 +1,19 @@
-import CrontabManager from 'cron-job-manager';
-import { app, autoUpdater } from 'electron';
 import {
     EventChannels,
     IpcChannels,
     Schedules,
     Toasts
-} from '../common/constants';
-import { destroyAllFarmWindows } from '../farms/management';
+} from '@main/common/constants';
+import { destroyAllFarmWindows } from '@main/farming/management';
+import { listenForEvent } from '@main/util/events';
+import { log } from '@main/util/logging';
+import { sendForcedTypeToast } from '@main/util/toast';
+import CrontabManager from 'cron-job-manager';
+import { app, autoUpdater } from 'electron';
 import { getSetting } from '../store';
-import { listenForEvent } from '../util/events';
-import { log } from '../util/logger';
-import { sendForcedTypeToast } from '../util/toast';
 import { handleOneWay, sendOneWay } from './ipc';
 import { destroyTray } from './tray';
-import { getMainWindow, setAppQuitting } from './windows';
+import { setAppQuitting } from './windows';
 
 let displayToasts: boolean = false;
 
@@ -47,22 +47,17 @@ function setupAppLaunchUpdateRouting() {
             if (
                 getSetting('application', 'checkForUpdates')?.value as boolean
             ) {
-                log('MAIN', 'DEBUG', 'Auto-update-checking is enabled');
+                log('debug', 'Auto-update-checking is enabled');
                 cron.startAll();
             } else {
-                log('MAIN', 'WARN', 'Auto-update-checking is disabled');
+                log('debug', 'Auto-update-checking is disabled');
             }
         } else {
-            log(
-                'MAIN',
-                'WARN',
-                'Auto-update-checking is disabled, because of DEV'
-            );
+            log('warn', 'Auto-update-checking is disabled, because of DEV');
         }
     } else {
         log(
-            'MAIN',
-            'WARN',
+            'warn',
             'First run of application after install/update. No automatic update checking enabled'
         );
     }
@@ -93,7 +88,7 @@ handleOneWay(IpcChannels.installUpdate, () => {
  * Listening for events.
  */
 autoUpdater.on('checking-for-update', () => {
-    log('MAIN', 'INFO', 'Currently checking if application can update');
+    log('info', 'Currently checking if application can update');
 
     if (displayToasts) {
         sendForcedTypeToast({
@@ -106,9 +101,9 @@ autoUpdater.on('checking-for-update', () => {
 });
 
 autoUpdater.on('update-not-available', () => {
-    log('MAIN', 'INFO', 'No update available');
+    log('info', 'No update available');
 
-    sendOneWay(getMainWindow(), IpcChannels.updateStatus, false);
+    sendOneWay(IpcChannels.updateStatus, false);
 
     if (displayToasts) {
         sendForcedTypeToast({
@@ -123,13 +118,13 @@ autoUpdater.on('update-not-available', () => {
 });
 
 autoUpdater.on('update-available', () => {
-    log('MAIN', 'INFO', 'Update to application is available! downloading...');
+    log('info', 'Update to application is available, downloading...');
 });
 
 autoUpdater.on('update-downloaded', () => {
-    log('MAIN', 'INFO', 'Update has finished downloading!');
+    log('info', 'Update has finished downloading');
 
-    sendOneWay(getMainWindow(), IpcChannels.updateStatus, true);
+    sendOneWay(IpcChannels.updateStatus, true);
 
     if (displayToasts) {
         sendForcedTypeToast({
@@ -149,9 +144,9 @@ autoUpdater.on('before-quit-for-update', () => {
 });
 
 autoUpdater.on('error', (err) => {
-    log('MAIN', 'ERROR', `Failed downloading / installing update. ${err}`);
+    log('error', `Failed downloading / installing update. ${err}`);
 
-    sendOneWay(getMainWindow(), IpcChannels.updateStatus, false);
+    sendOneWay(IpcChannels.updateStatus, false);
 
     if (displayToasts) {
         sendForcedTypeToast({
@@ -174,7 +169,7 @@ listenForEvent(EventChannels.PCWentToSleep, () => {
 
 listenForEvent(EventChannels.PCWokeUp, () => {
     if (getSetting('application', 'checkForUpdates')?.value as boolean) {
-        log('MAIN', 'DEBUG', 'Auto-update-checking is enabled');
+        log('debug', 'Auto-update-checking is enabled');
         cron.startAll();
     }
 });

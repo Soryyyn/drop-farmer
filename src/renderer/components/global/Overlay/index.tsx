@@ -1,4 +1,4 @@
-import { OpacityScaleTransition } from '@util/transitions';
+import { OpacityScaleTransition } from '@renderer/util/transitions';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 

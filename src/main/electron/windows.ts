@@ -1,11 +1,11 @@
+import { getFarms } from '@main/farming/management';
+import FarmTemplate from '@main/farming/template';
+import { log } from '@main/util/logging';
+import { getBrowserConnection } from '@main/util/puppeteer';
 import { BrowserWindow } from 'electron';
 import { resolve } from 'path';
 import { getPage } from 'puppeteer-in-electron';
-import { getFarms } from '../farms/management';
-import FarmTemplate from '../farms/template';
 import { getSetting } from '../store';
-import { log } from '../util/logger';
-import { getBrowserConnection, waitForTimeout } from '../util/puppeteer';
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -71,16 +71,14 @@ export function createMainWindow(isProd: boolean): void {
             process.platform == 'linux'
         ) {
             log(
-                'MAIN',
-                'DEBUG',
+                'debug',
                 `Created main window (shown) ${!isProd ? 'in dev mode' : ''}`
             );
             mainWindow.show();
             mainWindow.focus();
         } else {
             log(
-                'MAIN',
-                'DEBUG',
+                'debug',
                 `Created main window (hidden) ${!isProd ? 'in dev mode' : ''}`
             );
         }
@@ -116,15 +114,8 @@ export function getMainWindow(): BrowserWindow {
 
 /**
  * Create the farm window.
- *
- * @param {string} url The url which should load on window creation.
- * @param {string} gameName The name of the game to create the window for.
  */
-export async function createWindow(
-    url: string,
-    shouldBeShown: boolean,
-    gameName?: string
-) {
+export async function createWindow(url: string, shouldBeShown: boolean) {
     const window = new BrowserWindow({
         icon: resolve(
             __dirname,
@@ -161,11 +152,7 @@ export async function createWindow(
         }
     });
 
-    /**
-     * Decide if the windows is for a farm or just a general window.
-     */
-    if (gameName) log('MAIN', 'DEBUG', `Created window for "${gameName}"`);
-    else log('MAIN', 'DEBUG', 'Created general window');
+    log('debug', 'Created general window');
     return window;
 }
 
@@ -175,7 +162,7 @@ export async function createWindow(
  * @param {Electron.BrowserWindow} window The window to destroy.
  */
 export function destroyWindow(window: Electron.BrowserWindow): void {
-    log('MAIN', 'DEBUG', `Destroyed window(${window.id})`);
+    log('debug', `Destroyed window(${window.id})`);
     window.destroy();
 }
 
@@ -190,10 +177,10 @@ export function showWindow(
     isMainWindow: boolean
 ): void {
     log(
-        'MAIN',
-        'DEBUG',
+        'debug',
         `Showing window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
     );
+
     window.show();
     window.focus();
 }
@@ -209,10 +196,10 @@ export function hideWindow(
     isMainWindow: boolean
 ): void {
     log(
-        'MAIN',
-        'DEBUG',
+        'debug',
         `Hidding window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
     );
+
     window.hide();
 }
 
@@ -222,18 +209,8 @@ export function hideWindow(
  * @param {Electron.BrowserWindow} window The window to mute.
  */
 function muteWindow(window: Electron.BrowserWindow): void {
-    log('MAIN', 'DEBUG', `Muted window(${window.id})`);
+    log('debug', `Muted window(${window.id})`);
     window.webContents.setAudioMuted(true);
-}
-
-/**
- * Reload the given window.
- *
- * @param {Electron.BrowserWindow} window The window to reload.
- */
-export function reloadWindow(window: Electron.BrowserWindow): void {
-    log('MAIN', 'DEBUG', `Reloaded window(${window.id})`);
-    window.reload();
 }
 
 /**

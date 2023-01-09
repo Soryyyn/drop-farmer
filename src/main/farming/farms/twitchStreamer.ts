@@ -1,13 +1,17 @@
+import { EventChannels } from '@main/common/constants';
+import { emitEvent } from '@main/util/events';
+import { log } from '@main/util/logging';
+import {
+    doesElementExist,
+    getBrowserConnection,
+    getElementProperty,
+    waitForElementToAppear,
+    waitForTimeout
+} from '@main/util/puppeteer';
 import { getPage } from 'puppeteer-in-electron';
-import { log } from '../util/logger';
-import { getBrowserConnection, waitForTimeout } from '../util/puppeteer';
-import FarmTemplate from './template';
+import FarmTemplate from '../template';
 
 export default class TwitchStreamer extends FarmTemplate {
-    /**
-     * To make this farm work, we need a specific name and twitch url to load
-     * which is different from each farm.
-     */
     constructor(streamerName: string, twitchURL: string) {
         super(`twitch/${streamerName}`, streamerName, twitchURL);
     }
@@ -17,46 +21,53 @@ export default class TwitchStreamer extends FarmTemplate {
             try {
                 const page = await getPage(getBrowserConnection(), window);
 
+                const userDropdownButton = '[data-a-target=user-menu-toggle]';
+                const userDropdownButtonElement = await waitForElementToAppear(
+                    page,
+                    userDropdownButton
+                );
+
                 /**
                  * Get the user dropdown menu and check if the button element
                  * has classes added.
                  * If there are classes, the user is not logged in.
                  */
-                const userDropdownButton = await page.$(
-                    '[data-a-target=user-menu-toggle]'
-                );
-
                 if (
                     Object.keys(
-                        await (
-                            await userDropdownButton!.getProperty('classList')
-                        ).jsonValue()
-                    ).length != 0
+                        await getElementProperty(
+                            userDropdownButtonElement!,
+                            'classList'
+                        )
+                    ).length !== 0
                 ) {
-                    log('MAIN', 'DEBUG', `${this.id}: Login is needed by user`);
+                    log('debug', `${this.id}: Login is needed by user`);
 
                     /**
                      * Navigate to login page.
                      */
                     await page.goto('https://www.twitch.tv/login');
 
-                    window.show();
-                    window.focus();
-
-                    /**
-                     * Wait until the followed IpcChannels are showing.
-                     */
-                    page.waitForSelector('.top-name__menu', {
-                        timeout: 0
-                    }).then(() => {
-                        log('MAIN', 'DEBUG', `${this.id}: Login completed`);
-                        window.hide();
-                        resolve(undefined);
+                    emitEvent(EventChannels.LoginForFarm, {
+                        id: this.id,
+                        shown: this.shown,
+                        needed: true
                     });
+
+                    if (
+                        this.windowsCurrentlyShown ||
+                        this.windowsShownByDefault
+                    ) {
+                        window.show();
+                        window.focus();
+                    }
+
+                    await waitForElementToAppear(page, '.top-name__menu', 0);
+                    log('debug', `${this.id}: Login completed`);
+                    window.hide();
+                    resolve(undefined);
                 } else {
                     log(
-                        'MAIN',
-                        'DEBUG',
+                        'debug',
                         `${this.id}: User already logged in, continuing`
                     );
                     resolve(undefined);
@@ -70,41 +81,31 @@ export default class TwitchStreamer extends FarmTemplate {
     stillFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                if (this.farmers.length === 0) {
+                const page = await getPage(getBrowserConnection(), window);
+
+                const liveIndicatorText =
+                    '#live-channel-stream-information > div > div > div > div > div.Layout-sc-nxg1ff-0.wEGRY > div > div > div > a > div.Layout-sc-nxg1ff-0.ScHaloIndicator-sc-1l14b0i-1.ceXRHq.tw-halo__indicator > div > div > div > div > p';
+                const element = await waitForElementToAppear(
+                    page,
+                    liveIndicatorText
+                );
+
+                /**
+                 * Check for *LIVE* text on profile of streamer.
+                 */
+                if (element !== null) {
                     log(
-                        'MAIN',
-                        'DEBUG',
-                        `${this.id}: No farming windows, skipping checking step`
+                        'debug',
+                        `${this.id}: Stream still live, continue farming`
                     );
                     resolve(undefined);
                 } else {
-                    const page = await getPage(getBrowserConnection(), window);
-
-                    /**
-                     * Check for *LIVE* text on profile of streamer.
-                     */
-                    if (
-                        (await page.$(
-                            '#live-channel-stream-information > div > div > div > div > div.Layout-sc-nxg1ff-0.wEGRY > div > div > div > a > div.Layout-sc-nxg1ff-0.ScHaloIndicator-sc-1l14b0i-1.ceXRHq.tw-halo__indicator > div > div > div > div > p'
-                        )) != null
-                    ) {
-                        log(
-                            'MAIN',
-                            'DEBUG',
-                            `${this.id}: Stream still live, continue farming`
-                        );
-                        resolve(undefined);
-                    } else {
-                        this.destroyWindowFromArray(this.farmers, window);
-
-                        log(
-                            'MAIN',
-                            'DEBUG',
-                            `${this.id}: Stream not live anymore, stopping farming`
-                        );
-
-                        resolve(undefined);
-                    }
+                    this.destroyWindowFromArray(this.farmers, window);
+                    log(
+                        'debug',
+                        `${this.id}: Stream not live anymore, stopping farming`
+                    );
+                    resolve(undefined);
                 }
             } catch (err) {
                 reject(err);
@@ -117,16 +118,7 @@ export default class TwitchStreamer extends FarmTemplate {
             try {
                 const page = await getPage(getBrowserConnection(), window);
 
-                if (this.farmers.length > 0) {
-                    log(
-                        'MAIN',
-                        'DEBUG',
-                        `${this.id}: Already farming, no need to start again`
-                    );
-
-                    this.updateStatus('farming');
-                    resolve(undefined);
-                } else {
+                if (this.farmers.length === 0) {
                     /**
                      * Wait a bit for the page to load.
                      */
@@ -136,11 +128,12 @@ export default class TwitchStreamer extends FarmTemplate {
                      * Check if the *LIVE* container is present.
                      */
                     if (
-                        (await page.$(
+                        await doesElementExist(
+                            page,
                             '#live-channel-stream-information > div > div > div > div > div.Layout-sc-nxg1ff-0.wEGRY > div > div > div > a > div.Layout-sc-nxg1ff-0.ScHaloIndicator-sc-1l14b0i-1.ceXRHq.tw-halo__indicator > div > div > div > div > p'
-                        )) != null
+                        )
                     ) {
-                        log('MAIN', 'DEBUG', `${this.id}: Found livestream`);
+                        log('debug', `${this.id}: Found livestream`);
 
                         /**
                          * Create the farming window and open the livestream.
@@ -148,8 +141,7 @@ export default class TwitchStreamer extends FarmTemplate {
                         this.createArrayWindow(this.url, this.farmers).then(
                             () => {
                                 log(
-                                    'MAIN',
-                                    'DEBUG',
+                                    'debug',
                                     `${this.id}: Farming with "${this.farmers.length}" windows`
                                 );
 
@@ -159,14 +151,21 @@ export default class TwitchStreamer extends FarmTemplate {
                         );
                     } else {
                         log(
-                            'MAIN',
-                            'DEBUG',
+                            'debug',
                             `${this.id}: Stream not live, no need to farm`
                         );
                         this.updateStatus('idle');
 
                         resolve(undefined);
                     }
+                } else {
+                    log(
+                        'debug',
+                        `${this.id}: Already farming, no need to start again`
+                    );
+
+                    this.updateStatus('farming');
+                    resolve(undefined);
                 }
             } catch (err) {
                 reject(err);

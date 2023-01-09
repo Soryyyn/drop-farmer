@@ -1,4 +1,4 @@
-import { FarmContextProvider, FarmsContext } from '@util/contexts';
+import { FarmContextProvider, FarmsContext } from '@renderer/util/contexts';
 import React, { useContext } from 'react';
 import SidebarItem from './SidebarItem';
 

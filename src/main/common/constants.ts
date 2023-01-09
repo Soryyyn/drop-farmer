@@ -8,7 +8,6 @@ export enum IpcChannels {
     farmStatusChange = 'farm-status-change',
     farmWindowsVisibility = 'farm-windows-visibility',
     getSettings = 'get-settings',
-    log = 'log',
     saveNewSettings = 'save-new-settings',
     getApplicationVersion = 'get-application-version',
     clearCache = 'clear-cache',
@@ -33,7 +32,6 @@ export enum EventChannels {
 
 export const Constants = {
     LogFileName: '.log',
-    CrashLogFileName: 'crash.log',
     StoreFileName: 'store'
 };
 

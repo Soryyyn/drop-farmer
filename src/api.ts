@@ -12,9 +12,5 @@ export default {
         listener: (event: IpcRendererEvent, ...args: any[]) => void
     ) => ipcRenderer.on(channel, listener),
     removeAllListeners: (channel: IpcChannels) =>
-        ipcRenderer.removeAllListeners(channel),
-    log: (
-        type: 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG',
-        message: string
-    ) => ipcRenderer.send(IpcChannels.log, { type: type, message: message })
+        ipcRenderer.removeAllListeners(channel)
 };

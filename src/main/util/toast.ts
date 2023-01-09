@@ -1,6 +1,5 @@
-import { IpcChannels } from '../common/constants';
-import { sendOneWay } from '../electron/ipc';
-import { getMainWindow } from '../electron/windows';
+import { IpcChannels } from '@main/common/constants';
+import { sendOneWay } from '@main/electron/ipc';
 
 /**
  * When a toast needs to be displayed right at app start, the window doesn't
@@ -22,14 +21,14 @@ const toastBacklog: (BasicToast | PromiseToast | ForcedTypeToast)[] = [];
  */
 export function sendBasicToast(toast: BasicToast, callback: () => void): void {
     try {
-        sendOneWay(getMainWindow(), IpcChannels.toastSuccess, {
+        sendOneWay(IpcChannels.toastSuccess, {
             id: toast.id,
             text: toast.textOnSuccess,
             duration: toast.duration
         });
         callback();
     } catch (err) {
-        sendOneWay(getMainWindow(), IpcChannels.toastError, {
+        sendOneWay(IpcChannels.toastError, {
             id: toast.id,
             text: `${toast.textOnError} ${err}`,
             duration: toast.duration
@@ -47,7 +46,7 @@ export function sendPromiseToast(
     toast: PromiseToast,
     promise: Promise<any>
 ): void {
-    sendOneWay(getMainWindow(), IpcChannels.toastLoading, {
+    sendOneWay(IpcChannels.toastLoading, {
         id: toast.id,
         text: toast.textOnLoading,
         duration: Infinity
@@ -55,14 +54,14 @@ export function sendPromiseToast(
 
     promise
         .then(() => {
-            sendOneWay(getMainWindow(), IpcChannels.toastSuccess, {
+            sendOneWay(IpcChannels.toastSuccess, {
                 id: toast.id,
                 text: toast.textOnSuccess,
                 duration: toast.duration
             });
         })
         .catch((err) => {
-            sendOneWay(getMainWindow(), IpcChannels.toastError, {
+            sendOneWay(IpcChannels.toastError, {
                 id: toast.id,
                 text: `${toast.textOnError} ${err}`,
                 duration: toast.duration
@@ -76,7 +75,7 @@ export function sendPromiseToast(
  * @param {ForcedTypeToast} toast Toast data.
  */
 export function sendForcedTypeToast(toast: ForcedTypeToast): void {
-    sendOneWay(getMainWindow(), IpcChannels.toastForcedType, {
+    sendOneWay(IpcChannels.toastForcedType, {
         id: toast.id,
         text: toast.text,
         duration: toast.duration,

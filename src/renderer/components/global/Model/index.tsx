@@ -1,4 +1,4 @@
-import { SettingsContext } from '@util/contexts';
+import { SettingsContext } from '@renderer/util/contexts';
 import React, { useContext } from 'react';
 
 interface Props {

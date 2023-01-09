@@ -1,9 +1,5 @@
-import { app } from 'electron';
 import { EventEmitter } from 'events';
-import { EventChannels, IpcChannels } from '../common/constants';
-import { sendOneWay } from '../electron/ipc';
-import { getMainWindow, setAppQuitting } from '../electron/windows';
-import { createNotification } from './notifications';
+import { EventChannels } from '../common/constants';
 
 const em = new EventEmitter();
 
@@ -23,25 +19,3 @@ export function listenForEvent(
 ) {
     em.on(eventChannel, onEvent);
 }
-
-/**
- * Events.
- */
-listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
-    createNotification(
-        `${event[0].shown}: Login required`,
-        `Login to farm is required for the "${event[0].shown}" farm.`
-    );
-
-    sendOneWay(getMainWindow(), IpcChannels.farmLogin, {
-        id: event[0].id,
-        shown: event[0].shown,
-        needed: event[0].needed
-    });
-});
-
-listenForEvent(EventChannels.PCWokeUp, () => {
-    app.relaunch();
-    setAppQuitting(true);
-    app.quit();
-});

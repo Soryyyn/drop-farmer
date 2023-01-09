@@ -7,7 +7,7 @@ import {
     ModalContextProvider,
     SettingsContextProvider,
     UpdateContextProvider
-} from '@util/contexts';
+} from '@renderer/util/contexts';
 import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import './global.css';

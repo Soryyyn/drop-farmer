@@ -1,7 +1,7 @@
+import { EventChannels } from '@main/common/constants';
 import { powerMonitor } from 'electron';
-import { EventChannels } from '../common/constants';
 import { emitEvent } from './events';
-import { log } from './logger';
+import { log } from './logging';
 
 /**
  * Listen for suspend and resume events, to pause the farms to prevent errors.
@@ -11,14 +11,14 @@ import { log } from './logger';
  */
 export function initPowermonitor() {
     powerMonitor.on('suspend', () => {
-        log('MAIN', 'DEBUG', 'PC went to sleep');
+        log('debug', 'PC went to sleep');
         emitEvent(EventChannels.PCWentToSleep);
     });
 
     powerMonitor.on('resume', () => {
-        log('MAIN', 'DEBUG', 'PC woke up');
+        log('debug', 'PC woke up');
         emitEvent(EventChannels.PCWokeUp);
     });
 
-    log('MAIN', 'DEBUG', 'Initialized powermonitor');
+    log('debug', 'Initialized powermonitor');
 }

@@ -1,6 +1,6 @@
+import { log } from '@main/util/logging';
 import { app, Menu, NativeImage, nativeImage, Tray } from 'electron';
 import { resolve } from 'path';
-import { log } from '../util/logger';
 import { getMainWindow, setAppQuitting, showWindow } from './windows';
 
 /**
@@ -58,7 +58,7 @@ export function createTray(isProd: boolean): void {
         showWindow(getMainWindow(), true);
     });
 
-    log('MAIN', 'DEBUG', 'Created system tray');
+    log('debug', 'Created system tray');
 }
 
 /**
@@ -67,9 +67,9 @@ export function createTray(isProd: boolean): void {
 export function destroyTray(): void {
     try {
         tray.destroy();
-        log('MAIN', 'DEBUG', 'Destroyed tray');
+        log('debug', 'Destroyed tray');
     } catch (err) {
-        log('MAIN', 'ERROR', `Failed destroying tray. "${err}"`);
+        log('error', `Failed destroying tray. "${err}"`);
     }
 }
 

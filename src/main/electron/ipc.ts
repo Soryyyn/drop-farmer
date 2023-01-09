@@ -1,14 +1,14 @@
-import { app, ipcMain, shell } from 'electron';
-import { IpcChannels } from '../common/constants';
+import { IpcChannels } from '@main/common/constants';
 import {
     applySettingsToFarms,
     getFarmById,
     getFarmsRendererData
-} from '../farms/management';
+} from '@main/farming/management';
+import { log } from '@main/util/logging';
+import { sendBasicToast, sendPromiseToast } from '@main/util/toast';
+import { app, ipcMain, shell } from 'electron';
 import { getSettings, updateSettings } from '../store';
-import { log } from '../util/logger';
-import { sendBasicToast, sendPromiseToast } from '../util/toast';
-import { setAppQuitting } from './windows';
+import { getMainWindow, setAppQuitting } from './windows';
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -20,7 +20,7 @@ export function handleOneWay(
     channel: IpcChannels,
     listener: (event: Electron.IpcMainEvent, ...args: any[]) => void
 ) {
-    log('MAIN', 'DEBUG', `Handling one-way signal on ${channel}`);
+    log('debug', `Handling one-way signal on ${channel}`);
     ipcMain.on(channel, listener);
 }
 
@@ -34,7 +34,7 @@ export function handleAndReply(
     channel: string,
     listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any
 ) {
-    log('MAIN', 'DEBUG', `Handling two-way signal on ${channel}`);
+    log('debug', `Handling two-way signal on ${channel}`);
     ipcMain.handle(channel, listener);
 }
 
@@ -45,23 +45,13 @@ export function handleAndReply(
  * @param {IpcChannels} channel The ipc channel to send the signal too.
  * @param {...any[]} args The data to send with the signal.
  */
-export function sendOneWay(
-    window: Electron.BrowserWindow,
-    channel: string,
-    ...args: any[]
-) {
+export function sendOneWay(channel: string, ...args: any[]) {
+    const window = getMainWindow();
     if (window.webContents != undefined) {
-        log('MAIN', 'DEBUG', `Sending one-way signal on ${channel}`);
+        log('debug', `Sending one-way signal on ${channel}`);
         window.webContents.send(channel, ...args);
     }
 }
-
-/**
- * Ipc events below.
- */
-handleOneWay(IpcChannels.log, (event, { type, message }) => {
-    log('RENDERER', type, message);
-});
 
 handleAndReply(IpcChannels.getFarms, () => {
     return getFarmsRendererData();

@@ -14,9 +14,10 @@ import {
     destroyAllFarmWindows,
     initFarmsManagement,
     stopAllFarmJobs
-} from './farms/management';
+} from './farming/management';
 import { internetConnectionChecker } from './util/internet';
-import { initLogger, log } from './util/logger';
+import { log } from './util/logging';
+import { initPowermonitor } from './util/powermonitor';
 import { initPuppeteerConnection } from './util/puppeteer';
 
 /**
@@ -31,31 +32,9 @@ if (require('electron-squirrel-startup')) {
     app.quit();
 }
 
-/**
- * Create the main settings store.
- */
-import './store';
-import { initPowermonitor } from './util/powermonitor';
-
-/**
- * Create the logger and files asscociated with it.
- */
-initLogger();
 initFarmsManagement();
-
-/**
- * Puppeteer connection to electron application must happen before the app is ready.
- */
 initPuppeteerConnection();
-
-/**
- * Update checking / downloading.
- */
 initUpdater();
-
-/**
- * Import powermonitor here to handle sleeping and resuming.
- */
 initPowermonitor();
 
 /**
@@ -67,7 +46,7 @@ app.whenReady().then(() => {
      * Check if app needs to clear cache.
      */
     if (process.env.CLEAR_CACHE && process.env.CLEAR_CACHE!.trim() == '1') {
-        log('MAIN', 'WARN', 'Cleared application session data');
+        log('warn', 'Cleared application session data');
         session.defaultSession.clearStorageData();
     }
 
@@ -77,10 +56,10 @@ app.whenReady().then(() => {
     if (!inProd) {
         installExtension(REACT_DEVELOPER_TOOLS)
             .then((extensionName: string) => {
-                log('MAIN', 'DEBUG', `Installed ${extensionName} extension`);
+                log('debug', `Installed ${extensionName} extension`);
             })
             .catch((err) => {
-                log('MAIN', 'ERROR', `Failed adding extension. ${err}`);
+                log('error', `Failed adding extension. ${err}`);
             });
     }
 
@@ -117,8 +96,7 @@ app.whenReady().then(() => {
         getMainWindow().getNativeWindowHandle()
     );
     log(
-        'MAIN',
-        'DEBUG',
+        'debug',
         'Preventing system from shutting down before application savely quits'
     );
     ElectronShutdownHandler.blockShutdown('Please wait for graceful shutdown');
@@ -127,7 +105,7 @@ app.whenReady().then(() => {
      * React to the windows shutdown event firing.
      */
     ElectronShutdownHandler.on('shutdown', () => {
-        log('MAIN', 'INFO', 'Received shutdown event, shutting down now');
+        log('debug', 'Received shutdown event, shutting down now');
 
         /**
          * Stop all cron jobs, to prevent unfulfilled promises.
@@ -156,7 +134,7 @@ app.on('before-quit', () => {
  * When quitting routine has finished.
  */
 app.on('quit', () => {
-    log('MAIN', 'INFO', 'Quitting application');
+    log('debug', 'Quitting application');
 });
 
 /**

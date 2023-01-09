@@ -1,7 +1,7 @@
 import { app } from 'electron';
-import puppeteer, { Browser, ElementHandle, Frame, Page } from 'puppeteer-core';
+import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer-core';
 import { connect, initialize } from 'puppeteer-in-electron';
-import { log } from './logger';
+import { log } from './logging';
 
 /**
  * The connection to the electron application.
@@ -21,7 +21,7 @@ export async function connectToElectron() {
 export async function initPuppeteerConnection() {
     await initialize(app);
     connectToElectron();
-    log('MAIN', 'DEBUG', 'Connected puppeteer to electron application');
+    log('debug', 'Connected puppeteer to electron application');
 }
 
 /**
@@ -33,8 +33,6 @@ export function getBrowserConnection(): Browser {
 
 /**
  * Manually implemented timeout waiting for use.
- *
- * @param {number} timeout The amount of time to wait before continuing (in ms).
  */
 export function waitForTimeout(timeout: number): Promise<void> {
     return new Promise((r) => setTimeout(r, timeout));
@@ -42,11 +40,8 @@ export function waitForTimeout(timeout: number): Promise<void> {
 
 /**
  * Enter the iframe to control it.
- *
- * @param {string} gameName The name of the game currently running.
- * @param {Page} controlledPage The upper page which the iframe is on.
  */
-export function enterIFrame(gameName: string, controlledPage: Page) {
+export function enterIFrame(id: string, controlledPage: Page) {
     return new Promise<any>(async (resolve, reject) => {
         try {
             /**
@@ -54,9 +49,8 @@ export function enterIFrame(gameName: string, controlledPage: Page) {
              */
             while ((await controlledPage.$('iframe')) == null) {
                 log(
-                    'MAIN',
-                    'DEBUG',
-                    `${gameName}: Page needs to reload because iframe is not loaded`
+                    'debug',
+                    `${id}: Page needs to reload because iframe is not loaded`
                 );
                 await controlledPage.reload();
             }
@@ -68,7 +62,7 @@ export function enterIFrame(gameName: string, controlledPage: Page) {
                 .waitForSelector('iframe')
                 .then(async (iframeHandle) => {
                     await controlledPage.waitForNetworkIdle();
-                    log('MAIN', 'DEBUG', `${gameName}: Endered iframe element`);
+                    log('debug', `${id}: Endered iframe element`);
                     resolve(await iframeHandle!.contentFrame());
                 });
         } catch (err) {
@@ -80,11 +74,6 @@ export function enterIFrame(gameName: string, controlledPage: Page) {
 /**
  * Wait for a specific element to appear (or not) on the page.
  * Return either the element or null depending on if it appeared.
- *
- * @param {Page} controlledPage The page which is already controlled.
- * @param {string} elementSelector The element selector to wait to appear.
- * @param {number} timeToWait The number of milliseconds to wait for the element
- * to appear. 0 is infinite.
  */
 export function waitForElementToAppear(
     controlledPage: Page,
@@ -114,9 +103,6 @@ export function waitForElementToAppear(
 
 /**
  * Get a property from an element.
- *
- * @param element The element to get the property from.
- * @param property The property to get.
  */
 export function getElementProperty(
     element: ElementHandle<any>,
@@ -133,9 +119,6 @@ export function getElementProperty(
 
 /**
  * Check if an element exists at this point in time.
- *
- * @param controlledPage The controlled page.
- * @param selector The selector to check for.
  */
 export function doesElementExist(
     controlledPage: Page,

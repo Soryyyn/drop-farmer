@@ -1,15 +1,14 @@
-import CrontabManager from 'cron-job-manager';
-import { IpcChannels, Schedules } from '../common/constants';
-import { sendOneWay } from '../electron/ipc';
+import { IpcChannels, Schedules } from '@main/common/constants';
+import { sendOneWay } from '@main/electron/ipc';
 import {
     createWindow,
     destroyWindow,
-    getMainWindow,
     hideWindow,
     showWindow
-} from '../electron/windows';
+} from '@main/electron/windows';
+import { log } from '@main/util/logging';
+import CrontabManager from 'cron-job-manager';
 import { doesSettingExist, getSetting, setSetting } from '../store';
-import { log } from '../util/logger';
 
 export default abstract class FarmTemplate {
     id: string;
@@ -83,7 +82,7 @@ export default abstract class FarmTemplate {
          */
         if (this.enabled) this.scheduler.startAll();
 
-        log('MAIN', 'DEBUG', `${this.id}: Initialized farm`);
+        log('debug', `${this.id}: Initialized farm`);
     }
 
     applyNewSettings(): void {
@@ -139,21 +138,13 @@ export default abstract class FarmTemplate {
 
     protected updateStatus(status: FarmStatus): void {
         this.status = status;
-        sendOneWay(
-            getMainWindow(),
-            IpcChannels.farmStatusChange,
-            this.getRendererData()
-        );
+        sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
     }
 
     protected updateSchedule(schedule: number): void {
         this.schedule = schedule;
         this.scheduler.update(Schedules.CheckToFarm, `*/${schedule} * * * *`);
-        sendOneWay(
-            getMainWindow(),
-            IpcChannels.farmStatusChange,
-            this.getRendererData()
-        );
+        sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
     }
 
     enable(): void {
@@ -215,8 +206,7 @@ export default abstract class FarmTemplate {
             } else {
                 createWindow(
                     this.url,
-                    this.windowsShownByDefault || this.windowsCurrentlyShown,
-                    this.id
+                    this.windowsShownByDefault || this.windowsCurrentlyShown
                 )
                     .then((window: Electron.BrowserWindow) => {
                         window.on('close', () => {
@@ -241,8 +231,7 @@ export default abstract class FarmTemplate {
         return new Promise<Electron.BrowserWindow>((resolve, reject) => {
             createWindow(
                 url,
-                this.windowsShownByDefault || this.windowsCurrentlyShown,
-                this.id
+                this.windowsShownByDefault || this.windowsCurrentlyShown
             )
                 .then((window: Electron.BrowserWindow) => {
                     window.on('close', () => {
@@ -289,11 +278,7 @@ export default abstract class FarmTemplate {
         /**
          * Notify renderer about the change.
          */
-        sendOneWay(
-            getMainWindow(),
-            IpcChannels.farmStatusChange,
-            this.getRendererData()
-        );
+        sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
     }
 
     restartScheduler(steps?: () => void): void {
@@ -359,8 +344,7 @@ export default abstract class FarmTemplate {
                 })
                 .catch((err) => {
                     log(
-                        'MAIN',
-                        'ERROR',
+                        'error',
                         `${this.id}: Error occurred while checking the farm. ${err}`
                     );
                     this.updateStatus('attention-required');

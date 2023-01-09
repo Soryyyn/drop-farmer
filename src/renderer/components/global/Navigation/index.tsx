@@ -5,7 +5,11 @@ import {
     faPowerOff,
     faRotate
 } from '@fortawesome/free-solid-svg-icons';
-import { ModalContext, SettingsContext, UpdateContext } from '@util/contexts';
+import {
+    ModalContext,
+    SettingsContext,
+    UpdateContext
+} from '@renderer/util/contexts';
 import React, { useContext } from 'react';
 import { Overlays } from '../Overlay/types';
 import NavigationItem from './NavigationItem';

@@ -1,5 +1,5 @@
+import { log } from '@main/util/logging';
 import { Timer } from 'timer-node';
-import { log } from '../util/logger';
 
 /**
  * The timer class which handles the uptime tracking of the app or farm.
@@ -21,7 +21,7 @@ export class UptimeTimer {
             this._amount += this._timer.ms();
 
             this._timer.stop();
-            log('MAIN', 'DEBUG', `${this._timerName}: stopped`);
+            log('debug', `${this._timerName}: stopped`);
         }
     }
 
@@ -31,7 +31,7 @@ export class UptimeTimer {
     pauseTimer(): void {
         if (this._timer.isRunning()) {
             this._timer.pause();
-            log('MAIN', 'DEBUG', `${this._timerName}: paused`);
+            log('debug', `${this._timerName}: paused`);
         }
     }
 
@@ -41,10 +41,10 @@ export class UptimeTimer {
     startTimer(): void {
         if (this._timer.isPaused()) {
             this._timer.resume();
-            log('MAIN', 'DEBUG', `${this._timerName}: resumed`);
+            log('debug', `${this._timerName}: resumed`);
         } else if (this._timer.isStopped() || !this._timer.isStarted()) {
             this._timer.start();
-            log('MAIN', 'DEBUG', `${this._timerName}: started`);
+            log('debug', `${this._timerName}: started`);
         }
     }
 

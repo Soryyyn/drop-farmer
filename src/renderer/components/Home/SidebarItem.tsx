@@ -10,7 +10,7 @@ import {
     faTrash,
     faWindowMaximize
 } from '@fortawesome/free-solid-svg-icons';
-import { FarmContext } from '@util/contexts';
+import { FarmContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
 import StatusIndicator from './StatusIndicator';
 

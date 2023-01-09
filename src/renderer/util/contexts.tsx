@@ -80,9 +80,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
         api.channels.getSettings,
         null,
         (err, settings: SettingsSchema) => {
-            if (err) {
-                api.log('ERROR', err);
-            } else {
+            if (!err) {
                 setSettings(settings);
                 setOldSettings(cloneDeep(settings));
             }
