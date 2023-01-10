@@ -340,6 +340,7 @@ export default abstract class FarmTemplate {
                 })
                 .then(() => {
                     this.destroyChecker();
+                    this.updateStatus(this.status);
                 })
                 .catch((err) => {
                     log(
