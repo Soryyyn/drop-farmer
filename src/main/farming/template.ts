@@ -7,6 +7,7 @@ import {
     showWindow
 } from '@main/electron/windows';
 import { log } from '@main/util/logging';
+import { waitForTimeout } from '@main/util/puppeteer';
 import CrontabManager from 'cron-job-manager';
 import { doesSettingExist, getSetting, setSetting } from '../util/settings';
 import { Timer } from './timer';
@@ -230,7 +231,9 @@ export default abstract class FarmTemplate {
                         });
 
                         this.checker = window;
-                        resolve(this.checker);
+                    })
+                    .then(() => {
+                        resolve(this.checker!);
                     })
                     .catch((err) => {
                         reject(err);
@@ -255,6 +258,8 @@ export default abstract class FarmTemplate {
                     });
 
                     array.push(window);
+                })
+                .then(() => {
                     resolve(array[array.length - 1]);
                 })
                 .catch((err) => {
@@ -357,22 +362,14 @@ export default abstract class FarmTemplate {
                         await this.stillFarming(window);
                     }
                     await this.startFarming(window);
-
-                    /**
-                     * If the status is farming, then start/resume the timer.
-                     */
-                    this.timer.startTimer();
                 })
-                .then(() => {
-                    this.destroyChecker();
-
+                .then(async () => {
                     /**
-                     * If the farm has been disabled mid-check, set the status
-                     * to disable once again to be sure.
+                     * Wait for 2 seconds for the window to be actually created.
                      */
-                    if (!this.enabled) this.updateStatus('disabled');
+                    await waitForTimeout(2000);
 
-                    this.updateStatus(this.status);
+                    this.destroyChecker();
                 })
                 .catch((err) => {
                     log(
@@ -380,6 +377,26 @@ export default abstract class FarmTemplate {
                         `${this.id}: Error occurred while checking the farm. ${err}`
                     );
                     this.updateStatus('attention-required');
+                })
+                .finally(() => {
+                    /**
+                     * Set the status to farming if there are >0 farming
+                     * windows, otherwise set it to idle.
+                     */
+                    if (this.farmers.length > 0) {
+                        this.updateStatus('farming');
+                        this.timer.startTimer();
+                    } else {
+                        this.updateStatus('idle');
+                    }
+
+                    /**
+                     * If the farm has been disabled mid-check, set the status
+                     * to disable once again to be sure.
+                     */
+                    if (!this.enabled && this.status !== 'attention-required') {
+                        this.updateStatus('disabled');
+                    }
                 });
         }
     }

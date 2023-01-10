@@ -68,6 +68,8 @@ export default class YoutubeStream extends FarmTemplate {
      */
     login(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
+            let wasLoginNeeded = false;
+
             try {
                 const page = await getPage(getBrowserConnection(), window);
                 await page.waitForNetworkIdle();
@@ -104,6 +106,7 @@ export default class YoutubeStream extends FarmTemplate {
                 if (await pageUrlContains(page, 'accounts.google.com')) {
                     log('info', `${this.id}: Login is needed by user`);
 
+                    wasLoginNeeded = true;
                     emitEvent(EventChannels.LoginForFarm, {
                         id: this.id,
                         shown: this.shown,
@@ -131,29 +134,23 @@ export default class YoutubeStream extends FarmTemplate {
 
                     if (!(await pageUrlContains(page, 'accounts.google.com'))) {
                         log('info', `${this.id}: Login completed`);
-                        sendOneWay(IpcChannels.farmLogin, {
-                            id: this.id,
-                            needed: false
-                        });
-                        resolve(undefined);
                     } else {
                         await page.goto(this.url);
                         await page.waitForNavigation();
                         log('info', `${this.id}: Login completed`);
-                        sendOneWay(IpcChannels.farmLogin, {
-                            id: this.id,
-                            needed: false
-                        });
-                        resolve(undefined);
                     }
                 } else {
                     log('info', `${this.id}: Login completed`);
+                }
+
+                if (wasLoginNeeded) {
                     sendOneWay(IpcChannels.farmLogin, {
                         id: this.id,
                         needed: false
                     });
-                    resolve(undefined);
                 }
+
+                resolve(undefined);
             } catch (err) {
                 reject(err);
             }
@@ -219,7 +216,6 @@ export default class YoutubeStream extends FarmTemplate {
                                         `${this.id}: Farming with "${this.farmers.length}" windows`
                                     );
 
-                                    this.updateStatus('farming');
                                     resolve(undefined);
                                 }
                             );
@@ -228,7 +224,7 @@ export default class YoutubeStream extends FarmTemplate {
                                 'info',
                                 `${this.id}: No livestream found, no need to farm`
                             );
-                            this.updateStatus('idle');
+
                             resolve(undefined);
                         }
                     });
@@ -238,7 +234,6 @@ export default class YoutubeStream extends FarmTemplate {
                         `${this.id}: Already farming, no need to start again`
                     );
 
-                    this.updateStatus('farming');
                     resolve(undefined);
                 }
             } catch (err) {

@@ -145,7 +145,6 @@ export default class TwitchStreamer extends FarmTemplate {
                                     `${this.id}: Farming with "${this.farmers.length}" windows`
                                 );
 
-                                this.updateStatus('farming');
                                 resolve(undefined);
                             }
                         );
@@ -154,7 +153,6 @@ export default class TwitchStreamer extends FarmTemplate {
                             'info',
                             `${this.id}: Stream not live, no need to farm`
                         );
-                        this.updateStatus('idle');
 
                         resolve(undefined);
                     }
@@ -164,7 +162,6 @@ export default class TwitchStreamer extends FarmTemplate {
                         `${this.id}: Already farming, no need to start again`
                     );
 
-                    this.updateStatus('farming');
                     resolve(undefined);
                 }
             } catch (err) {

@@ -24,6 +24,8 @@ export default class LeagueOfLegends extends FarmTemplate {
 
     login(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
+            let wasLoginNeeded = false;
+
             try {
                 const page = await getPage(getBrowserConnection(), window);
 
@@ -72,6 +74,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                     } else if (tagName === 'INPUT') {
                         log('info', `${this.id}: Login is needed by user`);
 
+                        wasLoginNeeded = true;
                         emitEvent(EventChannels.LoginForFarm, {
                             id: this.id,
                             shown: this.shown,
@@ -95,12 +98,6 @@ export default class LeagueOfLegends extends FarmTemplate {
                             0
                         ).then(() => {
                             log('info', `${this.id}: Login completed`);
-
-                            sendOneWay(IpcChannels.farmLogin, {
-                                id: this.id,
-                                needed: false
-                            });
-                            resolve(undefined);
                         });
                     }
                 } else {
@@ -108,8 +105,16 @@ export default class LeagueOfLegends extends FarmTemplate {
                         'info',
                         `${this.id}: User already logged in, continuing`
                     );
-                    resolve(undefined);
                 }
+
+                if (wasLoginNeeded) {
+                    sendOneWay(IpcChannels.farmLogin, {
+                        id: this.id,
+                        needed: false
+                    });
+                }
+
+                resolve(undefined);
             } catch (err) {
                 reject(err);
             }
@@ -321,7 +326,6 @@ export default class LeagueOfLegends extends FarmTemplate {
                         `${this.id}: Farming with "${this.farmers.length}" windows`
                     );
 
-                    this.updateStatus('farming');
                     resolve(undefined);
                 } else {
                     /**
@@ -332,7 +336,6 @@ export default class LeagueOfLegends extends FarmTemplate {
                         'info',
                         `${this.id}: No live matches available, returning status back to idle`
                     );
-                    this.updateStatus('idle');
 
                     resolve(undefined);
                 }
