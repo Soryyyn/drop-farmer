@@ -46,7 +46,7 @@ type Setting = {
     disabled?: boolean;
 };
 
-type SettingsSchema = {
+type SettingsStoreSchema = {
     settings: {
         [name: string]: Setting[];
     };

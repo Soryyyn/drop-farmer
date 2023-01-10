@@ -7,7 +7,7 @@ import {
 import { log } from '@main/util/logging';
 import { sendToast } from '@main/util/toast';
 import { app, ipcMain, shell } from 'electron';
-import { getSettings, updateSettings } from '../store';
+import { getSettings, updateSettings } from '../util/settings';
 import { getMainWindow, setAppQuitting } from './windows';
 
 /**
@@ -80,7 +80,7 @@ handleAndReply(IpcChannels.getSettings, () => {
 
 handleOneWay(
     IpcChannels.saveNewSettings,
-    (event, settingsToSave: SettingsSchema) => {
+    (event, settingsToSave: SettingsStoreSchema) => {
         sendToast(
             {
                 type: 'promise',

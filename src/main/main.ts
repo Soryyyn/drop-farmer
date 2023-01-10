@@ -13,7 +13,8 @@ import {
 import {
     destroyAllFarmWindows,
     initFarmsManagement,
-    stopAllFarmJobs
+    stopAllFarmJobs,
+    stopAllTimers
 } from './farming/management';
 import { internetConnectionChecker } from './util/internet';
 import { log } from './util/logging';
@@ -111,6 +112,7 @@ app.whenReady().then(() => {
          * Stop all cron jobs, to prevent unfulfilled promises.
          */
         stopAllFarmJobs();
+        stopAllTimers();
 
         /**
          * Allow app to shutdown.
@@ -127,6 +129,7 @@ app.whenReady().then(() => {
 app.on('before-quit', () => {
     destroyTray();
     stopAllFarmJobs();
+    stopAllTimers();
     destroyAllFarmWindows();
 });
 

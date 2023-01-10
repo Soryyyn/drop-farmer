@@ -14,8 +14,8 @@ interface DefaultProps {
  * Contexts
  */
 export const SettingsContext = createContext<{
-    settings: SettingsSchema | undefined;
-    setNewSettings: (newSettings: SettingsSchema) => void;
+    settings: SettingsStoreSchema | undefined;
+    setNewSettings: (newSettings: SettingsStoreSchema) => void;
     resetToDefaultSettings: () => void;
     getSetting: (settingOwner: string, id: string) => Setting | undefined;
 }>({
@@ -73,13 +73,13 @@ export const FarmContext = createContext<{
  * Provider components
  */
 export function SettingsContextProvider({ children }: DefaultProps) {
-    const [settings, setSettings] = useState<SettingsSchema>();
-    const [oldSettings, setOldSettings] = useState<SettingsSchema>();
+    const [settings, setSettings] = useState<SettingsStoreSchema>();
+    const [oldSettings, setOldSettings] = useState<SettingsStoreSchema>();
 
     useSendAndWait(
         api.channels.getSettings,
         null,
-        (err, settings: SettingsSchema) => {
+        (err, settings: SettingsStoreSchema) => {
             if (!err) {
                 setSettings(settings);
                 setOldSettings(cloneDeep(settings));
@@ -91,7 +91,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
      * Function to save new settings in the main process.
      * Only if new changes actually happened.
      */
-    function setNewSettings(newSettings: SettingsSchema) {
+    function setNewSettings(newSettings: SettingsStoreSchema) {
         if (!isEqual(newSettings, oldSettings)) {
             api.sendOneWay(api.channels.saveNewSettings, newSettings);
 

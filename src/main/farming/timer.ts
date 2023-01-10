@@ -1,66 +1,49 @@
 import { log } from '@main/util/logging';
-import { Timer } from 'timer-node';
+import { Timer as TimerNode } from 'timer-node';
 
 /**
  * The timer class which handles the uptime tracking of the app or farm.
  */
-export class UptimeTimer {
-    private _timer = new Timer();
-    private _timerName: string;
-    private _amount: number = 0;
+export class Timer {
+    private timer = new TimerNode();
+    private timerName: string;
+    amount: number = 0;
 
-    constructor(timerName: string) {
-        this._timerName = timerName;
+    constructor(gameId: string) {
+        this.timerName = `${gameId} (timer)`;
     }
 
-    /**
-     * Stop the timer if it's running.
-     */
     stopTimer(): void {
-        if (this._timer.isRunning()) {
-            this._amount += this._timer.ms();
+        if (this.timer.isRunning()) {
+            this.addBuiltUpTime();
 
-            this._timer.stop();
-            log('info', `${this._timerName}: stopped`);
+            this.timer.stop();
+            log('info', `${this.timerName}: stopped`);
         }
     }
 
-    /**
-     * Pause the timer.
-     */
     pauseTimer(): void {
-        if (this._timer.isRunning()) {
-            this._timer.pause();
-            log('info', `${this._timerName}: paused`);
+        if (this.timer.isRunning()) {
+            this.timer.pause();
+
+            this.addBuiltUpTime();
+
+            log('info', `${this.timerName}: paused`);
         }
     }
 
-    /**
-     * Start or resume the timer if it's paused.
-     */
     startTimer(): void {
-        if (this._timer.isPaused()) {
-            this._timer.resume();
-            log('info', `${this._timerName}: resumed`);
-        } else if (this._timer.isStopped() || !this._timer.isStarted()) {
-            this._timer.start();
-            log('info', `${this._timerName}: started`);
+        if (this.timer.isPaused()) {
+            this.timer.resume();
+            log('info', `${this.timerName}: resumed`);
+        } else if (this.timer.isStopped() || !this.timer.isStarted()) {
+            this.timer.start();
+            log('info', `${this.timerName}: started`);
         }
     }
 
-    /**
-     * Returns the amount of time which is saved in the `_amount` attribute.
-     */
-    getAmount(): number {
-        return this._amount;
-    }
-
-    /**
-     * The timer amount to set.
-     *
-     * @param {number} amount The amount of time to set.
-     */
-    setAmount(amount: number): void {
-        this._amount = amount;
+    private addBuiltUpTime() {
+        this.amount += this.timer.ms();
+        this.timer.clear();
     }
 }

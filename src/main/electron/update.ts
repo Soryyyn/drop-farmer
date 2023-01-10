@@ -10,7 +10,7 @@ import { log } from '@main/util/logging';
 import { sendToast } from '@main/util/toast';
 import CrontabManager from 'cron-job-manager';
 import { app, autoUpdater } from 'electron';
-import { getSetting } from '../store';
+import { getSetting } from '../util/settings';
 import { handleOneWay, sendOneWay } from './ipc';
 import { destroyTray } from './tray';
 import { setAppQuitting } from './windows';

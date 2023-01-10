@@ -58,12 +58,17 @@ export function stopAllFarmJobs(): void {
     farms.forEach((farm) => farm.scheduler.stopAll());
 }
 
+export function stopAllTimers(): void {
+    farms.forEach((farm) => farm.timer.stopTimer());
+}
+
 listenForEvent(EventChannels.PCWentToSleep, () => {
     log(
         'warn',
         'Stopping farms and destroying windows because PC went to sleep'
     );
     stopAllFarmJobs();
+    stopAllTimers();
     destroyAllFarmWindows();
 });
 

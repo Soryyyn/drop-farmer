@@ -8,7 +8,8 @@ import {
 } from '@main/electron/windows';
 import { log } from '@main/util/logging';
 import CrontabManager from 'cron-job-manager';
-import { doesSettingExist, getSetting, setSetting } from '../store';
+import { doesSettingExist, getSetting, setSetting } from '../util/settings';
+import { Timer } from './timer';
 
 export default abstract class FarmTemplate {
     id: string;
@@ -21,6 +22,8 @@ export default abstract class FarmTemplate {
     windowsShownByDefault: boolean = false;
     windowsCurrentlyShown: boolean = false;
 
+    timer: Timer;
+
     scheduler: CrontabManager = new CrontabManager();
 
     checker: Electron.BrowserWindow | undefined = undefined;
@@ -31,6 +34,8 @@ export default abstract class FarmTemplate {
         this.id = id;
         this.shown = shown;
         this.url = url;
+
+        this.timer = new Timer(id);
     }
 
     initialize(): void {
@@ -81,6 +86,11 @@ export default abstract class FarmTemplate {
          * Start the farm if it is enabled.
          */
         if (this.enabled) this.scheduler.startAll();
+
+        /**
+         * Set the amount of uptime for the farm.
+         */
+        // this.timer.amount
 
         log('info', `${this.id}: Initialized farm`);
     }
@@ -167,6 +177,11 @@ export default abstract class FarmTemplate {
         this.updateStatus('disabled');
         this.scheduler.stopAll();
         this.destroyAllWindows();
+
+        /**
+         * Stop the timer if the farm has been disabled.
+         */
+        this.timer.stopTimer();
     }
 
     protected destroyChecker() {
@@ -332,14 +347,31 @@ export default abstract class FarmTemplate {
                 .then(async (window) => {
                     this.updateStatus('checking');
 
+                    /**
+                     * Pause timer if it is running.
+                     */
+                    this.timer.pauseTimer();
+
                     await this.login(window);
                     if (this.farmers.length > 0) {
                         await this.stillFarming(window);
                     }
                     await this.startFarming(window);
+
+                    /**
+                     * If the status is farming, then start/resume the timer.
+                     */
+                    this.timer.startTimer();
                 })
                 .then(() => {
                     this.destroyChecker();
+
+                    /**
+                     * If the farm has been disabled mid-check, set the status
+                     * to disable once again to be sure.
+                     */
+                    if (!this.enabled) this.updateStatus('disabled');
+
                     this.updateStatus(this.status);
                 })
                 .catch((err) => {

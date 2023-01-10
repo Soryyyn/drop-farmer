@@ -9,7 +9,7 @@ const autoLauncher = new AutoLaunch({ name: 'drop-farmer' });
  * The settings/config store of the app.
  * After this store is created, the farm settings still need to be added.
  */
-const store = new ElectronStore<SettingsSchema>({
+const store = new ElectronStore<SettingsStoreSchema>({
     name: 'store',
     clearInvalidConfig: true,
     cwd:
@@ -72,7 +72,7 @@ const store = new ElectronStore<SettingsSchema>({
 /**
  * Get all settings in the settings store.
  */
-export function getSettings(): SettingsSchema {
+export function getSettings(): SettingsStoreSchema {
     return {
         settings: store.get('settings')
     };
@@ -145,7 +145,7 @@ export function updateSetting(
 /**
  * Update the whole settings at once.
  */
-export function updateSettings(settings: SettingsSchema): void {
+export function updateSettings(settings: SettingsStoreSchema): void {
     store.set('settings', settings.settings);
 
     toggleAutoLaunch();

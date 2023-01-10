@@ -5,7 +5,7 @@ import { getBrowserConnection } from '@main/util/puppeteer';
 import { BrowserWindow } from 'electron';
 import { resolve } from 'path';
 import { getPage } from 'puppeteer-in-electron';
-import { getSetting } from '../store';
+import { getSetting } from '../util/settings';
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
