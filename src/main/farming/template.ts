@@ -353,9 +353,9 @@ export default abstract class FarmTemplate {
                     this.updateStatus('checking');
 
                     /**
-                     * Pause timer if it is running.
+                     * Stop the timer.
                      */
-                    this.timer.pauseTimer();
+                    this.timer.stopTimer();
 
                     await this.login(window);
                     if (this.farmers.length > 0) {

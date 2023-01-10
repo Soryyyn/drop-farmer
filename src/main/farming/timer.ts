@@ -22,24 +22,9 @@ export class Timer {
         }
     }
 
-    pauseTimer(): void {
-        if (this.timer.isRunning()) {
-            this.timer.pause();
-
-            this.addBuiltUpTime();
-
-            log('info', `${this.timerName}: paused`);
-        }
-    }
-
     startTimer(): void {
-        if (this.timer.isPaused()) {
-            this.timer.resume();
-            log('info', `${this.timerName}: resumed`);
-        } else if (this.timer.isStopped() || !this.timer.isStarted()) {
-            this.timer.start();
-            log('info', `${this.timerName}: started`);
-        }
+        this.timer.start();
+        log('info', `${this.timerName}: started`);
     }
 
     private addBuiltUpTime() {

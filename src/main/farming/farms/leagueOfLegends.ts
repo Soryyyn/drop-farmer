@@ -5,6 +5,7 @@ import { log } from '@main/util/logging';
 import {
     doesElementExist,
     getBrowserConnection,
+    getElementProperty,
     getElementTagName,
     waitForElementToAppear,
     waitForTimeout
@@ -127,21 +128,15 @@ export default class LeagueOfLegends extends FarmTemplate {
                 const page = await getPage(getBrowserConnection(), window);
 
                 /**
-                 * Wait for navigation to appear.
+                 * Move to schedule route.
                  */
-                const desktopNavigationElement =
-                    'div.riotbar-desktop-navigation-wrapper';
-                await waitForElementToAppear(page, desktopNavigationElement);
-
-                const scheduleRouteButton =
-                    'a[data-testid="riotbar:desktopNav:link-internal-schedule"]';
-                await waitForElementToAppear(page, scheduleRouteButton);
-                await page.click(scheduleRouteButton);
+                const scheduleRoute = 'https://lolesports.com/schedule';
+                await page.goto(scheduleRoute);
 
                 /**
                  * Wait until the events are found.
                  */
-                await waitForElementToAppear(page, 'main.Schedule', 0);
+                await waitForElementToAppear(page, 'main.Schedule');
 
                 /**
                  * Select all unselected leagues.
@@ -173,11 +168,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * Get href properties from the elements.
                      */
                     for (const element of matchElements)
-                        hrefs.push(
-                            await (
-                                await element.getProperty('href')
-                            ).jsonValue()
-                        );
+                        hrefs.push(await getElementProperty(element, 'href'));
 
                     log('info', `${this.id}: Got ${hrefs.length} matches`);
                     resolve(hrefs);
