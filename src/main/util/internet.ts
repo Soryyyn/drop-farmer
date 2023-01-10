@@ -2,7 +2,7 @@ import { IpcChannels } from '@main/common/constants';
 import { sendOneWay } from '@main/electron/ipc';
 import isOnline from 'is-online';
 import { log } from './logging';
-import { sendForcedTypeToast } from './toast';
+import { sendToast } from './toast';
 
 /**
  * The current internet connection.
@@ -21,10 +21,10 @@ export function internetConnectionChecker(): void {
              * If user has no internet connection, notify via toast.
              */
             if (!connection) {
-                sendForcedTypeToast({
-                    id: 'no-internet',
+                sendToast({
                     type: 'error',
-                    text: 'No internet connection.',
+                    id: 'no-internet',
+                    textOnError: 'No internet connection.',
                     duration: 4000
                 });
 

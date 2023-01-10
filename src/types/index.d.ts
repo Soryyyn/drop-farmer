@@ -53,12 +53,6 @@ type SettingsSchema = {
 };
 
 /**
- * Logging.
- */
-type LogOrigin = 'MAIN' | 'RENDERER';
-type LogLevel = 'FATAL' | 'ERROR' | 'WARN' | 'info' | 'INFO';
-
-/**
  * Farms.
  */
 type FarmRendererData = {
@@ -74,4 +68,18 @@ type LoginForFarmObject = {
     id: string;
     shown: string;
     needed: boolean;
+};
+
+/**
+ * Toasts.
+ */
+type ToastType = 'success' | 'error' | 'loading' | 'basic' | 'promise';
+
+type Toast = {
+    type: ToastType;
+    id: string;
+    duration: number;
+    textOnSuccess?: string;
+    textOnError?: string;
+    textOnLoading?: string;
 };

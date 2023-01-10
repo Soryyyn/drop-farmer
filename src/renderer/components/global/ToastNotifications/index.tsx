@@ -3,60 +3,24 @@ import React from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function ToastNotifications() {
-    /**
-     * Handle a toast success notification.
-     */
-    useHandleOneWay(api.channels.toastSuccess, null, (event, toastSettings) => {
-        toast.success(toastSettings.text, {
-            id: toastSettings.id,
-            duration: toastSettings.duration
-        });
-    });
-
-    /**
-     * Handle an error toast notification.
-     */
-    useHandleOneWay(api.channels.toastError, null, (event, toastSettings) => {
-        toast.error(toastSettings.text, {
-            id: toastSettings.id,
-            duration: toastSettings.duration
-        });
-    });
-
-    /**
-     * Handle a loading toast notification.
-     */
-    useHandleOneWay(api.channels.toastLoading, null, (event, toastSettings) => {
-        toast.loading(toastSettings.text, {
-            id: toastSettings.id,
-            duration: toastSettings.duration
-        });
-    });
-
-    /**
-     * Handle a forced type toast notification.
-     */
-    useHandleOneWay(
-        api.channels.toastForcedType,
-        null,
-        (event, toastSettings: ForcedTypeToast) => {
-            if (toastSettings.type === 'success')
-                toast.success(toastSettings.text, {
-                    id: toastSettings.id,
-                    duration: toastSettings.duration
-                });
-            else if (toastSettings.type === 'error')
-                toast.error(toastSettings.text, {
-                    id: toastSettings.id,
-                    duration: toastSettings.duration
-                });
-            else
-                toast.loading(toastSettings.text, {
-                    id: toastSettings.id,
-                    duration: toastSettings.duration
-                });
+    useHandleOneWay(api.channels.toast, null, (event, receivedToast: Toast) => {
+        if (receivedToast.type === 'success') {
+            toast.success(receivedToast.textOnSuccess!, {
+                id: receivedToast.id,
+                duration: receivedToast.duration
+            });
+        } else if (receivedToast.type === 'error') {
+            toast.error(receivedToast.textOnError!, {
+                id: receivedToast.id,
+                duration: receivedToast.duration
+            });
+        } else if (receivedToast.type === 'loading') {
+            toast.loading(receivedToast.textOnLoading!, {
+                id: receivedToast.id,
+                duration: receivedToast.duration
+            });
         }
-    );
+    });
 
     return (
         <Toaster

@@ -7,7 +7,7 @@ import {
 import { destroyAllFarmWindows } from '@main/farming/management';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
-import { sendForcedTypeToast } from '@main/util/toast';
+import { sendToast } from '@main/util/toast';
 import CrontabManager from 'cron-job-manager';
 import { app, autoUpdater } from 'electron';
 import { getSetting } from '../store';
@@ -69,11 +69,11 @@ function setupAppLaunchUpdateRouting() {
 handleOneWay(IpcChannels.updateCheck, () => {
     displayToasts = true;
     if (displayToasts) {
-        sendForcedTypeToast({
+        sendToast({
+            type: 'loading',
             id: Toasts.UpdateChecking,
-            text: 'Checking if update is available...',
-            duration: Infinity,
-            type: 'loading'
+            textOnLoading: 'Checking if update is available...',
+            duration: Infinity
         });
     }
 
@@ -91,11 +91,11 @@ autoUpdater.on('checking-for-update', () => {
     log('info', 'Currently checking if application can update');
 
     if (displayToasts) {
-        sendForcedTypeToast({
+        sendToast({
+            type: 'loading',
             id: Toasts.UpdateChecking,
-            text: 'Checking if update is available...',
             duration: Infinity,
-            type: 'loading'
+            textOnLoading: 'Checking if update is available...'
         });
     }
 });
@@ -106,11 +106,11 @@ autoUpdater.on('update-not-available', () => {
     sendOneWay(IpcChannels.updateStatus, false);
 
     if (displayToasts) {
-        sendForcedTypeToast({
+        sendToast({
+            type: 'error',
             id: Toasts.UpdateChecking,
-            text: 'No update available.',
             duration: 4000,
-            type: 'error'
+            textOnError: 'No update available.'
         });
     }
 
@@ -127,11 +127,11 @@ autoUpdater.on('update-downloaded', () => {
     sendOneWay(IpcChannels.updateStatus, true);
 
     if (displayToasts) {
-        sendForcedTypeToast({
+        sendToast({
+            type: 'success',
             id: Toasts.UpdateChecking,
-            text: 'Update available.',
             duration: 4000,
-            type: 'success'
+            textOnError: 'Update available.'
         });
     }
 
@@ -149,11 +149,12 @@ autoUpdater.on('error', (err) => {
     sendOneWay(IpcChannels.updateStatus, false);
 
     if (displayToasts) {
-        sendForcedTypeToast({
+        sendToast({
+            type: 'error',
             id: Toasts.UpdateChecking,
-            text: 'Error occured while checking for update. Please check the logfile.',
             duration: 4000,
-            type: 'error'
+            textOnError:
+                'Error occured while checking for update. Please check the logfile.'
         });
     }
 

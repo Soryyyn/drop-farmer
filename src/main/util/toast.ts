@@ -13,72 +13,48 @@ import { sendOneWay } from '@main/electron/ipc';
 const toastBacklog: (BasicToast | PromiseToast | ForcedTypeToast)[] = [];
 
 /**
- * Send a toast to the renderer.
- * Try-catch the callback to either send a error or success toast.
- *
- * @param {BasicToast} toast Toast data to send.
- * @param {() => void} callback The callback to call in the try block.
+ * Send a toast to the frontend.
  */
-export function sendBasicToast(toast: BasicToast, callback: () => void): void {
-    try {
-        sendOneWay(IpcChannels.toastSuccess, {
-            id: toast.id,
-            text: toast.textOnSuccess,
-            duration: toast.duration
-        });
-        callback();
-    } catch (err) {
-        sendOneWay(IpcChannels.toastError, {
-            id: toast.id,
-            text: `${toast.textOnError} ${err}`,
-            duration: toast.duration
-        });
-    }
-}
-
-/**
- * Send a promise-based toast to the renderer.
- *
- * @param {PromiseToast} toast Toast data.
- * @param {Promise<any>} promise The promise to check for.
- */
-export function sendPromiseToast(
-    toast: PromiseToast,
-    promise: Promise<any>
+export function sendToast(
+    toast: Toast,
+    callback?: () => void,
+    promise?: Promise<any>
 ): void {
-    sendOneWay(IpcChannels.toastLoading, {
-        id: toast.id,
-        text: toast.textOnLoading,
-        duration: Infinity
-    });
+    /**
+     * Forced type toast.
+     */
+    if (
+        toast.type === 'success' ||
+        toast.type === 'error' ||
+        toast.type === 'loading'
+    ) {
+        sendOneWay(IpcChannels.toast, toast);
+    }
 
-    promise
-        .then(() => {
-            sendOneWay(IpcChannels.toastSuccess, {
-                id: toast.id,
-                text: toast.textOnSuccess,
-                duration: toast.duration
-            });
-        })
-        .catch((err) => {
-            sendOneWay(IpcChannels.toastError, {
-                id: toast.id,
-                text: `${toast.textOnError} ${err}`,
-                duration: toast.duration
-            });
-        });
-}
+    /**
+     * Basic toast which can end on success or error based on callback.
+     */
+    if (toast.type === 'basic') {
+        try {
+            callback!();
+            sendOneWay(IpcChannels.toast, { ...toast, type: 'success' });
+        } catch (error) {
+            sendOneWay(IpcChannels.toast, { ...toast, type: 'error' });
+        }
+    }
 
-/**
- * Send a toast with a forced type (either success or error) to the renderer.
- *
- * @param {ForcedTypeToast} toast Toast data.
- */
-export function sendForcedTypeToast(toast: ForcedTypeToast): void {
-    sendOneWay(IpcChannels.toastForcedType, {
-        id: toast.id,
-        text: toast.text,
-        duration: toast.duration,
-        type: toast.type
-    });
+    /**
+     * Toast which reacts based on a promise given.
+     */
+    if (toast.type === 'promise') {
+        sendOneWay(IpcChannels.toast, { ...toast, type: 'loading' });
+
+        promise!
+            .then(() =>
+                sendOneWay(IpcChannels.toast, { ...toast, type: 'success' })
+            )
+            .catch((error) =>
+                sendOneWay(IpcChannels.toast, { ...toast, type: 'error' })
+            );
+    }
 }

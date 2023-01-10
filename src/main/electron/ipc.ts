@@ -5,7 +5,7 @@ import {
     getFarmsRendererData
 } from '@main/farming/management';
 import { log } from '@main/util/logging';
-import { sendBasicToast, sendPromiseToast } from '@main/util/toast';
+import { sendToast } from '@main/util/toast';
 import { app, ipcMain, shell } from 'electron';
 import { getSettings, updateSettings } from '../store';
 import { getMainWindow, setAppQuitting } from './windows';
@@ -81,14 +81,16 @@ handleAndReply(IpcChannels.getSettings, () => {
 handleOneWay(
     IpcChannels.saveNewSettings,
     (event, settingsToSave: SettingsSchema) => {
-        sendPromiseToast(
+        sendToast(
             {
+                type: 'promise',
                 id: 'settings-saving',
                 textOnLoading: 'Saving settings...',
                 textOnSuccess: 'Saved settings.',
                 textOnError: 'Failed saving settings.',
                 duration: 4000
             },
+            undefined,
             new Promise(async (resolve, reject) => {
                 try {
                     updateSettings(settingsToSave);
@@ -109,8 +111,9 @@ handleAndReply(IpcChannels.getApplicationVersion, () => {
 handleOneWay(IpcChannels.clearCache, (event, id) => {
     const farm = getFarmById(id);
     if (farm != undefined) {
-        sendBasicToast(
+        sendToast(
             {
+                type: 'basic',
                 id: `cleared-cache-${farm.id}`,
                 textOnSuccess: `Cleared cache for ${farm.shown}.`,
                 textOnError: `Failed clearing cache for ${farm.shown}}.`,
@@ -128,8 +131,9 @@ handleOneWay(IpcChannels.clearCache, (event, id) => {
 handleOneWay(IpcChannels.restartScheduler, (event, name) => {
     const farm = getFarmById(name);
     if (farm != undefined) {
-        sendBasicToast(
+        sendToast(
             {
+                type: 'basic',
                 id: `restart-schedule-${farm.id}`,
                 textOnSuccess: `Restarted schedule for ${farm.shown}.`,
                 textOnError: `Failed restarting schedule for ${farm.shown}}.`,

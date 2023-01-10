@@ -17,6 +17,7 @@ export enum IpcChannels {
     toastError = 'toast-error',
     toastLoading = 'toast-loading',
     toastForcedType = 'toast-forced-type',
+    toast = 'toast',
     internet = 'internet',
     installUpdate = 'install-update',
     updateCheck = 'update-check',
