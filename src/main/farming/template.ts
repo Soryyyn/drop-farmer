@@ -340,7 +340,6 @@ export default abstract class FarmTemplate {
                 })
                 .then(() => {
                     this.destroyChecker();
-                    this.updateStatus('idle');
                 })
                 .catch((err) => {
                     log(
