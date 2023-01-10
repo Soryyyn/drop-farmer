@@ -13,10 +13,6 @@ export enum IpcChannels {
     clearCache = 'clear-cache',
     restartScheduler = 'restart-scheduler',
     shutdown = 'shutdown',
-    toastSuccess = 'toast-success',
-    toastError = 'toast-error',
-    toastLoading = 'toast-loading',
-    toastForcedType = 'toast-forced-type',
     toast = 'toast',
     internet = 'internet',
     installUpdate = 'install-update',
@@ -33,7 +29,8 @@ export enum EventChannels {
 
 export const Constants = {
     LogFileName: '.log',
-    StoreFileName: 'store'
+    StoreFileName: 'store',
+    StatisticsStoreFileName: 'statistics'
 };
 
 export enum Schedules {
