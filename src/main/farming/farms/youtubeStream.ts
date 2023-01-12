@@ -13,8 +13,15 @@ import { getPage } from 'puppeteer-in-electron';
 import FarmTemplate from '../template';
 
 export default class YoutubeStream extends FarmTemplate {
-    constructor(id: string, shown: string, url: string) {
+    constructor(id: string, shown: string, url: string, schedule?: number) {
         super(`youtube/${id}`, shown, url);
+
+        /**
+         * If a schedule is provided, set it too.
+         */
+        if (schedule) {
+            this.schedule = schedule;
+        }
     }
 
     /**

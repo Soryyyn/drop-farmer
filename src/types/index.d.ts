@@ -70,6 +70,16 @@ type LoginForFarmObject = {
     needed: boolean;
 };
 
+type FarmType = 'youtube';
+
+type NewFarm = {
+    type: FarmType;
+    id: string;
+    shown: string;
+    schedule: number;
+    url: string;
+};
+
 /**
  * Toasts.
  */

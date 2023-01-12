@@ -18,7 +18,8 @@ export enum IpcChannels {
     installUpdate = 'install-update',
     updateCheck = 'update-check',
     updateStatus = 'update-status',
-    farmLogin = 'farm-login'
+    farmLogin = 'farm-login',
+    addNewFarm = 'add-new-farm'
 }
 
 export enum EventChannels {

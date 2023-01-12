@@ -51,8 +51,10 @@ export const UpdateContext = createContext<{
 
 export const FarmsContext = createContext<{
     farms: FarmRendererData[];
+    addFarm: (farm: NewFarm) => void;
 }>({
-    farms: []
+    farms: [],
+    addFarm: () => {}
 });
 
 export const FarmContext = createContext<{
@@ -223,13 +225,23 @@ export function FarmsContextProvider({ children }: DefaultProps) {
     useSendAndWait(
         api.channels.getFarms,
         null,
-        (err, response: FarmRendererData[]) => {
-            if (!err) setFarms(response);
+        (err, farms: FarmRendererData[]) => {
+            if (!err) setFarms(farms);
         }
     );
 
+    function addFarm(farm: NewFarm): void {
+        useSendAndWait(
+            api.channels.addNewFarm,
+            farm,
+            (err, updatedFarms: FarmRendererData[]) => {
+                if (!err) setFarms(updatedFarms);
+            }
+        );
+    }
+
     return (
-        <FarmsContext.Provider value={{ farms }}>
+        <FarmsContext.Provider value={{ farms, addFarm }}>
             {children}
         </FarmsContext.Provider>
     );

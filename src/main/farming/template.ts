@@ -69,6 +69,19 @@ export default abstract class FarmTemplate {
             });
         }
 
+        if (doesSettingExist(this.id, 'url')) {
+            this.url = getSetting(this.id, 'url')?.value as string;
+        } else {
+            setSetting(this.id, {
+                id: 'url',
+                shown: 'Checking URL',
+                desc: 'The URL the farm will check if it can farm.',
+                value: this.url,
+                default: '',
+                disabled: true
+            });
+        }
+
         if (getSetting('application', 'showWindowsForLogin')?.value as boolean)
             this.windowsShownByDefault === true;
         else this.windowsShownByDefault === false;

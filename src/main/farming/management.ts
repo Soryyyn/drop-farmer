@@ -1,7 +1,13 @@
 import { EventChannels, IpcChannels } from '@main/common/constants';
-import { sendOneWay } from '@main/electron/ipc';
+import { handleAndReply, sendOneWay } from '@main/electron/ipc';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
+import {
+    doesSettingExist,
+    getSetting,
+    setSetting,
+    updateSetting
+} from '@main/util/settings';
 import LeagueOfLegends from './farms/leagueOfLegends';
 import YoutubeStream from './farms/youtubeStream';
 import FarmTemplate from './template';
@@ -23,12 +29,15 @@ const defaultFarms: FarmTemplate[] = [
 
 export function initFarmsManagement(): void {
     addDefaultFarms();
+    addUserAddedFarms();
     initializeFarmSettings();
 }
 
 function addDefaultFarms(): void {
     farms.push(...defaultFarms);
 }
+
+function addUserAddedFarms(): void {}
 
 function initializeFarmSettings(): void {
     farms.forEach((farm) => farm.initialize());
@@ -61,6 +70,30 @@ export function stopAllFarmJobs(): void {
 export function stopAllTimers(): void {
     farms.forEach((farm) => farm.timer.stopTimer());
 }
+
+handleAndReply(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
+    switch (farm.type) {
+        case 'youtube':
+            farms.push(
+                new YoutubeStream(farm.id, farm.shown, farm.url, farm.schedule)
+            );
+            break;
+    }
+
+    const addedFarm = farms[farms.length - 1];
+    addedFarm.initialize();
+
+    /**
+     * Enable the wanted disabled settings.
+     */
+    if (!doesSettingExist(addedFarm.id, 'url')) {
+        const settingToBeUpdated = getSetting(addedFarm.id, 'url');
+        updateSetting(addedFarm.id, 'url', {
+            ...settingToBeUpdated!,
+            disabled: false
+        });
+    }
+});
 
 listenForEvent(EventChannels.PCWentToSleep, () => {
     log(

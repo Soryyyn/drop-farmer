@@ -12,6 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
+import DisabledIndicator from '../Settings/DisabledIndicator';
 import StatusIndicator from './StatusIndicator';
 
 export default function SidebarItem() {
@@ -55,7 +56,7 @@ export default function SidebarItem() {
 
     return (
         <div className="w-full p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
-            <div className="grow flex flex-col gap-2">
+            <div className="grow flex flex-row gap-2">
                 <span className="text-pepper-200 text-lg capitalize font-medium leading-none">
                     {farm?.shown}
                 </span>
