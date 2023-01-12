@@ -4,7 +4,7 @@ import AddFarmButton from './AddFarmButton';
 import SidebarItem from './SidebarItem';
 
 export default function Sidebar() {
-    const { farms, addFarm } = useContext(FarmsContext);
+    const { farms } = useContext(FarmsContext);
 
     return (
         <div className="flex flex-col gap-4 min-w-[40%] h-full">
@@ -17,7 +17,7 @@ export default function Sidebar() {
                     );
                 })}
             </ul>
-            <AddFarmButton addFarm={addFarm} />
+            <AddFarmButton />
         </div>
     );
 }

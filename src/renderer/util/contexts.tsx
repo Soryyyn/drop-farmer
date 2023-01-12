@@ -1,5 +1,6 @@
 import Overlay from '@components/global/Overlay';
 import { Overlays } from '@components/global/Overlay/types';
+import NewFarm from '@components/NewFarm';
 import Settings from '@components/Settings';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
@@ -187,6 +188,8 @@ export function ModalContextProvider({ children }: DefaultProps) {
     const renderModal = useCallback(() => {
         if (currentOverlay === Overlays.Settings) {
             return <Settings onClose={toggleOverlay} />;
+        } else if (currentOverlay === Overlays.NewFarm) {
+            return <NewFarm onClose={toggleOverlay} />;
         }
 
         return <></>;
