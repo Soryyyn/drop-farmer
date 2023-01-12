@@ -15,12 +15,11 @@ import FarmTemplate from '../template';
 export default class TwitchStreamer extends FarmTemplate {
     constructor(
         id: string,
-        shown: string,
         isProtected: boolean,
         url: string,
         schedule?: number
     ) {
-        super(`twitch/${id}`, shown, url, isProtected);
+        super(`twitch/${id}`, url, isProtected);
 
         /**
          * If a schedule is provided, set it too.
@@ -63,7 +62,6 @@ export default class TwitchStreamer extends FarmTemplate {
 
                     emitEvent(EventChannels.LoginForFarm, {
                         id: this.id,
-                        shown: this.shown,
                         needed: true
                     });
 

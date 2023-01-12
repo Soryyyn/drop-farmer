@@ -1,4 +1,5 @@
 import { IpcChannels } from '@main/common/constants';
+import { removeTypeFromText } from '@main/common/stringManipulation';
 import {
     applySettingsToFarms,
     getFarmById,
@@ -115,8 +116,12 @@ handleOneWay(IpcChannels.clearCache, (event, id) => {
             {
                 type: 'basic',
                 id: `cleared-cache-${farm.id}`,
-                textOnSuccess: `Cleared cache for ${farm.shown}.`,
-                textOnError: `Failed clearing cache for ${farm.shown}}.`,
+                textOnSuccess: `Cleared cache for ${removeTypeFromText(
+                    farm.id
+                )}.`,
+                textOnError: `Failed clearing cache for ${removeTypeFromText(
+                    farm.id
+                )}}.`,
                 duration: 4000
             },
             () => {
@@ -135,8 +140,12 @@ handleOneWay(IpcChannels.restartScheduler, (event, name) => {
             {
                 type: 'basic',
                 id: `restart-schedule-${farm.id}`,
-                textOnSuccess: `Restarted schedule for ${farm.shown}.`,
-                textOnError: `Failed restarting schedule for ${farm.shown}}.`,
+                textOnSuccess: `Restarted schedule for ${removeTypeFromText(
+                    farm.id
+                )}.`,
+                textOnError: `Failed restarting schedule for ${removeTypeFromText(
+                    farm.id
+                )}}.`,
                 duration: 4000
             },
             () => {

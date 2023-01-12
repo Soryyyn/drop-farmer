@@ -14,7 +14,6 @@ import { Timer } from './timer';
 
 export default abstract class FarmTemplate {
     id: string;
-    shown: string;
     url: string;
     isProtected: boolean;
 
@@ -32,9 +31,8 @@ export default abstract class FarmTemplate {
     farmers: Electron.BrowserWindow[] = [];
     extras: Electron.BrowserWindow[] = [];
 
-    constructor(id: string, shown: string, url: string, isProtected: boolean) {
+    constructor(id: string, url: string, isProtected: boolean) {
         this.id = id;
-        this.shown = shown;
         this.url = url;
         this.isProtected = isProtected;
 
@@ -154,7 +152,6 @@ export default abstract class FarmTemplate {
     getRendererData(): FarmRendererData {
         return {
             id: this.id,
-            shown: this.shown,
             status: this.status,
             schedule: this.schedule,
             isProtected: this.isProtected,

@@ -57,7 +57,6 @@ type SettingsStoreSchema = {
  */
 type FarmRendererData = {
     id: string;
-    shown: string;
     status: FarmStatus;
     schedule: number;
     isProtected: boolean;
@@ -67,7 +66,6 @@ type FarmRendererData = {
 
 type LoginForFarmObject = {
     id: string;
-    shown: string;
     needed: boolean;
 };
 
@@ -76,7 +74,6 @@ type FarmType = 'youtube' | 'twitch';
 type NewFarm = {
     type: FarmType;
     id: string;
-    shown: string;
     schedule: number;
     url: string;
 };

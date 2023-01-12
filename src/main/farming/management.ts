@@ -12,13 +12,11 @@ const farms: FarmTemplate[] = [];
 const defaultFarms: FarmTemplate[] = [
     new LeagueOfLegends(),
     new YoutubeStream(
-        'overwatch-league',
         'Overwatch: League',
         true,
         'https://www.youtube.com/c/overwatchleague'
     ),
     new YoutubeStream(
-        'overwatch-contenders',
         'Overwatch: Contenders',
         true,
         'https://www.youtube.com/c/OverwatchContenders'
@@ -73,24 +71,12 @@ handleOneWay(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
     switch (farm.type) {
         case 'youtube':
             farms.push(
-                new YoutubeStream(
-                    farm.id,
-                    farm.shown,
-                    false,
-                    farm.url,
-                    farm.schedule
-                )
+                new YoutubeStream(farm.id, false, farm.url, farm.schedule)
             );
             break;
         case 'twitch':
             farms.push(
-                new TwitchStreamer(
-                    farm.id,
-                    farm.shown,
-                    false,
-                    farm.url,
-                    farm.schedule
-                )
+                new TwitchStreamer(farm.id, false, farm.url, farm.schedule)
             );
             break;
     }
@@ -130,7 +116,6 @@ listenForEvent(EventChannels.PCWokeUp, () => {
 listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
     sendOneWay(IpcChannels.farmLogin, {
         id: event[0].id,
-        shown: event[0].shown,
         needed: event[0].needed
     });
 });

@@ -63,7 +63,7 @@ export default function Settings({ onClose }: Props) {
                             return (
                                 <Selector
                                     key={farm.id}
-                                    label={farm.shown}
+                                    label={api.removeTypeFromText(farm.id)}
                                     isSelected={farm.id === selected}
                                     onClick={() => setSelected(farm.id)}
                                 />

@@ -13,8 +13,7 @@ export default function AddFarmButton({ addFarm }: Props) {
             onClick={() =>
                 addFarm({
                     type: 'youtube',
-                    id: 'lofi-girl',
-                    shown: 'LoFi Girl',
+                    id: 'LoFi Girl',
                     schedule: 20,
                     url: 'https://www.youtube.com/@LofiGirl'
                 })

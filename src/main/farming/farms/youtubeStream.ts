@@ -15,12 +15,11 @@ import FarmTemplate from '../template';
 export default class YoutubeStream extends FarmTemplate {
     constructor(
         id: string,
-        shown: string,
         isProtected: boolean,
         url: string,
         schedule?: number
     ) {
-        super(`youtube/${id}`, shown, url, isProtected);
+        super(`youtube/${id}`, url, isProtected);
 
         /**
          * If a schedule is provided, set it too.
@@ -122,7 +121,6 @@ export default class YoutubeStream extends FarmTemplate {
                     wasLoginNeeded = true;
                     emitEvent(EventChannels.LoginForFarm, {
                         id: this.id,
-                        shown: this.shown,
                         needed: true
                     });
 
