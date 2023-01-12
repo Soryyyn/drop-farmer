@@ -1,4 +1,8 @@
 import { EventChannels, IpcChannels } from '@main/common/constants';
+import {
+    getTypeFromText,
+    removeTypeFromText
+} from '@main/common/stringManipulation';
 import { handleOneWay, sendOneWay } from '@main/electron/ipc';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
@@ -31,6 +35,7 @@ const defaultFarms: FarmTemplate[] = [
 export function initFarmsManagement(): void {
     addDefaultFarms();
     addUserAddedFarms();
+
     initializeFarmSettings();
 }
 
@@ -38,7 +43,47 @@ function addDefaultFarms(): void {
     farms.push(...defaultFarms);
 }
 
-function addUserAddedFarms(): void {}
+function addUserAddedFarms(): void {
+    const settings = getSettings().settings;
+
+    /**
+     * Go through each settings entry and find non-default farms and create the
+     * farm instances.
+     */
+    for (const [farmId, value] of Object.entries(settings)) {
+        let isDefault = false;
+        defaultFarms.forEach((farm) => {
+            if (farmId === farm.id) {
+                isDefault = true;
+            }
+        });
+
+        if (!isDefault) {
+            switch (getTypeFromText(farmId)) {
+                case 'youtube':
+                    farms.push(
+                        new YoutubeStream(
+                            removeTypeFromText(farmId),
+                            false,
+                            getSetting(farmId, 'url')!.value as string,
+                            getSetting(farmId, 'schedule')!.value as number
+                        )
+                    );
+                    break;
+                case 'twitch':
+                    farms.push(
+                        new TwitchStreamer(
+                            removeTypeFromText(farmId),
+                            false,
+                            getSetting(farmId, 'url')!.value as string,
+                            getSetting(farmId, 'schedule')!.value as number
+                        )
+                    );
+                    break;
+            }
+        }
+    }
+}
 
 function initializeFarmSettings(): void {
     farms.forEach((farm) => farm.initialize());
