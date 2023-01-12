@@ -16,6 +16,7 @@ export default abstract class FarmTemplate {
     id: string;
     shown: string;
     url: string;
+    isProtected: boolean;
 
     enabled: boolean = false;
     status: FarmStatus = 'disabled';
@@ -31,10 +32,11 @@ export default abstract class FarmTemplate {
     farmers: Electron.BrowserWindow[] = [];
     extras: Electron.BrowserWindow[] = [];
 
-    constructor(id: string, shown: string, url: string) {
+    constructor(id: string, shown: string, url: string, isProtected: boolean) {
         this.id = id;
         this.shown = shown;
         this.url = url;
+        this.isProtected = isProtected;
 
         this.timer = new Timer(id);
     }
@@ -77,7 +79,7 @@ export default abstract class FarmTemplate {
                 shown: 'Checking URL',
                 desc: 'The URL the farm will check if it can farm.',
                 value: this.url,
-                default: '',
+                default: this.url,
                 disabled: true
             });
         }
@@ -155,6 +157,7 @@ export default abstract class FarmTemplate {
             shown: this.shown,
             status: this.status,
             schedule: this.schedule,
+            isProtected: this.isProtected,
             amountOfWindows: this.getAmountOfWindows(),
             windowsShown: this.windowsCurrentlyShown
         };

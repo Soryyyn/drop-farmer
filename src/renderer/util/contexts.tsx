@@ -63,12 +63,14 @@ export const FarmContext = createContext<{
     setWindowsVisibility: (shouldBeShown: boolean) => void;
     restartSchedule: () => void;
     clearCache: () => void;
+    deleteSelf: () => void;
 }>({
     farm: undefined,
     loginNeeded: false,
     setWindowsVisibility: () => {},
     restartSchedule: () => {},
-    clearCache: () => {}
+    clearCache: () => {},
+    deleteSelf: () => {}
 });
 
 /**
@@ -86,6 +88,15 @@ export function SettingsContextProvider({ children }: DefaultProps) {
                 setSettings(settings);
                 setOldSettings(cloneDeep(settings));
             }
+        }
+    );
+
+    useHandleOneWay(
+        api.channels.newSettings,
+        null,
+        (event, newSettings: SettingsStoreSchema) => {
+            setSettings(newSettings);
+            setOldSettings(cloneDeep(newSettings));
         }
     );
 
@@ -230,14 +241,16 @@ export function FarmsContextProvider({ children }: DefaultProps) {
         }
     );
 
+    useHandleOneWay(
+        api.channels.newFarms,
+        null,
+        (event, newFarms: FarmRendererData[]) => {
+            setFarms(newFarms);
+        }
+    );
+
     function addFarm(farm: NewFarm): void {
-        useSendAndWait(
-            api.channels.addNewFarm,
-            farm,
-            (err, updatedFarms: FarmRendererData[]) => {
-                if (!err) setFarms(updatedFarms);
-            }
-        );
+        api.sendOneWay(api.channels.addNewFarm, farm);
     }
 
     return (
@@ -294,6 +307,8 @@ export function FarmContextProvider({
         api.sendOneWay(api.channels.clearCache, trackedFarm.id);
     }
 
+    function deleteSelf() {}
+
     return (
         <FarmContext.Provider
             value={{
@@ -301,7 +316,8 @@ export function FarmContextProvider({
                 loginNeeded,
                 setWindowsVisibility,
                 restartSchedule,
-                clearCache
+                clearCache,
+                deleteSelf
             }}
         >
             {children}

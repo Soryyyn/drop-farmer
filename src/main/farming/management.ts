@@ -1,14 +1,10 @@
 import { EventChannels, IpcChannels } from '@main/common/constants';
-import { handleAndReply, sendOneWay } from '@main/electron/ipc';
+import { handleOneWay, sendOneWay } from '@main/electron/ipc';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
-import {
-    doesSettingExist,
-    getSetting,
-    setSetting,
-    updateSetting
-} from '@main/util/settings';
+import { getSetting, getSettings, updateSetting } from '@main/util/settings';
 import LeagueOfLegends from './farms/leagueOfLegends';
+import TwitchStreamer from './farms/twitchStreamer';
 import YoutubeStream from './farms/youtubeStream';
 import FarmTemplate from './template';
 
@@ -18,11 +14,13 @@ const defaultFarms: FarmTemplate[] = [
     new YoutubeStream(
         'overwatch-league',
         'Overwatch: League',
+        true,
         'https://www.youtube.com/c/overwatchleague'
     ),
     new YoutubeStream(
         'overwatch-contenders',
         'Overwatch: Contenders',
+        true,
         'https://www.youtube.com/c/OverwatchContenders'
     )
 ];
@@ -71,11 +69,28 @@ export function stopAllTimers(): void {
     farms.forEach((farm) => farm.timer.stopTimer());
 }
 
-handleAndReply(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
+handleOneWay(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
     switch (farm.type) {
         case 'youtube':
             farms.push(
-                new YoutubeStream(farm.id, farm.shown, farm.url, farm.schedule)
+                new YoutubeStream(
+                    farm.id,
+                    farm.shown,
+                    false,
+                    farm.url,
+                    farm.schedule
+                )
+            );
+            break;
+        case 'twitch':
+            farms.push(
+                new TwitchStreamer(
+                    farm.id,
+                    farm.shown,
+                    false,
+                    farm.url,
+                    farm.schedule
+                )
             );
             break;
     }
@@ -86,13 +101,15 @@ handleAndReply(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
     /**
      * Enable the wanted disabled settings.
      */
-    if (!doesSettingExist(addedFarm.id, 'url')) {
-        const settingToBeUpdated = getSetting(addedFarm.id, 'url');
-        updateSetting(addedFarm.id, 'url', {
-            ...settingToBeUpdated!,
-            disabled: false
-        });
-    }
+    const settingToBeUpdated = getSetting(addedFarm.id, 'url');
+    updateSetting(addedFarm.id, 'url', {
+        ...settingToBeUpdated!,
+        default: farm.url,
+        disabled: false
+    });
+
+    sendOneWay(IpcChannels.newFarms, getFarmsRendererData());
+    sendOneWay(IpcChannels.newSettings, getSettings());
 });
 
 listenForEvent(EventChannels.PCWentToSleep, () => {

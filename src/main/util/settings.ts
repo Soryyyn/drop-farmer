@@ -136,7 +136,7 @@ export function updateSetting(
          * Insert updated settings at old position.
          */
         settings.splice(index, 0, updated);
-        store.set('settings', settings);
+        store.set(`settings.${owner}`, settings);
 
         toggleAutoLaunch();
     }

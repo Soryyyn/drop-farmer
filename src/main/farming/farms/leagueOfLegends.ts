@@ -19,7 +19,8 @@ export default class LeagueOfLegends extends FarmTemplate {
         super(
             'league-of-legends',
             'League Of Legends',
-            'https://lolesports.com/'
+            'https://lolesports.com/',
+            true
         );
     }
 

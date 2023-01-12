@@ -60,6 +60,7 @@ type FarmRendererData = {
     shown: string;
     status: FarmStatus;
     schedule: number;
+    isProtected: boolean;
     amountOfWindows: number;
     windowsShown: boolean;
 };
@@ -70,7 +71,7 @@ type LoginForFarmObject = {
     needed: boolean;
 };
 
-type FarmType = 'youtube';
+type FarmType = 'youtube' | 'twitch';
 
 type NewFarm = {
     type: FarmType;

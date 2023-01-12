@@ -8,12 +8,26 @@ import {
     waitForElementToAppear,
     waitForTimeout
 } from '@main/util/puppeteer';
+import { normalize } from '@main/util/textManipulation';
 import { getPage } from 'puppeteer-in-electron';
 import FarmTemplate from '../template';
 
 export default class TwitchStreamer extends FarmTemplate {
-    constructor(streamerName: string, twitchURL: string) {
-        super(`twitch/${streamerName}`, streamerName, twitchURL);
+    constructor(
+        id: string,
+        shown: string,
+        isProtected: boolean,
+        url: string,
+        schedule?: number
+    ) {
+        super(`twitch/${id}`, shown, url, isProtected);
+
+        /**
+         * If a schedule is provided, set it too.
+         */
+        if (schedule) {
+            this.schedule = schedule;
+        }
     }
 
     login(window: Electron.BrowserWindow): Promise<any> {

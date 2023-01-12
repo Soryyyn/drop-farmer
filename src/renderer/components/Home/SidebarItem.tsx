@@ -2,17 +2,19 @@ import { Icon } from '@components/global/Icon';
 import Menu, { Alignment } from '@components/global/Menu';
 import NotificationBadge from '@components/global/NotificationBadge';
 import {
+    faBroom,
     faClock,
     faEllipsisVertical,
     faEye,
     faEyeSlash,
     faRotate,
+    faShieldHalved,
     faTrash,
     faWindowMaximize
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
-import DisabledIndicator from '../Settings/DisabledIndicator';
+import ProtecedIndicator from './ProtectedIndicator';
 import StatusIndicator from './StatusIndicator';
 
 export default function SidebarItem() {
@@ -21,7 +23,8 @@ export default function SidebarItem() {
         loginNeeded,
         setWindowsVisibility,
         clearCache,
-        restartSchedule
+        restartSchedule,
+        deleteSelf
     } = useContext(FarmContext);
 
     const [timeUntilNextCheck, setTimeUntilNextCheck] = useState<string>('...');
@@ -56,12 +59,11 @@ export default function SidebarItem() {
 
     return (
         <div className="w-full p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
-            <div className="grow flex flex-row gap-2">
-                <span className="text-pepper-200 text-lg capitalize font-medium leading-none">
-                    {farm?.shown}
-                </span>
-            </div>
+            <span className="grow flex flex-row gap-2 items-center text-pepper-200 text-lg capitalize font-medium leading-none">
+                {farm?.shown}
+            </span>
 
+            {farm?.isProtected && <ProtecedIndicator />}
             <StatusIndicator status={farm!.status} />
 
             <Menu
@@ -133,18 +135,27 @@ export default function SidebarItem() {
                         onClick: () => restartSchedule()
                     },
                     {
+                        type: 'normal',
+                        label: 'Clear cache',
+                        icon: (
+                            <Icon sprite={faBroom} size="1x" className="mx-1" />
+                        ),
+                        onClick: () => clearCache()
+                    },
+                    {
                         type: 'seperator',
                         label: '',
                         onClick: () => {}
                     },
                     {
                         type: 'normal',
-                        label: 'Clear cache',
+                        label: 'Delete farm',
                         caution: true,
+                        disabled: farm?.isProtected,
                         icon: (
                             <Icon sprite={faTrash} size="1x" className="mx-1" />
                         ),
-                        onClick: () => clearCache()
+                        onClick: () => deleteSelf()
                     }
                 ]}
             />
