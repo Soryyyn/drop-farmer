@@ -92,11 +92,11 @@ export function SettingsContextProvider({ children }: DefaultProps) {
     );
 
     useHandleOneWay(
-        api.channels.newSettings,
+        api.channels.settingsChanged,
         null,
-        (event, newSettings: SettingsStoreSchema) => {
-            setSettings(newSettings);
-            setOldSettings(cloneDeep(newSettings));
+        (event, changedSettings: SettingsStoreSchema) => {
+            setSettings(changedSettings);
+            setOldSettings(cloneDeep(changedSettings));
         }
     );
 
@@ -242,10 +242,10 @@ export function FarmsContextProvider({ children }: DefaultProps) {
     );
 
     useHandleOneWay(
-        api.channels.newFarms,
+        api.channels.farmsChanged,
         null,
-        (event, newFarms: FarmRendererData[]) => {
-            setFarms(newFarms);
+        (event, changedFarms: FarmRendererData[]) => {
+            setFarms(changedFarms);
         }
     );
 
@@ -307,7 +307,9 @@ export function FarmContextProvider({
         api.sendOneWay(api.channels.clearCache, trackedFarm.id);
     }
 
-    function deleteSelf() {}
+    function deleteSelf() {
+        api.sendOneWay(api.channels.deleteFarm, trackedFarm.id);
+    }
 
     return (
         <FarmContext.Provider

@@ -2,7 +2,12 @@ import { EventChannels, IpcChannels } from '@main/common/constants';
 import { handleOneWay, sendOneWay } from '@main/electron/ipc';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
-import { getSetting, getSettings, updateSetting } from '@main/util/settings';
+import {
+    deleteSettingsOfOwner,
+    getSetting,
+    getSettings,
+    updateSetting
+} from '@main/util/settings';
 import LeagueOfLegends from './farms/leagueOfLegends';
 import TwitchStreamer from './farms/twitchStreamer';
 import YoutubeStream from './farms/youtubeStream';
@@ -67,7 +72,26 @@ export function stopAllTimers(): void {
     farms.forEach((farm) => farm.timer.stopTimer());
 }
 
-handleOneWay(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
+function deleteFarm(id: string): void {
+    /**
+     * Delete the farm from the management.
+     */
+    const index = farms.findIndex((farm) => farm.id === id);
+    farms[index].timer.stopTimer();
+    farms[index].scheduler.stopAll();
+    farms[index].destroyAllWindows();
+    farms.splice(index, 1);
+
+    /**
+     * Delete the settings of the farm.
+     */
+    deleteSettingsOfOwner(id);
+
+    sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
+    sendOneWay(IpcChannels.settingsChanged, getSettings());
+}
+
+function addNewFarm(farm: NewFarm): void {
     switch (farm.type) {
         case 'youtube':
             farms.push(
@@ -94,8 +118,16 @@ handleOneWay(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
         disabled: false
     });
 
-    sendOneWay(IpcChannels.newFarms, getFarmsRendererData());
-    sendOneWay(IpcChannels.newSettings, getSettings());
+    sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
+    sendOneWay(IpcChannels.settingsChanged, getSettings());
+}
+
+handleOneWay(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
+    addNewFarm(farm);
+});
+
+handleOneWay(IpcChannels.deleteFarm, (event, id) => {
+    deleteFarm(id);
 });
 
 listenForEvent(EventChannels.PCWentToSleep, () => {

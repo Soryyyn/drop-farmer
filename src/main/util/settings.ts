@@ -151,6 +151,21 @@ export function updateSettings(settings: SettingsStoreSchema): void {
     toggleAutoLaunch();
 }
 
+/**
+ * Delete the settings entry and it's settings of a specific owner.
+ */
+export function deleteSettingsOfOwner(owner: string): void {
+    const settings = getSettings();
+
+    for (const [key, value] of Object.entries(settings.settings)) {
+        if (key === owner) {
+            delete settings.settings[key];
+        }
+    }
+
+    updateSettings(settings);
+}
+
 function toggleAutoLaunch(): void {
     autoLauncher.isEnabled().then((isEnabled) => {
         const setting = getSetting('application', 'launchOnStartup')!
