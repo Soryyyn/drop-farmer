@@ -22,27 +22,26 @@ export enum Alignment {
 interface Props {
     button: JSX.Element;
     alignment: Alignment;
-    containerStyling?: string;
-    entryItemsStyling?: string;
     entries: MenuEntry[];
+    fullWidth?: boolean;
 }
 
-export default function Menu({
-    button,
-    entries,
-    containerStyling,
-    entryItemsStyling,
-    alignment
-}: Props) {
+export default function Menu({ button, entries, alignment, fullWidth }: Props) {
     return (
-        <HeadlessMenu as="div" className="relative w-fit box-border">
-            <HeadlessMenu.Button>{button}</HeadlessMenu.Button>
+        <HeadlessMenu
+            as="div"
+            className={clsx('relative w-fit box-border', {
+                'w-full': fullWidth
+            })}
+        >
+            <HeadlessMenu.Button className="w-full">
+                {button}
+            </HeadlessMenu.Button>
 
             <HeadlessMenu.Items
                 as="div"
                 className={clsx(
-                    containerStyling,
-                    'w-max absolute flex flex-col box-border',
+                    'w-max absolute flex flex-col box-border z-50 mt-1 bg-pepper-200/95 backdrop-blur-2xl rounded-md p-2 gap-1 shadow-xl shadow-pepper-200/25',
                     alignment === Alignment.BottomLeft && 'left-0',
                     alignment === Alignment.BottomRight && 'right-0',
                     alignment === Alignment.TopLeft &&
@@ -57,7 +56,7 @@ export default function Menu({
                             <HeadlessMenu.Item
                                 key={index}
                                 as="div"
-                                className="bg-pepper-500/50 h-0.5 w-[98%] rounded-full self-center"
+                                className="bg-pepper-200/50 h-0.5 w-[98%] rounded-full self-center"
                             />
                         );
                     } else {
@@ -66,8 +65,10 @@ export default function Menu({
                                 key={index}
                                 as="div"
                                 className={clsx(
-                                    'flex flex-row',
-                                    entryItemsStyling,
+                                    'flex flex-row gap-2 rounded leading-none py-1.5 pr-2 hover:bg-pepper-400 active:bg-pepper-500 text-snow-500 cursor-pointer min-w-[120px]',
+                                    {
+                                        'pl-2': !entry.icon
+                                    },
                                     entry.styling,
                                     {
                                         'text-blood-400': entry.caution,

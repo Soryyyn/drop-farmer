@@ -75,8 +75,6 @@ export default function SidebarItem() {
                     </NotificationBadge>
                 }
                 alignment={Alignment.BottomRight}
-                containerStyling="z-50 mt-1 bg-pepper-600/95 backdrop-blur-2xl rounded-md p-2 gap-1 shadow-xl shadow-pepper-600/25"
-                entryItemsStyling="gap-2 rounded leading-none py-1.5 pr-2 hover:bg-pepper-500 active:bg-pepper-400 text-snow-500 cursor-pointer"
                 entries={[
                     {
                         type: 'normal',
