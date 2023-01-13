@@ -44,6 +44,7 @@ type Setting = {
     min?: number;
     max?: number;
     disabled?: boolean;
+    requiresRestart?: boolean;
 };
 
 type SettingsStoreSchema = {

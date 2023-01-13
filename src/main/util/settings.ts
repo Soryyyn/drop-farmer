@@ -45,26 +45,23 @@ const store = new ElectronStore<SettingsStoreSchema>({
                     shown: 'Automatically check for updates',
                     desc: "Enable to automatically check for updates. If you don't wan't to update, disable this setting.",
                     value: true,
-                    default: true
+                    default: true,
+                    requiresRestart: true
                 },
                 {
                     id: 'reducedMotion',
                     shown: 'Prefer reduced motion',
                     desc: 'Enable this setting to keep animations & transitions to the minimum.',
                     value: false,
-                    default: false
+                    default: false,
+                    requiresRestart: true
                 }
             ]
         }
     },
     migrations: {
-        '0.0.1': (store) => {
-            const settings: Setting[] = store.get('settings.application');
-            const index = settings.findIndex(
-                (setting) => setting.id === 'debugLogs'
-            );
-            settings.splice(index, 1);
-            store.set('settings.application', settings);
+        'v1.0.0-beta30': (store) => {
+            store.clear();
         }
     }
 });

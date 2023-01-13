@@ -1,6 +1,7 @@
 import React from 'react';
 import DisabledIndicator from './DisabledIndicator';
 import NumberInput from './NumberInput';
+import RestartIndicator from './RestartIndicator';
 import SwitchToggle from './SwitchToggle';
 import TextValue from './TextValue';
 
@@ -26,6 +27,7 @@ export default function Setting({ setting, onChange }: Props) {
                 <div className="flex flex-row gap-4">
                     <p className="font-medium">{setting.shown}</p>
                     {setting.disabled && <DisabledIndicator />}
+                    {setting.requiresRestart && <RestartIndicator />}
                 </div>
                 <p className="text-snow-300/50">{setting.desc}</p>
             </div>
