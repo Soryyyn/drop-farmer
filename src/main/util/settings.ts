@@ -60,7 +60,7 @@ const store = new ElectronStore<SettingsStoreSchema>({
         }
     },
     migrations: {
-        'v1.0.0-beta30': (store) => {
+        'v1.0.0-beta31': (store) => {
             store.clear();
         }
     }

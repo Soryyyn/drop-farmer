@@ -131,7 +131,7 @@ autoUpdater.on('update-downloaded', () => {
             type: 'success',
             id: Toasts.UpdateChecking,
             duration: 4000,
-            textOnError: 'Update available.'
+            textOnSuccess: 'Update available.'
         });
     }
 
