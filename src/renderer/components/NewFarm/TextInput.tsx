@@ -17,7 +17,7 @@ export default function TextInput({ label, required, value, onChange }: Props) {
             </div>
 
             <input
-                className="bg-pepper-700 px-2 py-1 rounded focus:outline-none hover:bg-pepper-800 focus:bg-pepper-800 text-snow-300"
+                className="bg-pepper-700 px-2 py-1 rounded focus:outline-none hover:bg-pepper-800 focus:bg-pepper-800 text-snow-300 h-[33.5px]"
                 onChange={(event) => onChange(event.target.value)}
                 value={value}
             />

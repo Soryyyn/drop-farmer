@@ -1,4 +1,6 @@
+import { Icon } from '@components/global/Icon';
 import Menu, { Alignment } from '@components/global/Menu';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 import RequiredIndicator from './RequiredIndicator';
 
@@ -26,8 +28,13 @@ export default function Select({
 
             <Menu
                 button={
-                    <div className="w-full bg-pepper-700 px-2 py-1 rounded focus:outline-none hover:bg-pepper-800 focus:bg-pepper-800 text-snow-300 capitalize text-left">
-                        {value}
+                    <div className="w-full bg-pepper-700 px-2 py-1 rounded focus:outline-none hover:bg-pepper-800 focus:bg-pepper-800 text-snow-300 capitalize text-left h-[33.5px] flex flex-row items-center">
+                        <span>{value}</span>
+                        <Icon
+                            sprite={faChevronDown}
+                            size="sm"
+                            className="ml-auto"
+                        />
                     </div>
                 }
                 fullWidth={true}

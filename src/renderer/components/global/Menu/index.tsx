@@ -65,7 +65,7 @@ export default function Menu({ button, entries, alignment, fullWidth }: Props) {
                                 key={index}
                                 as="div"
                                 className={clsx(
-                                    'flex flex-row gap-2 rounded leading-none py-1.5 pr-2 hover:bg-pepper-400 active:bg-pepper-500 text-snow-500 cursor-pointer min-w-[120px]',
+                                    'flex flex-row gap-2 rounded leading-none py-1.5 pr-2 hover:bg-pepper-400 active:bg-pepper-500 text-snow-500 cursor-pointer min-w-[200px]',
                                     {
                                         'pl-2': !entry.icon
                                     },

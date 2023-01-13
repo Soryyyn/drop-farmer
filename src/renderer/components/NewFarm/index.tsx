@@ -1,10 +1,9 @@
 import { OverlayContainer } from '@components/global/Overlay/OverlayContainer';
 import OverlayContent from '@components/global/Overlay/OverlayContent';
 import { ActionButton } from '@components/Settings/ActionButton';
-import { faBoxOpen, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FarmsContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast';
 import NumberInput from './NumberInput';
 import Section from './Section';
 import Select from './Select';
@@ -38,7 +37,7 @@ export default function NewFarm({ onClose }: Props) {
                 buttons={[
                     <ActionButton
                         key="newFarm"
-                        icon={faBoxOpen}
+                        icon={faFloppyDisk}
                         tooltip="Create a new farm with the filled out details"
                         onClick={() => {
                             addFarm(farmDetails);
