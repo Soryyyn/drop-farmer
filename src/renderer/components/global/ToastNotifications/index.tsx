@@ -3,22 +3,25 @@ import React from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function ToastNotifications() {
-    useHandleOneWay(api.channels.toast, null, (event, receivedToast: Toast) => {
-        if (receivedToast.type === 'success') {
-            toast.success(receivedToast.textOnSuccess!, {
-                id: receivedToast.id,
-                duration: receivedToast.duration
-            });
-        } else if (receivedToast.type === 'error') {
-            toast.error(receivedToast.textOnError!, {
-                id: receivedToast.id,
-                duration: receivedToast.duration
-            });
-        } else if (receivedToast.type === 'loading') {
-            toast.loading(receivedToast.textOnLoading!, {
-                id: receivedToast.id,
-                duration: receivedToast.duration
-            });
+    useHandleOneWay({
+        channel: api.channels.toast,
+        callback: (event, receivedToast: Toast) => {
+            if (receivedToast.type === 'success') {
+                toast.success(receivedToast.textOnSuccess!, {
+                    id: receivedToast.id,
+                    duration: receivedToast.duration
+                });
+            } else if (receivedToast.type === 'error') {
+                toast.error(receivedToast.textOnError!, {
+                    id: receivedToast.id,
+                    duration: receivedToast.duration
+                });
+            } else if (receivedToast.type === 'loading') {
+                toast.loading(receivedToast.textOnLoading!, {
+                    id: receivedToast.id,
+                    duration: receivedToast.duration
+                });
+            }
         }
     });
 

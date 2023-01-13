@@ -1,9 +1,9 @@
-import { EventChannels, IpcChannels } from '@main/common/constants';
+import { EventChannels, IpcChannels, Toasts } from '@main/common/constants';
 import {
     getTypeFromText,
     removeTypeFromText
 } from '@main/common/stringManipulation';
-import { handleOneWay, sendOneWay } from '@main/electron/ipc';
+import { handleAndReply, handleOneWay, sendOneWay } from '@main/electron/ipc';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import {
@@ -12,6 +12,7 @@ import {
     getSettings,
     updateSetting
 } from '@main/util/settings';
+import { sendToast } from '@main/util/toast';
 import LeagueOfLegends from './farms/leagueOfLegends';
 import TwitchStreamer from './farms/twitchStreamer';
 import YoutubeStream from './farms/youtubeStream';
@@ -136,7 +137,9 @@ function deleteFarm(id: string): void {
     sendOneWay(IpcChannels.settingsChanged, getSettings());
 }
 
-function addNewFarm(farm: NewFarm): void {
+function addNewFarm(farm: NewFarm): FarmRendererData[] {
+    validateNewFarm(farm);
+
     switch (farm.type) {
         case 'youtube':
             farms.push(
@@ -163,12 +166,60 @@ function addNewFarm(farm: NewFarm): void {
         disabled: false
     });
 
-    sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
     sendOneWay(IpcChannels.settingsChanged, getSettings());
+    return getFarmsRendererData();
 }
 
-handleOneWay(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
-    addNewFarm(farm);
+function validateNewFarm(farm: NewFarm): void {
+    /**
+     * Validate url.
+     */
+    let urlOk = false;
+    let regex;
+
+    switch (farm.type) {
+        case 'twitch':
+            regex = new RegExp(
+                /(?:www\.|go\.)?twitch\.tv\/([a-zA-Z0-9_]+)($|\?)/
+            );
+            break;
+        case 'youtube':
+            regex = new RegExp(
+                /http(s)?:\/\/(www|m).youtube.com\/((channel|c)\/)?(?!feed|user\/|watch\?)([a-zA-Z0-9-_.])*.*/
+            );
+            break;
+    }
+
+    urlOk = regex.test(farm.url);
+
+    /**
+     * More checks in the future?
+     */
+    if (!urlOk) {
+        throw new Error(
+            'URL is not a valid channel URL for the given farm type'
+        );
+    }
+}
+
+handleAndReply(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
+    try {
+        sendToast({
+            id: Toasts.FarmCreation,
+            type: 'success',
+            duration: 4000,
+            textOnSuccess: `Successfully created farm ${farm.id}`
+        });
+        return addNewFarm(farm);
+    } catch (error) {
+        sendToast({
+            id: Toasts.FarmCreation,
+            type: 'error',
+            duration: 4000,
+            textOnError: `Failed creating farm (${error})`
+        });
+        return undefined;
+    }
 });
 
 handleOneWay(IpcChannels.deleteFarm, (event, id) => {

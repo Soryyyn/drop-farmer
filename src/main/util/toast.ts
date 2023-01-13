@@ -39,7 +39,11 @@ export function sendToast(
             callback!();
             sendOneWay(IpcChannels.toast, { ...toast, type: 'success' });
         } catch (error) {
-            sendOneWay(IpcChannels.toast, { ...toast, type: 'error' });
+            sendOneWay(IpcChannels.toast, {
+                ...toast,
+                type: 'error',
+                textOnError: `${toast.textOnError} (${error})`
+            });
         }
     }
 
@@ -54,7 +58,11 @@ export function sendToast(
                 sendOneWay(IpcChannels.toast, { ...toast, type: 'success' })
             )
             .catch((error) =>
-                sendOneWay(IpcChannels.toast, { ...toast, type: 'error' })
+                sendOneWay(IpcChannels.toast, {
+                    ...toast,
+                    type: 'error',
+                    textOnError: `${toast.textOnError} (${error})`
+                })
             );
     }
 }

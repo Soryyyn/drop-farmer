@@ -1,5 +1,11 @@
 import { useEffect } from 'react';
 
+interface Props {
+    channel: any;
+    dependency?: any;
+    callback: (event: any, response: any) => void;
+}
+
 /**
  * Hook to react to a one-way ipc signal received from the main process.
  *
@@ -8,11 +14,7 @@ import { useEffect } from 'react';
  * @param {(event: any, response: any) => void} callback The received signal
  * from the ipc event.
  */
-export function useHandleOneWay(
-    channel: any,
-    dependency: any,
-    callback: (event: any, response: any) => void
-) {
+export function useHandleOneWay({ channel, dependency, callback }: Props) {
     useEffect(() => {
         api.handleOneWay(channel, (event: any, response: any) => {
             callback(event, response);

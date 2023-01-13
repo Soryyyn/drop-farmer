@@ -52,9 +52,11 @@ export const UpdateContext = createContext<{
 
 export const FarmsContext = createContext<{
     farms: FarmRendererData[];
+    isValid: boolean;
     addFarm: (farm: NewFarm) => void;
 }>({
     farms: [],
+    isValid: false,
     addFarm: () => {}
 });
 
@@ -81,25 +83,23 @@ export function SettingsContextProvider({ children }: DefaultProps) {
     const [settings, setSettings] = useState<SettingsStoreSchema>();
     const [oldSettings, setOldSettings] = useState<SettingsStoreSchema>();
 
-    useSendAndWait(
-        api.channels.getSettings,
-        null,
-        (err, settings: SettingsStoreSchema) => {
+    useSendAndWait({
+        channel: api.channels.getSettings,
+        callback: (err, settings: SettingsStoreSchema) => {
             if (!err) {
                 setSettings(settings);
                 setOldSettings(cloneDeep(settings));
             }
         }
-    );
+    });
 
-    useHandleOneWay(
-        api.channels.settingsChanged,
-        null,
-        (event, changedSettings: SettingsStoreSchema) => {
+    useHandleOneWay({
+        channel: api.channels.settingsChanged,
+        callback: (event, changedSettings: SettingsStoreSchema) => {
             setSettings(changedSettings);
             setOldSettings(cloneDeep(changedSettings));
         }
-    );
+    });
 
     /**
      * Function to save new settings in the main process.
@@ -156,13 +156,12 @@ export function InternetConnectionContextProvider({ children }: DefaultProps) {
     const [internetConnectionContext, setInternetConnectContext] =
         useState<boolean>(true);
 
-    useHandleOneWay(
-        api.channels.internet,
-        null,
-        (event, internetConnection) => {
+    useHandleOneWay({
+        channel: api.channels.internet,
+        callback: (event, internetConnection) => {
             setInternetConnectContext(internetConnection);
         }
-    );
+    });
 
     return (
         <InternetConnectionContext.Provider value={internetConnectionContext}>
@@ -208,13 +207,12 @@ export function ModalContextProvider({ children }: DefaultProps) {
 export function UpdateContextProvider({ children }: DefaultProps) {
     const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
-    useHandleOneWay(
-        api.channels.updateStatus,
-        null,
-        (event, status: boolean) => {
+    useHandleOneWay({
+        channel: api.channels.updateStatus,
+        callback: (event, status: boolean) => {
             setUpdateAvailable(status);
         }
-    );
+    });
 
     function checkForUpdate() {
         api.sendOneWay(api.channels.updateCheck);
@@ -235,29 +233,42 @@ export function UpdateContextProvider({ children }: DefaultProps) {
 
 export function FarmsContextProvider({ children }: DefaultProps) {
     const [farms, setFarms] = useState<FarmRendererData[]>([]);
+    const [farmAdded, setFarmAdded] = useState<NewFarm>();
+    const [isValid, setIsValid] = useState(false);
 
-    useSendAndWait(
-        api.channels.getFarms,
-        null,
-        (err, farms: FarmRendererData[]) => {
+    useSendAndWait({
+        channel: api.channels.getFarms,
+        callback: (err, farms: FarmRendererData[]) => {
             if (!err) setFarms(farms);
         }
-    );
+    });
 
-    useHandleOneWay(
-        api.channels.farmsChanged,
-        null,
-        (event, changedFarms: FarmRendererData[]) => {
+    useSendAndWait({
+        channel: api.channels.addNewFarm,
+        args: farmAdded,
+        dependency: farmAdded,
+        skipFirstRender: true,
+        callback: (err, updatedFarms: FarmRendererData[] | undefined) => {
+            if (!err && updatedFarms) {
+                setFarms(updatedFarms);
+                setIsValid(true);
+            }
+        }
+    });
+
+    useHandleOneWay({
+        channel: api.channels.farmsChanged,
+        callback: (event, changedFarms: FarmRendererData[]) => {
             setFarms(changedFarms);
         }
-    );
+    });
 
     function addFarm(farm: NewFarm): void {
-        api.sendOneWay(api.channels.addNewFarm, farm);
+        setFarmAdded(farm);
     }
 
     return (
-        <FarmsContext.Provider value={{ farms, addFarm }}>
+        <FarmsContext.Provider value={{ farms, isValid, addFarm }}>
             {children}
         </FarmsContext.Provider>
     );
@@ -275,25 +286,23 @@ export function FarmContextProvider({
     /**
      * Update the status if the status update is the tracked farm.
      */
-    useHandleOneWay(
-        api.channels.farmStatusChange,
-        null,
-        (event, newFarmStatus: FarmRendererData) => {
+    useHandleOneWay({
+        channel: api.channels.farmStatusChange,
+        callback: (event, newFarmStatus: FarmRendererData) => {
             if (newFarmStatus.id === trackedFarm.id) {
                 setTrackedFarm(newFarmStatus);
             }
         }
-    );
+    });
 
-    useHandleOneWay(
-        api.channels.farmLogin,
-        null,
-        (event, data: LoginForFarmObject) => {
+    useHandleOneWay({
+        channel: api.channels.farmLogin,
+        callback: (event, data: LoginForFarmObject) => {
             if (data.id === trackedFarm.id) {
                 setLoginNeeded(data.needed);
             }
         }
-    );
+    });
 
     function setWindowsVisibility(shouldBeShown: boolean) {
         api.sendOneWay(api.channels.farmWindowsVisibility, {

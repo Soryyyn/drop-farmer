@@ -1,5 +1,6 @@
 export enum Toasts {
-    UpdateChecking = 'update-checking'
+    UpdateChecking = 'update-checking',
+    FarmCreation = 'farm-creation'
 }
 
 export enum IpcChannels {
