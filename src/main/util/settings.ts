@@ -15,51 +15,56 @@ const autoLauncher = new AutoLaunch({ name: 'drop-farmer' });
 const store = new ElectronStore<SettingsStoreSchema>({
     name: FileNames.SettingsStoreFileName,
     clearInvalidConfig: true,
-    encryptionKey: process.env.STORES_ENCRYPTION_KEY,
+    encryptionKey:
+        process.env.NODE_ENV === 'production'
+            ? process.env.STORES_ENCRYPTION_KEY
+            : '',
     cwd:
         process.env.NODE_ENV === 'production'
             ? app.getPath('userData')
             : join(__dirname, '../../'),
     defaults: {
-        application: [
-            {
-                id: 'launchOnStartup',
-                shown: 'Launch on startup',
-                desc: 'Enable or disable if drop-farmer should be started when your PC has finished booting.',
-                value: false,
-                default: false
-            },
-            {
-                id: 'showMainWindowOnLaunch',
-                shown: 'Show main window on launch',
-                desc: 'If the main window should be shown when drop-farmer starts.',
-                value: true,
-                default: true
-            },
-            {
-                id: 'showWindowsForLogin',
-                shown: 'Show farm windows automatically for login',
-                desc: 'If enabled, the window of a farm, where login is required to continue, will automatically be shown.',
-                value: false,
-                default: false
-            },
-            {
-                id: 'checkForUpdates',
-                shown: 'Automatically check for updates',
-                desc: "Enable to automatically check for updates. If you don't wan't to update, disable this setting.",
-                value: true,
-                default: true,
-                requiresRestart: true
-            },
-            {
-                id: 'reducedMotion',
-                shown: 'Prefer reduced motion',
-                desc: 'Enable this setting to keep animations & transitions to the minimum.',
-                value: false,
-                default: false,
-                requiresRestart: true
-            }
-        ]
+        settings: {
+            application: [
+                {
+                    id: 'launchOnStartup',
+                    shown: 'Launch on startup',
+                    desc: 'Enable or disable if drop-farmer should be started when your PC has finished booting.',
+                    value: false,
+                    default: false
+                },
+                {
+                    id: 'showMainWindowOnLaunch',
+                    shown: 'Show main window on launch',
+                    desc: 'If the main window should be shown when drop-farmer starts.',
+                    value: true,
+                    default: true
+                },
+                {
+                    id: 'showWindowsForLogin',
+                    shown: 'Show farm windows automatically for login',
+                    desc: 'If enabled, the window of a farm, where login is required to continue, will automatically be shown.',
+                    value: false,
+                    default: false
+                },
+                {
+                    id: 'checkForUpdates',
+                    shown: 'Automatically check for updates',
+                    desc: "Enable to automatically check for updates. If you don't wan't to update, disable this setting.",
+                    value: true,
+                    default: true,
+                    requiresRestart: true
+                },
+                {
+                    id: 'reducedMotion',
+                    shown: 'Prefer reduced motion',
+                    desc: 'Enable this setting to keep animations & transitions to the minimum.',
+                    value: false,
+                    default: false,
+                    requiresRestart: true
+                }
+            ]
+        }
     },
     beforeEachMigration: (store, context) => {
         log(
@@ -73,38 +78,26 @@ const store = new ElectronStore<SettingsStoreSchema>({
         },
         'v1.0.0-beta32': (store) => {
             store.clear();
-
-            /**
-             * Delete the settings store file, because encryption has been enabled.
-             */
-            unlinkSync(
-                process.env.NODE_ENV === 'production'
-                    ? join(
-                          app.getPath('userData'),
-                          `${FileNames.SettingsStoreFileName}.json`
-                      )
-                    : join(
-                          __dirname,
-                          '../../',
-                          `${FileNames.SettingsStoreFileName}.json`
-                      )
-            );
         }
     }
 });
+
+console.log(store.store);
 
 /**
  * Get all settings in the settings store.
  */
 export function getSettings(): SettingsStoreSchema {
-    return store.store;
+    return {
+        settings: store.get('settings')
+    };
 }
 
 /**
  * Get a specific setting of the settings store by dot notation.
  */
 export function getSetting(owner: string, id: string): Setting | undefined {
-    const settings: Setting[] = store.get(owner);
+    const settings: Setting[] = store.get(`settings.${owner}`);
     return settings.find((setting) => setting?.id === id);
 }
 
@@ -112,20 +105,20 @@ export function getSetting(owner: string, id: string): Setting | undefined {
  * Set a specific setting by key and value pair via dot notation.
  */
 export function setSetting(owner: string, value: Setting) {
-    if (!store.get(owner)) {
-        store.set(owner, []);
+    if (!store.get(`settings.${owner}`)) {
+        store.set(`settings.${owner}`, []);
     }
 
-    const settings: Setting[] = store.get(owner);
+    const settings: Setting[] = store.get(`settings.${owner}`);
     settings.push(value);
-    store.set(owner, settings);
+    store.set(`settings.${owner}`, settings);
 }
 
 /**
  * Checks if a specific setting exists inside an owner object
  */
 export function doesSettingExist(owner: string, id: string): boolean {
-    const settings: Setting[] = store.get(owner);
+    const settings: Setting[] = store.get(`settings.${owner}`);
 
     if (settings !== undefined && Array.isArray(settings)) {
         if (settings.find((setting) => setting?.id === id)) {
@@ -150,7 +143,7 @@ export function updateSetting(
         /**
          * Remove the old setting and save it's index.
          */
-        const settings: Setting[] = store.get(owner);
+        const settings: Setting[] = store.get(`settings.${owner}`);
         const index = settings.findIndex((setting) => setting.id === id);
         settings.splice(index, 1);
 
@@ -158,7 +151,7 @@ export function updateSetting(
          * Insert updated settings at old position.
          */
         settings.splice(index, 0, updated);
-        store.set(owner, settings);
+        store.set(`settings.${owner}`, settings);
 
         toggleAutoLaunch();
     }
@@ -168,8 +161,7 @@ export function updateSetting(
  * Update the whole settings at once.
  */
 export function updateSettings(settings: SettingsStoreSchema): void {
-    // store.set('settings', settings.settings);
-    store.store = settings;
+    store.set('settings', settings.settings);
 
     toggleAutoLaunch();
 }
@@ -180,9 +172,9 @@ export function updateSettings(settings: SettingsStoreSchema): void {
 export function deleteSettingsOfOwner(owner: string): void {
     const settings = getSettings();
 
-    for (const [key, value] of Object.entries(settings)) {
+    for (const [key, value] of Object.entries(settings.settings)) {
         if (key === owner) {
-            delete settings[key];
+            delete settings.settings[key];
         }
     }
 

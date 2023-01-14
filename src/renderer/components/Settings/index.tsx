@@ -73,7 +73,7 @@ export default function Settings({ onClose }: Props) {
 
                     {/* Settings */}
                     <ul className="grow flex flex-col gap-4 overflow-y-auto">
-                        {settings?.[selected].map((setting) => {
+                        {settings?.settings[selected].map((setting) => {
                             return (
                                 <Setting
                                     key={setting.id}
@@ -82,16 +82,14 @@ export default function Settings({ onClose }: Props) {
                                         const copyOfSettings = { ...settings };
                                         const newFarmSetting = { ...setting };
 
-                                        copyOfSettings[selected].forEach(
-                                            (s) => {
-                                                if (
-                                                    newFarmSetting.id === s.id
-                                                ) {
-                                                    s.value = updated;
-                                                    s = newFarmSetting;
-                                                }
+                                        copyOfSettings.settings[
+                                            selected
+                                        ].forEach((s) => {
+                                            if (newFarmSetting.id === s.id) {
+                                                s.value = updated;
+                                                s = newFarmSetting;
                                             }
-                                        );
+                                        });
 
                                         setCurrentSettings(copyOfSettings);
                                     }}

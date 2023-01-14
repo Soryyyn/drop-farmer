@@ -7,6 +7,7 @@ import {
     getBrowserConnection,
     getElementProperty,
     getElementTagName,
+    pageUrlContains,
     waitForElementToAppear,
     waitForTimeout
 } from '@main/util/puppeteer';
@@ -38,40 +39,26 @@ export default class LeagueOfLegends extends FarmTemplate {
                     /**
                      * Click the "login" button on the top right.
                      */
-                    await page.click('a[data-riotbar-link-id="login"]');
-
-                    await waitForTimeout(10000);
+                    await page.click(
+                        'div.riotbar-account-anonymous-link-wrapper'
+                    );
 
                     /**
                      * Wait for either the user has been redirected to the main page
                      * logged in *or* redirected to the login page.
                      */
-                    const finishedSelector = await Promise.race([
+                    const finished = await Promise.race([
                         waitForElementToAppear(
                             page,
                             'div.riotbar-summoner-name'
                         ),
-                        waitForElementToAppear(
-                            page,
-                            'body > div:nth-child(3) > div > div > div.grid.grid-direction__row.grid-page-web__content > div > div > div.grid.grid-align-center.grid-justify-space-between.grid-fill.grid-direction__column.grid-panel-web__content.grid-panel__content > div > div > div > div:nth-child(1) > div > input'
-                        )
+                        pageUrlContains(page, 'https://auth.riotgames.com/')
                     ]);
 
-                    /**
-                     * Returns either `DIV` if at home route or `INPUT` if at login.
-                     */
-                    const tagName = await getElementTagName(
-                        page,
-                        finishedSelector!
-                    );
-
-                    if (tagName === 'DIV') {
-                        log('info', `${this.id}: Login completed`);
-                        resolve(undefined);
-                    } else if (tagName === 'INPUT') {
+                    if (typeof finished === 'boolean') {
                         log('info', `${this.id}: Login is needed by user`);
-
                         wasLoginNeeded = true;
+
                         emitEvent(EventChannels.LoginForFarm, {
                             id: this.id,
                             needed: true
@@ -85,16 +72,16 @@ export default class LeagueOfLegends extends FarmTemplate {
                             window.focus();
                         }
 
+                        console.log('test');
+
                         /**
                          * Back at main page.
                          */
-                        waitForElementToAppear(
-                            page,
-                            'div.riotbar-summoner-name',
-                            0
-                        ).then(() => {
-                            log('info', `${this.id}: Login completed`);
-                        });
+                        await waitForElementToAppear(page, 'main.Home', 0);
+
+                        console.log('test2');
+                    } else {
+                        log('info', `${this.id}: Login completed`);
                     }
                 } else {
                     log(

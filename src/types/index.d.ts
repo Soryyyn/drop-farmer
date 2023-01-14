@@ -49,7 +49,9 @@ type Setting = {
 };
 
 type SettingsStoreSchema = {
-    [name: string]: Setting[];
+    settings: {
+        [name: string]: Setting[];
+    };
 };
 
 /**
