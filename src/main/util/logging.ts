@@ -1,12 +1,12 @@
-import { Constants } from '@main/common/constants';
+import { FileNames } from '@main/common/constants';
 import { app } from 'electron';
 import { join } from 'path';
 import SimpleLogger, { createLogManager } from 'simple-node-logger';
 
 const filePath =
     process.env.NODE_ENV === 'production'
-        ? join(app.getPath('userData'), Constants.LogFileName)
-        : join(__dirname, '../../', Constants.LogFileName);
+        ? join(app.getPath('userData'), FileNames.LogFileName)
+        : join(__dirname, '../../', FileNames.LogFileName);
 
 const logManager = createLogManager();
 

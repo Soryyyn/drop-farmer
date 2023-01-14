@@ -1,44 +1,49 @@
-export enum Toasts {
-    UpdateChecking = 'update-checking',
-    FarmCreation = 'farm-creation'
-}
+export const Toasts = {
+    UpdateChecking: 'update-checking',
+    FarmCreation: 'farm-creation'
+} as const;
+export type Toast = typeof Toasts[keyof typeof Toasts];
 
-export enum IpcChannels {
-    openLinkInExternal = 'open-link-in-external',
-    getFarms = 'get-farms',
-    farmStatusChange = 'farm-status-change',
-    farmWindowsVisibility = 'farm-windows-visibility',
-    getSettings = 'get-settings',
-    saveNewSettings = 'save-new-settings',
-    getApplicationVersion = 'get-application-version',
-    clearCache = 'clear-cache',
-    restartScheduler = 'restart-scheduler',
-    shutdown = 'shutdown',
-    toast = 'toast',
-    internet = 'internet',
-    installUpdate = 'install-update',
-    updateCheck = 'update-check',
-    updateStatus = 'update-status',
-    farmLogin = 'farm-login',
-    addNewFarm = 'add-new-farm',
-    farmsChanged = 'farms-changed',
-    settingsChanged = 'settings-changed',
-    deleteFarm = 'delete-farm'
-}
+export const IpcChannels = {
+    openLinkInExternal: 'open-link-in-external',
+    getFarms: 'get-farms',
+    farmStatusChange: 'farm-status-change',
+    farmWindowsVisibility: 'farm-windows-visibility',
+    getSettings: 'get-settings',
+    saveNewSettings: 'save-new-settings',
+    getApplicationVersion: 'get-application-version',
+    clearCache: 'clear-cache',
+    restartScheduler: 'restart-scheduler',
+    shutdown: 'shutdown',
+    toast: 'toast',
+    internet: 'internet',
+    installUpdate: 'install-update',
+    updateCheck: 'update-check',
+    updateStatus: 'update-status',
+    farmLogin: 'farm-login',
+    addNewFarm: 'add-new-farm',
+    farmsChanged: 'farms-changed',
+    settingsChanged: 'settings-changed',
+    deleteFarm: 'delete-farm'
+} as const;
+export type IpcChannel = typeof IpcChannels[keyof typeof IpcChannels];
 
-export enum EventChannels {
-    PCWentToSleep = 'pc-went-to-sleep',
-    PCWokeUp = 'pc-woke-up',
-    LoginForFarm = 'login-for-farm'
-}
+export const EventChannels = {
+    PCWentToSleep: 'pc-went-to-sleep',
+    PCWokeUp: 'pc-woke-up',
+    LoginForFarm: 'login-for-farm'
+} as const;
+export type EventChannel = typeof EventChannels[keyof typeof EventChannels];
 
-export const Constants = {
+export const FileNames = {
     LogFileName: '.log',
-    StoreFileName: 'store',
+    SettingsStoreFileName: 'settings',
     StatisticsStoreFileName: 'statistics'
-};
+} as const;
+export type FileName = typeof FileNames[keyof typeof FileNames];
 
-export enum Schedules {
-    CheckToFarm = 'check-to-farm',
-    Update = 'update'
-}
+export const Schedules = {
+    CheckToFarm: 'check-to-farm',
+    Update: 'update'
+} as const;
+export type Schedule = typeof Schedules[keyof typeof Schedules];

@@ -50,7 +50,7 @@ export default function Navigation() {
             />
             <NavigationItem
                 icon={faPowerOff}
-                tooltip="Shutdown application"
+                tooltip="Quit"
                 onClick={() => api.sendOneWay(api.channels.shutdown)}
             />
         </div>

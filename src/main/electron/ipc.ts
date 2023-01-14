@@ -1,4 +1,4 @@
-import { IpcChannels } from '@main/common/constants';
+import { IpcChannel, IpcChannels } from '@main/common/constants';
 import { removeTypeFromText } from '@main/common/stringManipulation';
 import {
     applySettingsToFarms,
@@ -18,7 +18,7 @@ import { getMainWindow, setAppQuitting } from './windows';
  * @param {(event: IpcMainEvent, ...args: any[]) => void} listener Callback when event has been received.
  */
 export function handleOneWay(
-    channel: IpcChannels,
+    channel: IpcChannel,
     listener: (event: Electron.IpcMainEvent, ...args: any[]) => void
 ) {
     log('info', `Handling one-way signal on ${channel}`);

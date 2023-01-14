@@ -1,12 +1,12 @@
+import { EventChannel } from '@main/common/constants';
 import { EventEmitter } from 'events';
-import { EventChannels } from '../common/constants';
 
 const em = new EventEmitter();
 
 /**
  * Emit a main process only event.
  */
-export function emitEvent(eventChannel: EventChannels, ...args: any[]) {
+export function emitEvent(eventChannel: EventChannel, ...args: any[]) {
     em.emit(eventChannel, args);
 }
 
@@ -14,7 +14,7 @@ export function emitEvent(eventChannel: EventChannels, ...args: any[]) {
  * Listen for a main process only event.
  */
 export function listenForEvent(
-    eventChannel: EventChannels,
+    eventChannel: EventChannel,
     onEvent: (...args: any[]) => void
 ) {
     em.on(eventChannel, onEvent);

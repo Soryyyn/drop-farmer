@@ -1,3 +1,4 @@
+import { FileNames } from '@main/common/constants';
 import AutoLaunch from 'auto-launch';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
@@ -10,7 +11,7 @@ const autoLauncher = new AutoLaunch({ name: 'drop-farmer' });
  * After this store is created, the farm settings still need to be added.
  */
 const store = new ElectronStore<SettingsStoreSchema>({
-    name: 'store',
+    name: FileNames.SettingsStoreFileName,
     clearInvalidConfig: true,
     cwd:
         process.env.NODE_ENV === 'production'
