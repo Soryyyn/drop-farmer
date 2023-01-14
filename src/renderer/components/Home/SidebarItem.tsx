@@ -50,7 +50,7 @@ export default function SidebarItem() {
             } else {
                 setTimeUntilNextCheck('...');
             }
-        }, 1000);
+        }, 500);
 
         return () => {
             clearInterval(interval);

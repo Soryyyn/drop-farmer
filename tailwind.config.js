@@ -36,6 +36,10 @@ module.exports = {
             },
             leaf: {
                 500: '#21db87'
+            },
+            amethyst: {
+                400: '#7F56FF',
+                500: '#9173F2'
             }
         },
         extend: {

@@ -3,7 +3,8 @@ type FarmStatus =
     | 'idle'
     | 'checking'
     | 'disabled'
-    | 'attention-required';
+    | 'attention-required'
+    | 'condition-fulfilled';
 
 type BasicToast = {
     id: string;
