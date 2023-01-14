@@ -1,9 +1,9 @@
+import { IpcChannel, IpcChannels } from '@main/common/constants';
 import {
     capitalizeFirstLetter,
     removeTypeFromText
 } from '@main/common/stringManipulation';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
-import { IpcChannel, IpcChannels } from './main/common/constants';
 
 export default {
     channels: IpcChannels,

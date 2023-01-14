@@ -1,10 +1,10 @@
-import { FileNames, PathToStoreFiles } from '@main/common/constants';
+import { FileNames } from '@main/common/constants';
 import AutoLaunch from 'auto-launch';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
+import { unlinkSync } from 'fs';
 import { join } from 'path';
 import { log } from './logging';
-require('dotenv').config();
 
 const autoLauncher = new AutoLaunch({ name: 'drop-farmer' });
 
@@ -16,7 +16,10 @@ const store = new ElectronStore<SettingsStoreSchema>({
     name: FileNames.SettingsStoreFileName,
     clearInvalidConfig: true,
     encryptionKey: process.env.STORES_ENCRYPTION_KEY,
-    cwd: PathToStoreFiles,
+    cwd:
+        process.env.NODE_ENV === 'production'
+            ? app.getPath('userData')
+            : join(__dirname, '../../'),
     defaults: {
         application: [
             {
@@ -70,6 +73,22 @@ const store = new ElectronStore<SettingsStoreSchema>({
         },
         'v1.0.0-beta32': (store) => {
             store.clear();
+
+            /**
+             * Delete the settings store file, because encryption has been enabled.
+             */
+            unlinkSync(
+                process.env.NODE_ENV === 'production'
+                    ? join(
+                          app.getPath('userData'),
+                          `${FileNames.SettingsStoreFileName}.json`
+                      )
+                    : join(
+                          __dirname,
+                          '../../',
+                          `${FileNames.SettingsStoreFileName}.json`
+                      )
+            );
         }
     }
 });
