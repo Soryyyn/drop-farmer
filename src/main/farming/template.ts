@@ -33,6 +33,7 @@ export default abstract class FarmTemplate {
 
     conditions: FarmingConditions = {
         timeframe: 'unlimited',
+        repeating: true,
         amountToFulfill: 0,
         buffer: 30
     };

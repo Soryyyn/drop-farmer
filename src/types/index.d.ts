@@ -89,6 +89,7 @@ type FarmingConditions = {
     amountToFulfill: number; // in hours
     buffer: number; // in minutes
     timeframe: Timeframe;
+    repeating: boolean;
 };
 
 /**
