@@ -51,6 +51,9 @@ export const Schedules = {
 } as const;
 export type Schedule = typeof Schedules[keyof typeof Schedules];
 
+/**
+ * Is either the root directory of the dev folder or the user appdata path.
+ */
 export const PathToStoreFiles: string =
     process.env.NODE_ENV === 'production'
         ? app.getPath('userData')
