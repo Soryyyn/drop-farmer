@@ -80,6 +80,17 @@ type NewFarm = {
     url: string;
 };
 
+type Timeframe = 'weekly' | 'monthly' | 'unlimited';
+
+type FarmingConditions = {
+    started?: Date;
+    fulfilled?: Date;
+    amount?: number; // in milliseconds
+    amountToFulfill: number; // in hours
+    buffer: number; // in minutes
+    timeframe: Timeframe;
+};
+
 /**
  * Toasts.
  */

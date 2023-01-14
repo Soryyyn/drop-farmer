@@ -31,6 +31,12 @@ export default abstract class FarmTemplate {
     farmers: Electron.BrowserWindow[] = [];
     extras: Electron.BrowserWindow[] = [];
 
+    conditions: FarmingConditions = {
+        timeframe: 'unlimited',
+        amountToFulfill: 0,
+        buffer: 30
+    };
+
     constructor(id: string, url: string, isProtected: boolean) {
         this.id = id;
         this.url = url;
@@ -100,11 +106,6 @@ export default abstract class FarmTemplate {
          * Start the farm if it is enabled.
          */
         if (this.enabled) this.scheduler.startAll();
-
-        /**
-         * Set the amount of uptime for the farm.
-         */
-        // this.timer.amount
 
         log('info', `${this.id}: Initialized farm`);
     }
