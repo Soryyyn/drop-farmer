@@ -1,3 +1,6 @@
+import { app } from 'electron';
+import { join } from 'path';
+
 export const Toasts = {
     UpdateChecking: 'update-checking',
     FarmCreation: 'farm-creation'
@@ -47,3 +50,8 @@ export const Schedules = {
     Update: 'update'
 } as const;
 export type Schedule = typeof Schedules[keyof typeof Schedules];
+
+export const PathToStoreFiles: string =
+    process.env.NODE_ENV === 'production'
+        ? app.getPath('userData')
+        : join(__dirname, '../../');

@@ -1,4 +1,5 @@
 import {
+    faChartSimple,
     faDownload,
     faGear,
     faGlobe,
@@ -39,6 +40,11 @@ export default function Navigation() {
                         'https://drop-farmer.soryn.dev'
                     )
                 }
+            />
+            <NavigationItem
+                icon={faChartSimple}
+                tooltip="Statistics"
+                onClick={() => {}}
             />
             <NavigationItem
                 icon={faGear}

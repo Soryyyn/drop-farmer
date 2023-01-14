@@ -45,7 +45,7 @@ function addDefaultFarms(): void {
 }
 
 function addUserAddedFarms(): void {
-    const settings = getSettings().settings;
+    const settings = getSettings();
 
     /**
      * Go through each settings entry and find non-default farms and create the

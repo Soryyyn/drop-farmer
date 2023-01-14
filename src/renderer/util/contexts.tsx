@@ -120,9 +120,9 @@ export function SettingsContextProvider({ children }: DefaultProps) {
     function resetToDefaultSettings() {
         const appliedChanges = cloneDeep(settings!);
 
-        for (const [key, value] of Object.entries(appliedChanges!.settings)) {
+        for (const [key, value] of Object.entries(appliedChanges!)) {
             value.forEach((setting, index) => {
-                appliedChanges.settings[key][index].value = setting.default;
+                appliedChanges[key][index].value = setting.default;
             });
         }
 
@@ -133,9 +133,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
      * Get a specific setting or the settings of the owner, ex. application.
      */
     function getSetting(settingOwner: string, id: string) {
-        return settings?.settings[settingOwner].find(
-            (setting) => setting.id === id
-        );
+        return settings?.[settingOwner].find((setting) => setting.id === id);
     }
 
     return (
