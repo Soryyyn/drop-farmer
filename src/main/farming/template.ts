@@ -8,6 +8,7 @@ import {
 } from '@main/electron/windows';
 import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
+import { getStatistic, updateStatistic } from '@main/util/statistics';
 import CrontabManager from 'cron-job-manager';
 import { doesSettingExist, getSetting, setSetting } from '../util/settings';
 import { Timer } from './timer';
@@ -32,10 +33,7 @@ export default abstract class FarmTemplate {
     extras: Electron.BrowserWindow[] = [];
 
     conditions: FarmingConditions = {
-        timeframe: 'unlimited',
-        repeating: true,
-        amountToFulfill: 0,
-        buffer: 30
+        timeframe: 'unlimited'
     };
 
     constructor(id: string, url: string, isProtected: boolean) {
@@ -47,51 +45,8 @@ export default abstract class FarmTemplate {
     }
 
     initialize(): void {
-        /**
-         * Set the farm settings inside the store if they don't exist.
-         */
-        if (doesSettingExist(this.id, 'enabled')) {
-            this.enabled = getSetting(this.id, 'enabled')?.value as boolean;
-        } else {
-            setSetting(this.id, {
-                id: 'enabled',
-                shown: 'Farm enabled',
-                desc: 'Enable or disable this farm.',
-                value: this.enabled,
-                default: false
-            });
-        }
-
-        if (doesSettingExist(this.id, 'schedule')) {
-            this.schedule = getSetting(this.id, 'schedule')?.value as number;
-        } else {
-            setSetting(this.id, {
-                id: 'schedule',
-                shown: 'Farming schedule',
-                desc: 'The schedule (in minutes) on which drop-farmer will check if farming is possible.',
-                value: this.schedule,
-                default: 30,
-                max: 60,
-                min: 1
-            });
-        }
-
-        if (doesSettingExist(this.id, 'url')) {
-            this.url = getSetting(this.id, 'url')?.value as string;
-        } else {
-            setSetting(this.id, {
-                id: 'url',
-                shown: 'Checking URL',
-                desc: 'The URL the farm will check if it can farm.',
-                value: this.url,
-                default: this.url,
-                disabled: true
-            });
-        }
-
-        if (getSetting('application', 'showWindowsForLogin')?.value as boolean)
-            this.windowsShownByDefault === true;
-        else this.windowsShownByDefault === false;
+        this.createOrSetFarmSettings();
+        this.createOrSetStatistics();
 
         this.status = this.enabled ? 'idle' : 'disabled';
 
@@ -139,6 +94,68 @@ export default abstract class FarmTemplate {
             this.updateSchedule(
                 getSetting(this.id, 'schedule')?.value as number
             );
+    }
+
+    createOrSetFarmSettings(): void {
+        if (doesSettingExist(this.id, 'enabled')) {
+            this.enabled = getSetting(this.id, 'enabled')?.value as boolean;
+        } else {
+            setSetting(this.id, {
+                id: 'enabled',
+                shown: 'Farm enabled',
+                desc: 'Enable or disable this farm.',
+                value: this.enabled,
+                default: false
+            });
+        }
+
+        if (doesSettingExist(this.id, 'schedule')) {
+            this.schedule = getSetting(this.id, 'schedule')?.value as number;
+        } else {
+            setSetting(this.id, {
+                id: 'schedule',
+                shown: 'Farming schedule',
+                desc: 'The schedule (in minutes) on which drop-farmer will check if farming is possible.',
+                value: this.schedule,
+                default: 30,
+                max: 60,
+                min: 1
+            });
+        }
+
+        if (doesSettingExist(this.id, 'url')) {
+            this.url = getSetting(this.id, 'url')?.value as string;
+        } else {
+            setSetting(this.id, {
+                id: 'url',
+                shown: 'Checking URL',
+                desc: 'The URL the farm will check if it can farm.',
+                value: this.url,
+                default: this.url,
+                disabled: true
+            });
+        }
+
+        if (getSetting('application', 'showWindowsForLogin')?.value as boolean)
+            this.windowsShownByDefault === true;
+        else this.windowsShownByDefault === false;
+    }
+
+    createOrSetStatistics(): void {
+        const stat = getStatistic(this.id);
+        if (stat === undefined) {
+            updateStatistic(this.id, {
+                uptime: 0,
+                openedWindows: 0,
+                conditions: this.conditions
+            });
+        } else {
+            /**
+             * The conditions are defined here, because they are only not
+             * defined for the overall key.
+             */
+            this.conditions = stat.conditions!;
+        }
     }
 
     private getAmountOfWindows(): number {

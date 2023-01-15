@@ -1,8 +1,5 @@
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
 import { app, session } from 'electron';
-import installExtension, {
-    REACT_DEVELOPER_TOOLS
-} from 'electron-devtools-installer';
 import { createTray, destroyTray } from './electron/tray';
 import { initUpdater } from './electron/update';
 import {
@@ -49,19 +46,6 @@ app.whenReady().then(() => {
     if (process.env.CLEAR_CACHE && process.env.CLEAR_CACHE!.trim() == '1') {
         log('warn', 'Cleared application session data');
         session.defaultSession.clearStorageData();
-    }
-
-    /**
-     * Install react devtools extension if in development mode.
-     */
-    if (!inProd) {
-        installExtension(REACT_DEVELOPER_TOOLS)
-            .then((extensionName: string) => {
-                log('info', `Installed ${extensionName} extension`);
-            })
-            .catch((err) => {
-                log('error', `Failed adding extension. ${err}`);
-            });
     }
 
     /**

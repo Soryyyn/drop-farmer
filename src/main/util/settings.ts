@@ -82,15 +82,11 @@ const store = new ElectronStore<SettingsStoreSchema>({
     }
 });
 
-console.log(store.store);
-
 /**
  * Get all settings in the settings store.
  */
-export function getSettings(): SettingsStoreSchema {
-    return {
-        settings: store.get('settings')
-    };
+export function getSettings(): SettingsOnly {
+    return store.get('settings');
 }
 
 /**
@@ -160,8 +156,8 @@ export function updateSetting(
 /**
  * Update the whole settings at once.
  */
-export function updateSettings(settings: SettingsStoreSchema): void {
-    store.set('settings', settings.settings);
+export function updateSettings(settings: SettingsOnly): void {
+    store.set('settings', settings);
 
     toggleAutoLaunch();
 }
@@ -172,9 +168,9 @@ export function updateSettings(settings: SettingsStoreSchema): void {
 export function deleteSettingsOfOwner(owner: string): void {
     const settings = getSettings();
 
-    for (const [key, value] of Object.entries(settings.settings)) {
+    for (const [key, value] of Object.entries(settings)) {
         if (key === owner) {
-            delete settings.settings[key];
+            delete settings[key];
         }
     }
 

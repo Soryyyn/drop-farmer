@@ -49,10 +49,22 @@ type Setting = {
 };
 
 type SettingsStoreSchema = {
-    settings: {
-        [name: string]: Setting[];
-    };
+    settings: SettingsOnly;
 };
+
+type SettingsOnly = { [name: string]: Setting[] };
+
+type Statistic = {
+    uptime: number;
+    openedWindows: number;
+    conditions?: FarmingConditions;
+};
+
+type StatisticsStoreSchema = {
+    statistics: StatisticsOnly;
+};
+
+type StatisticsOnly = { [name: string]: Statistic };
 
 /**
  * Farms.
@@ -86,10 +98,10 @@ type FarmingConditions = {
     started?: Date;
     fulfilled?: Date;
     amount?: number; // in milliseconds
-    amountToFulfill: number; // in hours
-    buffer: number; // in minutes
+    amountToFulfill?: number; // in hours
+    buffer?: number; // in minutes
     timeframe: Timeframe;
-    repeating: boolean;
+    repeating?: boolean; // not needed if unlimited
 };
 
 /**

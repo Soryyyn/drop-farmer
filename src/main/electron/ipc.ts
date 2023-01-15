@@ -81,7 +81,7 @@ handleAndReply(IpcChannels.getSettings, () => {
 
 handleOneWay(
     IpcChannels.saveNewSettings,
-    (event, settingsToSave: SettingsStoreSchema) => {
+    (event, settingsToSave: SettingsOnly) => {
         sendToast(
             {
                 type: 'promise',

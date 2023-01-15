@@ -15,8 +15,8 @@ interface DefaultProps {
  * Contexts
  */
 export const SettingsContext = createContext<{
-    settings: SettingsStoreSchema | undefined;
-    setNewSettings: (newSettings: SettingsStoreSchema) => void;
+    settings: SettingsOnly | undefined;
+    setNewSettings: (newSettings: SettingsOnly) => void;
     resetToDefaultSettings: () => void;
     getSetting: (settingOwner: string, id: string) => Setting | undefined;
 }>({
@@ -80,12 +80,12 @@ export const FarmContext = createContext<{
  * Provider components
  */
 export function SettingsContextProvider({ children }: DefaultProps) {
-    const [settings, setSettings] = useState<SettingsStoreSchema>();
-    const [oldSettings, setOldSettings] = useState<SettingsStoreSchema>();
+    const [settings, setSettings] = useState<SettingsOnly>();
+    const [oldSettings, setOldSettings] = useState<SettingsOnly>();
 
     useSendAndWait({
         channel: api.channels.getSettings,
-        callback: (err, settings: SettingsStoreSchema) => {
+        callback: (err, settings: SettingsOnly) => {
             if (!err) {
                 setSettings(settings);
                 setOldSettings(cloneDeep(settings));
@@ -95,7 +95,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
 
     useHandleOneWay({
         channel: api.channels.settingsChanged,
-        callback: (event, changedSettings: SettingsStoreSchema) => {
+        callback: (event, changedSettings: SettingsOnly) => {
             setSettings(changedSettings);
             setOldSettings(cloneDeep(changedSettings));
         }
@@ -105,7 +105,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
      * Function to save new settings in the main process.
      * Only if new changes actually happened.
      */
-    function setNewSettings(newSettings: SettingsStoreSchema) {
+    function setNewSettings(newSettings: SettingsOnly) {
         if (!isEqual(newSettings, oldSettings)) {
             api.sendOneWay(api.channels.saveNewSettings, newSettings);
 
@@ -120,9 +120,9 @@ export function SettingsContextProvider({ children }: DefaultProps) {
     function resetToDefaultSettings() {
         const appliedChanges = cloneDeep(settings!);
 
-        for (const [key, value] of Object.entries(appliedChanges!.settings)) {
+        for (const [key, value] of Object.entries(appliedChanges!)) {
             value.forEach((setting, index) => {
-                appliedChanges.settings[key][index].value = setting.default;
+                appliedChanges[key][index].value = setting.default;
             });
         }
 
@@ -133,9 +133,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
      * Get a specific setting or the settings of the owner, ex. application.
      */
     function getSetting(settingOwner: string, id: string) {
-        return settings?.settings[settingOwner].find(
-            (setting) => setting.id === id
-        );
+        return settings?.[settingOwner].find((setting) => setting.id === id);
     }
 
     return (
