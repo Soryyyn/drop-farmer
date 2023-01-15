@@ -10,6 +10,7 @@ import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
 import { getStatistic, updateStatistic } from '@main/util/statistics';
 import CrontabManager from 'cron-job-manager';
+import dayjs from 'dayjs';
 import { doesSettingExist, getSetting, setSetting } from '../util/settings';
 import { Timer } from './timer';
 
@@ -139,6 +140,62 @@ export default abstract class FarmTemplate {
         if (getSetting('application', 'showWindowsForLogin')?.value as boolean)
             this.windowsShownByDefault === true;
         else this.windowsShownByDefault === false;
+
+        /**
+         * Condition settings.
+         */
+        if (doesSettingExist(this.id, 'started')) {
+            const started = getSetting(this.id, 'started')?.value as string;
+            if (started !== '') {
+                this.conditions.started = dayjs(started).toDate();
+            }
+        } else {
+            setSetting(this.id, {
+                id: 'started',
+                value: ''
+            });
+        }
+
+        if (doesSettingExist(this.id, 'fulfilled')) {
+            const fulfilled = getSetting(this.id, 'fulfilled')?.value as string;
+            if (fulfilled !== '') {
+                this.conditions.fulfilled = dayjs(fulfilled).toDate();
+            }
+        } else {
+            setSetting(this.id, {
+                id: 'fulfilled',
+                value: ''
+            });
+        }
+
+        if (doesSettingExist(this.id, 'amount')) {
+            this.conditions.amount = getSetting(this.id, 'amount')
+                ?.value as number;
+        } else {
+            setSetting(this.id, {
+                id: 'amount',
+                value: 0
+            });
+        }
+
+        if (doesSettingExist(this.id, 'amountToFulfill')) {
+            this.conditions.amountToFulfill = getSetting(
+                this.id,
+                'amountToFulfill'
+            )?.value as number;
+        } else {
+            setSetting(this.id, {
+                id: 'amountToFulfill',
+                shown: 'Amount to fulfill condition',
+                desc: 'The amount of hours the farm needs to farm before the stopping/reset condition has been fulfilled.',
+                value: 4,
+                default: 4,
+                disabled: false
+            });
+        }
+        /**
+         * left to do: buffer, timerframe, repeating
+         */
     }
 
     createOrSetStatistics(): void {
@@ -146,15 +203,8 @@ export default abstract class FarmTemplate {
         if (stat === undefined) {
             updateStatistic(this.id, {
                 uptime: 0,
-                openedWindows: 0,
-                conditions: this.conditions
+                openedWindows: 0
             });
-        } else {
-            /**
-             * The conditions are defined here, because they are only not
-             * defined for the overall key.
-             */
-            this.conditions = stat.conditions!;
         }
     }
 

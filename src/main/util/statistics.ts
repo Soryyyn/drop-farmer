@@ -1,7 +1,6 @@
 import { FileNames } from '@main/common/constants';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
-import isEqual from 'lodash.isequal';
 import { join } from 'path';
 import { log } from './logging';
 
@@ -51,8 +50,7 @@ export function updateStatistic(owner: string, updated: Statistic): void {
     if (
         owner !== 'overall' &&
         updated.uptime !== 0 &&
-        updated.openedWindows !== 0 &&
-        isEqual(updated.conditions, before?.conditions)
+        updated.openedWindows !== 0
     ) {
         const stat = getStatistic('overall');
         updateStatistic('overall', {

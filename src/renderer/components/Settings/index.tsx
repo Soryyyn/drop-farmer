@@ -74,29 +74,41 @@ export default function Settings({ onClose }: Props) {
                     {/* Settings */}
                     <ul className="grow flex flex-col gap-4 overflow-y-auto">
                         {settings?.[selected].map((setting) => {
-                            return (
-                                <Setting
-                                    key={setting.id}
-                                    setting={setting}
-                                    onChange={(updated) => {
-                                        const copyOfSettings = { ...settings };
-                                        const newFarmSetting = { ...setting };
+                            /**
+                             * Only render a setting, if it has a shown name and
+                             * description set (used for setting which don't
+                             * need to be shown to the user)
+                             */
+                            if (setting.shown && setting.desc) {
+                                return (
+                                    <Setting
+                                        key={setting.id}
+                                        setting={setting}
+                                        onChange={(updated) => {
+                                            const copyOfSettings = {
+                                                ...settings
+                                            };
+                                            const newFarmSetting = {
+                                                ...setting
+                                            };
 
-                                        copyOfSettings[selected].forEach(
-                                            (s) => {
-                                                if (
-                                                    newFarmSetting.id === s.id
-                                                ) {
-                                                    s.value = updated;
-                                                    s = newFarmSetting;
+                                            copyOfSettings[selected].forEach(
+                                                (s) => {
+                                                    if (
+                                                        newFarmSetting.id ===
+                                                        s.id
+                                                    ) {
+                                                        s.value = updated;
+                                                        s = newFarmSetting;
+                                                    }
                                                 }
-                                            }
-                                        );
+                                            );
 
-                                        setCurrentSettings(copyOfSettings);
-                                    }}
-                                />
-                            );
+                                            setCurrentSettings(copyOfSettings);
+                                        }}
+                                    />
+                                );
+                            }
                         })}
                     </ul>
                 </div>

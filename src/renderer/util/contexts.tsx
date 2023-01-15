@@ -106,6 +106,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
      * Only if new changes actually happened.
      */
     function setNewSettings(newSettings: SettingsOnly) {
+        console.log(newSettings);
         if (!isEqual(newSettings, oldSettings)) {
             api.sendOneWay(api.channels.saveNewSettings, newSettings);
 
@@ -122,7 +123,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
 
         for (const [key, value] of Object.entries(appliedChanges!)) {
             value.forEach((setting, index) => {
-                appliedChanges[key][index].value = setting.default;
+                appliedChanges[key][index].value = setting.default!;
             });
         }
 

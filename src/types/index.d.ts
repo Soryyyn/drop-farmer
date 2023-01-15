@@ -38,10 +38,10 @@ declare const api: typeof import('../api').default;
  */
 type Setting = {
     id: string;
-    shown: string;
-    desc: string;
+    shown?: string;
+    desc?: string;
     value: string | number | boolean;
-    default: string | number | boolean;
+    default?: string | number | boolean;
     min?: number;
     max?: number;
     disabled?: boolean;
@@ -57,7 +57,6 @@ type SettingsOnly = { [name: string]: Setting[] };
 type Statistic = {
     uptime: number;
     openedWindows: number;
-    conditions?: FarmingConditions;
 };
 
 type StatisticsStoreSchema = {
