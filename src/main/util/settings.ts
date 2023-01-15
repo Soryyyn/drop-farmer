@@ -77,6 +77,9 @@ const store = new ElectronStore<SettingsStoreSchema>({
         },
         'v1.0.0-beta32': (store) => {
             store.clear();
+        },
+        'v1.0.0-beta33': (store) => {
+            store.clear();
         }
     }
 });

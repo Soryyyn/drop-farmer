@@ -178,6 +178,25 @@ export default abstract class FarmTemplate {
             });
         }
 
+        if (doesSettingExist(this.id, 'timeframe')) {
+            this.conditions.timeframe = getSetting(this.id, 'timeframe')
+                ?.value as Timeframe;
+        } else {
+            setSetting(this.id, {
+                id: 'timeframe',
+                shown: 'Timeframe',
+                desc: 'The timeframe in which the farm will try to fulfill the condition. The condition will reset depending on the timeframe. ',
+                value: 'unlimited',
+                default: 'unlimited',
+                options: ['weekly', 'monthly', 'unlimited'],
+                disabled: false,
+                ignores: {
+                    onValue: 'unlimited',
+                    ids: ['amountToFulfill', 'buffer', 'repeating']
+                }
+            });
+        }
+
         if (doesSettingExist(this.id, 'amountToFulfill')) {
             this.conditions.amountToFulfill = getSetting(
                 this.id,
@@ -209,25 +228,6 @@ export default abstract class FarmTemplate {
                 disabled: false,
                 min: 0,
                 max: 60
-            });
-        }
-
-        if (doesSettingExist(this.id, 'timeframe')) {
-            this.conditions.timeframe = getSetting(this.id, 'timeframe')
-                ?.value as Timeframe;
-        } else {
-            setSetting(this.id, {
-                id: 'timeframe',
-                shown: 'Timeframe',
-                desc: 'The timeframe in which the farm will try to fulfill the condition. The condition will reset depending on the timeframe. ',
-                value: 'unlimited',
-                default: 'unlimited',
-                options: ['weekly', 'monthly', 'unlimited'],
-                disabled: false,
-                ignores: {
-                    onValue: 'unlimited',
-                    ids: ['amountToFulfill', 'buffer', 'repeating']
-                }
             });
         }
 
@@ -482,6 +482,11 @@ export default abstract class FarmTemplate {
                 });
         });
     }
+
+    /**
+     * Check for conditions and what to do next.
+     */
+    private conditionCheck() {}
 
     /**
      * The farming flow function which need to be defined by each farm themselves.
