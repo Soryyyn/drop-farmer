@@ -9,7 +9,7 @@ export default function RestartIndicator() {
         >
             <div className="flex items-center bg-amber-500 py-1 px-2 rounded ">
                 <p className="text-pepper-200 font-semibold text-center leading-none text-sm">
-                    REQUIRES RESTART
+                    RESTART
                 </p>
             </div>
         </Tooltip>

@@ -47,6 +47,10 @@ type Setting = {
     max?: number;
     disabled?: boolean;
     requiresRestart?: boolean;
+    ignores?: {
+        onValue: string | number | boolean;
+        ids: string[];
+    };
 };
 
 type SettingsStoreSchema = {

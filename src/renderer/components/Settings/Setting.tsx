@@ -1,5 +1,6 @@
 import React from 'react';
 import DisabledIndicator from './DisabledIndicator';
+import IgnoredIndicator from './IgnoredIndicator';
 import NumberInput from './NumberInput';
 import RestartIndicator from './RestartIndicator';
 import SelectionInput from './SelectionInput';
@@ -8,10 +9,17 @@ import TextValue from './TextValue';
 
 interface Props {
     setting: Setting;
+    ignored: boolean;
+    ignoredBy: string;
     onChange: (updated: any) => void;
 }
 
-export default function Setting({ setting, onChange }: Props) {
+export default function Setting({
+    setting,
+    ignored,
+    ignoredBy,
+    onChange
+}: Props) {
     function actionRender() {
         if (setting.options) {
             return <SelectionInput setting={setting} onChange={onChange} />;
@@ -34,8 +42,11 @@ export default function Setting({ setting, onChange }: Props) {
             <div className="!w-3/4 flex flex-col gap-2">
                 <div className="flex flex-row gap-4">
                     <p className="font-medium">{setting.shown}</p>
-                    {setting.disabled && <DisabledIndicator />}
-                    {setting.requiresRestart && <RestartIndicator />}
+                    <div className="flex flex-row gap-2 grow">
+                        {setting.disabled && <DisabledIndicator />}
+                        {setting.requiresRestart && <RestartIndicator />}
+                        {ignored && <IgnoredIndicator ignoredBy={ignoredBy} />}
+                    </div>
                 </div>
                 <p className="text-snow-300/50">{setting.desc}</p>
             </div>

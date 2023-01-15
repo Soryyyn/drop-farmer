@@ -6,7 +6,7 @@ import {
     faXmark
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmsContext, SettingsContext } from '@renderer/util/contexts';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ActionButton } from './ActionButton';
 import Selector from './Selector';
 import Setting from './Setting';
@@ -21,6 +21,28 @@ export default function Settings({ onClose }: Props) {
     const { farms } = useContext(FarmsContext);
     const [selected, setSelected] = useState<string>('application');
     const [currentSettings, setCurrentSettings] = useState(settings);
+
+    const [ignoredSettings, setIgnoredSettings] = useState<string[]>([]);
+    const [ignoredBy, setIgnoredBy] = useState<string>('');
+
+    /**
+     * Set the ignored indicator to settings which will be ignored.
+     */
+    useEffect(() => {
+        if (settings && selected) {
+            settings[selected].map((setting) => {
+                if (setting.ignores) {
+                    if (setting.ignores.onValue === setting.value) {
+                        setIgnoredSettings(setting.ignores.ids);
+                        setIgnoredBy(setting.shown!);
+                    } else {
+                        setIgnoredSettings([]);
+                        setIgnoredBy('');
+                    }
+                }
+            });
+        }
+    }, [selected, settings]);
 
     return (
         <OverlayContainer>
@@ -84,6 +106,10 @@ export default function Settings({ onClose }: Props) {
                                     <Setting
                                         key={`${selected}-${setting.id}`}
                                         setting={setting}
+                                        ignored={ignoredSettings.includes(
+                                            setting.id
+                                        )}
+                                        ignoredBy={ignoredBy}
                                         onChange={(updated) => {
                                             const copyOfSettings = {
                                                 ...settings

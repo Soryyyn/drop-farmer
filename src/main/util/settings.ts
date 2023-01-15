@@ -2,7 +2,6 @@ import { FileNames } from '@main/common/constants';
 import AutoLaunch from 'auto-launch';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
-import { unlinkSync } from 'fs';
 import { join } from 'path';
 import { log } from './logging';
 

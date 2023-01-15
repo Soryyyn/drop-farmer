@@ -219,11 +219,15 @@ export default abstract class FarmTemplate {
             setSetting(this.id, {
                 id: 'timeframe',
                 shown: 'Timeframe',
-                desc: 'The timeframe in which the farm will try to fulfill the condition. The condition will reset depending on the timeframe. If the "Unlimited" is set, it will always try to farm.',
+                desc: 'The timeframe in which the farm will try to fulfill the condition. The condition will reset depending on the timeframe. ',
                 value: 'unlimited',
                 default: 'unlimited',
                 options: ['weekly', 'monthly', 'unlimited'],
-                disabled: false
+                disabled: false,
+                ignores: {
+                    onValue: 'unlimited',
+                    ids: ['amountToFulfill', 'buffer', 'repeating']
+                }
             });
         }
 
@@ -234,7 +238,7 @@ export default abstract class FarmTemplate {
             setSetting(this.id, {
                 id: 'repeating',
                 shown: 'Repeat after timeframe reset',
-                desc: 'If the farm should repeat the condition after the timeframe is fulfilled. If the timeframe is set as "Unlimited" this option won\'t be taken into consideration.',
+                desc: 'If the farm should repeat the condition after the timeframe is fulfilled.',
                 value: true,
                 default: true,
                 disabled: false
