@@ -43,6 +43,8 @@ export default class LeagueOfLegends extends FarmTemplate {
                         'div.riotbar-account-anonymous-link-wrapper'
                     );
 
+                    await waitForTimeout(3000);
+
                     /**
                      * Wait for either the user has been redirected to the main page
                      * logged in *or* redirected to the login page.

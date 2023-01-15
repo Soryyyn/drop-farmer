@@ -82,7 +82,7 @@ export default function Settings({ onClose }: Props) {
                             if (setting.shown && setting.desc) {
                                 return (
                                     <Setting
-                                        key={setting.id}
+                                        key={`${selected}-${setting.id}`}
                                         setting={setting}
                                         onChange={(updated) => {
                                             const copyOfSettings = {

@@ -39,6 +39,7 @@ export default class YoutubeStream extends FarmTemplate {
             try {
                 const page = await getPage(getBrowserConnection(), window);
                 await page.waitForNetworkIdle();
+                await waitForTimeout(10000);
 
                 /**
                  * Check if there are any video elements with a live element
@@ -151,6 +152,8 @@ export default class YoutubeStream extends FarmTemplate {
                         log('info', `${this.id}: Login completed`);
                     }
                 } else {
+                    await page.goto(this.url);
+                    await waitForTimeout(3000);
                     log('info', `${this.id}: Login completed`);
                 }
 

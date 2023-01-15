@@ -39,23 +39,30 @@ export function getStatistic(owner: string): Statistic | undefined {
     return store.get(`statistics.${owner}`);
 }
 
-export function updateStatistic(owner: string, updated: Statistic): void {
-    const before = getStatistic(owner);
-    store.set(`statistics.${owner}`, updated);
+export function updateStatistic(
+    owner: string,
+    updated: Statistic
+): Promise<void> {
+    return new Promise((resolve) => {
+        const statsBeforeUpdate = getStatistic(owner);
+        store.set(`statistics.${owner}`, updated);
 
-    /**
-     * Update the overall stat when the farms get updated, but not when they get
-     * initialized and/or only the conditions have not been updated.
-     */
-    if (
-        owner !== 'overall' &&
-        updated.uptime !== 0 &&
-        updated.openedWindows !== 0
-    ) {
-        const stat = getStatistic('overall');
-        updateStatistic('overall', {
-            uptime: stat!.uptime + updated.uptime,
-            openedWindows: stat!.openedWindows + updated.openedWindows
-        });
-    }
+        /**
+         * Update the overall stat when the farms get updated, but not when they get
+         * initialized and/or only the conditions have not been updated.
+         */
+        if (owner !== 'overall') {
+            const stat = getStatistic('overall');
+
+            store.set('statistics.overall', {
+                uptime:
+                    stat!.uptime + (updated.uptime - statsBeforeUpdate!.uptime),
+                openedWindows:
+                    stat!.openedWindows +
+                    (updated.openedWindows - statsBeforeUpdate!.openedWindows)
+            });
+        }
+
+        resolve(undefined);
+    });
 }

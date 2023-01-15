@@ -27,7 +27,10 @@ export default function Setting({ setting, onChange }: Props) {
     }
 
     return (
-        <li className="w-full p-4 list-none rounded-md bg-pepper-500 flex flex-row gap-4 text-snow-300">
+        <li
+            className="w-full p-4 list-none rounded-md bg-pepper-500 flex flex-row gap-4 text-snow-300"
+            key={setting.id}
+        >
             <div className="!w-3/4 flex flex-col gap-2">
                 <div className="flex flex-row gap-4">
                     <p className="font-medium">{setting.shown}</p>

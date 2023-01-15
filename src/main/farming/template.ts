@@ -240,10 +240,6 @@ export default abstract class FarmTemplate {
                 disabled: false
             });
         }
-
-        /**
-         * left to do: buffer, timerframe, repeating
-         */
     }
 
     createOrSetStatistics(): void {
@@ -345,6 +341,22 @@ export default abstract class FarmTemplate {
         this.destroyWindowFromArray(this.extras);
     }
 
+    private async addWindowStatistic(): Promise<void> {
+        const stat = getStatistic(this.id);
+        await updateStatistic(this.id, {
+            ...stat!,
+            openedWindows: stat?.openedWindows! + 1
+        });
+    }
+
+    private async addUptimeAmount(): Promise<void> {
+        const stat = getStatistic(this.id);
+        await updateStatistic(this.id, {
+            ...stat!,
+            uptime: stat!.uptime + this.timer.amount
+        });
+    }
+
     protected createCheckerWindow(): Promise<Electron.BrowserWindow> {
         return new Promise<Electron.BrowserWindow>((resolve, reject) => {
             if (this.checker) {
@@ -354,13 +366,15 @@ export default abstract class FarmTemplate {
                     this.url,
                     this.windowsShownByDefault || this.windowsCurrentlyShown
                 )
-                    .then((window: Electron.BrowserWindow) => {
+                    .then(async (window: Electron.BrowserWindow) => {
                         window.on('close', () => {
                             this.checker = undefined;
                             destroyWindow(window);
                         });
 
                         this.checker = window;
+
+                        await this.addWindowStatistic();
                     })
                     .then(() => {
                         resolve(this.checker!);
@@ -381,13 +395,15 @@ export default abstract class FarmTemplate {
                 url,
                 this.windowsShownByDefault || this.windowsCurrentlyShown
             )
-                .then((window: Electron.BrowserWindow) => {
+                .then(async (window: Electron.BrowserWindow) => {
                     window.on('close', () => {
                         this.destroyWindowFromArray(array, window);
                         destroyWindow(window);
                     });
 
                     array.push(window);
+
+                    await this.addWindowStatistic();
                 })
                 .then(() => {
                     resolve(array[array.length - 1]);
@@ -480,12 +496,10 @@ export default abstract class FarmTemplate {
         ) {
             this.createCheckerWindow()
                 .then(async (window) => {
-                    this.updateStatus('checking');
-
-                    /**
-                     * Stop the timer.
-                     */
                     this.timer.stopTimer();
+                    await this.addUptimeAmount();
+
+                    this.updateStatus('checking');
 
                     await this.login(window);
                     if (this.farmers.length > 0) {
