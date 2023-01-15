@@ -23,7 +23,15 @@ export default function NumberInput({
     const [inputValue, setInputValue] = useState<number>(value);
 
     useEffect(() => {
-        onChange(inputValue);
+        if (value < 0) setInputValue(0);
+
+        if (value < min) {
+            setInputValue(min);
+        } else if (value > max) {
+            setInputValue(max);
+        } else {
+            onChange(inputValue);
+        }
     }, [inputValue]);
 
     return (
@@ -49,16 +57,7 @@ export default function NumberInput({
                     value={value}
                     type="number"
                     onInput={(event) => {
-                        if (value > 0) setInputValue(0);
-
-                        /**
-                         * Check for min and max values.
-                         */
-                        if (value < min) {
-                            setInputValue(min);
-                        } else if (value > max) {
-                            setInputValue(max);
-                        }
+                        setInputValue(parseInt(event.currentTarget.value));
                     }}
                 />
                 <button

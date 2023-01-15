@@ -10,7 +10,15 @@ export default function NumberInput({ setting, onChange }: Props) {
     const [value, setValue] = useState<number>(setting.value as number);
 
     useEffect(() => {
-        onChange(value);
+        if (value < 0) setValue(0);
+
+        if (value < setting.min!) {
+            setValue(setting.min!);
+        } else if (value > setting.max!) {
+            setValue(setting.max!);
+        } else {
+            onChange(value);
+        }
     }, [value]);
 
     return (
@@ -31,17 +39,8 @@ export default function NumberInput({ setting, onChange }: Props) {
                 value={value}
                 disabled={setting.disabled}
                 type="number"
-                onChange={(event) => {
-                    if (value > 0) setValue(0);
-
-                    /**
-                     * Check for min and max values.
-                     */
-                    if (value < setting.min!) {
-                        setValue(setting.min!);
-                    } else if (value > setting.max!) {
-                        setValue(setting.max!);
-                    }
+                onInput={(event) => {
+                    setValue(parseInt(event.currentTarget.value));
                 }}
             />
             <button
