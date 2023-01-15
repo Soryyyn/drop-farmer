@@ -72,14 +72,10 @@ export default class LeagueOfLegends extends FarmTemplate {
                             window.focus();
                         }
 
-                        console.log('test');
-
                         /**
                          * Back at main page.
                          */
                         await waitForElementToAppear(page, 'main.Home', 0);
-
-                        console.log('test2');
                     } else {
                         log('info', `${this.id}: Login completed`);
                     }

@@ -2,6 +2,7 @@ import React from 'react';
 import DisabledIndicator from './DisabledIndicator';
 import NumberInput from './NumberInput';
 import RestartIndicator from './RestartIndicator';
+import SelectionInput from './SelectionInput';
 import SwitchToggle from './SwitchToggle';
 import TextValue from './TextValue';
 
@@ -12,12 +13,16 @@ interface Props {
 
 export default function Setting({ setting, onChange }: Props) {
     function actionRender() {
-        if (typeof setting.value === 'boolean') {
-            return <SwitchToggle setting={setting} onChange={onChange} />;
-        } else if (typeof setting.value === 'number') {
-            return <NumberInput setting={setting} onChange={onChange} />;
-        } else if (typeof setting.value === 'string') {
-            return <TextValue setting={setting} onChange={onChange} />;
+        if (setting.options) {
+            return <SelectionInput setting={setting} onChange={onChange} />;
+        } else {
+            if (typeof setting.value === 'boolean') {
+                return <SwitchToggle setting={setting} onChange={onChange} />;
+            } else if (typeof setting.value === 'number') {
+                return <NumberInput setting={setting} onChange={onChange} />;
+            } else if (typeof setting.value === 'string') {
+                return <TextValue setting={setting} onChange={onChange} />;
+            }
         }
     }
 

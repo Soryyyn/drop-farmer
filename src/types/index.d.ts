@@ -42,6 +42,7 @@ type Setting = {
     desc?: string;
     value: string | number | boolean;
     default?: string | number | boolean;
+    options?: string[];
     min?: number;
     max?: number;
     disabled?: boolean;

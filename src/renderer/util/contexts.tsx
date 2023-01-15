@@ -106,7 +106,6 @@ export function SettingsContextProvider({ children }: DefaultProps) {
      * Only if new changes actually happened.
      */
     function setNewSettings(newSettings: SettingsOnly) {
-        console.log(newSettings);
         if (!isEqual(newSettings, oldSettings)) {
             api.sendOneWay(api.channels.saveNewSettings, newSettings);
 

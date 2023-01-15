@@ -242,8 +242,6 @@ listenForEvent(EventChannels.PCWokeUp, () => {
 });
 
 listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
-    console.log(event);
-
     sendOneWay(IpcChannels.farmLogin, {
         id: event[0].id,
         needed: event[0].needed

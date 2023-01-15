@@ -190,9 +190,57 @@ export default abstract class FarmTemplate {
                 desc: 'The amount of hours the farm needs to farm before the stopping/reset condition has been fulfilled.',
                 value: 4,
                 default: 4,
+                disabled: false,
+                min: 1,
+                max: 730
+            });
+        }
+
+        if (doesSettingExist(this.id, 'buffer')) {
+            this.conditions.buffer = getSetting(this.id, 'buffer')
+                ?.value as number;
+        } else {
+            setSetting(this.id, {
+                id: 'buffer',
+                shown: 'Buffer',
+                desc: 'The buffer (in minutes) controls how much longer the farm will farm as a buffer because drops may not exactly happen on the hour.',
+                value: 30,
+                default: 30,
+                disabled: false,
+                min: 0,
+                max: 60
+            });
+        }
+
+        if (doesSettingExist(this.id, 'timeframe')) {
+            this.conditions.timeframe = getSetting(this.id, 'timeframe')
+                ?.value as Timeframe;
+        } else {
+            setSetting(this.id, {
+                id: 'timeframe',
+                shown: 'Timeframe',
+                desc: 'The timeframe in which the farm will try to fulfill the condition. The condition will reset depending on the timeframe. If the "Unlimited" is set, it will always try to farm.',
+                value: 'unlimited',
+                default: 'unlimited',
+                options: ['weekly', 'monthly', 'unlimited'],
                 disabled: false
             });
         }
+
+        if (doesSettingExist(this.id, 'repeating')) {
+            this.conditions.repeating = getSetting(this.id, 'repeating')
+                ?.value as boolean;
+        } else {
+            setSetting(this.id, {
+                id: 'repeating',
+                shown: 'Repeat after timeframe reset',
+                desc: 'If the farm should repeat the condition after the timeframe is fulfilled. If the timeframe is set as "Unlimited" this option won\'t be taken into consideration.',
+                value: true,
+                default: true,
+                disabled: false
+            });
+        }
+
         /**
          * left to do: buffer, timerframe, repeating
          */

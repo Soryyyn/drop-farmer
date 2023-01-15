@@ -1,6 +1,6 @@
 import { Icon } from '@components/global/Icon';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import React, { useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import RequiredIndicator from './RequiredIndicator';
 
 interface Props {
@@ -20,7 +20,11 @@ export default function NumberInput({
     max,
     onChange
 }: Props) {
-    const numberInputRef = useRef<HTMLInputElement>(null);
+    const [inputValue, setInputValue] = useState<number>(value);
+
+    useEffect(() => {
+        onChange(inputValue);
+    }, [inputValue]);
 
     return (
         <div className="flex flex-col gap-2 grow">
@@ -33,51 +37,36 @@ export default function NumberInput({
                 <button
                     className="flex justify-center items-center  bg-pepper-700 rounded cursor-pointer aspect-square px-2  text-snow-300 hover:bg-pepper-800"
                     onClick={() => {
-                        if (numberInputRef.current?.value)
-                            if (parseInt(numberInputRef.current.value) < max) {
-                                onChange(
-                                    parseInt(numberInputRef.current.value) + 1
-                                );
-                            }
+                        if (value < max) {
+                            setInputValue(value + 1);
+                        }
                     }}
                 >
                     <Icon sprite={faPlus} size="sm" />
                 </button>
                 <input
-                    ref={numberInputRef}
                     className="w-1/3 text-center bg-pepper-700 px-2 py-1 rounded focus:outline-none hover:bg-pepper-800 focus:bg-pepper-800 text-snow-300 grow"
                     value={value}
                     type="number"
                     onInput={(event) => {
-                        /**
-                         * Check for NaN.
-                         */
-                        if (event.currentTarget.value == '')
-                            event.currentTarget.value = '1';
-
-                        let value = parseInt(event.currentTarget.value);
+                        if (value > 0) setInputValue(0);
 
                         /**
                          * Check for min and max values.
                          */
                         if (value < min) {
-                            value = 1;
+                            setInputValue(min);
                         } else if (value > max) {
-                            value = 60;
+                            setInputValue(max);
                         }
-
-                        onChange(value);
                     }}
                 />
                 <button
                     className="flex justify-center items-center  bg-pepper-700 rounded cursor-pointer aspect-square px-2 text-snow-300 hover:bg-pepper-800"
                     onClick={() => {
-                        if (numberInputRef.current?.value)
-                            if (parseInt(numberInputRef.current.value) > min) {
-                                onChange(
-                                    parseInt(numberInputRef.current.value) - 1
-                                );
-                            }
+                        if (value > min) {
+                            setInputValue(value - 1);
+                        }
                     }}
                 >
                     <Icon sprite={faMinus} size="sm" />

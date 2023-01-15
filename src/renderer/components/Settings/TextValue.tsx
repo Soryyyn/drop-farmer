@@ -12,7 +12,7 @@ export default function TextValue({ setting, onChange }: Props) {
             disabled={setting.disabled}
             value={setting.value as string}
             type="text"
-            onInput={(event) => {
+            onChange={(event) => {
                 onChange(event.currentTarget.value);
             }}
         />
