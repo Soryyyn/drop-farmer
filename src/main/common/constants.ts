@@ -2,7 +2,7 @@ export const Toasts = {
     UpdateChecking: 'update-checking',
     FarmCreation: 'farm-creation'
 } as const;
-export type Toast = typeof Toasts[keyof typeof Toasts];
+export type Toast = (typeof Toasts)[keyof typeof Toasts];
 
 export const IpcChannels = {
     openLinkInExternal: 'open-link-in-external',
@@ -26,24 +26,24 @@ export const IpcChannels = {
     settingsChanged: 'settings-changed',
     deleteFarm: 'delete-farm'
 } as const;
-export type IpcChannel = typeof IpcChannels[keyof typeof IpcChannels];
+export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
 
 export const EventChannels = {
     PCWentToSleep: 'pc-went-to-sleep',
     PCWokeUp: 'pc-woke-up',
     LoginForFarm: 'login-for-farm'
 } as const;
-export type EventChannel = typeof EventChannels[keyof typeof EventChannels];
+export type EventChannel = (typeof EventChannels)[keyof typeof EventChannels];
 
 export const FileNames = {
     LogFileName: '.log',
     SettingsStoreFileName: 'settings',
     StatisticsStoreFileName: 'statistics'
 } as const;
-export type FileName = typeof FileNames[keyof typeof FileNames];
+export type FileName = (typeof FileNames)[keyof typeof FileNames];
 
 export const Schedules = {
     CheckToFarm: 'check-to-farm',
     Update: 'update'
 } as const;
-export type Schedule = typeof Schedules[keyof typeof Schedules];
+export type Schedule = (typeof Schedules)[keyof typeof Schedules];
