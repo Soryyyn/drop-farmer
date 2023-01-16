@@ -4,6 +4,7 @@ import { createTray, destroyTray } from './electron/tray';
 import { initUpdater } from './electron/update';
 import {
     createMainWindow,
+    destroyWindow,
     getMainWindow,
     setAppQuitting
 } from './electron/windows';
@@ -128,5 +129,5 @@ app.on('quit', () => {
  * Handle darwin quits.
  */
 app.on('window-all-closed', () => {
-    app.quit();
+    if (process.platform != 'darwin') app.quit();
 });

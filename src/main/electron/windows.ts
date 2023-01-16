@@ -152,18 +152,22 @@ export async function createWindow(url: string, shouldBeShown: boolean) {
         }
     });
 
-    log('info', 'Created general window');
+    log('info', 'Created window');
     return window;
 }
 
 /**
  * Destroy the wanted window.
  *
- * @param {Electron.BrowserWindow} window The window to destroy.
+ * @param {Electron.BrowserWindow} window The window to destroy.t
  */
-export function destroyWindow(window: Electron.BrowserWindow): void {
-    log('info', `Destroyed window(${window.id})`);
-    window.destroy();
+export function destroyWindow(window: Electron.BrowserWindow) {
+    return new Promise((resolve) => {
+        log('info', `Destroyed window(${window.id})`);
+        if (window) window.destroy();
+
+        resolve(undefined);
+    });
 }
 
 /**

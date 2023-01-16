@@ -49,15 +49,25 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * Wait for either the user has been redirected to the main page
                      * logged in *or* redirected to the login page.
                      */
-                    const finished = await Promise.race([
+                    await Promise.race([
                         waitForElementToAppear(
                             page,
-                            'div.riotbar-summoner-name'
+                            'div.riotbar-summoner-name',
+                            0
                         ),
-                        pageUrlContains(page, 'https://auth.riotgames.com/')
+                        waitForElementToAppear(
+                            page,
+                            'div.auth-rso-login-page',
+                            0
+                        )
                     ]);
 
-                    if (typeof finished === 'boolean') {
+                    if (
+                        await pageUrlContains(
+                            page,
+                            'https://auth.riotgames.com/'
+                        )
+                    ) {
                         log('info', `${this.id}: Login is needed by user`);
                         wasLoginNeeded = true;
 
@@ -81,11 +91,6 @@ export default class LeagueOfLegends extends FarmTemplate {
                     } else {
                         log('info', `${this.id}: Login completed`);
                     }
-                } else {
-                    log(
-                        'info',
-                        `${this.id}: User already logged in, continuing`
-                    );
                 }
 
                 if (wasLoginNeeded) {
@@ -280,9 +285,9 @@ export default class LeagueOfLegends extends FarmTemplate {
                     /**
                      * Create the farm windows for all hrefs.
                      */
-                    for (const href of hrefs) {
-                        this.createArrayWindow(href, this.farmers);
-                    }
+                    hrefs.forEach(async (href) => {
+                        await this.createArrayWindow(href, this.farmers);
+                    });
 
                     /**
                      * Clear hrefs array.

@@ -399,20 +399,27 @@ export default abstract class FarmTemplate {
     protected destroyWindowFromArray(
         array: Electron.BrowserWindow[],
         window?: Electron.BrowserWindow
-    ): void {
-        if (window) {
-            array.splice(array.indexOf(window), 1);
-            destroyWindow(window);
-        } else {
-            for (const window of array)
-                this.destroyWindowFromArray(array, window);
-        }
+    ) {
+        return new Promise(async (resolve) => {
+            if (window) {
+                array.splice(array.indexOf(window), 1);
+                destroyWindow(window);
+            } else {
+                for (let i = 0; array.length; i++) {
+                    await destroyWindow(array[i]);
+                    array.splice(i, 1);
+                }
+            }
+
+            resolve(undefined);
+        });
     }
 
-    destroyAllWindows(): void {
+    async destroyAllWindows() {
         this.destroyChecker();
-        this.destroyWindowFromArray(this.farmers);
-        this.destroyWindowFromArray(this.extras);
+
+        await this.destroyWindowFromArray(this.farmers);
+        await this.destroyWindowFromArray(this.extras);
     }
 
     private async addWindowStatistic(): Promise<void> {
@@ -447,11 +454,6 @@ export default abstract class FarmTemplate {
                     this.windowsShownByDefault || this.windowsCurrentlyShown
                 )
                     .then(async (window: Electron.BrowserWindow) => {
-                        window.on('close', () => {
-                            this.checker = undefined;
-                            destroyWindow(window);
-                        });
-
                         this.checker = window;
 
                         await this.addWindowStatistic();
@@ -476,13 +478,7 @@ export default abstract class FarmTemplate {
                 this.windowsShownByDefault || this.windowsCurrentlyShown
             )
                 .then(async (window: Electron.BrowserWindow) => {
-                    window.on('close', () => {
-                        this.destroyWindowFromArray(array, window);
-                        destroyWindow(window);
-                    });
-
                     array.push(window);
-
                     await this.addWindowStatistic();
                 })
                 .then(() => {

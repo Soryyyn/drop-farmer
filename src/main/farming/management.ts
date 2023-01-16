@@ -107,25 +107,28 @@ export function getFarmsRendererData(): FarmRendererData[] {
 }
 
 export function destroyAllFarmWindows(): void {
-    farms.forEach((farm) => farm.destroyAllWindows());
+    farms.forEach(async (farm) => await farm.destroyAllWindows());
+    log('info', 'Destroyed all windows');
 }
 
 export function stopAllFarmJobs(): void {
     farms.forEach((farm) => farm.scheduler.stopAll());
+    log('info', 'Stopped all farm jobs');
 }
 
 export function stopAllTimers(): void {
     farms.forEach((farm) => farm.timer.stopTimer());
+    log('info', 'Stopped all farm timers');
 }
 
-function deleteFarm(id: string): void {
+async function deleteFarm(id: string) {
     /**
      * Delete the farm from the management.
      */
     const index = farms.findIndex((farm) => farm.id === id);
     farms[index].timer.stopTimer();
     farms[index].scheduler.stopAll();
-    farms[index].destroyAllWindows();
+    await farms[index].destroyAllWindows();
     farms.splice(index, 1);
 
     /**
