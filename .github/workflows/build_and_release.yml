@@ -40,6 +40,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
               with:
+                  draft: true
                   files: |
                       out/**/*.deb
                       out/**/*.dmg
