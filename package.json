@@ -90,7 +90,7 @@
         "dayjs": "^1.11.7",
         "electron-squirrel-startup": "^1.0.0",
         "electron-store": "^8.1.0",
-        "eslint": "^8.28.0",
+        "eslint": "^8.32.0",
         "eslint-plugin-react": "^7.31.11",
         "framer-motion": "^7.10.2",
         "is-online": "^10.0.0",
