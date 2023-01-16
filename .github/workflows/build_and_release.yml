@@ -35,12 +35,11 @@ jobs:
               run: yarn
             - name: Build application
               run: yarn run make --arch=${{ matrix.arch }}
-            - name: Create release draft
+            - name: Create release
               uses: softprops/action-gh-release@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
               with:
-                  draft: true
                   files: |
                       out/**/*.deb
                       out/**/*.dmg
