@@ -7,6 +7,7 @@ import RequiredIndicator from './RequiredIndicator';
 interface Props {
     label: string;
     value: any;
+    desc?: string;
     options: any[];
     required: boolean;
     onSelected: (selected: any) => void;
@@ -15,6 +16,7 @@ interface Props {
 export default function Select({
     label,
     value,
+    desc,
     options,
     required,
     onSelected
@@ -47,6 +49,8 @@ export default function Select({
                     };
                 })}
             />
+
+            {desc && <span className="text-snow-300/50">{desc}</span>}
         </div>
     );
 }

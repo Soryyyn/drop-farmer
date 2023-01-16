@@ -143,15 +143,29 @@ async function deleteFarm(id: string) {
 function addNewFarm(farm: NewFarm): FarmRendererData[] {
     validateNewFarm(farm);
 
+    console.log(farm);
+
     switch (farm.type) {
         case 'youtube':
             farms.push(
-                new YoutubeStream(farm.id, false, farm.url, farm.schedule)
+                new YoutubeStream(
+                    farm.id,
+                    false,
+                    farm.url,
+                    farm.schedule,
+                    farm.conditions
+                )
             );
             break;
         case 'twitch':
             farms.push(
-                new TwitchStreamer(farm.id, false, farm.url, farm.schedule)
+                new TwitchStreamer(
+                    farm.id,
+                    false,
+                    farm.url,
+                    farm.schedule,
+                    farm.conditions
+                )
             );
             break;
     }

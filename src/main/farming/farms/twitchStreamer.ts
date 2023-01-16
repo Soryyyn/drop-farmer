@@ -17,7 +17,8 @@ export default class TwitchStreamer extends FarmTemplate {
         id: string,
         isProtected: boolean,
         url: string,
-        schedule?: number
+        schedule?: number,
+        conditions?: FarmingConditions
     ) {
         super(`twitch/${id}`, url, isProtected);
 
@@ -26,6 +27,11 @@ export default class TwitchStreamer extends FarmTemplate {
          */
         if (schedule) {
             this.schedule = schedule;
+        }
+
+        if (conditions) {
+            this.conditions = conditions;
+            this.updateConditionValues();
         }
     }
 

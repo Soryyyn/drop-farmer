@@ -7,6 +7,7 @@ interface Props {
     label: string;
     required: boolean;
     value: number;
+    desc?: string;
     min: number;
     max: number;
     onChange: (updated: number) => void;
@@ -15,6 +16,7 @@ interface Props {
 export default function NumberInput({
     label,
     value,
+    desc,
     required,
     min,
     max,
@@ -35,7 +37,7 @@ export default function NumberInput({
     }, [inputValue]);
 
     return (
-        <div className="flex flex-col gap-2 grow">
+        <div className="flex flex-col gap-2 grow" key={label}>
             <div className="flex flex-row leading-none gap-1">
                 <span className="text-snow-300">{label}</span>
                 {required && <RequiredIndicator />}
@@ -71,6 +73,8 @@ export default function NumberInput({
                     <Icon sprite={faMinus} size="sm" />
                 </button>
             </div>
+
+            {desc && <span className="text-snow-300/50">{desc}</span>}
         </div>
     );
 }

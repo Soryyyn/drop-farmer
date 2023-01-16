@@ -196,7 +196,7 @@ export default abstract class FarmTemplate {
                 id: 'timeframe',
                 shown: 'Timeframe',
                 desc: 'The timeframe in which the farm will try to fulfill the condition. The condition will reset depending on the timeframe. ',
-                value: 'unlimited',
+                value: this.conditions.timeframe ?? 'unlimited',
                 default: 'unlimited',
                 options: ['weekly', 'monthly', 'unlimited'],
                 disabled: false,
@@ -217,7 +217,7 @@ export default abstract class FarmTemplate {
                 id: 'amountToFulfill',
                 shown: 'Amount to fulfill condition',
                 desc: 'The amount of hours the farm needs to farm before the stopping/reset condition has been fulfilled.',
-                value: 4,
+                value: this.conditions.amountToFulfill ?? 4,
                 default: 4,
                 disabled: false,
                 min: 1,
@@ -233,7 +233,7 @@ export default abstract class FarmTemplate {
                 id: 'buffer',
                 shown: 'Buffer',
                 desc: 'The buffer (in minutes) controls how much longer the farm will farm as a buffer because drops may not exactly happen on the hour.',
-                value: 30,
+                value: this.conditions.buffer ?? 30,
                 default: 30,
                 disabled: false,
                 min: 0,
@@ -249,7 +249,7 @@ export default abstract class FarmTemplate {
                 id: 'repeating',
                 shown: 'Repeat after timeframe reset',
                 desc: 'If the farm should repeat the condition after the timeframe is fulfilled.',
-                value: true,
+                value: this.conditions.repeating ?? true,
                 default: true,
                 disabled: false
             });
@@ -284,7 +284,7 @@ export default abstract class FarmTemplate {
         this.conditions.amount = getStatistic(this.id)?.uptime;
     }
 
-    private updateConditionValues(): void {
+    protected updateConditionValues(): void {
         if (this.conditions.started)
             updateSetting(this.id, 'started', {
                 id: 'started',

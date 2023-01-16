@@ -94,6 +94,12 @@ type NewFarm = {
     id: string;
     schedule: number;
     url: string;
+    conditions: {
+        timeframe: Timeframe;
+        amountToFulfill?: number;
+        buffer?: number;
+        repeating?: boolean;
+    };
 };
 
 type Timeframe = 'weekly' | 'monthly' | 'unlimited';

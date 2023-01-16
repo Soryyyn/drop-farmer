@@ -5,10 +5,17 @@ interface Props {
     label: string;
     required: boolean;
     value: string;
+    desc?: string;
     onChange: (updated: string) => void;
 }
 
-export default function TextInput({ label, required, value, onChange }: Props) {
+export default function TextInput({
+    label,
+    required,
+    value,
+    desc,
+    onChange
+}: Props) {
     return (
         <div className="flex flex-col gap-2 grow">
             <div className="flex flex-row leading-none gap-1">
@@ -21,6 +28,8 @@ export default function TextInput({ label, required, value, onChange }: Props) {
                 onChange={(event) => onChange(event.target.value)}
                 value={value}
             />
+
+            {desc && <span className="text-snow-300/50">{desc}</span>}
         </div>
     );
 }

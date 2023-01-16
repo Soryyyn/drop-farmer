@@ -17,7 +17,8 @@ export default class YoutubeStream extends FarmTemplate {
         id: string,
         isProtected: boolean,
         url: string,
-        schedule?: number
+        schedule?: number,
+        conditions?: FarmingConditions
     ) {
         super(`youtube/${id}`, url, isProtected);
 
@@ -27,6 +28,13 @@ export default class YoutubeStream extends FarmTemplate {
         if (schedule) {
             this.schedule = schedule;
         }
+
+        if (conditions) {
+            this.conditions = conditions;
+            this.updateConditionValues();
+        }
+
+        console.log(this.conditions);
     }
 
     /**
