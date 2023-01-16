@@ -51,7 +51,7 @@ export function updateStatistic(
          * Update the overall stat when the farms get updated, but not when they get
          * initialized and/or only the conditions have not been updated.
          */
-        if (owner !== 'overall') {
+        if (owner !== 'overall' && statsBeforeUpdate) {
             const stat = getStatistic('overall');
 
             store.set('statistics.overall', {

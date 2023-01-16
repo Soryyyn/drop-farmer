@@ -108,6 +108,8 @@ type FarmingConditions = {
     repeating?: boolean; // not needed if unlimited
 };
 
+type ConditionCheckReturn = 'farm' | 'conditions-fulfilled';
+
 /**
  * Toasts.
  */

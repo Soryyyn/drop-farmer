@@ -11,8 +11,16 @@ import { waitForTimeout } from '@main/util/puppeteer';
 import { getStatistic, updateStatistic } from '@main/util/statistics';
 import CrontabManager from 'cron-job-manager';
 import dayjs from 'dayjs';
-import { doesSettingExist, getSetting, setSetting } from '../util/settings';
+import Duration from 'dayjs/plugin/duration';
+import {
+    doesSettingExist,
+    getSetting,
+    setSetting,
+    updateSetting
+} from '../util/settings';
 import { Timer } from './timer';
+
+dayjs.extend(Duration);
 
 export default abstract class FarmTemplate {
     id: string;
@@ -95,6 +103,8 @@ export default abstract class FarmTemplate {
             this.updateSchedule(
                 getSetting(this.id, 'schedule')?.value as number
             );
+
+        this.updateConditionsWithSettings();
     }
 
     createOrSetFarmSettings(): void {
@@ -174,7 +184,7 @@ export default abstract class FarmTemplate {
         } else {
             setSetting(this.id, {
                 id: 'amount',
-                value: 0
+                value: getStatistic(this.id)?.uptime ?? 0
             });
         }
 
@@ -254,6 +264,66 @@ export default abstract class FarmTemplate {
                 openedWindows: 0
             });
         }
+    }
+
+    private updateConditionsWithSettings(): void {
+        this.conditions.timeframe = getSetting(this.id, 'timeframe')
+            ?.value as Timeframe;
+
+        this.conditions.amountToFulfill = getSetting(this.id, 'amountToFulfill')
+            ?.value as number;
+
+        this.conditions.buffer = getSetting(this.id, 'buffer')?.value as number;
+
+        this.conditions.repeating = getSetting(this.id, 'repeating')
+            ?.value as boolean;
+
+        /**
+         * Set the amount from the statistics.
+         */
+        this.conditions.amount = getStatistic(this.id)?.uptime;
+    }
+
+    private updateConditionValues(): void {
+        if (this.conditions.started)
+            updateSetting(this.id, 'started', {
+                id: 'started',
+                value: dayjs(this.conditions.started).toISOString()
+            });
+
+        if (this.conditions.fulfilled)
+            updateSetting(this.id, 'fulfilled', {
+                id: 'fulfilled',
+                value: dayjs(this.conditions.fulfilled).toISOString()
+            });
+
+        if (this.conditions.amount)
+            updateSetting(this.id, 'amount', {
+                id: 'amount',
+                value: this.conditions.amount
+            });
+    }
+
+    private resetConditions(): void {
+        this.conditions.started = undefined;
+        updateSetting(this.id, 'started', {
+            id: 'started',
+            value: ''
+        });
+
+        this.conditions.fulfilled = undefined;
+        updateSetting(this.id, 'fulfilled', {
+            id: 'fulfilled',
+            value: ''
+        });
+
+        this.conditions.amount = undefined;
+        updateSetting(this.id, 'amount', {
+            id: 'amount',
+            value: 0
+        });
+
+        log('info', `${this.id}: Conditions have been reset`);
     }
 
     private getAmountOfWindows(): number {
@@ -359,6 +429,12 @@ export default abstract class FarmTemplate {
             ...stat!,
             uptime: stat!.uptime + this.timer.amount
         });
+
+        /**
+         * Set the amount from the statistics.
+         */
+        this.conditions.amount = getStatistic(this.id)?.uptime;
+        this.updateConditionValues();
     }
 
     protected createCheckerWindow(): Promise<Electron.BrowserWindow> {
@@ -486,7 +562,161 @@ export default abstract class FarmTemplate {
     /**
      * Check for conditions and what to do next.
      */
-    private conditionCheck() {}
+    private conditionCheck(): ConditionCheckReturn {
+        /**
+         * Check if the farm is set to unlimited farming.
+         */
+        if (this.conditions.timeframe === 'unlimited') {
+            log('info', `${this.id}: Timeframe set to unlimited, farming now`);
+            return 'farm';
+        } else {
+            /**
+             * Check if the condition has a started date set.
+             */
+            if (!this.conditions.started) {
+                log('info', `${this.id}: No started date set, farming now`);
+
+                /**
+                 * Set the started date.
+                 */
+                this.conditions.started = dayjs().toDate();
+                this.updateConditionValues();
+                return 'farm';
+            } else {
+                /**
+                 * Farming has already started. Check if a fulfilled date has been set.
+                 */
+                if (!this.conditions.fulfilled) {
+                    log(
+                        'info',
+                        `${this.id}: Fulfilled date is not set, checking if fulfilled`
+                    );
+
+                    /**
+                     * Fulfilled has not been set. Check the timeframe amount and
+                     * compare the current date with the started date.
+                     */
+                    const amountOfDaysFarmed: number = dayjs().diff(
+                        dayjs(this.conditions.started),
+                        'day'
+                    );
+
+                    if (
+                        (this.conditions.timeframe === 'weekly' &&
+                            amountOfDaysFarmed === 7) ||
+                        (this.conditions.timeframe === 'monthly' &&
+                            amountOfDaysFarmed === dayjs().daysInMonth())
+                    ) {
+                        /**
+                         * Has reached its reset.
+                         */
+                        if (this.conditions.repeating) {
+                            log(
+                                'info',
+                                `${this.id}: Reached timeframe reset, will reset now`
+                            );
+                            this.resetConditions();
+                            return 'farm';
+                        } else {
+                            log(
+                                'info',
+                                `${this.id}: Reached timeframe reset, repeating is not enabled, will set fulfilled`
+                            );
+                            this.conditions.fulfilled = dayjs().toDate();
+                            this.updateConditionValues();
+                            this.updateStatus('condition-fulfilled');
+                            return 'conditions-fulfilled';
+                        }
+                    } else {
+                        /**
+                         * Still time to farm, not at reset point.
+                         */
+                        if (this.conditions.amount) {
+                            log(
+                                'info',
+                                `${this.id}: Checking if amount to fulfilled has been achieved`
+                            );
+
+                            const amountToAchieve = dayjs
+                                .duration({
+                                    hours: this.conditions.amountToFulfill,
+                                    minutes: this.conditions.buffer
+                                })
+                                .asMilliseconds();
+
+                            if (this.conditions.amount >= amountToAchieve) {
+                                log(
+                                    'info',
+                                    `${this.id}: Achieved amount to fulfill condition, will set fulfilled`
+                                );
+                                this.conditions.fulfilled = dayjs().toDate();
+                                this.updateConditionValues();
+                                this.updateStatus('condition-fulfilled');
+                                return 'conditions-fulfilled';
+                            } else {
+                                log(
+                                    'info',
+                                    `${this.id}: Has not achieved amount to fulfill yet, farm now`
+                                );
+                                return 'farm';
+                            }
+                        } else {
+                            log(
+                                'info',
+                                `${this.id}: No amount achieved, will farm`
+                            );
+                            return 'farm';
+                        }
+                    }
+                } else {
+                    log(
+                        'info',
+                        `${this.id}: Already fulfilled amount, checking if can reset`
+                    );
+
+                    const amountOfDaysFarmed: number = dayjs().diff(
+                        dayjs(this.conditions.started),
+                        'day'
+                    );
+
+                    if (
+                        (this.conditions.timeframe === 'weekly' &&
+                            amountOfDaysFarmed === 7) ||
+                        (this.conditions.timeframe === 'monthly' &&
+                            amountOfDaysFarmed === dayjs().daysInMonth())
+                    ) {
+                        /**
+                         * Has reached its reset.
+                         */
+                        if (this.conditions.repeating) {
+                            log(
+                                'info',
+                                `${this.id}: Reached timeframe reset, will reset now`
+                            );
+                            this.resetConditions();
+                            return 'farm';
+                        } else {
+                            log(
+                                'info',
+                                `${this.id}: Reached timeframe reset, repeating is not enabled, will set fulfilled`
+                            );
+                            this.conditions.fulfilled = dayjs().toDate();
+                            this.updateConditionValues();
+                            this.updateStatus('condition-fulfilled');
+                            return 'conditions-fulfilled';
+                        }
+                    } else {
+                        log(
+                            'info',
+                            `${this.id}: Not able to reset yet, set fulfilled`
+                        );
+                        this.updateStatus('condition-fulfilled');
+                        return 'conditions-fulfilled';
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * The farming flow function which need to be defined by each farm themselves.
@@ -503,54 +733,71 @@ export default abstract class FarmTemplate {
             this.status !== 'checking' &&
             this.status !== 'attention-required'
         ) {
-            this.createCheckerWindow()
-                .then(async (window) => {
-                    this.timer.stopTimer();
-                    await this.addUptimeAmount();
-
-                    this.updateStatus('checking');
-
-                    await this.login(window);
-                    if (this.farmers.length > 0) {
-                        await this.stillFarming(window);
-                    }
-                    await this.startFarming(window);
-                })
-                .then(async () => {
-                    /**
-                     * Wait for 2 seconds for the window to be actually created.
-                     */
-                    await waitForTimeout(2000);
-
-                    this.destroyChecker();
-                })
-                .catch((err) => {
+            /**
+             * Check for conditions.
+             */
+            switch (this.conditionCheck()) {
+                case 'conditions-fulfilled':
                     log(
-                        'error',
-                        `${this.id}: Error occurred while checking the farm. ${err}`
+                        'info',
+                        `${this.id}: Condition fulfilled, will not farm`
                     );
-                    this.updateStatus('attention-required');
-                })
-                .finally(() => {
-                    /**
-                     * Set the status to farming if there are >0 farming
-                     * windows, otherwise set it to idle.
-                     */
-                    if (this.farmers.length > 0) {
-                        this.updateStatus('farming');
-                        this.timer.startTimer();
-                    } else {
-                        this.updateStatus('idle');
-                    }
+                    break;
+                case 'farm':
+                    this.createCheckerWindow()
+                        .then(async (window) => {
+                            this.timer.stopTimer();
+                            await this.addUptimeAmount();
 
-                    /**
-                     * If the farm has been disabled mid-check, set the status
-                     * to disable once again to be sure.
-                     */
-                    if (!this.enabled && this.status !== 'attention-required') {
-                        this.updateStatus('disabled');
-                    }
-                });
+                            this.updateStatus('checking');
+
+                            await this.login(window);
+                            if (this.farmers.length > 0) {
+                                await this.stillFarming(window);
+                            }
+                            await this.startFarming(window);
+                        })
+                        .then(async () => {
+                            /**
+                             * Wait for 2 seconds for the window to be actually created.
+                             */
+                            await waitForTimeout(2000);
+
+                            this.destroyChecker();
+                        })
+                        .catch((err) => {
+                            log(
+                                'error',
+                                `${this.id}: Error occurred while checking the farm. ${err}`
+                            );
+                            this.updateStatus('attention-required');
+                        })
+                        .finally(() => {
+                            /**
+                             * Set the status to farming if there are >0 farming
+                             * windows, otherwise set it to idle.
+                             */
+                            if (this.farmers.length > 0) {
+                                this.updateStatus('farming');
+                                this.timer.startTimer();
+                            } else {
+                                this.updateStatus('idle');
+                            }
+
+                            /**
+                             * If the farm has been disabled mid-check, set the status
+                             * to disable once again to be sure.
+                             */
+                            if (
+                                !this.enabled &&
+                                this.status !== 'attention-required'
+                            ) {
+                                this.updateStatus('disabled');
+                            }
+                        });
+
+                    break;
+            }
         }
     }
 }
