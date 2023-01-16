@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function NewFarm({ onClose }: Props) {
-    const { addFarm, isValid } = useContext(FarmsContext);
+    const { addFarm, isValid, resetValidation } = useContext(FarmsContext);
 
     const [farmDetails, setFarmDetails] = useState<NewFarm>({
         id: '',
@@ -35,7 +35,10 @@ export default function NewFarm({ onClose }: Props) {
      * Close the modal if the validation succeeded.
      */
     useEffect(() => {
-        if (isValid) onClose();
+        if (isValid === true) {
+            onClose();
+            resetValidation();
+        }
     }, [isValid]);
 
     return (
@@ -46,9 +49,7 @@ export default function NewFarm({ onClose }: Props) {
                         key="newFarm"
                         icon={faFloppyDisk}
                         tooltip="Create a new farm with the filled out details"
-                        onClick={() => {
-                            addFarm(farmDetails);
-                        }}
+                        onClick={() => addFarm(farmDetails)}
                     />,
                     <ActionButton
                         key="close"

@@ -33,8 +33,6 @@ export default class YoutubeStream extends FarmTemplate {
             this.conditions = conditions;
             this.updateConditionValues();
         }
-
-        console.log(this.conditions);
     }
 
     /**

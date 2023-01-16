@@ -143,8 +143,6 @@ async function deleteFarm(id: string) {
 function addNewFarm(farm: NewFarm): FarmRendererData[] {
     validateNewFarm(farm);
 
-    console.log(farm);
-
     switch (farm.type) {
         case 'youtube':
             farms.push(
