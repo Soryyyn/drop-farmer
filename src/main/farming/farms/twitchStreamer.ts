@@ -40,24 +40,13 @@ export default class TwitchStreamer extends FarmTemplate {
             try {
                 const page = await getPage(getBrowserConnection(), window);
 
-                const userDropdownButton = '[data-a-target=user-menu-toggle]';
-                const userDropdownButtonElement = await waitForElementToAppear(
-                    page,
-                    userDropdownButton
-                );
-
                 /**
-                 * Get the user dropdown menu and check if the button element
-                 * has classes added.
-                 * If there are classes, the user is not logged in.
+                 * Get the login button
                  */
+                const loginButton =
+                    'button[data-test-selector="anon-user-menu__login-button"]';
                 if (
-                    Object.keys(
-                        await getElementProperty(
-                            userDropdownButtonElement!,
-                            'classList'
-                        )
-                    ).length !== 0
+                    (await waitForElementToAppear(page, loginButton)) !== null
                 ) {
                     log('info', `${this.id}: Login is needed by user`);
 
@@ -79,9 +68,15 @@ export default class TwitchStreamer extends FarmTemplate {
                         window.focus();
                     }
 
-                    await waitForElementToAppear(page, '.top-name__menu', 0);
+                    await waitForElementToAppear(
+                        page,
+                        'div.root-scrollable__wrapper',
+                        0
+                    );
+
+                    await page.goto(this.url);
+
                     log('info', `${this.id}: Login completed`);
-                    window.hide();
                     resolve(undefined);
                 } else {
                     log(
@@ -148,7 +143,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     if (
                         await doesElementExist(
                             page,
-                            '#live-channel-stream-information > div > div > div > div > div.Layout-sc-nxg1ff-0.wEGRY > div > div > div > a > div.Layout-sc-nxg1ff-0.ScHaloIndicator-sc-1l14b0i-1.ceXRHq.tw-halo__indicator > div > div > div > div > p'
+                            'div.live-indicator-container'
                         )
                     ) {
                         log('info', `${this.id}: Found livestream`);
