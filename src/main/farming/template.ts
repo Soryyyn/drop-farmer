@@ -523,7 +523,9 @@ export default abstract class FarmTemplate {
         sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
     }
 
-    restartScheduler(steps?: () => void): void {
+    async restartScheduler(steps?: () => void) {
+        this.timer.stopTimer();
+        await this.addUptimeAmount();
         this.destroyAllWindows();
 
         this.scheduler.stopAll();

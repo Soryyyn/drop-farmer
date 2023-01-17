@@ -253,7 +253,7 @@ listenForEvent(EventChannels.PCWentToSleep, () => {
 
 listenForEvent(EventChannels.PCWokeUp, () => {
     log('warn', 'Starting farms again because PC woke up');
-    farms.forEach((farm) => farm.restartScheduler());
+    farms.forEach(async (farm) => await farm.restartScheduler());
 });
 
 listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {

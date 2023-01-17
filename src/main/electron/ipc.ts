@@ -148,8 +148,8 @@ handleOneWay(IpcChannels.restartScheduler, (event, name) => {
                 )}}.`,
                 duration: 4000
             },
-            () => {
-                farm.restartScheduler();
+            async () => {
+                await farm.restartScheduler();
             }
         );
     }
