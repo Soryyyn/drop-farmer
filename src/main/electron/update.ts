@@ -4,7 +4,11 @@ import {
     Schedules,
     Toasts
 } from '@main/common/constants';
-import { destroyAllFarmWindows } from '@main/farming/management';
+import {
+    destroyAllFarmWindows,
+    stopAllFarmJobs,
+    stopAllTimers
+} from '@main/farming/management';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { sendToast } from '@main/util/toast';
@@ -140,6 +144,8 @@ autoUpdater.on('update-downloaded', () => {
 
 autoUpdater.on('before-quit-for-update', () => {
     destroyTray();
+    stopAllFarmJobs();
+    stopAllTimers();
     destroyAllFarmWindows();
 });
 

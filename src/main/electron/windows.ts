@@ -133,7 +133,7 @@ export async function createWindow(url: string, shouldBeShown: boolean) {
     /**
      * Mute window.
      */
-    muteWindow(window);
+    await muteWindow(window);
 
     /**
      * Load the url.
@@ -163,10 +163,12 @@ export async function createWindow(url: string, shouldBeShown: boolean) {
  */
 export function destroyWindow(window: Electron.BrowserWindow) {
     return new Promise((resolve) => {
-        log('info', `Destroyed window(${window.id})`);
-        if (window) window.destroy();
+        window.destroy();
 
-        resolve(undefined);
+        window.on('closed', () => {
+            log('info', `Destroyed window(${window.id})`);
+            resolve(undefined);
+        });
     });
 }
 
@@ -212,9 +214,12 @@ export function hideWindow(
  *
  * @param {Electron.BrowserWindow} window The window to mute.
  */
-function muteWindow(window: Electron.BrowserWindow): void {
-    log('info', `Muted window(${window.id})`);
-    window.webContents.setAudioMuted(true);
+function muteWindow(window: Electron.BrowserWindow): Promise<void> {
+    return new Promise((resolve) => {
+        log('info', `Muted window(${window.id})`);
+        window.webContents.setAudioMuted(true);
+        resolve();
+    });
 }
 
 /**

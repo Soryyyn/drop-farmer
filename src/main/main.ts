@@ -4,7 +4,6 @@ import { createTray, destroyTray } from './electron/tray';
 import { initUpdater } from './electron/update';
 import {
     createMainWindow,
-    destroyWindow,
     getMainWindow,
     setAppQuitting
 } from './electron/windows';
@@ -96,8 +95,10 @@ app.whenReady().then(() => {
         /**
          * Stop all cron jobs, to prevent unfulfilled promises.
          */
+        destroyTray();
         stopAllFarmJobs();
         stopAllTimers();
+        destroyAllFarmWindows();
 
         /**
          * Allow app to shutdown.
@@ -116,6 +117,11 @@ app.on('before-quit', () => {
     stopAllFarmJobs();
     stopAllTimers();
     destroyAllFarmWindows();
+
+    /**
+     * Hard quit the app.
+     */
+    process.exit();
 });
 
 /**
