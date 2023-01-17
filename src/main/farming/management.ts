@@ -13,6 +13,7 @@ import {
     updateSetting
 } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
+import { reject } from 'lodash';
 import LeagueOfLegends from './farms/leagueOfLegends';
 import TwitchStreamer from './farms/twitchStreamer';
 import YoutubeStream from './farms/youtubeStream';
@@ -239,6 +240,38 @@ handleAndReply(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
 
 handleOneWay(IpcChannels.deleteFarm, (event, id) => {
     deleteFarm(id);
+});
+
+handleOneWay(IpcChannels.resetFarmingConditions, async (event, id) => {
+    const farm = getFarmById(id);
+
+    sendToast(
+        {
+            id: Toasts.FarmResetConditions,
+            type: 'promise',
+            duration: 4000,
+            textOnSuccess: `Reset farming conditions for farm ${removeTypeFromText(
+                farm?.id!
+            )}`,
+            textOnError: `Failed resetting farming conditions for farm ${removeTypeFromText(
+                farm?.id!
+            )}`,
+            textOnLoading: `Resetting farming conditions for farm ${removeTypeFromText(
+                farm?.id!
+            )}...`
+        },
+        undefined,
+        new Promise((resolve, reject) => {
+            try {
+                farm?.restartScheduler();
+                farm?.resetConditions();
+
+                resolve(undefined);
+            } catch (error) {
+                reject(error);
+            }
+        })
+    );
 });
 
 listenForEvent(EventChannels.PCWentToSleep, () => {

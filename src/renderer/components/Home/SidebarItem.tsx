@@ -8,6 +8,7 @@ import {
     faEye,
     faEyeSlash,
     faRotate,
+    faRotateRight,
     faShieldHalved,
     faTrash,
     faWindowMaximize
@@ -24,7 +25,8 @@ export default function SidebarItem() {
         setWindowsVisibility,
         clearCache,
         restartSchedule,
-        deleteSelf
+        deleteSelf,
+        resetConditions
     } = useContext(FarmContext);
 
     const [timeUntilNextCheck, setTimeUntilNextCheck] = useState<string>('...');
@@ -119,6 +121,18 @@ export default function SidebarItem() {
                         onClick: () => {
                             setWindowsVisibility(!farm?.windowsShown);
                         }
+                    },
+                    {
+                        type: 'normal',
+                        label: 'Reset conditions',
+                        icon: (
+                            <Icon
+                                sprite={faRotateRight}
+                                size="1x"
+                                className="mx-1"
+                            />
+                        ),
+                        onClick: () => resetConditions()
                     },
                     {
                         type: 'normal',

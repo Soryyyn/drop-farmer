@@ -69,13 +69,15 @@ export const FarmContext = createContext<{
     restartSchedule: () => void;
     clearCache: () => void;
     deleteSelf: () => void;
+    resetConditions: () => void;
 }>({
     farm: undefined,
     loginNeeded: false,
     setWindowsVisibility: () => {},
     restartSchedule: () => {},
     clearCache: () => {},
-    deleteSelf: () => {}
+    deleteSelf: () => {},
+    resetConditions: () => {}
 });
 
 /**
@@ -329,6 +331,10 @@ export function FarmContextProvider({
         api.sendOneWay(api.channels.deleteFarm, trackedFarm.id);
     }
 
+    function resetConditions() {
+        api.sendOneWay(api.channels.resetFarmingConditions, trackedFarm.id);
+    }
+
     return (
         <FarmContext.Provider
             value={{
@@ -337,7 +343,8 @@ export function FarmContextProvider({
                 setWindowsVisibility,
                 restartSchedule,
                 clearCache,
-                deleteSelf
+                deleteSelf,
+                resetConditions
             }}
         >
             {children}

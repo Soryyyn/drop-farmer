@@ -1,6 +1,7 @@
 export const Toasts = {
     UpdateChecking: 'update-checking',
-    FarmCreation: 'farm-creation'
+    FarmCreation: 'farm-creation',
+    FarmResetConditions: 'farm-reset-conditions'
 } as const;
 export type Toast = (typeof Toasts)[keyof typeof Toasts];
 
@@ -24,7 +25,8 @@ export const IpcChannels = {
     addNewFarm: 'add-new-farm',
     farmsChanged: 'farms-changed',
     settingsChanged: 'settings-changed',
-    deleteFarm: 'delete-farm'
+    deleteFarm: 'delete-farm',
+    resetFarmingConditions: 'reset-farming-conditions'
 } as const;
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
 

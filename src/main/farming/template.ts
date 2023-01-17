@@ -304,7 +304,7 @@ export default abstract class FarmTemplate {
             });
     }
 
-    private resetConditions(): void {
+    resetConditions(): void {
         this.conditions.started = undefined;
         updateSetting(this.id, 'started', {
             id: 'started',
@@ -523,7 +523,7 @@ export default abstract class FarmTemplate {
         sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
     }
 
-    async restartScheduler(steps?: () => void) {
+    async restartScheduler(withStatus?: FarmStatus, steps?: () => void) {
         this.timer.stopTimer();
         await this.addUptimeAmount();
         this.destroyAllWindows();
@@ -535,7 +535,7 @@ export default abstract class FarmTemplate {
         if (this.status === 'disabled') {
             this.updateStatus('disabled');
         } else {
-            this.updateStatus('idle');
+            this.updateStatus(withStatus ?? 'idle');
         }
     }
 
@@ -726,7 +726,7 @@ export default abstract class FarmTemplate {
     /**
      * The farming schedule itself which will start if the farm is enabled.
      */
-    private farmingSchedule(): void {
+    private async farmingSchedule(): Promise<void> {
         if (
             this.status !== 'checking' &&
             this.status !== 'attention-required'
@@ -736,6 +736,8 @@ export default abstract class FarmTemplate {
              */
             switch (this.conditionCheck()) {
                 case 'conditions-fulfilled':
+                    await this.destroyAllWindows();
+
                     log(
                         'info',
                         `${this.id}: Condition fulfilled, will not farm`

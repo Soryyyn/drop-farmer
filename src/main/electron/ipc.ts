@@ -124,8 +124,8 @@ handleOneWay(IpcChannels.clearCache, (event, id) => {
                 )}}.`,
                 duration: 4000
             },
-            () => {
-                farm.restartScheduler(async () => {
+            async () => {
+                await farm.restartScheduler(undefined, async () => {
                     await farm.clearCache();
                 });
             }
