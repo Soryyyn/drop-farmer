@@ -249,7 +249,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                     /**
                      * All hrefs with checking for duplicates.
                      */
-                    let hrefs: string[] = [];
+                    const hrefs: string[] = [];
 
                     /**
                      * Go through each url and redirect it to the correct one.
@@ -289,10 +289,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                         await this.createArrayWindow(href, this.farmers);
                     });
 
-                    /**
-                     * Clear hrefs array.
-                     */
-                    hrefs = [];
+                    await waitForTimeout(2000);
 
                     /**
                      * Change status to farming.

@@ -765,14 +765,7 @@ export default abstract class FarmTemplate {
 
                             this.destroyChecker();
                         })
-                        .catch((err) => {
-                            log(
-                                'error',
-                                `${this.id}: Error occurred while checking the farm. ${err}`
-                            );
-                            this.updateStatus('attention-required');
-                        })
-                        .finally(() => {
+                        .then(async () => {
                             /**
                              * Set the status to farming if there are >0 farming
                              * windows, otherwise set it to idle.
@@ -783,7 +776,15 @@ export default abstract class FarmTemplate {
                             } else {
                                 this.updateStatus('idle');
                             }
-
+                        })
+                        .catch((err) => {
+                            log(
+                                'error',
+                                `${this.id}: Error occurred while checking the farm. ${err}`
+                            );
+                            this.updateStatus('attention-required');
+                        })
+                        .finally(() => {
                             /**
                              * If the farm has been disabled mid-check, set the status
                              * to disable once again to be sure.
