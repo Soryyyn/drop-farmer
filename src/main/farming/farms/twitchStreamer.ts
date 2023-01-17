@@ -96,17 +96,12 @@ export default class TwitchStreamer extends FarmTemplate {
             try {
                 const page = await getPage(getBrowserConnection(), window);
 
-                const liveIndicatorText =
-                    '#live-channel-stream-information > div > div > div > div > div.Layout-sc-nxg1ff-0.wEGRY > div > div > div > a > div.Layout-sc-nxg1ff-0.ScHaloIndicator-sc-1l14b0i-1.ceXRHq.tw-halo__indicator > div > div > div > div > p';
-                const element = await waitForElementToAppear(
-                    page,
-                    liveIndicatorText
-                );
-
                 /**
                  * Check for *LIVE* text on profile of streamer.
                  */
-                if (element !== null) {
+                if (
+                    await doesElementExist(page, 'div.live-indicator-container')
+                ) {
                     log(
                         'info',
                         `${this.id}: Stream still live, continue farming`
