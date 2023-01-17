@@ -7,7 +7,6 @@ interface Props {
     label: string;
     required: boolean;
     value: boolean;
-    desc?: string;
     onChange: (updated: boolean) => void;
 }
 
@@ -15,7 +14,6 @@ export default function SwitchToggle({
     label,
     required,
     value,
-    desc,
     onChange
 }: Props) {
     return (
@@ -46,8 +44,6 @@ export default function SwitchToggle({
                     )}
                 />
             </Switch>
-
-            {desc && <span className="text-snow-300/50">{desc}</span>}
         </div>
     );
 }

@@ -67,7 +67,6 @@ export default function NewFarm({ onClose }: Props) {
                                         label="Name"
                                         value={farmDetails.id}
                                         required={true}
-                                        desc="This is the name of the farm. This value will be referenced all over the place."
                                         onChange={(changed) =>
                                             setFarmDetails({
                                                 ...farmDetails,
@@ -79,7 +78,6 @@ export default function NewFarm({ onClose }: Props) {
                                 <NumberInput
                                     label="Schedule (in minutes)"
                                     value={farmDetails.schedule}
-                                    desc={`The schedule controls how often the farm will check if it can farm.`}
                                     required={true}
                                     min={1}
                                     max={60}
@@ -95,7 +93,6 @@ export default function NewFarm({ onClose }: Props) {
                                 label="Farming location"
                                 value={farmDetails.type}
                                 required={true}
-                                desc="This will control what type of farm it is and will check the corresponding website."
                                 options={['youtube', 'twitch']}
                                 onSelected={(selected: FarmType) => {
                                     setFarmDetails({
@@ -108,7 +105,6 @@ export default function NewFarm({ onClose }: Props) {
                                 label="URL"
                                 value={farmDetails.url}
                                 required={true}
-                                desc="The URL is the actual link of the stream/streamer you wan't to farm."
                                 onChange={(changed) =>
                                     setFarmDetails({
                                         ...farmDetails,
@@ -129,9 +125,6 @@ export default function NewFarm({ onClose }: Props) {
                             <Select
                                 label="Timeframe"
                                 value={farmDetails.conditions.timeframe}
-                                desc={
-                                    'The timeframe controls when the farm should reset it\'s statistics and reset. If it\'s set to "Unlimited", the other settings will be ignored.'
-                                }
                                 required={true}
                                 options={['unlimited', 'weekly', 'monthly']}
                                 onSelected={(selected: Timeframe) => {
@@ -151,7 +144,6 @@ export default function NewFarm({ onClose }: Props) {
                                     value={
                                         farmDetails.conditions.amountToFulfill!
                                     }
-                                    desc="This value control how much the farm will try to achieve in the given timeframe until it's considered fulfilled."
                                     required={
                                         farmDetails.conditions.timeframe !==
                                         'unlimited'
@@ -171,7 +163,6 @@ export default function NewFarm({ onClose }: Props) {
                                 <NumberInput
                                     label="Buffer (in minutes)"
                                     value={farmDetails.conditions.buffer!}
-                                    desc="This values is a buffer to the amount given. Sometimes drops won't be given exactly on the hour."
                                     required={
                                         farmDetails.conditions.timeframe !==
                                         'unlimited'
@@ -191,7 +182,6 @@ export default function NewFarm({ onClose }: Props) {
 
                                 <SwitchToggle
                                     label="Repeating"
-                                    desc="This controls if the farm should repeat it's current condition after the timeframe has been fulfilled."
                                     required={
                                         farmDetails.conditions.timeframe !==
                                         'unlimited'

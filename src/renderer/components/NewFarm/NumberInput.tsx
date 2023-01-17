@@ -7,7 +7,6 @@ interface Props {
     label: string;
     required: boolean;
     value: number;
-    desc?: string;
     min: number;
     max: number;
     onChange: (updated: number) => void;
@@ -16,7 +15,6 @@ interface Props {
 export default function NumberInput({
     label,
     value,
-    desc,
     required,
     min,
     max,
@@ -73,8 +71,6 @@ export default function NumberInput({
                     <Icon sprite={faMinus} size="sm" />
                 </button>
             </div>
-
-            {desc && <span className="text-snow-300/50">{desc}</span>}
         </div>
     );
 }
