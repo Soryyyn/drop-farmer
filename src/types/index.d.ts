@@ -80,6 +80,8 @@ type FarmRendererData = {
     isProtected: boolean;
     amountOfWindows: number;
     windowsShown: boolean;
+    amountLeftToFulfill?: number; // in hours
+    nextConditionReset?: number; // in days
 };
 
 type LoginForFarmObject = {

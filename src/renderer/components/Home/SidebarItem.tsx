@@ -3,15 +3,18 @@ import Menu, { Alignment } from '@components/global/Menu';
 import NotificationBadge from '@components/global/NotificationBadge';
 import {
     faBroom,
+    faCalendarDays,
     faClock,
     faEllipsisVertical,
     faEye,
     faEyeSlash,
+    faHourglassHalf,
     faRotate,
     faRotateRight,
     faShieldHalved,
     faTrash,
-    faWindowMaximize
+    faWindowMaximize,
+    faWindowRestore
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
@@ -48,7 +51,7 @@ export default function SidebarItem() {
             } else if (farm!.status === 'attention-required') {
                 setTimeUntilNextCheck('Paused');
             } else if (currentTime < nextCheck) {
-                setTimeUntilNextCheck(`${nextCheck - currentTime}min(s)`);
+                setTimeUntilNextCheck(`~${nextCheck - currentTime}min(s)`);
             } else {
                 setTimeUntilNextCheck('...');
             }
@@ -84,7 +87,7 @@ export default function SidebarItem() {
                         disabled: true,
                         icon: (
                             <Icon
-                                sprite={faWindowMaximize}
+                                sprite={faWindowRestore}
                                 size="1x"
                                 className="mx-1"
                             />
@@ -97,6 +100,40 @@ export default function SidebarItem() {
                         disabled: true,
                         icon: (
                             <Icon sprite={faClock} size="1x" className="mx-1" />
+                        ),
+                        onClick: () => {}
+                    },
+                    {
+                        type: 'normal',
+                        label: `Time left to fulfill: ${
+                            farm?.nextConditionReset === Infinity
+                                ? 'Never'
+                                : `~${farm?.amountLeftToFulfill}h`
+                        }`,
+                        disabled: true,
+                        icon: (
+                            <Icon
+                                sprite={faHourglassHalf}
+                                size="1x"
+                                className="mx-1"
+                            />
+                        ),
+                        onClick: () => {}
+                    },
+                    {
+                        type: 'normal',
+                        label: `Days until reset: ${
+                            farm?.nextConditionReset === Infinity
+                                ? 'Never'
+                                : farm?.nextConditionReset
+                        }`,
+                        disabled: true,
+                        icon: (
+                            <Icon
+                                sprite={faCalendarDays}
+                                size="1x"
+                                className="mx-1"
+                            />
                         ),
                         onClick: () => {}
                     },

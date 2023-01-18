@@ -277,11 +277,6 @@ export default abstract class FarmTemplate {
 
         this.conditions.repeating = getSetting(this.id, 'repeating')
             ?.value as boolean;
-
-        /**
-         * Set the amount from the statistics.
-         */
-        this.conditions.amount = getStatistic(this.id)?.uptime;
     }
 
     updateConditionValues(): void {
@@ -337,13 +332,46 @@ export default abstract class FarmTemplate {
     }
 
     getRendererData(): FarmRendererData {
+        const needsToAchieve =
+            this.conditions.timeframe !== 'unlimited'
+                ? Math.round(
+                      dayjs
+                          .duration({
+                              milliseconds:
+                                  dayjs
+                                      .duration({
+                                          hours: this.conditions
+                                              .amountToFulfill,
+                                          minutes: this.conditions.buffer
+                                      })
+                                      .asMilliseconds() -
+                                  this.conditions.amount!
+                          })
+                          .asHours()
+                  )
+                : Infinity;
+
+        let daysLeftUntilReset = 0;
+        if (this.conditions.timeframe === 'weekly') {
+            daysLeftUntilReset =
+                7 - dayjs().diff(dayjs(this.conditions.started), 'day');
+        } else if (this.conditions.timeframe === 'monthly') {
+            daysLeftUntilReset =
+                dayjs().daysInMonth() -
+                dayjs().diff(dayjs(this.conditions.started), 'day');
+        } else {
+            daysLeftUntilReset = Infinity;
+        }
+
         return {
             id: this.id,
             status: this.status,
             schedule: this.schedule,
             isProtected: this.isProtected,
             amountOfWindows: this.getAmountOfWindows(),
-            windowsShown: this.windowsCurrentlyShown
+            windowsShown: this.windowsCurrentlyShown,
+            amountLeftToFulfill: needsToAchieve,
+            nextConditionReset: daysLeftUntilReset
         };
     }
 
@@ -625,7 +653,6 @@ export default abstract class FarmTemplate {
                             );
                             this.conditions.fulfilled = dayjs().toDate();
                             this.updateConditionValues();
-                            this.updateStatus('condition-fulfilled');
                             return 'conditions-fulfilled';
                         }
                     } else {
@@ -651,8 +678,7 @@ export default abstract class FarmTemplate {
                                     `${this.id}: Achieved amount to fulfill condition, will set fulfilled`
                                 );
                                 this.conditions.fulfilled = dayjs().toDate();
-                                this.updateConditionValues();
-                                this.updateStatus('condition-fulfilled');
+
                                 return 'conditions-fulfilled';
                             } else {
                                 log(
@@ -703,7 +729,6 @@ export default abstract class FarmTemplate {
                             );
                             this.conditions.fulfilled = dayjs().toDate();
                             this.updateConditionValues();
-                            this.updateStatus('condition-fulfilled');
                             return 'conditions-fulfilled';
                         }
                     } else {
@@ -711,7 +736,6 @@ export default abstract class FarmTemplate {
                             'info',
                             `${this.id}: Not able to reset yet, set fulfilled`
                         );
-                        this.updateStatus('condition-fulfilled');
                         return 'conditions-fulfilled';
                     }
                 }
@@ -740,11 +764,11 @@ export default abstract class FarmTemplate {
             switch (await this.conditionCheck()) {
                 case 'conditions-fulfilled':
                     await this.destroyAllWindows();
-
                     log(
                         'info',
                         `${this.id}: Condition fulfilled, will not farm`
                     );
+                    this.updateStatus('condition-fulfilled');
                     break;
                 case 'farm':
                     this.createCheckerWindow()
@@ -795,6 +819,8 @@ export default abstract class FarmTemplate {
                             ) {
                                 this.updateStatus('disabled');
                             }
+
+                            this.updateConditionValues();
                         });
 
                     break;
