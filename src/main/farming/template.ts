@@ -657,7 +657,7 @@ export default abstract class FarmTemplate {
                             } else {
                                 log(
                                     'info',
-                                    `${this.id}: Has not achieved amount to fulfill yet, farm now`
+                                    `${this.id}: Has not achieved amount to fulfill yet, farm now (needs ${amountToAchieve} / has ${this.conditions.amount})`
                                 );
                                 return 'farm';
                             }
