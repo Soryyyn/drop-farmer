@@ -560,7 +560,10 @@ export default abstract class FarmTemplate {
     /**
      * Check for conditions and what to do next.
      */
-    private conditionCheck(): ConditionCheckReturn {
+    private async conditionCheck(): Promise<ConditionCheckReturn> {
+        this.timer.stopTimer();
+        await this.addUptimeAmount();
+
         /**
          * Check if the farm is set to unlimited farming.
          */
@@ -734,7 +737,7 @@ export default abstract class FarmTemplate {
             /**
              * Check for conditions.
              */
-            switch (this.conditionCheck()) {
+            switch (await this.conditionCheck()) {
                 case 'conditions-fulfilled':
                     await this.destroyAllWindows();
 
@@ -746,9 +749,6 @@ export default abstract class FarmTemplate {
                 case 'farm':
                     this.createCheckerWindow()
                         .then(async (window) => {
-                            this.timer.stopTimer();
-                            await this.addUptimeAmount();
-
                             this.updateStatus('checking');
 
                             await this.login(window);
