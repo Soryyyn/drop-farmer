@@ -284,7 +284,7 @@ export default abstract class FarmTemplate {
         this.conditions.amount = getStatistic(this.id)?.uptime;
     }
 
-    protected updateConditionValues(): void {
+    updateConditionValues(): void {
         if (this.conditions.started)
             updateSetting(this.id, 'started', {
                 id: 'started',

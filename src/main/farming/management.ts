@@ -118,7 +118,10 @@ export function stopAllFarmJobs(): void {
 }
 
 export function stopAllTimers(): void {
-    farms.forEach((farm) => farm.timer.stopTimer());
+    farms.forEach((farm) => {
+        farm.timer.stopTimer();
+        farm.updateConditionValues();
+    });
     log('info', 'Stopped all farm timers');
 }
 
