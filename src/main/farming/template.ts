@@ -6,6 +6,12 @@ import {
     hideWindow,
     showWindow
 } from '@main/electron/windows';
+import {
+    combineTimeUnits,
+    getCurrentDate,
+    remainingDaysInMonth,
+    remainingDaysInWeek
+} from '@main/util/calendar';
 import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
 import { getStatistic, updateStatistic } from '@main/util/statistics';
@@ -608,7 +614,7 @@ export default abstract class FarmTemplate {
                 /**
                  * Set the started date.
                  */
-                this.conditions.started = dayjs().toDate();
+                this.conditions.started = getCurrentDate();
                 this.updateConditionValues();
                 return 'farm';
             } else {
@@ -622,19 +628,13 @@ export default abstract class FarmTemplate {
                     );
 
                     /**
-                     * Fulfilled has not been set. Check the timeframe amount and
-                     * compare the current date with the started date.
+                     * Check if its reset time.
                      */
-                    const amountOfDaysFarmed: number = dayjs().diff(
-                        dayjs(this.conditions.started),
-                        'day'
-                    );
-
                     if (
                         (this.conditions.timeframe === 'weekly' &&
-                            amountOfDaysFarmed === 7) ||
+                            remainingDaysInWeek() === 0) ||
                         (this.conditions.timeframe === 'monthly' &&
-                            amountOfDaysFarmed === dayjs().daysInMonth())
+                            remainingDaysInMonth() === 0)
                     ) {
                         /**
                          * Has reached its reset.
@@ -651,7 +651,7 @@ export default abstract class FarmTemplate {
                                 'info',
                                 `${this.id}: Reached timeframe reset, repeating is not enabled, will set fulfilled`
                             );
-                            this.conditions.fulfilled = dayjs().toDate();
+                            this.conditions.fulfilled = getCurrentDate();
                             this.updateConditionValues();
                             return 'conditions-fulfilled';
                         }
@@ -665,20 +665,17 @@ export default abstract class FarmTemplate {
                                 `${this.id}: Checking if amount to fulfilled has been achieved`
                             );
 
-                            const amountToAchieve = dayjs
-                                .duration({
-                                    hours: this.conditions.amountToFulfill,
-                                    minutes: this.conditions.buffer
-                                })
-                                .asMilliseconds();
+                            const amountToAchieve = combineTimeUnits({
+                                hours: this.conditions.amountToFulfill,
+                                minutes: this.conditions.buffer
+                            }).asMilliseconds();
 
                             if (this.conditions.amount >= amountToAchieve) {
                                 log(
                                     'info',
                                     `${this.id}: Achieved amount to fulfill condition, will set fulfilled`
                                 );
-                                this.conditions.fulfilled = dayjs().toDate();
-
+                                this.conditions.fulfilled = getCurrentDate();
                                 return 'conditions-fulfilled';
                             } else {
                                 log(
@@ -701,16 +698,11 @@ export default abstract class FarmTemplate {
                         `${this.id}: Already fulfilled amount, checking if can reset`
                     );
 
-                    const amountOfDaysFarmed: number = dayjs().diff(
-                        dayjs(this.conditions.started),
-                        'day'
-                    );
-
                     if (
                         (this.conditions.timeframe === 'weekly' &&
-                            amountOfDaysFarmed === 7) ||
+                            remainingDaysInWeek() === 0) ||
                         (this.conditions.timeframe === 'monthly' &&
-                            amountOfDaysFarmed === dayjs().daysInMonth())
+                            remainingDaysInMonth() === 0)
                     ) {
                         /**
                          * Has reached its reset.
@@ -727,7 +719,7 @@ export default abstract class FarmTemplate {
                                 'info',
                                 `${this.id}: Reached timeframe reset, repeating is not enabled, will set fulfilled`
                             );
-                            this.conditions.fulfilled = dayjs().toDate();
+                            this.conditions.fulfilled = getCurrentDate();
                             this.updateConditionValues();
                             return 'conditions-fulfilled';
                         }
