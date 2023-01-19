@@ -187,9 +187,7 @@ export function getElementTagName(
 }
 
 /**
- * Goto a url.
- *
- * NOTE: If it fails on an error, it tries until it succeeds.
+ * Goto a url with retrying and optional delay.
  */
 export function gotoURL(
     page: Page,
