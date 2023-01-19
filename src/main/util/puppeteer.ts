@@ -138,6 +138,9 @@ export function doesElementExist(
     });
 }
 
+/**
+ * If the current url contains a specific string.
+ */
 export function pageUrlContains(
     controlledPage: Page,
     contains: string
@@ -151,6 +154,9 @@ export function pageUrlContains(
     });
 }
 
+/**
+ * If the current page title contains a specific string.
+ */
 export function pageTitleContains(
     controlledPage: Page,
     contains: string
@@ -164,6 +170,9 @@ export function pageTitleContains(
     });
 }
 
+/**
+ * Get the tag name of an element.
+ */
 export function getElementTagName(
     controlledPage: Page,
     element: ElementHandle<Element>
@@ -173,6 +182,30 @@ export function getElementTagName(
             resolve(controlledPage.evaluate((el) => el!.tagName, element));
         } catch (error) {
             reject(error);
+        }
+    });
+}
+
+/**
+ * Goto a url.
+ *
+ * NOTE: If it fails on an error, it tries until it succeeds.
+ */
+export function gotoURL(
+    page: Page,
+    url: string,
+    timeout?: number
+): Promise<void> {
+    return new Promise(async (resolve) => {
+        try {
+            await page.goto(url);
+
+            if (timeout) await waitForTimeout(timeout);
+
+            resolve();
+        } catch (error) {
+            await waitForTimeout(2000);
+            await gotoURL(page, url);
         }
     });
 }

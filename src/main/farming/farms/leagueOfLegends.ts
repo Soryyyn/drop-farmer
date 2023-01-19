@@ -7,6 +7,7 @@ import {
     getBrowserConnection,
     getElementProperty,
     getElementTagName,
+    gotoURL,
     pageUrlContains,
     waitForElementToAppear,
     waitForTimeout
@@ -115,8 +116,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                 /**
                  * Move to schedule route.
                  */
-                const scheduleRoute = 'https://lolesports.com/schedule';
-                await page.goto(scheduleRoute);
+                await gotoURL(page, 'https://lolesports.com/schedule');
 
                 /**
                  * Wait until the events are found.

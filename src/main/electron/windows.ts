@@ -1,7 +1,7 @@
 import { getFarms } from '@main/farming/management';
 import FarmTemplate from '@main/farming/template';
 import { log } from '@main/util/logging';
-import { getBrowserConnection } from '@main/util/puppeteer';
+import { getBrowserConnection, gotoURL } from '@main/util/puppeteer';
 import { BrowserWindow } from 'electron';
 import { resolve } from 'path';
 import { getPage } from 'puppeteer-in-electron';
@@ -141,7 +141,7 @@ export async function createWindow(url: string, shouldBeShown: boolean) {
      */
     await window.loadURL(url);
     const page = await getPage(getBrowserConnection(), window);
-    await page.goto(url);
+    await gotoURL(page, url);
 
     window.on('ready-to-show', () => {
         if (

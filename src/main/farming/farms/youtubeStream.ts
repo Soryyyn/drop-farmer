@@ -5,6 +5,7 @@ import { log } from '@main/util/logging';
 import {
     doesElementExist,
     getBrowserConnection,
+    gotoURL,
     pageUrlContains,
     waitForElementToAppear,
     waitForTimeout
@@ -117,9 +118,8 @@ export default class YoutubeStream extends FarmTemplate {
                  * If after navigation the user ends up at login screen, login
                  * is needed, else login is finished.
                  */
-                const signinRoute = 'https://www.youtube.com/signin';
-                await page.goto(signinRoute);
-                await waitForTimeout(3000);
+                await gotoURL(page, 'https://www.youtube.com/signin', 3000);
+
                 log('info', `${this.id}: Navigation to login route`);
 
                 if (await pageUrlContains(page, 'accounts.google.com')) {
@@ -153,13 +153,12 @@ export default class YoutubeStream extends FarmTemplate {
                     if (!(await pageUrlContains(page, 'accounts.google.com'))) {
                         log('info', `${this.id}: Login completed`);
                     } else {
-                        await page.goto(this.url);
+                        await gotoURL(page, this.url);
                         await page.waitForNavigation();
                         log('info', `${this.id}: Login completed`);
                     }
                 } else {
-                    await page.goto(this.url);
-                    await waitForTimeout(3000);
+                    await gotoURL(page, this.url, 3000);
                     log('info', `${this.id}: Login completed`);
                 }
 
@@ -192,8 +191,7 @@ export default class YoutubeStream extends FarmTemplate {
                     /**
                      * Re-route to checker route for safety.
                      */
-                    await page.goto(this.url);
-                    await waitForTimeout(1000);
+                    await gotoURL(page, this.url, 1000);
 
                     /**
                      * Check if any live indicator is shown before 10seconds expire.

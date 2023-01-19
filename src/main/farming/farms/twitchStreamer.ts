@@ -5,6 +5,7 @@ import {
     doesElementExist,
     getBrowserConnection,
     getElementProperty,
+    gotoURL,
     waitForElementToAppear,
     waitForTimeout
 } from '@main/util/puppeteer';
@@ -53,7 +54,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     /**
                      * Navigate to login page.
                      */
-                    await page.goto('https://www.twitch.tv/login');
+                    await gotoURL(page, 'https://www.twitch.tv/login');
 
                     emitEvent(EventChannels.LoginForFarm, {
                         id: this.id,
@@ -74,7 +75,7 @@ export default class TwitchStreamer extends FarmTemplate {
                         0
                     );
 
-                    await page.goto(this.url);
+                    await gotoURL(page, this.url);
 
                     log('info', `${this.id}: Login completed`);
                     resolve(undefined);
