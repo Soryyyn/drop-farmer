@@ -48,7 +48,7 @@ export function handleAndReply(
  */
 export function sendOneWay(channel: string, ...args: any[]) {
     const window = getMainWindow();
-    if (window.webContents != undefined) {
+    if (window.webContents != undefined && !window.isDestroyed()) {
         log('info', `Sending one-way signal on ${channel}`);
         window.webContents.send(channel, ...args);
     }
