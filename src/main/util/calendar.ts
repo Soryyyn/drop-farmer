@@ -12,7 +12,7 @@ export function remainingDaysInWeek(): number {
  * Get the remaining days in the month.
  */
 export function remainingDaysInMonth(): number {
-    return dayjs().date() - dayjs().daysInMonth();
+    return dayjs().daysInMonth() - dayjs().date();
 }
 
 /**
