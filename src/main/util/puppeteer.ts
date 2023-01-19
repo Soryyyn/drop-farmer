@@ -204,7 +204,8 @@ export function gotoURL(
 
             resolve();
         } catch (error) {
-            await waitForTimeout(2000);
+            log('warn', 'Retrying to goto url');
+            await waitForTimeout(500);
             await gotoURL(page, url);
         }
     });
