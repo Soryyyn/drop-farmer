@@ -9,6 +9,7 @@ import {
 import {
     combineTimeUnits,
     getCurrentDate,
+    msInHours,
     remainingDaysInMonth,
     remainingDaysInWeek
 } from '@main/util/calendar';
@@ -338,37 +339,6 @@ export default abstract class FarmTemplate {
     }
 
     getRendererData(): FarmRendererData {
-        const needsToAchieve =
-            this.conditions.timeframe !== 'unlimited'
-                ? Math.round(
-                      dayjs
-                          .duration({
-                              milliseconds:
-                                  dayjs
-                                      .duration({
-                                          hours: this.conditions
-                                              .amountToFulfill,
-                                          minutes: this.conditions.buffer
-                                      })
-                                      .asMilliseconds() -
-                                  this.conditions.amount!
-                          })
-                          .asHours()
-                  )
-                : Infinity;
-
-        let daysLeftUntilReset = 0;
-        if (this.conditions.timeframe === 'weekly') {
-            daysLeftUntilReset =
-                7 - dayjs().diff(dayjs(this.conditions.started), 'day');
-        } else if (this.conditions.timeframe === 'monthly') {
-            daysLeftUntilReset =
-                dayjs().daysInMonth() -
-                dayjs().diff(dayjs(this.conditions.started), 'day');
-        } else {
-            daysLeftUntilReset = Infinity;
-        }
-
         return {
             id: this.id,
             status: this.status,
@@ -376,8 +346,19 @@ export default abstract class FarmTemplate {
             isProtected: this.isProtected,
             amountOfWindows: this.getAmountOfWindows(),
             windowsShown: this.windowsCurrentlyShown,
-            amountLeftToFulfill: needsToAchieve,
-            nextConditionReset: daysLeftUntilReset
+            amountLeftToFulfill: msInHours(
+                combineTimeUnits({
+                    hours: this.conditions.amountToFulfill,
+                    minutes: this.conditions.buffer
+                }).asMilliseconds() - this.conditions.amount!,
+                true
+            ),
+            nextConditionReset:
+                this.conditions.timeframe === 'weekly'
+                    ? remainingDaysInWeek()
+                    : this.conditions.timeframe === 'monthly'
+                    ? remainingDaysInMonth()
+                    : Infinity
         };
     }
 
@@ -755,7 +736,8 @@ export default abstract class FarmTemplate {
              */
             switch (await this.conditionCheck()) {
                 case 'conditions-fulfilled':
-                    await this.destroyAllWindows();
+                    await this.restartScheduler();
+
                     log(
                         'info',
                         `${this.id}: Condition fulfilled, will not farm`

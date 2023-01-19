@@ -106,8 +106,10 @@ export default function SidebarItem() {
                     {
                         type: 'normal',
                         label: `Time left to fulfill: ${
-                            farm?.nextConditionReset === Infinity
+                            farm?.amountLeftToFulfill === Infinity
                                 ? 'Never'
+                                : farm?.amountLeftToFulfill! < 0
+                                ? 'Finished'
                                 : `~${farm?.amountLeftToFulfill}h`
                         }`,
                         disabled: true,

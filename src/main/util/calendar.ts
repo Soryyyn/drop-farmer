@@ -25,8 +25,14 @@ export function msInMinutes(ms: number): number {
 /**
  * Get an amount of milliseconds as hours.
  */
-export function msInHours(ms: number): number {
-    return dayjs.duration({ milliseconds: ms }).asHours();
+export function msInHours(ms: number, rounded?: boolean): number {
+    const hours = dayjs.duration({ milliseconds: ms }).asHours();
+
+    if (rounded) {
+        return Math.round(hours);
+    }
+
+    return hours;
 }
 
 /**
