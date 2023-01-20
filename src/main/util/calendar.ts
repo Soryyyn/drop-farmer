@@ -59,3 +59,10 @@ export function combineTimeUnits(
 ): Duration {
     return dayjs.duration(units);
 }
+
+/**
+ * Gets the current month name. Ex. 'January' or 'February'.
+ */
+export function getCurrentMonthName(): string {
+    return dayjs(getCurrentDate()).format('MMMM');
+}

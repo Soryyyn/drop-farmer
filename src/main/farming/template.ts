@@ -15,7 +15,7 @@ import {
 } from '@main/util/calendar';
 import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
-import { getStatistic, updateStatistic } from '@main/util/statistics';
+// import { getStatistic, updateStatistic } from '@main/util/statistics';
 import CrontabManager from 'cron-job-manager';
 import dayjs from 'dayjs';
 import Duration from 'dayjs/plugin/duration';
@@ -191,7 +191,7 @@ export default abstract class FarmTemplate {
         } else {
             setSetting(this.id, {
                 id: 'amount',
-                value: getStatistic(this.id)?.uptime ?? 0
+                value: 0
             });
         }
 
@@ -264,13 +264,13 @@ export default abstract class FarmTemplate {
     }
 
     createOrSetStatistics(): void {
-        const stat = getStatistic(this.id);
-        if (stat === undefined) {
-            updateStatistic(this.id, {
-                uptime: 0,
-                openedWindows: 0
-            });
-        }
+        // const stat = getStatistic(this.id);
+        // if (stat === undefined) {
+        //     updateStatistic(this.id, {
+        //         uptime: 0,
+        //         openedWindows: 0
+        //     });
+        // }
     }
 
     private updateConditionsWithSettings(): void {
@@ -438,25 +438,24 @@ export default abstract class FarmTemplate {
     }
 
     private async addWindowStatistic(): Promise<void> {
-        const stat = getStatistic(this.id);
-        await updateStatistic(this.id, {
-            ...stat!,
-            openedWindows: stat?.openedWindows! + 1
-        });
+        // const stat = getStatistic(this.id);
+        // await updateStatistic(this.id, {
+        //     ...stat!,
+        //     openedWindows: stat?.openedWindows! + 1
+        // });
     }
 
     private async addUptimeAmount(): Promise<void> {
-        const stat = getStatistic(this.id);
-        await updateStatistic(this.id, {
-            ...stat!,
-            uptime: stat!.uptime + this.timer.amount
-        });
-
-        /**
-         * Set the amount from the statistics.
-         */
-        this.conditions.amount = getStatistic(this.id)?.uptime;
-        this.updateConditionValues();
+        // const stat = getStatistic(this.id);
+        // await updateStatistic(this.id, {
+        //     ...stat!,
+        //     uptime: stat!.uptime + this.timer.amount
+        // });
+        // /**
+        //  * Set the amount from the statistics.
+        //  */
+        // this.conditions.amount = getStatistic(this.id)?.uptime;
+        // this.updateConditionValues();
     }
 
     protected createCheckerWindow(): Promise<Electron.BrowserWindow> {

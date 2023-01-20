@@ -64,11 +64,26 @@ type Statistic = {
     openedWindows: number;
 };
 
+type FarmStatistic = { [name: string]: Statistic };
+
+type Month = {
+    month: string;
+    farms: FarmStatistic[];
+};
+
+type Year = {
+    year: string;
+    months: Month[];
+};
+
+type StatisticsOnly = {
+    overall: Statistic;
+    years: Year[];
+};
+
 type StatisticsStoreSchema = {
     statistics: StatisticsOnly;
 };
-
-type StatisticsOnly = { [name: string]: Statistic };
 
 /**
  * Farms.

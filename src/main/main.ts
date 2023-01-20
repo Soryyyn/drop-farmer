@@ -17,6 +17,7 @@ import { internetConnectionChecker } from './util/internet';
 import { log } from './util/logging';
 import { initPowermonitor } from './util/powermonitor';
 import { initPuppeteerConnection } from './util/puppeteer';
+import { getStatistics } from './util/statistics';
 
 /**
  * If application is in run in production environment.
@@ -34,6 +35,8 @@ initFarmsManagement();
 initPuppeteerConnection();
 initUpdater();
 initPowermonitor();
+
+getStatistics();
 
 /**
  * Gets executed when electron has finished starting.

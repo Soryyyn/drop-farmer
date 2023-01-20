@@ -2,6 +2,7 @@ import { FileNames } from '@main/common/constants';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
+import { getCurrentDate, getCurrentMonthName } from './calendar';
 import { log } from './logging';
 
 const store = new ElectronStore<StatisticsStoreSchema>({
@@ -20,7 +21,8 @@ const store = new ElectronStore<StatisticsStoreSchema>({
             overall: {
                 openedWindows: 0,
                 uptime: 0
-            }
+            },
+            years: []
         }
     },
     beforeEachMigration: (store, context) => {
@@ -66,3 +68,58 @@ export function updateStatistic(
         resolve(undefined);
     });
 }
+
+/**
+ * Add the current year to the statistics.
+ */
+function addCurrentYear(): void {
+    const years = getStatistics().years;
+
+    /**
+     * Check if the a entry with the current year is found.
+     */
+    const found = years.find(
+        (yearEntry) =>
+            yearEntry.year === getCurrentDate().getFullYear().toString()
+    );
+
+    if (!found) {
+        years.push({
+            year: getCurrentDate().getFullYear().toString(),
+            months: []
+        });
+
+        store.set('statistics.years', years);
+    }
+}
+
+function addCurrentMonthToYear(): void {
+    const years = getStatistics().years;
+
+    const currentYear = years.find(
+        (yearEntry) =>
+            yearEntry.year === getCurrentDate().getFullYear().toString()
+    );
+    const indexToReplace = years.indexOf(currentYear!);
+
+    const found = currentYear!.months.find(
+        (monthEntry) => monthEntry.month === getCurrentMonthName()
+    );
+
+    if (!found) {
+        currentYear!.months.push({
+            month: getCurrentMonthName(),
+            farms: []
+        });
+
+        years[indexToReplace] = currentYear!;
+
+        store.set('statistics.years', years);
+    }
+}
+
+/**
+ * App start things.
+ */
+addCurrentYear();
+addCurrentMonthToYear();
