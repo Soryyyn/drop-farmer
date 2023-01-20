@@ -30,6 +30,11 @@ const store = new ElectronStore<StatisticsStoreSchema>({
             'info',
             `Migrated statistics from version ${context.fromVersion} to ${context.toVersion}`
         );
+    },
+    migrations: {
+        '<v1.0.0-beta37': (store) => {
+            store.clear();
+        }
     }
 });
 

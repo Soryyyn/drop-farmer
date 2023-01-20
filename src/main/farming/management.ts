@@ -6,6 +6,7 @@ import {
 import { handleAndReply, handleOneWay, sendOneWay } from '@main/electron/ipc';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
+import { connectToElectron } from '@main/util/puppeteer';
 import {
     deleteSettingsOfOwner,
     getSetting,
@@ -287,8 +288,14 @@ listenForEvent(EventChannels.PCWentToSleep, () => {
     destroyAllFarmWindows();
 });
 
-listenForEvent(EventChannels.PCWokeUp, () => {
+listenForEvent(EventChannels.PCWokeUp, async () => {
     log('warn', 'Starting farms again because PC woke up');
+
+    /**
+     * Reconnect puppeteer to electron.
+     */
+    await connectToElectron();
+
     farms.forEach(async (farm) => await farm.restartScheduler());
 });
 
