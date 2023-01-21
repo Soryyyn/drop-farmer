@@ -60,15 +60,14 @@ type SettingsStoreSchema = {
 type SettingsOnly = { [name: string]: Setting[] };
 
 type Statistic = {
+    id?: string;
     uptime: number;
     openedWindows: number;
 };
 
-type FarmStatistic = { [name: string]: Statistic };
-
 type Month = {
     month: string;
-    farms: FarmStatistic[];
+    farms: Statistic[];
 };
 
 type Year = {

@@ -42,35 +42,64 @@ export function getStatistics(): StatisticsOnly {
     return store.get('statistics');
 }
 
-export function getStatistic(owner: string): Statistic | undefined {
-    return store.get(`statistics.${owner}`);
-}
-
-export function updateStatistic(
-    owner: string,
-    updated: Statistic
+/**
+ * Update a farm statistic in the current month of the current year, and add it
+ * to the overall statistic too.
+ */
+export function updateFarmStatistic(
+    farmId: string,
+    toAdd: Statistic
 ): Promise<void> {
     return new Promise((resolve) => {
-        const statsBeforeUpdate = getStatistic(owner);
-        store.set(`statistics.${owner}`, updated);
+        const statistics = getStatistics();
+        const currentYear = statistics.years.find(
+            (year) => year.year === getCurrentDate().getFullYear().toString()
+        );
+        const indexOfYear = statistics.years.indexOf(currentYear!);
+        const currentMonth = currentYear?.months.find(
+            (month) => month.month === getCurrentMonthName()
+        );
+        const indexOfMonth = currentYear?.months.indexOf(currentMonth!);
 
         /**
-         * Update the overall stat when the farms get updated, but not when they get
-         * initialized and/or only the conditions have not been updated.
+         * Check if the farm exists in the current month of the current year. If not
+         * add it.
          */
-        if (owner !== 'overall' && statsBeforeUpdate) {
-            const stat = getStatistic('overall');
+        const indexToUpdate = currentMonth?.farms.findIndex(
+            (farmStat) => farmStat.id === farmId
+        );
 
-            store.set('statistics.overall', {
-                uptime:
-                    stat!.uptime + (updated.uptime - statsBeforeUpdate!.uptime),
-                openedWindows:
-                    stat!.openedWindows +
-                    (updated.openedWindows - statsBeforeUpdate!.openedWindows)
-            });
+        /**
+         * Push the farm to the farms if it cant be found.
+         */
+        if (indexToUpdate === -1) {
+            currentMonth!.farms.push(toAdd);
+        } else {
+            currentMonth!.farms[indexToUpdate!].uptime =
+                currentMonth!.farms[indexToUpdate!].uptime + toAdd.uptime;
+            currentMonth!.farms[indexToUpdate!].openedWindows =
+                currentMonth!.farms[indexToUpdate!].openedWindows +
+                toAdd.openedWindows;
         }
 
-        resolve(undefined);
+        /**
+         * Update the updated month in the year.
+         */
+        currentYear!.months[indexOfMonth!] = currentMonth!;
+        statistics.years[indexOfYear] = currentYear!;
+        store.set('statistics.years', statistics.years);
+
+        /**
+         * Also add the statistics to the overall stats.
+         */
+        const overall: Statistic = {
+            uptime: statistics.overall.uptime + toAdd.uptime,
+            openedWindows:
+                statistics.overall.openedWindows + toAdd.openedWindows
+        };
+        store.set('statistics.overall', overall);
+
+        resolve();
     });
 }
 
