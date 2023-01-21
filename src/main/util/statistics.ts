@@ -32,7 +32,7 @@ const store = new ElectronStore<StatisticsStoreSchema>({
         );
     },
     migrations: {
-        '<v1.0.0-beta37': (store) => {
+        '<=v1.0.0-beta37': (store) => {
             store.clear();
         }
     }
