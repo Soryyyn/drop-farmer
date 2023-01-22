@@ -197,14 +197,11 @@ export function gotoURL(
     return new Promise(async (resolve) => {
         try {
             await page.goto(url);
-
             if (timeout) await waitForTimeout(timeout);
-
             resolve();
         } catch (error) {
             log('warn', 'Retrying to goto url');
-            await waitForTimeout(500);
-            await gotoURL(page, url);
+            await gotoURL(page, url, timeout);
         }
     });
 }
