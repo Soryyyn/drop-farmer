@@ -118,7 +118,7 @@ type NewFarm = {
     };
 };
 
-type Timeframe = 'weekly' | 'monthly' | 'unlimited';
+type Timeframe = 'weekly' | 'monthly' | 'unlimited' | 'from ... to ...';
 
 type FarmingConditions = {
     started?: Date;
@@ -127,6 +127,8 @@ type FarmingConditions = {
     amountToFulfill?: number; // in hours
     buffer?: number; // in minutes
     timeframe: Timeframe;
+    from?: Date;
+    to?: Date;
     repeating?: boolean; // not needed if unlimited
 };
 

@@ -126,7 +126,12 @@ export default function NewFarm({ onClose }: Props) {
                                 label="Timeframe"
                                 value={farmDetails.conditions.timeframe}
                                 required={true}
-                                options={['unlimited', 'weekly', 'monthly']}
+                                options={[
+                                    'unlimited',
+                                    'weekly',
+                                    'monthly',
+                                    'from ... to ...'
+                                ]}
                                 onSelected={(selected: Timeframe) => {
                                     setFarmDetails({
                                         ...farmDetails,
@@ -137,6 +142,9 @@ export default function NewFarm({ onClose }: Props) {
                                     });
                                 }}
                             />
+
+                            {farmDetails.conditions.timeframe ===
+                                'from ... to ...' && <div></div>}
 
                             <div className="flex flex-row gap-4">
                                 <NumberInput
@@ -198,6 +206,11 @@ export default function NewFarm({ onClose }: Props) {
                                     }
                                 />
                             </div>
+
+                            <TextInformation
+                                label="Important"
+                                text="For drop-farmer to actually be able to farm drops from Twitch, YouTube, etc. you must connect your accounts to the wanted platforms. If not done, you will only rack up on watchtime and nothing else, which defeats the purpose of drop-farmer."
+                            />
                         </div>
                     </Section>
                 </div>

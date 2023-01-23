@@ -13,3 +13,9 @@ export function getTypeFromText(text: string): FarmType {
 export function capitalizeFirstLetter(string: string): string {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export function capitalize(string: string): string {
+    return string.replace(/\b\w/g, (toReplace: string) => {
+        return toReplace.toUpperCase();
+    });
+}

@@ -27,7 +27,7 @@ export default function SelectionInput({ setting, onChange }: Props) {
                 entries={setting.options!.map((option) => {
                     return {
                         type: 'normal',
-                        label: api.capitalize(option),
+                        label: api.capitalizeFirstLetter(option),
                         onClick: () => onChange(option)
                     };
                 })}
