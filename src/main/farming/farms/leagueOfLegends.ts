@@ -92,6 +92,8 @@ export default class LeagueOfLegends extends FarmTemplate {
                     } else {
                         log('info', `${this.id}: Login completed`);
                     }
+                } else {
+                    log('info', `${this.id}: Already logged in`);
                 }
 
                 if (wasLoginNeeded) {
