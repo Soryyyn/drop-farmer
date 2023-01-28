@@ -4,6 +4,7 @@ import { ActionButton } from '@components/Settings/ActionButton';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FarmsContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
+import DateInput from './DateInput';
 import NumberInput from './NumberInput';
 import Section from './Section';
 import Select from './Select';
@@ -144,7 +145,16 @@ export default function NewFarm({ onClose }: Props) {
                             />
 
                             {farmDetails.conditions.timeframe ===
-                                'from ... to ...' && <div></div>}
+                                'from ... to ...' && (
+                                <div>
+                                    <DateInput
+                                        label="From"
+                                        required={true}
+                                        value={new Date()}
+                                        onSelected={() => {}}
+                                    />
+                                </div>
+                            )}
 
                             <div className="flex flex-row gap-4">
                                 <NumberInput
