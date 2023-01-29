@@ -4,12 +4,11 @@ import RequiredIndicator from './RequiredIndicator';
 
 interface Props {
     label: string;
-    value: Date;
     required: boolean;
     onChange: (updated: any) => void;
 }
 
-export default function DateInput({ label, value, required, onChange }: Props) {
+export default function DateInput({ label, required, onChange }: Props) {
     return (
         <div className="flex flex-col gap-2 grow" key={label}>
             <div className="flex flex-row leading-none gap-1">

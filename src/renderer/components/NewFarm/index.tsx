@@ -28,7 +28,7 @@ export default function NewFarm({ onClose }: Props) {
             timeframe: 'monthly',
             amountToFulfill: 4,
             buffer: 30,
-            repeating: true
+            repeating: false
         }
     });
 
@@ -146,11 +146,17 @@ export default function NewFarm({ onClose }: Props) {
 
                             {farmDetails.conditions.timeframe ===
                                 'from ... to ...' && (
-                                <div>
+                                <div className="flex flex-row gap-4">
                                     <DateInput
                                         label="From"
                                         required={true}
-                                        value={new Date()}
+                                        onChange={(changed) =>
+                                            console.log(changed)
+                                        }
+                                    />
+                                    <DateInput
+                                        label="To"
+                                        required={true}
                                         onChange={(changed) =>
                                             console.log(changed)
                                         }
@@ -199,25 +205,25 @@ export default function NewFarm({ onClose }: Props) {
                                         })
                                     }
                                 />
-
-                                <SwitchToggle
-                                    label="Repeating"
-                                    required={
-                                        farmDetails.conditions.timeframe !==
-                                        'unlimited'
-                                    }
-                                    value={farmDetails.conditions.repeating!}
-                                    onChange={(changed) =>
-                                        setFarmDetails({
-                                            ...farmDetails,
-                                            conditions: {
-                                                ...farmDetails.conditions,
-                                                repeating: changed
-                                            }
-                                        })
-                                    }
-                                />
                             </div>
+
+                            <SwitchToggle
+                                label="Repeating"
+                                required={
+                                    farmDetails.conditions.timeframe !==
+                                    'unlimited'
+                                }
+                                value={farmDetails.conditions.repeating!}
+                                onChange={(changed) =>
+                                    setFarmDetails({
+                                        ...farmDetails,
+                                        conditions: {
+                                            ...farmDetails.conditions,
+                                            repeating: changed
+                                        }
+                                    })
+                                }
+                            />
 
                             <TextInformation
                                 label="Important"
