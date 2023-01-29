@@ -4,7 +4,8 @@ import NewFarm from '@components/NewFarm';
 import Settings from '@components/Settings';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
-import { cloneDeep, isEqual } from 'lodash';
+import cloneDeep from 'lodash.clonedeep';
+import isEqual from 'lodash.isequal';
 import React, { createContext, useCallback, useState } from 'react';
 
 interface DefaultProps {

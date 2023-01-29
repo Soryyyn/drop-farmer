@@ -151,7 +151,9 @@ export default function NewFarm({ onClose }: Props) {
                                         label="From"
                                         required={true}
                                         value={new Date()}
-                                        onSelected={() => {}}
+                                        onChange={(changed) =>
+                                            console.log(changed)
+                                        }
                                     />
                                 </div>
                             )}

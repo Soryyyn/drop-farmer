@@ -14,7 +14,6 @@ import {
     updateSetting
 } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
-import { reject } from 'lodash';
 import LeagueOfLegends from './farms/leagueOfLegends';
 import TwitchStreamer from './farms/twitchStreamer';
 import YoutubeStream from './farms/youtubeStream';
