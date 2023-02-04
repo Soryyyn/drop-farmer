@@ -18,7 +18,6 @@ import { waitForTimeout } from '@main/util/puppeteer';
 import { updateFarmStatistic } from '@main/util/statistics';
 import CrontabManager from 'cron-job-manager';
 import dayjs from 'dayjs';
-import Duration from 'dayjs/plugin/duration';
 import {
     doesSettingExist,
     getSetting,
@@ -26,8 +25,6 @@ import {
     updateSetting
 } from '../util/settings';
 import { Timer } from './timer';
-
-dayjs.extend(Duration);
 
 export default abstract class FarmTemplate {
     id: string;

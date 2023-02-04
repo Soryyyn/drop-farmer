@@ -4,6 +4,7 @@ import {
     removeTypeFromText
 } from '@main/common/stringManipulation';
 import { handleAndReply, handleOneWay, sendOneWay } from '@main/electron/ipc';
+import { stringToDate } from '@main/util/calendar';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { connectToElectron } from '@main/util/puppeteer';
@@ -212,11 +213,30 @@ function validateNewFarm(farm: NewFarm): void {
     urlOk = regex.test(farm.url);
 
     /**
-     * More checks in the future?
+     * Check if the dates are valid dates and the 'from' date is smaller than
+     * the 'to' date.
      */
+    let fromToOk = false;
+
+    if (
+        (farm.conditions.from as string).includes('_') ||
+        (farm.conditions.to as string).includes('_') ||
+        stringToDate(farm.conditions.from as string) <
+            stringToDate(farm.conditions.to as string)
+    ) {
+        fromToOk = true;
+    }
+
     if (!urlOk) {
+        /**
+         * More checks in the future?
+         */
         throw new Error(
             'URL is not a valid channel URL for the given farm type'
+        );
+    } else if (!fromToOk) {
+        throw new Error(
+            'From or To date is not valid and from date needs to be before the to date.'
         );
     }
 }

@@ -1,5 +1,9 @@
 import dayjs from 'dayjs';
-import { Duration } from 'dayjs/plugin/duration';
+import CustomParseFormatPlugin from 'dayjs/plugin/customParseFormat';
+import DurationPlugin, { Duration } from 'dayjs/plugin/duration';
+
+dayjs.extend(DurationPlugin);
+dayjs.extend(CustomParseFormatPlugin);
 
 /**
  * Get the remaining days in the current week.
@@ -65,4 +69,11 @@ export function combineTimeUnits(
  */
 export function getCurrentMonthName(): string {
     return dayjs(getCurrentDate()).format('MMMM');
+}
+
+/**
+ * Parse the wanted string of the needed format to a date.
+ */
+export function stringToDate(string: string): Date {
+    return dayjs(string, 'DD-MM-YYYY').toDate();
 }

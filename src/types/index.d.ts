@@ -115,6 +115,8 @@ type NewFarm = {
         amountToFulfill?: number;
         buffer?: number;
         repeating?: boolean;
+        from?: Date | string;
+        to?: Date | string;
     };
 };
 
@@ -127,8 +129,8 @@ type FarmingConditions = {
     amountToFulfill?: number; // in hours
     buffer?: number; // in minutes
     timeframe: Timeframe;
-    from?: Date;
-    to?: Date;
+    from?: Date | string;
+    to?: Date | string;
     repeating?: boolean; // not needed if unlimited
 };
 

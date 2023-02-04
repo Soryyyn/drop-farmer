@@ -150,16 +150,28 @@ export default function NewFarm({ onClose }: Props) {
                                     <DateInput
                                         label="From"
                                         required={true}
-                                        onChange={(changed) =>
-                                            console.log(changed)
-                                        }
+                                        onChange={(changed: string) => {
+                                            setFarmDetails({
+                                                ...farmDetails,
+                                                conditions: {
+                                                    ...farmDetails.conditions,
+                                                    from: changed
+                                                }
+                                            });
+                                        }}
                                     />
                                     <DateInput
                                         label="To"
                                         required={true}
-                                        onChange={(changed) =>
-                                            console.log(changed)
-                                        }
+                                        onChange={(changed: string) => {
+                                            setFarmDetails({
+                                                ...farmDetails,
+                                                conditions: {
+                                                    ...farmDetails.conditions,
+                                                    to: changed
+                                                }
+                                            });
+                                        }}
                                     />
                                 </div>
                             )}
