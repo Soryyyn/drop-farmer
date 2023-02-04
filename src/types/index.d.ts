@@ -50,7 +50,7 @@ type Setting = {
     ignores?: {
         onValue: string | number | boolean;
         ids: string[];
-    };
+    }[];
 };
 
 type SettingsStoreSchema = {

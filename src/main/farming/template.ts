@@ -201,12 +201,32 @@ export default abstract class FarmTemplate {
                 desc: 'The timeframe in which the farm will try to fulfill the condition. The condition will reset depending on the timeframe. ',
                 value: this.conditions.timeframe ?? 'unlimited',
                 default: 'unlimited',
-                options: ['weekly', 'monthly', 'unlimited'],
+                options: ['weekly', 'monthly', 'unlimited', 'from ... to ...'],
                 disabled: false,
-                ignores: {
-                    onValue: 'unlimited',
-                    ids: ['amountToFulfill', 'buffer', 'repeating']
-                }
+                ignores: [
+                    {
+                        onValue: 'unlimited',
+                        ids: [
+                            'amountToFulfill',
+                            'buffer',
+                            'repeating',
+                            'from',
+                            'to'
+                        ]
+                    },
+                    {
+                        onValue: 'weekly',
+                        ids: ['from', 'to']
+                    },
+                    {
+                        onValue: 'monthly',
+                        ids: ['from', 'to']
+                    },
+                    {
+                        onValue: 'from ... to ...',
+                        ids: ['repeating']
+                    }
+                ]
             });
         }
 

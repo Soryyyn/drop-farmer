@@ -32,12 +32,27 @@ export default function Settings({ onClose }: Props) {
         if (settings && selected) {
             settings[selected].map((setting) => {
                 if (setting.ignores) {
-                    if (setting.ignores.onValue === setting.value) {
-                        setIgnoredSettings(setting.ignores.ids);
-                        setIgnoredBy(setting.shown!);
-                    } else {
-                        setIgnoredSettings([]);
-                        setIgnoredBy('');
+                    let foundIndex = -1;
+
+                    setting.ignores.forEach((ignored, index) => {
+                        if (
+                            foundIndex === -1 &&
+                            ignored.onValue === setting.value
+                        )
+                            foundIndex = index;
+                    });
+
+                    if (foundIndex !== -1) {
+                        if (
+                            setting.ignores[foundIndex].onValue ===
+                            setting.value
+                        ) {
+                            setIgnoredSettings(setting.ignores[foundIndex].ids);
+                            setIgnoredBy(setting.shown!);
+                        } else {
+                            setIgnoredSettings([]);
+                            setIgnoredBy('');
+                        }
                     }
                 }
             });
