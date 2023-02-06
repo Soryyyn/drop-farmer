@@ -18,11 +18,7 @@ export default function Switch({
     onChange
 }: Props) {
     return (
-        <div
-            className={clsx('flex flex-col gap-2', {
-                grow: fullWidth
-            })}
-        >
+        <div className="flex flex-col gap-2">
             {label && (
                 <div className="flex flex-row leading-none gap-1">
                     <span className="text-snow-300">{label}</span>

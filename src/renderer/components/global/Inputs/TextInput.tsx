@@ -17,11 +17,7 @@ export default function TextInput({
     onChange
 }: Props) {
     return (
-        <div
-            className={clsx('flex flex-col gap-2', {
-                grow: fullWidth
-            })}
-        >
+        <div className="flex flex-col gap-2 grow">
             {label && (
                 <div className="flex flex-row leading-none gap-1">
                     <span className="text-snow-300">{label}</span>
@@ -33,9 +29,8 @@ export default function TextInput({
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
                 className={clsx(
-                    'bg-pepper-700 px-2 py-1 rounded focus:outline-none text-snow-300 h-[33.5px] placeholder:text-snow-300/50 caret-snow-500',
+                    'w-full bg-pepper-700 px-2 py-1 rounded focus:outline-none text-snow-300 text-left h-[33.5px]',
                     {
-                        'w-fit': !fullWidth,
                         'hover:bg-pepper-800 focus:bg-pepper-800': !disabled
                     }
                 )}

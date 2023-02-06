@@ -12,6 +12,7 @@ interface Props {
     fullWidth?: boolean;
     disabled?: boolean;
     withButtons?: boolean;
+    inputWidth?: string;
     onChange: (changed: number) => void;
 }
 
@@ -23,6 +24,7 @@ export default function NumberInput({
     fullWidth,
     disabled,
     withButtons,
+    inputWidth,
     onChange
 }: Props) {
     const [inputValue, setInputValue] = useState<number>(value);
@@ -40,19 +42,14 @@ export default function NumberInput({
     }, [inputValue]);
 
     return (
-        <div
-            className={clsx('flex flex-col gap-2', {
-                grow: fullWidth
-            })}
-            key={uniqueId()}
-        >
+        <div className="flex flex-col gap-2 grow" key={uniqueId()}>
             {label && (
                 <div className="flex flex-row leading-none gap-1">
                     <span className="text-snow-300">{label}</span>
                 </div>
             )}
 
-            <div className="flex flex-row gap-1">
+            <div className="flex flex-row gap-1 justify-center">
                 {withButtons && (
                     <button
                         disabled={disabled}
@@ -75,8 +72,8 @@ export default function NumberInput({
                     className={clsx(
                         'text-center bg-pepper-700 px-2 py-1 rounded focus:outline-none text-snow-300 caret-snow-500',
                         {
-                            'grow': fullWidth,
-                            'w-fit': !fullWidth,
+                            'w-full': fullWidth,
+                            'w-1/3': !fullWidth,
                             'hover:bg-pepper-800 focus:bg-pepper-800': !disabled
                         }
                     )}

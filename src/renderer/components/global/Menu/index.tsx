@@ -37,8 +37,9 @@ export default function Menu({
     return (
         <HeadlessMenu
             as="div"
-            className={clsx('relative w-fit box-border', {
-                'w-full': fullWidth
+            className={clsx('relative box-border', {
+                'w-full': fullWidth,
+                'w-fit': !fullWidth
             })}
         >
             <HeadlessMenu.Button className="w-full" disabled={disabled}>
