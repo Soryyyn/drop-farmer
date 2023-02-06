@@ -24,9 +24,16 @@ interface Props {
     alignment: Alignment;
     entries: MenuEntry[];
     fullWidth?: boolean;
+    disabled?: boolean;
 }
 
-export default function Menu({ button, entries, alignment, fullWidth }: Props) {
+export default function Menu({
+    button,
+    entries,
+    alignment,
+    fullWidth,
+    disabled
+}: Props) {
     return (
         <HeadlessMenu
             as="div"
@@ -34,20 +41,22 @@ export default function Menu({ button, entries, alignment, fullWidth }: Props) {
                 'w-full': fullWidth
             })}
         >
-            <HeadlessMenu.Button className="w-full">
+            <HeadlessMenu.Button className="w-full" disabled={disabled}>
                 {button}
             </HeadlessMenu.Button>
 
             <HeadlessMenu.Items
                 as="div"
                 className={clsx(
-                    'w-max absolute flex flex-col box-border z-50 mt-1 bg-pepper-200/95 backdrop-blur-2xl rounded-md p-2 gap-1 shadow-xl shadow-pepper-200/25',
-                    alignment === Alignment.BottomLeft && 'left-0',
-                    alignment === Alignment.BottomRight && 'right-0',
-                    alignment === Alignment.TopLeft &&
-                        'left-0 top-0 -translate-y-full',
-                    alignment === Alignment.TopRight &&
-                        'right-0 top-0 -translate-y-full'
+                    'w-max absolute flex flex-col box-border z-50 bg-pepper-200/95 backdrop-blur-2xl rounded-md p-2 gap-1 shadow-xl shadow-pepper-200/25',
+                    {
+                        'left-0 mt-1': alignment === Alignment.BottomLeft,
+                        'right-0 mt-1': alignment === Alignment.BottomRight,
+                        'left-0 -top-1 -translate-y-full':
+                            alignment === Alignment.TopLeft,
+                        'right-0 -top-1 -translate-y-full':
+                            alignment === Alignment.TopRight
+                    }
                 )}
             >
                 {entries.map((entry, index) => {
