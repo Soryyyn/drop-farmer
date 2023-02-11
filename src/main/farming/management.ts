@@ -218,12 +218,16 @@ function validateNewFarm(farm: NewFarm): void {
      */
     let fromToOk = false;
 
-    if (
-        (farm.conditions.from as string).includes('_') ||
-        (farm.conditions.to as string).includes('_') ||
-        stringToDate(farm.conditions.from as string) <
-            stringToDate(farm.conditions.to as string)
-    ) {
+    if (farm.conditions.from && farm.conditions.to) {
+        if (
+            (farm.conditions.from as string).includes('_') ||
+            (farm.conditions.to as string).includes('_') ||
+            stringToDate(farm.conditions.from as string) <
+                stringToDate(farm.conditions.to as string)
+        ) {
+            fromToOk = true;
+        }
+    } else {
         fromToOk = true;
     }
 
