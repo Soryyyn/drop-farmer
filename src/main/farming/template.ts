@@ -756,6 +756,11 @@ export default abstract class FarmTemplate {
                 case 'conditions-fulfilled':
                     await this.restartScheduler();
 
+                    /**
+                     * Destroy all windows.
+                     */
+                    await this.destroyAllWindows();
+
                     log(
                         'info',
                         `${this.id}: Condition fulfilled, will not farm`
