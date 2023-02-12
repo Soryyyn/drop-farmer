@@ -36,23 +36,6 @@ declare const api: typeof import('../api').default;
 /**
  * Store.
  */
-// type Setting = {
-//     id: string;
-//     shown?: string;
-//     desc?: string;
-//     value: string | number | boolean;
-//     default?: string | number | boolean;
-//     options?: string[];
-//     min?: number;
-//     max?: number;
-//     disabled?: boolean;
-//     requiresRestart?: boolean;
-//     ignores?: {
-//         onValue: string | number | boolean;
-//         ids: string[];
-//     }[];
-// };
-
 type ReadonlySetting = {
     id: string;
     value: string | number | boolean;
@@ -104,11 +87,13 @@ type Setting =
     | SelectionSetting
     | ReadonlySetting;
 
+type SettingsOnly = {
+    [name: string]: Setting[];
+};
+
 type SettingsStoreSchema = {
     settings: SettingsOnly;
 };
-
-type SettingsOnly = { [name: string]: Setting[] };
 
 type Statistic = {
     id?: string;
@@ -161,29 +146,8 @@ type NewFarm = {
     id: string;
     schedule: number;
     url: string;
-    conditions: {
-        timeframe: Timeframe;
-        amountToFulfill?: number;
-        buffer?: number;
-        repeating?: boolean;
-        from?: Date | string;
-        to?: Date | string;
-    };
+    conditions: FarmingConditions;
 };
-
-type Timeframe = 'weekly' | 'monthly' | 'unlimited' | 'from ... to ...';
-
-// type FarmingConditions = {
-//     started?: Date;
-//     fulfilled?: Date;
-//     amount?: number; // in milliseconds
-//     amountToFulfill?: number; // in hours
-//     buffer?: number; // in minutes
-//     timeframe: Timeframe;
-//     from?: Date | string;
-//     to?: Date | string;
-//     repeating?: boolean; // not needed if unlimited
-// };
 
 type BaseConditions = {
     started?: Date;

@@ -78,6 +78,10 @@ export function stringToDate(string: string): Date {
     return dayjs(string, 'DD-MM-YYYY').toDate();
 }
 
+export function dateToISOString(date: Date): string {
+    return dayjs(date).toISOString();
+}
+
 /**
  * Parse a string to a date.
  */

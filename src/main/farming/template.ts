@@ -8,9 +8,9 @@ import {
 } from '@main/electron/windows';
 import {
     combineTimeUnits,
+    dateToISOString,
     getCurrentDate,
     getDate,
-    msInHours,
     remainingDaysInMonth,
     remainingDaysInWeek,
     stringToDate
@@ -19,14 +19,13 @@ import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
 import { updateFarmStatistic } from '@main/util/statistics';
 import CrontabManager from 'cron-job-manager';
-import dayjs from 'dayjs';
 import {
-    doesSettingExist,
+    deleteSetting,
+    getOrSetSetting,
     getSetting,
-    setSetting,
+    getSettings,
     updateSetting
 } from '../util/settings';
-import { getOrSetSetting } from './helpers';
 import { Timer } from './timer';
 
 export default abstract class FarmTemplate {
@@ -93,76 +92,165 @@ export default abstract class FarmTemplate {
     }
 
     applyNewSettings(): void {
-        /**
-         * Enable or disable the farm if necessary.
-         */
-        if ((getSetting(this.id, 'enabled')?.value as boolean) && !this.enabled)
-            this.enable();
-        else if (
-            !(getSetting(this.id, 'enabled')?.value as boolean) &&
-            this.enabled
-        )
-            this.disable();
+        const farmSettings = getSettings()[this.id];
 
         /**
-         * Set the setting if created windows should be shown.
+         * Apply default settings.
          */
-        if (getSetting('application', 'showWindowsForLogin')?.value as boolean)
-            this.windowsShownByDefault === true;
-        else this.windowsShownByDefault === false;
+        farmSettings.forEach((setting) => {
+            switch (setting.id) {
+                /**
+                 * Default farm settings.
+                 */
+                case 'enabled':
+                    (setting.value as boolean) ? this.enable() : this.disable();
+                    break;
+                case 'schedule':
+                    this.updateSchedule(
+                        (setting as NumberSetting).value as number
+                    );
+                    break;
+                case 'url':
+                    this.url = (setting as TextSetting).value as string;
+                    break;
+
+                /**
+                 * Condition settings.
+                 */
+                case 'condition-started':
+                    if (this.conditions.condition.type !== 'unlimited') {
+                        this.conditions.started = stringToDate(
+                            setting.value as string
+                        );
+                    } else {
+                        deleteSetting(this.id, 'condition-started');
+                    }
+                    break;
+                case 'condition-fulfilled':
+                    if (this.conditions.condition.type !== 'unlimited') {
+                        this.conditions.fulfilled = stringToDate(
+                            setting.value as string
+                        );
+                    } else {
+                        deleteSetting(this.id, 'condition-fulfilled');
+                    }
+                    break;
+                case 'condition-type':
+                    this.conditions.condition.type =
+                        setting.value as ConditionType;
+                    break;
+                case 'condition-amount':
+                    if (this.conditions.condition.type !== 'unlimited') {
+                        this.conditions.condition.amount =
+                            setting.value as number;
+                    } else {
+                        deleteSetting(this.id, 'condition-amount');
+                    }
+                    break;
+                case 'condition-amountToFulfill':
+                    if (this.conditions.condition.type !== 'unlimited') {
+                        this.conditions.condition.amountToFulfill =
+                            setting.value as number;
+                    } else {
+                        deleteSetting(this.id, 'condition-amountToFulfill');
+                    }
+                    break;
+                case 'condition-buffer':
+                    if (this.conditions.condition.type !== 'unlimited') {
+                        this.conditions.condition.buffer =
+                            setting.value as number;
+                    } else {
+                        deleteSetting(this.id, 'condition-buffer');
+                    }
+                    break;
+                case 'condition-repeating':
+                    if (
+                        this.conditions.condition.type !== 'unlimited' &&
+                        this.conditions.condition.type !== 'timeWindow'
+                    ) {
+                        this.conditions.condition.repeating =
+                            setting.value as boolean;
+                    } else {
+                        deleteSetting(this.id, 'condition-repeating');
+                    }
+                    break;
+                case 'condition-from':
+                    if (this.conditions.condition.type === 'timeWindow') {
+                        this.conditions.condition.from = stringToDate(
+                            setting.value as string
+                        );
+                    } else {
+                        deleteSetting(this.id, 'condition-from');
+                    }
+                    break;
+                case 'condition-to':
+                    if (this.conditions.condition.type === 'timeWindow') {
+                        this.conditions.condition.to = stringToDate(
+                            setting.value as string
+                        );
+                    } else {
+                        deleteSetting(this.id, 'condition-to');
+                    }
+                    break;
+            }
+        });
 
         /**
-         * Set the schedule if it changed.
+         * Create the conditional settings needed, because maybe the type changed.
          */
-        if (
-            (getSetting(this.id, 'schedule')?.value as number) !== this.schedule
-        )
-            this.updateSchedule(
-                getSetting(this.id, 'schedule')?.value as number
-            );
+        this.createOrSetConditionSettings();
 
-        this.updateConditionsWithSettings();
+        log('info', `${this.id}: Applied new settings`);
     }
 
+    /**
+     * Create all settings depending on the farm type.
+     */
     createOrSetFarmSettings(): void {
-        this.enabled = getOrSetSetting(this.id, 'enabled', {
-            id: 'enabled',
-            shown: 'Farm enabled',
-            desc: 'Enable or disable this farm.',
-            value: this.enabled,
-            default: false
-        }) as boolean;
+        this.enabled = (
+            getOrSetSetting(this.id, 'enabled', {
+                id: 'enabled',
+                shown: 'Farm enabled',
+                desc: 'Enable or disable this farm.',
+                value: this.enabled,
+                default: false
+            }) as BoolishSetting
+        ).value;
 
-        this.schedule = getOrSetSetting(this.id, 'schedule', {
-            id: 'schedule',
-            shown: 'Farming schedule',
-            desc: 'The schedule (in minutes) on which drop-farmer will check if farming is possible.',
-            value: this.schedule,
-            default: 30,
-            max: 60,
-            min: 1
-        }) as number;
+        this.schedule = (
+            getOrSetSetting(this.id, 'schedule', {
+                id: 'schedule',
+                shown: 'Farming schedule',
+                desc: 'The schedule (in minutes) on which drop-farmer will check if farming is possible.',
+                value: this.schedule,
+                default: 30,
+                max: 60,
+                min: 1
+            }) as NumberSetting
+        ).value;
 
-        this.url = getOrSetSetting(this.id, 'url', {
-            id: 'url',
-            shown: 'Checking URL',
-            desc: 'The URL the farm will check if it can farm.',
-            value: this.url,
-            default: this.url,
-            disabled: true
-        }) as string;
+        this.url = (
+            getOrSetSetting(this.id, 'url', {
+                id: 'url',
+                shown: 'Checking URL',
+                desc: 'The URL the farm will check if it can farm.',
+                value: this.url,
+                default: this.url,
+                disabled: true
+            }) as TextSetting
+        ).value;
 
-        this.windowsShownByDefault = (getOrSetSetting(
-            'application',
-            'showWindowsForLogin'
-        ) as boolean)
+        this.windowsShownByDefault = (
+            getOrSetSetting(
+                'application',
+                'showWindowsForLogin'
+            ) as BoolishSetting
+        ).value
             ? true
             : false;
 
-        this.conditions.condition.type = getOrSetSetting(
-            this.id,
-            'condition-type',
-            {
+        this.conditions.condition.type = (
+            getOrSetSetting(this.id, 'condition-type', {
                 id: 'condition-type',
                 shown: 'Condition type',
                 desc: 'The type will control how the farm will when to farm.',
@@ -187,13 +275,18 @@ export default abstract class FarmTemplate {
                         value: 'timeWindow'
                     }
                 ]
-            }
-        ) as ConditionType;
+            }) as SelectionSetting
+        ).value as ConditionType;
 
-        /**
-         * Load / or create conditions based on condition type.
-         */
+        this.createOrSetConditionSettings();
+    }
+
+    /**
+     * Load / or create conditions based on condition type.
+     */
+    createOrSetConditionSettings(): void {
         const conditionType = this.conditions.condition.type;
+
         if (
             conditionType === 'monthly' ||
             conditionType === 'weekly' ||
@@ -202,37 +295,37 @@ export default abstract class FarmTemplate {
             /**
              * Set the started or fulfilled condition if it is set in the settings.
              */
-            const started = getOrSetSetting(this.id, 'condition-started', {
-                id: 'condition-started',
-                value: ''
-            }) as string;
+            const started = (
+                getOrSetSetting(this.id, 'condition-started', {
+                    id: 'condition-started',
+                    value: ''
+                }) as TextSetting
+            ).value;
 
             if (started !== '') {
                 this.conditions.started = getDate(started);
             }
 
-            const fulfilled = getOrSetSetting(this.id, 'condition-fulfilled', {
-                id: 'condition-fulfilled',
-                value: ''
-            }) as string;
+            const fulfilled = (
+                getOrSetSetting(this.id, 'condition-fulfilled', {
+                    id: 'condition-fulfilled',
+                    value: ''
+                }) as TextSetting
+            ).value;
 
             if (fulfilled !== '') {
                 this.conditions.fulfilled = getDate(fulfilled);
             }
 
-            this.conditions.condition.amount = getOrSetSetting(
-                this.id,
-                'condition-amount',
-                {
+            this.conditions.condition.amount = (
+                getOrSetSetting(this.id, 'condition-amount', {
                     id: 'condition-amount',
                     value: 0
-                }
-            ) as number;
+                }) as NumberSetting
+            ).value;
 
-            this.conditions.condition.amountToFulfill = getOrSetSetting(
-                this.id,
-                'condition-amountToFulfill',
-                {
+            this.conditions.condition.amountToFulfill = (
+                getOrSetSetting(this.id, 'condition-amountToFulfill', {
                     id: 'condition-amountToFulfill',
                     shown: 'Amount to fulfill condition',
                     desc: 'The amount of hours the farm needs to farm before the stopping/reset condition has been fulfilled.',
@@ -241,13 +334,11 @@ export default abstract class FarmTemplate {
                     disabled: false,
                     min: 1,
                     max: 100
-                }
-            ) as number;
+                }) as NumberSetting
+            ).value;
 
-            this.conditions.condition.buffer = getOrSetSetting(
-                this.id,
-                'condition-buffer',
-                {
+            this.conditions.condition.buffer = (
+                getOrSetSetting(this.id, 'condition-buffer', {
                     id: 'condition-buffer',
                     shown: 'Buffer',
                     desc: 'The buffer (in minutes) controls how much longer the farm will farm as a buffer because drops may not exactly happen on the hour.',
@@ -256,44 +347,49 @@ export default abstract class FarmTemplate {
                     disabled: false,
                     min: 0,
                     max: 60
-                }
-            ) as number;
+                }) as NumberSetting
+            ).value;
 
+            /**
+             * Type specific condition settings.
+             */
             if (conditionType === 'weekly' || conditionType === 'monthly') {
-                this.conditions.condition.repeating = getOrSetSetting(
-                    this.id,
-                    'condition-repeating',
-                    {
+                this.conditions.condition.repeating = (
+                    getOrSetSetting(this.id, 'condition-repeating', {
                         id: 'condition-repeating',
                         shown: 'Repeat after timeframe reset',
                         desc: 'If the farm should repeat the condition after the timeframe is fulfilled.',
                         value: this.conditions.condition.repeating ?? true,
                         default: true,
                         disabled: false
-                    }
-                ) as boolean;
+                    }) as BoolishSetting
+                ).value;
             } else if (conditionType === 'timeWindow') {
-                const from = getOrSetSetting(this.id, 'condition-from', {
-                    id: 'condition-from',
-                    shown: 'Starting date of condition',
-                    desc: "The starting date; From when on the farm can farm and try to fulfill it's condition.",
-                    value: (this.conditions.condition.from as string) ?? '',
-                    default: '',
-                    disabled: false
-                }) as string;
+                const from = (
+                    getOrSetSetting(this.id, 'condition-from', {
+                        id: 'condition-from',
+                        shown: 'Starting date of condition',
+                        desc: "The starting date; From when on the farm can farm and try to fulfill it's condition.",
+                        value: (this.conditions.condition.from as string) ?? '',
+                        default: '',
+                        disabled: false
+                    }) as TextSetting
+                ).value;
 
                 if (from !== '') {
                     this.conditions.condition.from = stringToDate(from);
                 }
 
-                const to = getOrSetSetting(this.id, 'condition-to', {
-                    id: 'condition-to',
-                    shown: 'Ending date of condition',
-                    desc: "The ending date; When the farm should stop trying to fulfill it's condition",
-                    value: (this.conditions.condition.to as string) ?? '',
-                    default: '',
-                    disabled: false
-                }) as string;
+                const to = (
+                    getOrSetSetting(this.id, 'condition-to', {
+                        id: 'condition-to',
+                        shown: 'Ending date of condition',
+                        desc: "The ending date; When the farm should stop trying to fulfill it's condition",
+                        value: (this.conditions.condition.to as string) ?? '',
+                        default: '',
+                        disabled: false
+                    }) as TextSetting
+                ).value;
 
                 if (to !== '') {
                     this.conditions.condition.to = stringToDate(to);
@@ -302,58 +398,49 @@ export default abstract class FarmTemplate {
         }
     }
 
-    private updateConditionsWithSettings(): void {
-        // this.conditions.condition.type = getSetting(this.id, 'condition-type')
-        //     ?.value as ConditionType;
-        // this.conditions.condition.amountToFulfill = getSetting(
-        //     this.id,
-        //     'condition-amountToFulfill'
-        // )?.value as number;
-        // this.conditions.condition.buffer = getSetting(
-        //     this.id,
-        //     'condition-buffer'
-        // )?.value as number;
-        // this.conditions.condition.repeating = getSetting(
-        //     this.id,
-        //     'condition-repeating'
-        // )?.value as boolean;
-    }
-
     updateConditionValues(): void {
-        // if (this.conditions.started)
-        //     updateSetting(this.id, 'started', {
-        //         id: 'started',
-        //         value: dayjs(this.conditions.started).toISOString()
-        //     });
-        // if (this.conditions.fulfilled)
-        //     updateSetting(this.id, 'fulfilled', {
-        //         id: 'fulfilled',
-        //         value: dayjs(this.conditions.fulfilled).toISOString()
-        //     });
-        // if (this.conditions.condition.amount)
-        //     updateSetting(this.id, 'amount', {
-        //         id: 'amount',
-        //         value: this.conditions.amount
-        //     });
+        if (this.conditions.condition.type !== 'unlimited') {
+            updateSetting(this.id, 'condition-amount', {
+                id: 'condition-amount',
+                value: this.conditions.condition.amount!
+            });
+
+            updateSetting(this.id, 'condition-started', {
+                id: 'condition-started',
+                value: dateToISOString(this.conditions.started!)
+            });
+
+            updateSetting(this.id, 'condition-fulfilled', {
+                id: 'condition-fulfilled',
+                value: dateToISOString(this.conditions.fulfilled!)
+            });
+        }
+
+        log('info', `${this.id}: Updated condition values`);
     }
 
     resetConditions(): void {
-        // this.conditions.started = undefined;
-        // updateSetting(this.id, 'started', {
-        //     id: 'started',
-        //     value: ''
-        // });
-        // this.conditions.fulfilled = undefined;
-        // updateSetting(this.id, 'fulfilled', {
-        //     id: 'fulfilled',
-        //     value: ''
-        // });
-        // this.conditions.condition.amount = undefined;
-        // updateSetting(this.id, 'amount', {
-        //     id: 'amount',
-        //     value: 0
-        // });
-        // log('info', `${this.id}: Conditions have been reset`);
+        this.conditions.started = undefined;
+        updateSetting(this.id, 'condition-started', {
+            id: 'condition-started',
+            value: ''
+        });
+
+        this.conditions.fulfilled = undefined;
+        updateSetting(this.id, 'condition-fulfilled', {
+            id: 'condition-fulfilled',
+            value: ''
+        });
+
+        if (this.conditions.condition.type !== 'unlimited') {
+            this.conditions.condition.amount = undefined;
+            updateSetting(this.id, 'condition-amount', {
+                id: 'condition-amount',
+                value: 0
+            });
+        }
+
+        log('info', `${this.id}: Conditions have been reset`);
     }
 
     private getAmountOfWindows(): number {
@@ -376,7 +463,7 @@ export default abstract class FarmTemplate {
             windowsShown: this.windowsCurrentlyShown
             // amountLeftToFulfill: msInHours(
             //     combineTimeUnits({
-            //         hours: this.conditions.amountToFulfill,
+            //         hours: this.conditions.condition.amountToFulfill,
             //         minutes: this.conditions.buffer
             //     }).asMilliseconds() - this.conditions.amount!,
             //     true

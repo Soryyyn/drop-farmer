@@ -184,7 +184,7 @@ function addNewFarm(farm: NewFarm): FarmRendererData[] {
         ...settingToBeUpdated!,
         default: farm.url,
         disabled: false
-    });
+    } as TextSetting);
 
     sendOneWay(IpcChannels.settingsChanged, getSettings());
     return getFarmsRendererData();
@@ -216,20 +216,20 @@ function validateNewFarm(farm: NewFarm): void {
      * Check if the dates are valid dates and the 'from' date is smaller than
      * the 'to' date.
      */
-    let fromToOk = false;
+    // let fromToOk = false;
 
-    if (farm.conditions.from && farm.conditions.to) {
-        if (
-            (farm.conditions.from as string).includes('_') ||
-            (farm.conditions.to as string).includes('_') ||
-            stringToDate(farm.conditions.from as string) <
-                stringToDate(farm.conditions.to as string)
-        ) {
-            fromToOk = true;
-        }
-    } else {
-        fromToOk = true;
-    }
+    // if (farm.conditions.from && farm.conditions.to) {
+    //     if (
+    //         (farm.conditions.from as string).includes('_') ||
+    //         (farm.conditions.to as string).includes('_') ||
+    //         stringToDate(farm.conditions.from as string) <
+    //             stringToDate(farm.conditions.to as string)
+    //     ) {
+    //         fromToOk = true;
+    //     }
+    // } else {
+    //     fromToOk = true;
+    // }
 
     if (!urlOk) {
         /**
@@ -238,11 +238,12 @@ function validateNewFarm(farm: NewFarm): void {
         throw new Error(
             'URL is not a valid channel URL for the given farm type'
         );
-    } else if (!fromToOk) {
-        throw new Error(
-            'From or To date is not valid and from date needs to be before the to date.'
-        );
     }
+    //  else if (!fromToOk) {
+    //     throw new Error(
+    //         'From or To date is not valid and from date needs to be before the to date.'
+    //     );
+    // }
 }
 
 handleAndReply(IpcChannels.addNewFarm, (event, farm: NewFarm) => {

@@ -102,9 +102,14 @@ export function getSettings(): SettingsOnly {
  */
 export function getSetting(owner: string, id: string): Setting | undefined {
     const settings: Setting[] = store.get(`settings.${owner}`);
-    return settings.find((setting) => {
-        setting?.id === id;
+
+    let foundSetting: Setting | undefined = undefined;
+
+    settings.forEach((setting) => {
+        if (setting.id === id) foundSetting = setting;
     });
+
+    return foundSetting;
 }
 
 /**
@@ -117,6 +122,7 @@ export function setSetting(owner: string, value: Setting) {
 
     const settings: Setting[] = store.get(`settings.${owner}`);
     settings.push(value);
+
     store.set(`settings.${owner}`, settings);
 }
 
@@ -187,6 +193,22 @@ export function deleteSettingsOfOwner(owner: string): void {
     updateSettings(settings);
 }
 
+/**
+ * Delete a specific setting by id.
+ */
+export function deleteSetting(owner: string, id: string): void {
+    const settings = getSettings();
+    const settingsOfOwner: Setting[] = settings[owner];
+    const indexToDelete = settingsOfOwner.findIndex(
+        (setting) => setting.id === id
+    );
+
+    settingsOfOwner.splice(indexToDelete, 1);
+    settings[owner] = settingsOfOwner;
+
+    updateSettings(settings);
+}
+
 function toggleAutoLaunch(): void {
     autoLauncher.isEnabled().then((isEnabled) => {
         const setting = getSetting('application', 'launchOnStartup')!
@@ -195,4 +217,22 @@ function toggleAutoLaunch(): void {
         if (!isEnabled && setting) autoLauncher.enable();
         if (isEnabled && !setting) autoLauncher.disable();
     });
+}
+
+/**
+ * Get a setting for the farm or create the setting and return it.
+ */
+export function getOrSetSetting(
+    owner: string,
+    id: string,
+    toCreate?: Setting
+): Setting | undefined {
+    if (doesSettingExist(owner, id)) {
+        return getSetting(owner, id)!;
+    } else {
+        if (toCreate) {
+            setSetting(owner, toCreate);
+            return toCreate;
+        }
+    }
 }
