@@ -128,6 +128,10 @@ autoUpdater.on('update-available', () => {
 autoUpdater.on('update-downloaded', () => {
     log('info', 'Update has finished downloading');
 
+    /**
+     * TODO: Get release notes here.
+     */
+
     sendOneWay(IpcChannels.updateStatus, true);
 
     if (displayToasts) {

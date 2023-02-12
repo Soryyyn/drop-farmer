@@ -9,9 +9,11 @@ import {
 import {
     combineTimeUnits,
     getCurrentDate,
+    getDate,
     msInHours,
     remainingDaysInMonth,
-    remainingDaysInWeek
+    remainingDaysInWeek,
+    stringToDate
 } from '@main/util/calendar';
 import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
@@ -24,6 +26,7 @@ import {
     setSetting,
     updateSetting
 } from '../util/settings';
+import { getOrSetSetting } from './helpers';
 import { Timer } from './timer';
 
 export default abstract class FarmTemplate {
@@ -46,7 +49,9 @@ export default abstract class FarmTemplate {
     extras: Electron.BrowserWindow[] = [];
 
     conditions: FarmingConditions = {
-        timeframe: 'unlimited'
+        condition: {
+            type: 'unlimited'
+        }
     };
 
     constructor(id: string, url: string, isProtected: boolean) {
@@ -60,7 +65,16 @@ export default abstract class FarmTemplate {
     initialize(): void {
         this.createOrSetFarmSettings();
 
-        this.status = this.enabled ? 'idle' : 'disabled';
+        /**
+         * Set the initial status based on factors.
+         */
+        if (!this.enabled) {
+            this.status = 'disabled';
+        } else if (this.conditions.fulfilled) {
+            this.status = 'condition-fulfilled';
+        } else {
+            this.status = 'idle';
+        }
 
         this.scheduler.add(
             Schedules.CheckToFarm,
@@ -111,227 +125,235 @@ export default abstract class FarmTemplate {
     }
 
     createOrSetFarmSettings(): void {
-        if (doesSettingExist(this.id, 'enabled')) {
-            this.enabled = getSetting(this.id, 'enabled')?.value as boolean;
-        } else {
-            setSetting(this.id, {
-                id: 'enabled',
-                shown: 'Farm enabled',
-                desc: 'Enable or disable this farm.',
-                value: this.enabled,
-                default: false
-            });
-        }
+        this.enabled = getOrSetSetting(this.id, 'enabled', {
+            id: 'enabled',
+            shown: 'Farm enabled',
+            desc: 'Enable or disable this farm.',
+            value: this.enabled,
+            default: false
+        }) as boolean;
 
-        if (doesSettingExist(this.id, 'schedule')) {
-            this.schedule = getSetting(this.id, 'schedule')?.value as number;
-        } else {
-            setSetting(this.id, {
-                id: 'schedule',
-                shown: 'Farming schedule',
-                desc: 'The schedule (in minutes) on which drop-farmer will check if farming is possible.',
-                value: this.schedule,
-                default: 30,
-                max: 60,
-                min: 1
-            });
-        }
+        this.schedule = getOrSetSetting(this.id, 'schedule', {
+            id: 'schedule',
+            shown: 'Farming schedule',
+            desc: 'The schedule (in minutes) on which drop-farmer will check if farming is possible.',
+            value: this.schedule,
+            default: 30,
+            max: 60,
+            min: 1
+        }) as number;
 
-        if (doesSettingExist(this.id, 'url')) {
-            this.url = getSetting(this.id, 'url')?.value as string;
-        } else {
-            setSetting(this.id, {
-                id: 'url',
-                shown: 'Checking URL',
-                desc: 'The URL the farm will check if it can farm.',
-                value: this.url,
-                default: this.url,
-                disabled: true
-            });
-        }
+        this.url = getOrSetSetting(this.id, 'url', {
+            id: 'url',
+            shown: 'Checking URL',
+            desc: 'The URL the farm will check if it can farm.',
+            value: this.url,
+            default: this.url,
+            disabled: true
+        }) as string;
 
-        if (getSetting('application', 'showWindowsForLogin')?.value as boolean)
-            this.windowsShownByDefault === true;
-        else this.windowsShownByDefault === false;
+        this.windowsShownByDefault = (getOrSetSetting(
+            'application',
+            'showWindowsForLogin'
+        ) as boolean)
+            ? true
+            : false;
 
-        /**
-         * Condition settings.
-         */
-        if (doesSettingExist(this.id, 'started')) {
-            const started = getSetting(this.id, 'started')?.value as string;
-            if (started !== '') {
-                this.conditions.started = dayjs(started).toDate();
-            }
-        } else {
-            setSetting(this.id, {
-                id: 'started',
-                value: ''
-            });
-        }
-
-        if (doesSettingExist(this.id, 'fulfilled')) {
-            const fulfilled = getSetting(this.id, 'fulfilled')?.value as string;
-            if (fulfilled !== '') {
-                this.conditions.fulfilled = dayjs(fulfilled).toDate();
-            }
-        } else {
-            setSetting(this.id, {
-                id: 'fulfilled',
-                value: ''
-            });
-        }
-
-        if (doesSettingExist(this.id, 'amount')) {
-            this.conditions.amount = getSetting(this.id, 'amount')
-                ?.value as number;
-        } else {
-            setSetting(this.id, {
-                id: 'amount',
-                value: 0
-            });
-        }
-
-        if (doesSettingExist(this.id, 'timeframe')) {
-            this.conditions.timeframe = getSetting(this.id, 'timeframe')
-                ?.value as Timeframe;
-        } else {
-            setSetting(this.id, {
-                id: 'timeframe',
-                shown: 'Timeframe',
-                desc: 'The timeframe in which the farm will try to fulfill the condition. The condition will reset depending on the timeframe. ',
-                value: this.conditions.timeframe ?? 'unlimited',
-                default: 'unlimited',
-                options: ['weekly', 'monthly', 'unlimited', 'from ... to ...'],
+        this.conditions.condition.type = getOrSetSetting(
+            this.id,
+            'condition-type',
+            {
+                id: 'condition-type',
+                shown: 'Condition type',
+                desc: 'The type will control how the farm will when to farm.',
                 disabled: false,
-                ignores: [
+                value: this.conditions.condition.type,
+                default: 'unlimited',
+                options: [
                     {
-                        onValue: 'unlimited',
-                        ids: [
-                            'amountToFulfill',
-                            'buffer',
-                            'repeating',
-                            'from',
-                            'to'
-                        ]
+                        display: 'Unlimited',
+                        value: 'unlimited'
                     },
                     {
-                        onValue: 'weekly',
-                        ids: ['from', 'to']
+                        display: 'Weekly',
+                        value: 'weekly'
                     },
                     {
-                        onValue: 'monthly',
-                        ids: ['from', 'to']
+                        display: 'Monthly',
+                        value: 'Monthly'
                     },
                     {
-                        onValue: 'from ... to ...',
-                        ids: ['repeating']
+                        display: 'From ... to ...',
+                        value: 'timeWindow'
                     }
                 ]
-            });
-        }
+            }
+        ) as ConditionType;
 
-        if (doesSettingExist(this.id, 'amountToFulfill')) {
-            this.conditions.amountToFulfill = getSetting(
+        /**
+         * Load / or create conditions based on condition type.
+         */
+        const conditionType = this.conditions.condition.type;
+        if (
+            conditionType === 'monthly' ||
+            conditionType === 'weekly' ||
+            conditionType === 'timeWindow'
+        ) {
+            /**
+             * Set the started or fulfilled condition if it is set in the settings.
+             */
+            const started = getOrSetSetting(this.id, 'condition-started', {
+                id: 'condition-started',
+                value: ''
+            }) as string;
+
+            if (started !== '') {
+                this.conditions.started = getDate(started);
+            }
+
+            const fulfilled = getOrSetSetting(this.id, 'condition-fulfilled', {
+                id: 'condition-fulfilled',
+                value: ''
+            }) as string;
+
+            if (fulfilled !== '') {
+                this.conditions.fulfilled = getDate(fulfilled);
+            }
+
+            this.conditions.condition.amount = getOrSetSetting(
                 this.id,
-                'amountToFulfill'
-            )?.value as number;
-        } else {
-            setSetting(this.id, {
-                id: 'amountToFulfill',
-                shown: 'Amount to fulfill condition',
-                desc: 'The amount of hours the farm needs to farm before the stopping/reset condition has been fulfilled.',
-                value: this.conditions.amountToFulfill ?? 4,
-                default: 4,
-                disabled: false,
-                min: 1,
-                max: 730
-            });
-        }
+                'condition-amount',
+                {
+                    id: 'condition-amount',
+                    value: 0
+                }
+            ) as number;
 
-        if (doesSettingExist(this.id, 'buffer')) {
-            this.conditions.buffer = getSetting(this.id, 'buffer')
-                ?.value as number;
-        } else {
-            setSetting(this.id, {
-                id: 'buffer',
-                shown: 'Buffer',
-                desc: 'The buffer (in minutes) controls how much longer the farm will farm as a buffer because drops may not exactly happen on the hour.',
-                value: this.conditions.buffer ?? 30,
-                default: 30,
-                disabled: false,
-                min: 0,
-                max: 60
-            });
-        }
+            this.conditions.condition.amountToFulfill = getOrSetSetting(
+                this.id,
+                'condition-amountToFulfill',
+                {
+                    id: 'condition-amountToFulfill',
+                    shown: 'Amount to fulfill condition',
+                    desc: 'The amount of hours the farm needs to farm before the stopping/reset condition has been fulfilled.',
+                    value: this.conditions.condition.amountToFulfill ?? 4,
+                    default: 4,
+                    disabled: false,
+                    min: 1,
+                    max: 100
+                }
+            ) as number;
 
-        if (doesSettingExist(this.id, 'repeating')) {
-            this.conditions.repeating = getSetting(this.id, 'repeating')
-                ?.value as boolean;
-        } else {
-            setSetting(this.id, {
-                id: 'repeating',
-                shown: 'Repeat after timeframe reset',
-                desc: 'If the farm should repeat the condition after the timeframe is fulfilled.',
-                value: this.conditions.repeating ?? true,
-                default: true,
-                disabled: false
-            });
+            this.conditions.condition.buffer = getOrSetSetting(
+                this.id,
+                'condition-buffer',
+                {
+                    id: 'condition-buffer',
+                    shown: 'Buffer',
+                    desc: 'The buffer (in minutes) controls how much longer the farm will farm as a buffer because drops may not exactly happen on the hour.',
+                    value: this.conditions.condition.buffer ?? 30,
+                    default: 30,
+                    disabled: false,
+                    min: 0,
+                    max: 60
+                }
+            ) as number;
+
+            if (conditionType === 'weekly' || conditionType === 'monthly') {
+                this.conditions.condition.repeating = getOrSetSetting(
+                    this.id,
+                    'condition-repeating',
+                    {
+                        id: 'condition-repeating',
+                        shown: 'Repeat after timeframe reset',
+                        desc: 'If the farm should repeat the condition after the timeframe is fulfilled.',
+                        value: this.conditions.condition.repeating ?? true,
+                        default: true,
+                        disabled: false
+                    }
+                ) as boolean;
+            } else if (conditionType === 'timeWindow') {
+                const from = getOrSetSetting(this.id, 'condition-from', {
+                    id: 'condition-from',
+                    shown: 'Starting date of condition',
+                    desc: "The starting date; From when on the farm can farm and try to fulfill it's condition.",
+                    value: (this.conditions.condition.from as string) ?? '',
+                    default: '',
+                    disabled: false
+                }) as string;
+
+                if (from !== '') {
+                    this.conditions.condition.from = stringToDate(from);
+                }
+
+                const to = getOrSetSetting(this.id, 'condition-to', {
+                    id: 'condition-to',
+                    shown: 'Ending date of condition',
+                    desc: "The ending date; When the farm should stop trying to fulfill it's condition",
+                    value: (this.conditions.condition.to as string) ?? '',
+                    default: '',
+                    disabled: false
+                }) as string;
+
+                if (to !== '') {
+                    this.conditions.condition.to = stringToDate(to);
+                }
+            }
         }
     }
 
     private updateConditionsWithSettings(): void {
-        this.conditions.timeframe = getSetting(this.id, 'timeframe')
-            ?.value as Timeframe;
-
-        this.conditions.amountToFulfill = getSetting(this.id, 'amountToFulfill')
-            ?.value as number;
-
-        this.conditions.buffer = getSetting(this.id, 'buffer')?.value as number;
-
-        this.conditions.repeating = getSetting(this.id, 'repeating')
-            ?.value as boolean;
+        // this.conditions.condition.type = getSetting(this.id, 'condition-type')
+        //     ?.value as ConditionType;
+        // this.conditions.condition.amountToFulfill = getSetting(
+        //     this.id,
+        //     'condition-amountToFulfill'
+        // )?.value as number;
+        // this.conditions.condition.buffer = getSetting(
+        //     this.id,
+        //     'condition-buffer'
+        // )?.value as number;
+        // this.conditions.condition.repeating = getSetting(
+        //     this.id,
+        //     'condition-repeating'
+        // )?.value as boolean;
     }
 
     updateConditionValues(): void {
-        if (this.conditions.started)
-            updateSetting(this.id, 'started', {
-                id: 'started',
-                value: dayjs(this.conditions.started).toISOString()
-            });
-
-        if (this.conditions.fulfilled)
-            updateSetting(this.id, 'fulfilled', {
-                id: 'fulfilled',
-                value: dayjs(this.conditions.fulfilled).toISOString()
-            });
-
-        if (this.conditions.amount)
-            updateSetting(this.id, 'amount', {
-                id: 'amount',
-                value: this.conditions.amount
-            });
+        // if (this.conditions.started)
+        //     updateSetting(this.id, 'started', {
+        //         id: 'started',
+        //         value: dayjs(this.conditions.started).toISOString()
+        //     });
+        // if (this.conditions.fulfilled)
+        //     updateSetting(this.id, 'fulfilled', {
+        //         id: 'fulfilled',
+        //         value: dayjs(this.conditions.fulfilled).toISOString()
+        //     });
+        // if (this.conditions.condition.amount)
+        //     updateSetting(this.id, 'amount', {
+        //         id: 'amount',
+        //         value: this.conditions.amount
+        //     });
     }
 
     resetConditions(): void {
-        this.conditions.started = undefined;
-        updateSetting(this.id, 'started', {
-            id: 'started',
-            value: ''
-        });
-
-        this.conditions.fulfilled = undefined;
-        updateSetting(this.id, 'fulfilled', {
-            id: 'fulfilled',
-            value: ''
-        });
-
-        this.conditions.amount = undefined;
-        updateSetting(this.id, 'amount', {
-            id: 'amount',
-            value: 0
-        });
-
-        log('info', `${this.id}: Conditions have been reset`);
+        // this.conditions.started = undefined;
+        // updateSetting(this.id, 'started', {
+        //     id: 'started',
+        //     value: ''
+        // });
+        // this.conditions.fulfilled = undefined;
+        // updateSetting(this.id, 'fulfilled', {
+        //     id: 'fulfilled',
+        //     value: ''
+        // });
+        // this.conditions.condition.amount = undefined;
+        // updateSetting(this.id, 'amount', {
+        //     id: 'amount',
+        //     value: 0
+        // });
+        // log('info', `${this.id}: Conditions have been reset`);
     }
 
     private getAmountOfWindows(): number {
@@ -351,20 +373,20 @@ export default abstract class FarmTemplate {
             schedule: this.schedule,
             isProtected: this.isProtected,
             amountOfWindows: this.getAmountOfWindows(),
-            windowsShown: this.windowsCurrentlyShown,
-            amountLeftToFulfill: msInHours(
-                combineTimeUnits({
-                    hours: this.conditions.amountToFulfill,
-                    minutes: this.conditions.buffer
-                }).asMilliseconds() - this.conditions.amount!,
-                true
-            ),
-            nextConditionReset:
-                this.conditions.timeframe === 'weekly'
-                    ? remainingDaysInWeek()
-                    : this.conditions.timeframe === 'monthly'
-                    ? remainingDaysInMonth()
-                    : Infinity
+            windowsShown: this.windowsCurrentlyShown
+            // amountLeftToFulfill: msInHours(
+            //     combineTimeUnits({
+            //         hours: this.conditions.amountToFulfill,
+            //         minutes: this.conditions.buffer
+            //     }).asMilliseconds() - this.conditions.amount!,
+            //     true
+            // ),
+            // nextConditionReset:
+            //     this.conditions.timeframe === 'weekly'
+            //         ? remainingDaysInWeek()
+            //         : this.conditions.timeframe === 'monthly'
+            //         ? remainingDaysInMonth()
+            //         : Infinity
         };
     }
 
@@ -469,9 +491,9 @@ export default abstract class FarmTemplate {
             /**
              * Also set the amount to the conditions.
              */
-            this.conditions.amount = this.conditions.amount
-                ? this.conditions.amount + this.timer.amount
-                : this.timer.amount;
+            // this.conditions.amount = this.conditions.amount
+            //     ? this.conditions.amount + this.timer.amount
+            //     : this.timer.amount;
 
             resolve();
         });
@@ -559,7 +581,7 @@ export default abstract class FarmTemplate {
     async restartScheduler(withStatus?: FarmStatus, steps?: () => void) {
         this.timer.stopTimer();
         await this.addUptimeAmount();
-        this.destroyAllWindows();
+        await this.destroyAllWindows();
 
         this.scheduler.stopAll();
         if (steps) Promise.all([steps()]);
@@ -600,7 +622,7 @@ export default abstract class FarmTemplate {
         /**
          * Check if the farm is set to unlimited farming.
          */
-        if (this.conditions.timeframe === 'unlimited') {
+        if (this.conditions.condition.type === 'unlimited') {
             log('info', `${this.id}: Timeframe set to unlimited, farming now`);
             return 'farm';
         } else {
@@ -630,15 +652,15 @@ export default abstract class FarmTemplate {
                      * Check if its reset time.
                      */
                     if (
-                        (this.conditions.timeframe === 'weekly' &&
+                        (this.conditions.condition.type === 'weekly' &&
                             remainingDaysInWeek() === 0) ||
-                        (this.conditions.timeframe === 'monthly' &&
+                        (this.conditions.condition.type === 'monthly' &&
                             remainingDaysInMonth() === 0)
                     ) {
                         /**
                          * Has reached its reset.
                          */
-                        if (this.conditions.repeating) {
+                        if (this.conditions.condition.repeating) {
                             log(
                                 'info',
                                 `${this.id}: Reached timeframe reset, will reset now`
@@ -658,18 +680,22 @@ export default abstract class FarmTemplate {
                         /**
                          * Still time to farm, not at reset point.
                          */
-                        if (this.conditions.amount) {
+                        if (this.conditions.condition.amount) {
                             log(
                                 'info',
                                 `${this.id}: Checking if amount to fulfilled has been achieved`
                             );
 
                             const amountToAchieve = combineTimeUnits({
-                                hours: this.conditions.amountToFulfill,
-                                minutes: this.conditions.buffer
+                                hours: this.conditions.condition
+                                    .amountToFulfill,
+                                minutes: this.conditions.condition.buffer
                             }).asMilliseconds();
 
-                            if (this.conditions.amount >= amountToAchieve) {
+                            if (
+                                this.conditions.condition.amount >=
+                                amountToAchieve
+                            ) {
                                 log(
                                     'info',
                                     `${this.id}: Achieved amount to fulfill condition, will set fulfilled`
@@ -679,7 +705,7 @@ export default abstract class FarmTemplate {
                             } else {
                                 log(
                                     'info',
-                                    `${this.id}: Has not achieved amount to fulfill yet, farm now (needs ${amountToAchieve} / has ${this.conditions.amount})`
+                                    `${this.id}: Has not achieved amount to fulfill yet, farm now (needs ${amountToAchieve} / has ${this.conditions.condition.amount})`
                                 );
                                 return 'farm';
                             }
@@ -698,15 +724,15 @@ export default abstract class FarmTemplate {
                     );
 
                     if (
-                        (this.conditions.timeframe === 'weekly' &&
+                        (this.conditions.condition.type === 'weekly' &&
                             remainingDaysInWeek() === 0) ||
-                        (this.conditions.timeframe === 'monthly' &&
+                        (this.conditions.condition.type === 'monthly' &&
                             remainingDaysInMonth() === 0)
                     ) {
                         /**
                          * Has reached its reset.
                          */
-                        if (this.conditions.repeating) {
+                        if (this.conditions.condition.repeating) {
                             log(
                                 'info',
                                 `${this.id}: Reached timeframe reset, will reset now`
@@ -755,11 +781,6 @@ export default abstract class FarmTemplate {
             switch (await this.conditionCheck()) {
                 case 'conditions-fulfilled':
                     await this.restartScheduler();
-
-                    /**
-                     * Destroy all windows.
-                     */
-                    await this.destroyAllWindows();
 
                     log(
                         'info',
@@ -821,6 +842,13 @@ export default abstract class FarmTemplate {
                         });
 
                     break;
+            }
+
+            /**
+             * For safety, check and destroy any windows left.
+             */
+            if (this.status === 'idle' && this.getAmountOfWindows() > 0) {
+                await this.destroyAllWindows();
             }
         }
     }

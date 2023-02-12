@@ -83,6 +83,9 @@ const store = new ElectronStore<SettingsStoreSchema>({
         },
         'v1.0.0-beta37': (store) => {
             store.clear();
+        },
+        'v1.0.0-beta38': (store) => {
+            store.clear();
         }
     }
 });
@@ -99,7 +102,9 @@ export function getSettings(): SettingsOnly {
  */
 export function getSetting(owner: string, id: string): Setting | undefined {
     const settings: Setting[] = store.get(`settings.${owner}`);
-    return settings.find((setting) => setting?.id === id);
+    return settings.find((setting) => {
+        setting?.id === id;
+    });
 }
 
 /**

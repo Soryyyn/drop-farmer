@@ -36,22 +36,73 @@ declare const api: typeof import('../api').default;
 /**
  * Store.
  */
-type Setting = {
+// type Setting = {
+//     id: string;
+//     shown?: string;
+//     desc?: string;
+//     value: string | number | boolean;
+//     default?: string | number | boolean;
+//     options?: string[];
+//     min?: number;
+//     max?: number;
+//     disabled?: boolean;
+//     requiresRestart?: boolean;
+//     ignores?: {
+//         onValue: string | number | boolean;
+//         ids: string[];
+//     }[];
+// };
+
+type ReadonlySetting = {
     id: string;
-    shown?: string;
-    desc?: string;
     value: string | number | boolean;
     default?: string | number | boolean;
-    options?: string[];
-    min?: number;
-    max?: number;
-    disabled?: boolean;
+};
+
+type DisplayedSettingBase = {
+    id: string;
+    shown: string;
+    desc: string;
+    disabled: boolean;
     requiresRestart?: boolean;
     ignores?: {
         onValue: string | number | boolean;
         ids: string[];
     }[];
 };
+
+type NumberSetting = DisplayedSettingBase & {
+    value: number;
+    default: number;
+    min: number;
+    max: number;
+};
+
+type BoolishSetting = DisplayedSettingBase & {
+    value: boolean;
+    default: boolean;
+};
+
+type TextSetting = DisplayedSettingBase & {
+    value: string;
+    default: string;
+};
+
+type SelectionSetting = DisplayedSettingBase & {
+    value: string;
+    default: string;
+    options: {
+        display: string;
+        value: string;
+    }[];
+};
+
+type Setting =
+    | NumberSetting
+    | BoolishSetting
+    | TextSetting
+    | SelectionSetting
+    | ReadonlySetting;
 
 type SettingsStoreSchema = {
     settings: SettingsOnly;
@@ -122,17 +173,49 @@ type NewFarm = {
 
 type Timeframe = 'weekly' | 'monthly' | 'unlimited' | 'from ... to ...';
 
-type FarmingConditions = {
+// type FarmingConditions = {
+//     started?: Date;
+//     fulfilled?: Date;
+//     amount?: number; // in milliseconds
+//     amountToFulfill?: number; // in hours
+//     buffer?: number; // in minutes
+//     timeframe: Timeframe;
+//     from?: Date | string;
+//     to?: Date | string;
+//     repeating?: boolean; // not needed if unlimited
+// };
+
+type BaseConditions = {
     started?: Date;
     fulfilled?: Date;
+};
+
+type UnlimitedCondition = {
+    type: 'unlimited';
+};
+
+type PeriodCondition = {
+    type: 'weekly' | 'monthly';
     amount?: number; // in milliseconds
     amountToFulfill?: number; // in hours
     buffer?: number; // in minutes
-    timeframe: Timeframe;
+    repeating?: boolean;
+};
+
+type TimeWindowCondition = {
+    type: 'timeWindow';
+    amount?: number; // in milliseconds
+    amountToFulfill?: number; // in hours
+    buffer?: number; // in minutes
     from?: Date | string;
     to?: Date | string;
-    repeating?: boolean; // not needed if unlimited
 };
+
+type FarmingConditions = BaseConditions & {
+    condition: UnlimitedCondition | PeriodCondition | TimeWindowCondition;
+};
+
+type ConditionType = 'unlimited' | 'weekly' | 'monthly' | 'timeWindow';
 
 type ConditionCheckReturn = 'farm' | 'conditions-fulfilled';
 

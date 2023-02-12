@@ -77,3 +77,10 @@ export function getCurrentMonthName(): string {
 export function stringToDate(string: string): Date {
     return dayjs(string, 'DD-MM-YYYY').toDate();
 }
+
+/**
+ * Parse a string to a date.
+ */
+export function getDate(string: string): Date {
+    return dayjs(string).toDate();
+}
