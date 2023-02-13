@@ -9,7 +9,7 @@ import IgnoredIndicator from './IgnoredIndicator';
 import RestartIndicator from './RestartIndicator';
 
 interface Props {
-    setting: Setting;
+    setting: NumberSetting | BoolishSetting | TextSetting | SelectionSetting;
     ignored: boolean;
     ignoredBy: string;
     onChange: (updated: any) => void;
@@ -22,14 +22,14 @@ export default function Setting({
     onChange
 }: Props) {
     function actionRender() {
-        if (setting.options) {
+        if ((setting as SelectionSetting).options) {
             return (
                 <Select
                     value={setting.value.toString()}
                     disabled={setting.disabled}
                     alignment={Alignment.BottomRight}
                     fullWidth={true}
-                    options={setting.options}
+                    options={(setting as SelectionSetting).options}
                     onChange={onChange}
                 />
             );

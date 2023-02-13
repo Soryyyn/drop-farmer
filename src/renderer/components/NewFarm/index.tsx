@@ -25,10 +25,12 @@ export default function NewFarm({ onClose }: Props) {
         type: 'youtube',
         url: '',
         conditions: {
-            timeframe: 'monthly',
-            amountToFulfill: 4,
-            buffer: 30,
-            repeating: false
+            condition: {
+                type: 'monthly',
+                amountToFulfill: 4,
+                buffer: 30,
+                repeating: false
+            }
         }
     });
 
@@ -123,9 +125,9 @@ export default function NewFarm({ onClose }: Props) {
 
                     <Section title="Farming Conditions">
                         <div className="flex flex-col gap-4">
-                            <Select
+                            {/* <Select
                                 label="Timeframe"
-                                value={farmDetails.conditions.timeframe}
+                                value={farmDetails.conditions.condition.type}
                                 required={true}
                                 options={[
                                     'unlimited',
@@ -235,7 +237,7 @@ export default function NewFarm({ onClose }: Props) {
                                         }
                                     })
                                 }
-                            />
+                            /> */}
 
                             <TextInformation
                                 label="Important"

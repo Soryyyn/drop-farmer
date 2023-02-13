@@ -30,11 +30,17 @@ export default function Settings({ onClose }: Props) {
      */
     useEffect(() => {
         if (settings && selected) {
-            settings[selected].map((setting) => {
+            settings[selected].map((s) => {
+                const setting = s as
+                    | NumberSetting
+                    | BoolishSetting
+                    | TextSetting
+                    | SelectionSetting;
+
                 if (setting.ignores) {
                     let foundIndex = -1;
 
-                    setting.ignores.forEach((ignored, index) => {
+                    setting.ignores?.forEach((ignored, index) => {
                         if (
                             foundIndex === -1 &&
                             ignored.onValue === setting.value
@@ -110,7 +116,13 @@ export default function Settings({ onClose }: Props) {
 
                     {/* Settings */}
                     <ul className="grow flex flex-col gap-4 overflow-y-auto">
-                        {settings?.[selected].map((setting) => {
+                        {settings?.[selected].map((s) => {
+                            const setting = s as
+                                | NumberSetting
+                                | BoolishSetting
+                                | TextSetting
+                                | SelectionSetting;
+
                             /**
                              * Only render a setting, if it has a shown name and
                              * description set (used for setting which don't

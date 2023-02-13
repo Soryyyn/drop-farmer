@@ -22,7 +22,6 @@ import CrontabManager from 'cron-job-manager';
 import {
     deleteSetting,
     getOrSetSetting,
-    getSetting,
     getSettings,
     updateSetting
 } from '../util/settings';
@@ -400,20 +399,23 @@ export default abstract class FarmTemplate {
 
     updateConditionValues(): void {
         if (this.conditions.condition.type !== 'unlimited') {
-            updateSetting(this.id, 'condition-amount', {
-                id: 'condition-amount',
-                value: this.conditions.condition.amount!
-            });
+            if (this.conditions.condition.amount)
+                updateSetting(this.id, 'condition-amount', {
+                    id: 'condition-amount',
+                    value: this.conditions.condition.amount
+                });
 
-            updateSetting(this.id, 'condition-started', {
-                id: 'condition-started',
-                value: dateToISOString(this.conditions.started!)
-            });
+            if (this.conditions.started)
+                updateSetting(this.id, 'condition-started', {
+                    id: 'condition-started',
+                    value: dateToISOString(this.conditions.started)
+                });
 
-            updateSetting(this.id, 'condition-fulfilled', {
-                id: 'condition-fulfilled',
-                value: dateToISOString(this.conditions.fulfilled!)
-            });
+            if (this.conditions.fulfilled)
+                updateSetting(this.id, 'condition-fulfilled', {
+                    id: 'condition-fulfilled',
+                    value: dateToISOString(this.conditions.fulfilled)
+                });
         }
 
         log('info', `${this.id}: Updated condition values`);
@@ -578,9 +580,12 @@ export default abstract class FarmTemplate {
             /**
              * Also set the amount to the conditions.
              */
-            // this.conditions.amount = this.conditions.amount
-            //     ? this.conditions.amount + this.timer.amount
-            //     : this.timer.amount;
+            if (this.conditions.condition.type !== 'unlimited') {
+                this.conditions.condition.amount = this.conditions.condition
+                    .amount
+                    ? this.conditions.condition.amount + this.timer.amount
+                    : this.timer.amount;
+            }
 
             resolve();
         });

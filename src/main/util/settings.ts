@@ -1,9 +1,12 @@
-import { FileNames } from '@main/common/constants';
+import { FileNames, IpcChannels } from '@main/common/constants';
+import { handleAndReply, handleOneWay, sendOneWay } from '@main/electron/ipc';
+import { applySettingsToFarms } from '@main/farming/management';
 import AutoLaunch from 'auto-launch';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
 import { log } from './logging';
+import { sendToast } from './toast';
 
 const autoLauncher = new AutoLaunch({ name: 'drop-farmer' });
 
@@ -207,6 +210,7 @@ export function deleteSetting(owner: string, id: string): void {
     settings[owner] = settingsOfOwner;
 
     updateSettings(settings);
+    log('info', `Deleted setting ${id} of ${owner}`);
 }
 
 function toggleAutoLaunch(): void {
@@ -236,3 +240,38 @@ export function getOrSetSetting(
         }
     }
 }
+
+handleAndReply(IpcChannels.getSettings, () => {
+    return getSettings();
+});
+
+handleOneWay(
+    IpcChannels.saveNewSettings,
+    (event, settingsToSave: SettingsOnly) => {
+        sendToast(
+            {
+                type: 'promise',
+                id: 'settings-saving',
+                textOnLoading: 'Saving settings...',
+                textOnSuccess: 'Saved settings.',
+                textOnError: 'Failed saving settings.',
+                duration: 4000
+            },
+            undefined,
+            new Promise(async (resolve, reject) => {
+                try {
+                    updateSettings(settingsToSave);
+                    applySettingsToFarms();
+                    resolve(undefined);
+                } catch (err) {
+                    reject(err);
+                }
+            })
+        );
+
+        /**
+         * Notify renderer of settings changed.
+         */
+        sendOneWay(IpcChannels.settingsChanged, getSettings());
+    }
+);

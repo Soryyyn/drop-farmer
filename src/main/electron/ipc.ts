@@ -75,36 +75,6 @@ handleOneWay(IpcChannels.shutdown, () => {
     app.quit();
 });
 
-handleAndReply(IpcChannels.getSettings, () => {
-    return getSettings();
-});
-
-handleOneWay(
-    IpcChannels.saveNewSettings,
-    (event, settingsToSave: SettingsOnly) => {
-        sendToast(
-            {
-                type: 'promise',
-                id: 'settings-saving',
-                textOnLoading: 'Saving settings...',
-                textOnSuccess: 'Saved settings.',
-                textOnError: 'Failed saving settings.',
-                duration: 4000
-            },
-            undefined,
-            new Promise(async (resolve, reject) => {
-                try {
-                    updateSettings(settingsToSave);
-                    applySettingsToFarms();
-                    resolve(undefined);
-                } catch (err) {
-                    reject(err);
-                }
-            })
-        );
-    }
-);
-
 handleAndReply(IpcChannels.getApplicationVersion, () => {
     return app.getVersion();
 });

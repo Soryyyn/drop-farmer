@@ -10,7 +10,10 @@ interface Props {
     fullWidth?: boolean;
     disabled?: boolean;
     alignment: Alignment;
-    options: any[];
+    options: {
+        display: string;
+        value: string;
+    }[];
     onChange: (changed: any) => void;
 }
 
@@ -38,8 +41,8 @@ export default function Select({
                 entries={options.map((option) => {
                     return {
                         type: 'normal',
-                        label: api.capitalize(option),
-                        onClick: () => onChange(option)
+                        label: option.display,
+                        onClick: () => onChange(option.value)
                     };
                 })}
                 button={
