@@ -1,16 +1,17 @@
 import { OverlayContainer } from '@components/global/Overlay/OverlayContainer';
 import OverlayContent from '@components/global/Overlay/OverlayContent';
+import { TabSwitcher } from '@components/global/TabSwitcher';
 import { ActionButton } from '@components/Settings/ActionButton';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FarmsContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
-import DateInput from './DateInput';
-import NumberInput from './NumberInput';
-import Section from './Section';
-import Select from './Select';
-import SwitchToggle from './SwitchToggle';
-import TextInformation from './TextInformation';
-import TextInput from './TextInput';
+// import DateInput from './DateInput';
+// import NumberInput from './NumberInput';
+// import Section from './Section';
+// import Select from './Select';
+// import SwitchToggle from './SwitchToggle';
+// import TextInformation from './TextInformation';
+// import TextInput from './TextInput';
 
 interface Props {
     onClose: () => void;
@@ -61,7 +62,20 @@ export default function NewFarm({ onClose }: Props) {
                     />
                 ]}
             >
-                <div className="flex flex-col h-full w-full gap-4 overflow-y-auto">
+                <TabSwitcher
+                    tabs={[
+                        {
+                            title: 'Basic Settings',
+                            content: <p>asdassd</p>
+                        },
+                        {
+                            title: 'Conditions',
+                            content: <p>fghfhhffhfh</p>
+                        }
+                    ]}
+                />
+
+                {/* <div className="flex flex-col h-full w-full gap-4 overflow-y-auto">
                     <Section title="Details">
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-row gap-4">
@@ -125,7 +139,7 @@ export default function NewFarm({ onClose }: Props) {
 
                     <Section title="Farming Conditions">
                         <div className="flex flex-col gap-4">
-                            {/* <Select
+                            <Select
                                 label="Timeframe"
                                 value={farmDetails.conditions.condition.type}
                                 required={true}
@@ -237,7 +251,7 @@ export default function NewFarm({ onClose }: Props) {
                                         }
                                     })
                                 }
-                            /> */}
+                            />
 
                             <TextInformation
                                 label="Important"
@@ -245,7 +259,7 @@ export default function NewFarm({ onClose }: Props) {
                             />
                         </div>
                     </Section>
-                </div>
+                </div> */}
             </OverlayContent>
         </OverlayContainer>
     );
