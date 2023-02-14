@@ -22,7 +22,7 @@ export function TabSwitcher({ tabs }: Props) {
                                 setCurrentTab(tab.title);
                             }}
                             className={clsx(
-                                'px-2 py-0.5 rounded text-snow-300 cursor-pointer',
+                                'px-3 py-0.5 rounded text-snow-300 cursor-pointer',
                                 {
                                     'bg-pepper-700 hover:bg-pepper-800 ':
                                         tab.title !== currentTab,
