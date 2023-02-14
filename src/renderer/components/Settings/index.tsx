@@ -1,4 +1,4 @@
-import { OverlayContainer } from '@components/global/Overlay/OverlayContainer';
+import OverlayContainer from '@components/global/Overlay/OverlayContainer';
 import OverlayContent from '@components/global/Overlay/OverlayContent';
 import {
     faFloppyDisk,
@@ -7,7 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmsContext, SettingsContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
-import { ActionButton } from './ActionButton';
+import ActionButton from './ActionButton';
 import Selector from './Selector';
 import Setting from './Setting';
 

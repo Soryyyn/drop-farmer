@@ -1,4 +1,4 @@
-import { Icon } from '@components/global/Icon';
+import Icon from '@components/global/Icon';
 import Menu, { Alignment } from '@components/global/Menu';
 import NotificationBadge from '@components/global/NotificationBadge';
 import {

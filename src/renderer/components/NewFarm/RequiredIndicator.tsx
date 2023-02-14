@@ -1,4 +1,4 @@
-import { Icon } from '@components/global/Icon';
+import Icon from '@components/global/Icon';
 import { faStarOfLife } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 

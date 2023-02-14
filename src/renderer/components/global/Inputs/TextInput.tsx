@@ -2,20 +2,13 @@ import clsx from 'clsx';
 import React from 'react';
 
 interface Props {
-    label?: string;
     value: string;
-    fullWidth?: boolean;
+    label?: string;
     disabled?: boolean;
     onChange: (changed: string) => void;
 }
 
-export default function TextInput({
-    label,
-    value,
-    fullWidth,
-    disabled,
-    onChange
-}: Props) {
+export default function TextInput({ label, value, disabled, onChange }: Props) {
     return (
         <div className="flex flex-col gap-2 grow">
             {label && (

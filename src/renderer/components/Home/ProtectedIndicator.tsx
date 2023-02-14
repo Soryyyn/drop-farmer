@@ -1,4 +1,4 @@
-import { Icon } from '@components/global/Icon';
+import Icon from '@components/global/Icon';
 import Tooltip from '@components/global/Tooltip';
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';

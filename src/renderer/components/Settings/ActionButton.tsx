@@ -1,4 +1,4 @@
-import { Icon } from '@components/global/Icon';
+import Icon from '@components/global/Icon';
 import Tooltip from '@components/global/Tooltip';
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
@@ -9,7 +9,7 @@ interface Props {
     onClick: () => void;
 }
 
-export function ActionButton({ icon, tooltip, onClick }: Props) {
+export default function ActionButton({ icon, tooltip, onClick }: Props) {
     return (
         <>
             {tooltip ? (

@@ -1,6 +1,6 @@
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
-import { Icon } from '../Icon';
+import Icon from '../Icon';
 import Tooltip from '../Tooltip';
 
 interface Props {

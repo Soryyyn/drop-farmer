@@ -1,4 +1,4 @@
-import { Icon } from '@components/global/Icon';
+import Icon from '@components/global/Icon';
 import { Overlays } from '@components/global/Overlay/types';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { ModalContext } from '@renderer/util/contexts';

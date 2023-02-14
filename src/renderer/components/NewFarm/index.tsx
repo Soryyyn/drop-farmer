@@ -1,17 +1,11 @@
-import { OverlayContainer } from '@components/global/Overlay/OverlayContainer';
+import OverlayContainer from '@components/global/Overlay/OverlayContainer';
 import OverlayContent from '@components/global/Overlay/OverlayContent';
-import { TabSwitcher } from '@components/global/TabSwitcher';
-import { ActionButton } from '@components/Settings/ActionButton';
+import TabSwitcher from '@components/global/TabSwitcher';
+import ActionButton from '@components/Settings/ActionButton';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FarmsContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
-// import DateInput from './DateInput';
-// import NumberInput from './NumberInput';
-// import Section from './Section';
-// import Select from './Select';
-// import SwitchToggle from './SwitchToggle';
-// import TextInformation from './TextInformation';
-// import TextInput from './TextInput';
+import BasicInfoTab, { BasicInfoObject } from './BasicInfoTab';
 
 interface Props {
     onClose: () => void;
@@ -20,20 +14,23 @@ interface Props {
 export default function NewFarm({ onClose }: Props) {
     const { addFarm, isValid, resetValidation } = useContext(FarmsContext);
 
-    const [farmDetails, setFarmDetails] = useState<NewFarm>({
-        id: '',
-        schedule: 30,
-        type: 'youtube',
-        url: '',
-        conditions: {
-            condition: {
-                type: 'monthly',
-                amountToFulfill: 4,
-                buffer: 30,
-                repeating: false
-            }
-        }
-    });
+    const [finishedFillingOut, setFinishedFillingOut] = useState(false);
+    const [details, setDetails] = useState<NewFarm>();
+
+    // const [farmDetails, setFarmDetails] = useState<NewFarm>({
+    //     id: '',
+    //     schedule: 30,
+    //     type: 'youtube',
+    //     url: '',
+    //     conditions: {
+    //         condition: {
+    //             type: 'monthly',
+    //             amountToFulfill: 4,
+    //             buffer: 30,
+    //             repeating: false
+    //         }
+    //     }
+    // });
 
     /**
      * Close the modal if the validation succeeded.
@@ -49,12 +46,16 @@ export default function NewFarm({ onClose }: Props) {
         <OverlayContainer>
             <OverlayContent
                 buttons={[
-                    <ActionButton
-                        key="newFarm"
-                        icon={faFloppyDisk}
-                        tooltip="Create a new farm with the filled out details"
-                        onClick={() => addFarm(farmDetails)}
-                    />,
+                    ...(finishedFillingOut
+                        ? [
+                              <ActionButton
+                                  key="newFarm"
+                                  icon={faFloppyDisk}
+                                  tooltip="Create a new farm with the filled out details"
+                                  onClick={() => {}}
+                              />
+                          ]
+                        : []),
                     <ActionButton
                         key="close"
                         icon={faXmark}
@@ -63,13 +64,22 @@ export default function NewFarm({ onClose }: Props) {
                 ]}
             >
                 <TabSwitcher
+                    onLastTab={(isOnLastTab) =>
+                        setFinishedFillingOut(isOnLastTab)
+                    }
                     tabs={[
                         {
                             title: 'Basic Settings',
-                            content: <p>asdassd</p>
+                            desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
+                            content: (
+                                <BasicInfoTab
+                                    onChange={(info) => console.log(info)}
+                                />
+                            )
                         },
                         {
                             title: 'Conditions',
+                            desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
                             content: <p>fghfhhffhfh</p>
                         }
                     ]}

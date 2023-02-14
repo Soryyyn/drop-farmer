@@ -10,7 +10,7 @@ interface Props {
     className?: string;
 }
 
-export function Icon({ sprite, size, className }: Props) {
+export default function Icon({ sprite, size, className }: Props) {
     if (typeof sprite === 'object') {
         return (
             <FontAwesomeIcon

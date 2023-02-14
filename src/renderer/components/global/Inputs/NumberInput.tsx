@@ -2,7 +2,7 @@ import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import { uniqueId } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { Icon } from '../Icon';
+import Icon from '../Icon';
 
 interface Props {
     label?: string;

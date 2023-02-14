@@ -1,7 +1,7 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import React from 'react';
-import { Icon } from '../Icon';
+import Icon from '../Icon';
 import Menu, { Alignment } from '../Menu';
 
 interface Props {
