@@ -51,7 +51,6 @@ export default function BasicInfoTab({ onChange }: Props) {
             />
             <Select
                 label="Farming location (Stream site)"
-                alignment={Alignment.BottomLeft}
                 value={basicInfo.type}
                 fullWidth
                 options={[

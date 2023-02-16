@@ -6,7 +6,13 @@ import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
-import React, { createContext, useCallback, useState } from 'react';
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState
+} from 'react';
 
 interface DefaultProps {
     children: JSX.Element | JSX.Element[];
@@ -32,10 +38,12 @@ export const SettingsContext = createContext<{
 export const InternetConnectionContext = createContext<boolean>(true);
 
 export const ModalContext = createContext<{
+    isModalShowing: boolean;
     currentOverlay: Overlays | undefined;
     setCurrentOverlay: (modal: Overlays) => void;
     toggleOverlay: () => void;
 }>({
+    isModalShowing: false,
     currentOverlay: undefined,
     setCurrentOverlay: () => {},
     toggleOverlay: () => {}
@@ -79,6 +87,18 @@ export const FarmContext = createContext<{
     clearCache: () => {},
     deleteSelf: () => {},
     resetConditions: () => {}
+});
+
+export const BoundingContext = createContext<{
+    bounding: {
+        width: number;
+        height: number;
+    };
+}>({
+    bounding: {
+        width: 1200,
+        height: 800
+    }
 });
 
 /**
@@ -199,7 +219,12 @@ export function ModalContextProvider({ children }: DefaultProps) {
 
     return (
         <ModalContext.Provider
-            value={{ currentOverlay, setCurrentOverlay, toggleOverlay }}
+            value={{
+                isModalShowing: showing,
+                currentOverlay,
+                setCurrentOverlay,
+                toggleOverlay
+            }}
         >
             <Overlay showing={showing}>{renderModal()}</Overlay>
             {children}
@@ -350,5 +375,39 @@ export function FarmContextProvider({
         >
             {children}
         </FarmContext.Provider>
+    );
+}
+
+export function BoundingContextProvider({ children }: DefaultProps) {
+    const [bounding, setBounding] = useState<{
+        width: number;
+        height: number;
+    }>({
+        width: 1200,
+        height: 900
+    });
+    const { isModalShowing } = useContext(ModalContext);
+
+    /**
+     * Change the bounding sizes once in overlay or not.
+     */
+    useEffect(() => {
+        if (isModalShowing) {
+            setBounding({
+                width: 1040,
+                height: 640
+            });
+        } else {
+            setBounding({
+                width: 1200,
+                height: 900
+            });
+        }
+    }, [isModalShowing]);
+
+    return (
+        <BoundingContext.Provider value={{ bounding }}>
+            {children}
+        </BoundingContext.Provider>
     );
 }

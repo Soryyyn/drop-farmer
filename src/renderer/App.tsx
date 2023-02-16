@@ -2,6 +2,7 @@ import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
 import Home from '@components/Home';
 import {
+    BoundingContextProvider,
     FarmsContextProvider,
     InternetConnectionContextProvider,
     ModalContextProvider,

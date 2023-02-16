@@ -1,6 +1,7 @@
 import { Menu as HeadlessMenu } from '@headlessui/react';
+import { BoundingContext } from '@renderer/util/contexts';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 export type MenuEntry = {
     type: 'normal' | 'seperator';
@@ -21,19 +22,47 @@ export enum Alignment {
 
 interface Props {
     button: JSX.Element;
-    alignment: Alignment;
     entries: MenuEntry[];
     fullWidth?: boolean;
     disabled?: boolean;
 }
 
-export default function Menu({
-    button,
-    entries,
-    alignment,
-    fullWidth,
-    disabled
-}: Props) {
+export default function Menu({ button, entries, fullWidth, disabled }: Props) {
+    const { bounding } = useContext(BoundingContext);
+
+    const [selfAlignment, setSelfAlignment] = useState<Alignment>();
+    const menuRef = useCallback(
+        (element: any) => {
+            if (element !== null && selfAlignment === undefined) {
+                const elementBounding = element?.getBoundingClientRect()!;
+
+                if (
+                    elementBounding.y + elementBounding.height <
+                    bounding.height
+                ) {
+                    if (
+                        elementBounding.x + elementBounding.width <
+                        bounding.width
+                    ) {
+                        setSelfAlignment(Alignment.BottomLeft);
+                    } else {
+                        setSelfAlignment(Alignment.BottomRight);
+                    }
+                } else {
+                    if (
+                        elementBounding.x + elementBounding.width <
+                        bounding.width
+                    ) {
+                        setSelfAlignment(Alignment.TopLeft);
+                    } else {
+                        setSelfAlignment(Alignment.TopRight);
+                    }
+                }
+            }
+        },
+        [selfAlignment]
+    );
+
     return (
         <HeadlessMenu
             as="div"
@@ -47,16 +76,17 @@ export default function Menu({
             </HeadlessMenu.Button>
 
             <HeadlessMenu.Items
+                ref={menuRef}
                 as="div"
                 className={clsx(
                     'w-max absolute flex flex-col box-border z-50 bg-pepper-200/95 backdrop-blur-2xl rounded-md p-2 gap-1 shadow-xl shadow-pepper-200/25',
                     {
-                        'left-0 mt-1': alignment === Alignment.BottomLeft,
-                        'right-0 mt-1': alignment === Alignment.BottomRight,
+                        'left-0 mt-1': selfAlignment === Alignment.BottomLeft,
+                        'right-0 mt-1': selfAlignment === Alignment.BottomRight,
                         'left-0 -top-1 -translate-y-full':
-                            alignment === Alignment.TopLeft,
+                            selfAlignment === Alignment.TopLeft,
                         'right-0 -top-1 -translate-y-full':
-                            alignment === Alignment.TopRight
+                            selfAlignment === Alignment.TopRight
                     }
                 )}
             >

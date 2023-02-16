@@ -2,14 +2,13 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import React from 'react';
 import Icon from '../Icon';
-import Menu, { Alignment } from '../Menu';
+import Menu from '../Menu';
 
 interface Props {
     label?: string;
     value: string;
     fullWidth?: boolean;
     disabled?: boolean;
-    alignment: Alignment;
     options: {
         display: string;
         value: string;
@@ -22,7 +21,6 @@ export default function Select({
     value,
     fullWidth,
     disabled,
-    alignment,
     options,
     onChange
 }: Props) {
@@ -37,7 +35,6 @@ export default function Select({
             <Menu
                 disabled={disabled}
                 fullWidth={fullWidth}
-                alignment={alignment}
                 entries={options.map((option) => {
                     return {
                         type: 'normal',

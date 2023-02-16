@@ -38,6 +38,7 @@
         "semi": ["error", "always"],
         "no-unused-vars": "off",
         "no-async-promise-executor": "off",
-        "no-prototype-builtins": "off"
+        "no-prototype-builtins": "off",
+        "react/display-name": "off"
     }
 }

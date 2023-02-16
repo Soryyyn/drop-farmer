@@ -1,5 +1,5 @@
 import Icon from '@components/global/Icon';
-import Menu, { Alignment } from '@components/global/Menu';
+import Menu from '@components/global/Menu';
 import NotificationBadge from '@components/global/NotificationBadge';
 import {
     faBroom,
@@ -11,9 +11,7 @@ import {
     faHourglassHalf,
     faRotate,
     faRotateRight,
-    faShieldHalved,
     faTrash,
-    faWindowMaximize,
     faWindowRestore
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmContext } from '@renderer/util/contexts';
@@ -79,7 +77,6 @@ export default function SidebarItem() {
                         </div>
                     </NotificationBadge>
                 }
-                alignment={Alignment.BottomRight}
                 entries={[
                     {
                         type: 'normal',

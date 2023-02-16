@@ -27,7 +27,6 @@ export default function Setting({
                 <Select
                     value={setting.value.toString()}
                     disabled={setting.disabled}
-                    alignment={Alignment.BottomRight}
                     fullWidth={true}
                     options={(setting as SelectionSetting).options}
                     onChange={onChange}
