@@ -79,7 +79,7 @@ export default function NewFarm({ onClose }: Props) {
                         },
                         {
                             title: 'Conditions',
-                            desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
+                            // desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
                             content: <p>fghfhhffhfh</p>
                         }
                     ]}

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 interface Props {
     tabs: {
         title: string;
-        desc: string;
+        desc?: string;
         content: JSX.Element;
     }[];
     onLastTab: (isOnLastTab: boolean) => void;
@@ -44,15 +44,31 @@ export default function TabSwitcher({ tabs, onLastTab }: Props) {
                 })}
             </ul>
 
-            <div className="h-full flex flex-row gap-4 rounded-lg p-4 bg-pepper-500">
-                <div className="w-3/4 overflow-y-auto">
-                    {tabs.find((tab) => tab.title === currentTab)?.content}
-                </div>
+            {tabs.map((tab) => {
+                if (tab.title === currentTab) {
+                    return (
+                        <div
+                            className="h-full flex flex-row gap-4 rounded-lg p-4 bg-pepper-500"
+                            key={tab.title}
+                        >
+                            <div
+                                className={clsx('overflow-y-auto', {
+                                    'w-3/4': tab.desc,
+                                    'w-full': !tab.desc
+                                })}
+                            >
+                                {tab.content}
+                            </div>
 
-                <p className="h-full rounded-md p-2 bg-pepper-700/30 text-snow-300">
-                    {tabs.find((tab) => tab.title === currentTab)?.desc}
-                </p>
-            </div>
+                            {tab.desc && (
+                                <p className="h-full rounded-md p-2 bg-pepper-700/30 text-snow-300">
+                                    {tab.desc}
+                                </p>
+                            )}
+                        </div>
+                    );
+                }
+            })}
         </div>
     );
 }
