@@ -6,6 +6,7 @@ import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FarmsContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
 import BasicInfoTab, { BasicInfoObject } from './BasicInfoTab';
+import ConditionsTab from './ConditionsTab';
 
 interface Props {
     onClose: () => void;
@@ -79,8 +80,12 @@ export default function NewFarm({ onClose }: Props) {
                         },
                         {
                             title: 'Conditions',
-                            // desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
-                            content: <p>fghfhhffhfh</p>
+                            desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
+                            content: (
+                                <ConditionsTab
+                                    onChange={(info) => console.log(info)}
+                                />
+                            )
                         }
                     ]}
                 />
