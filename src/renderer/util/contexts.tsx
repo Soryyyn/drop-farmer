@@ -1,3 +1,4 @@
+import { Alignment } from '@components/global/Menu';
 import Overlay from '@components/global/Overlay';
 import { Overlays } from '@components/global/Overlay/types';
 import NewFarm from '@components/NewFarm';
@@ -11,6 +12,7 @@ import React, {
     useCallback,
     useContext,
     useEffect,
+    useMemo,
     useState
 } from 'react';
 
@@ -89,16 +91,18 @@ export const FarmContext = createContext<{
     resetConditions: () => {}
 });
 
-export const BoundingContext = createContext<{
+export const AlignmentContext = createContext<{
     bounding: {
         width: number;
         height: number;
     };
+    getAlignment: (element: DOMRect) => Alignment;
 }>({
     bounding: {
         width: 1200,
         height: 800
-    }
+    },
+    getAlignment: () => Alignment.BottomLeft
 });
 
 /**
@@ -378,7 +382,8 @@ export function FarmContextProvider({
     );
 }
 
-export function BoundingContextProvider({ children }: DefaultProps) {
+export function AlignmentContextProvider({ children }: DefaultProps) {
+    const { isModalShowing } = useContext(ModalContext);
     const [bounding, setBounding] = useState<{
         width: number;
         height: number;
@@ -386,7 +391,6 @@ export function BoundingContextProvider({ children }: DefaultProps) {
         width: 1200,
         height: 900
     });
-    const { isModalShowing } = useContext(ModalContext);
 
     /**
      * Change the bounding sizes once in overlay or not.
@@ -394,8 +398,8 @@ export function BoundingContextProvider({ children }: DefaultProps) {
     useEffect(() => {
         if (isModalShowing) {
             setBounding({
-                width: 1040,
-                height: 640
+                width: 1064,
+                height: 664
             });
         } else {
             setBounding({
@@ -405,9 +409,28 @@ export function BoundingContextProvider({ children }: DefaultProps) {
         }
     }, [isModalShowing]);
 
+    /**
+     * Calculate the alignment based on the element given and the bounding.
+     */
+    function getAlignment(element: DOMRect): Alignment {
+        if (element.y + element.height < bounding.height) {
+            if (element.x + element.width < bounding.width) {
+                return Alignment.BottomLeft;
+            } else {
+                return Alignment.BottomRight;
+            }
+        } else {
+            if (element.x + element.width < bounding.width) {
+                return Alignment.TopLeft;
+            } else {
+                return Alignment.TopRight;
+            }
+        }
+    }
+
     return (
-        <BoundingContext.Provider value={{ bounding }}>
+        <AlignmentContext.Provider value={{ bounding, getAlignment }}>
             {children}
-        </BoundingContext.Provider>
+        </AlignmentContext.Provider>
     );
 }
