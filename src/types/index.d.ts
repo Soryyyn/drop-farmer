@@ -38,15 +38,15 @@ declare const api: typeof import('../api').default;
  */
 type ReadonlySetting = {
     id: string;
-    value: string | number | boolean;
-    default?: string | number | boolean;
+    // value: string | number | boolean;
+    default: string | number | boolean;
 };
 
 type DisplayedSettingBase = {
     id: string;
     shown: string;
     desc: string;
-    disabled: boolean;
+    disabled?: boolean;
     requiresRestart?: boolean;
     ignores?: {
         onValue: string | number | boolean;
@@ -55,29 +55,26 @@ type DisplayedSettingBase = {
 };
 
 type NumberSetting = DisplayedSettingBase & {
-    value: number;
+    // value: number;
     default: number;
     min: number;
     max: number;
 };
 
 type BoolishSetting = DisplayedSettingBase & {
-    value: boolean;
+    // value: boolean;
     default: boolean;
 };
 
 type TextSetting = DisplayedSettingBase & {
-    value: string;
+    // value: string;
     default: string;
 };
 
 type SelectionSetting = DisplayedSettingBase & {
-    value: string;
+    // value: string;
     default: string;
-    options: {
-        display: string;
-        value: string;
-    }[];
+    options: any[];
 };
 
 type Setting =
@@ -89,6 +86,16 @@ type Setting =
 
 type SettingsOnly = {
     [name: string]: Setting[];
+};
+
+type SavedSetting = string | number | boolean;
+type SettingsInFile = { [settingName: string]: SavedSetting };
+type OwnerSettings = {
+    [owner: string]: SettingsInFile;
+};
+
+type NewSettingsStoreSchema = {
+    settings: OwnerSettings;
 };
 
 type SettingsStoreSchema = {
@@ -195,4 +202,9 @@ type Toast = {
     textOnSuccess?: string;
     textOnError?: string;
     textOnLoading?: string;
+};
+
+type SelectOption<T> = {
+    display: string;
+    value: T;
 };

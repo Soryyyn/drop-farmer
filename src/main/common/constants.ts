@@ -49,3 +49,145 @@ export const Schedules = {
     Update: 'update'
 } as const;
 export type Schedule = (typeof Schedules)[keyof typeof Schedules];
+
+export const FarmConditionTypeSelectOptions: SelectOption<ConditionType>[] = [
+    {
+        display: 'Unlimited',
+        value: 'unlimited'
+    },
+    {
+        display: 'Weekly',
+        value: 'weekly'
+    },
+    {
+        display: 'Monthly',
+        value: 'monthly'
+    },
+    {
+        display: 'From ... to ...',
+        value: 'timeWindow'
+    }
+];
+
+/**
+ * Possible settings to appear in the settings file.
+ */
+export const PossibleSettings: Setting[] = [
+    /**
+     * Application settings
+     */
+    {
+        id: 'application-launchOnStartup',
+        shown: 'Launch on startup',
+        desc: 'Enable or disable if drop-farmer should be started when your PC has finished booting.',
+        default: false
+    },
+    {
+        id: 'application-showMainWindowOnLaunch',
+        shown: 'Show main window on launch',
+        desc: 'If the main window should be shown when drop-farmer starts.',
+        default: true
+    },
+    {
+        id: 'application-showWindowsForLogin',
+        shown: 'Show farm windows automatically for login',
+        desc: 'If enabled, the window of a farm, where login is required to continue, will automatically be shown.',
+        default: false
+    },
+    {
+        id: 'application-checkForUpdates',
+        shown: 'Automatically check for updates',
+        desc: "Enable to automatically check for updates. If you don't wan't to update, disable this setting.",
+        default: true,
+        requiresRestart: true
+    },
+    {
+        id: 'application-reducedMotion',
+        shown: 'Prefer reduced motion',
+        desc: 'Enable this setting to keep animations & transitions to the minimum.',
+        default: false,
+        requiresRestart: true
+    },
+
+    /**
+     * Farm settings.
+     */
+    {
+        id: 'farm-enabled',
+        shown: 'Farm enabled',
+        desc: 'Enable or disable this farm.',
+        default: true
+    },
+    {
+        id: 'farm-schedule',
+        shown: 'Farming schedule',
+        desc: 'The schedule (in minutes) on which drop-farmer will check if farming is possible.',
+        default: 30,
+        max: 60,
+        min: 1
+    },
+    {
+        id: 'farm-url',
+        shown: 'Checking URL',
+        desc: 'The URL the farm will check if it can farm.',
+        disabled: true,
+        default: ''
+    },
+
+    /**
+     * Farm condition settings.
+     */
+    {
+        id: 'farm-condition-type',
+        shown: 'Condition type',
+        desc: 'The type will control how the farm will when to farm.',
+        default: 'unlimited',
+        options: ['unlimited', 'weekly', 'monthly', 'timeWindow']
+    },
+    {
+        id: 'farm-condition-started',
+        default: ''
+    },
+    {
+        id: 'farm-condition-fulfilled',
+        default: ''
+    },
+    {
+        id: 'farm-condition-amount',
+        default: 0
+    },
+    {
+        id: 'farm-condition-amountToFulfill',
+        shown: 'Amount to fulfill condition',
+        desc: 'The amount of hours the farm needs to farm before the stopping/reset condition has been fulfilled.',
+        default: 4,
+        min: 1,
+        max: 100
+    },
+    {
+        id: 'farm-condition-buffer',
+        shown: 'Buffer',
+        desc: 'The buffer (in minutes) controls how much longer the farm will farm as a buffer because drops may not exactly happen on the hour.',
+        default: 30,
+        min: 0,
+        max: 60
+    },
+    {
+        id: 'farm-condition-repeating',
+        shown: 'Repeat after timeframe reset',
+        desc: 'If the farm should repeat the condition after the timeframe is fulfilled.',
+        default: true
+    },
+    {
+        id: 'farm-condition-from',
+        shown: 'Starting date of condition',
+        desc: "The starting date; From when on the farm can farm and try to fulfill it's condition.",
+        default: ''
+    },
+    {
+        id: 'farm-condition-to',
+        shown: 'Ending date of condition',
+        desc: "The ending date; When the farm should stop trying to fulfill it's condition.",
+        default: ''
+    }
+];
