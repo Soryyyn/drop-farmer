@@ -126,11 +126,8 @@ export default abstract class FarmTemplate {
             )! as ConditionType;
 
             if (this.conditions.condition.type !== 'unlimited') {
-                console.log('uhhhhuhuhuhuhuhu');
-
                 getSettingOrSet(this.id, 'farm-condition-started')! as string;
                 getSettingOrSet(this.id, 'farm-condition-fulfilled')! as string;
-
                 getSettingOrSet(this.id, 'farm-condition-amount')! as number;
                 getSettingOrSet(
                     this.id,
@@ -358,13 +355,20 @@ export default abstract class FarmTemplate {
 
     protected updateStatus(status: FarmStatus): void {
         this.status = status;
-        // sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
+        sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
     }
 
     protected updateSchedule(schedule: number): void {
         this.schedule = schedule;
-        this.scheduler.update(Schedules.CheckToFarm, `*/${schedule} * * * *`);
-        // sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
+
+        if (this.scheduler.exists(Schedules.CheckToFarm)) {
+            this.scheduler.update(
+                Schedules.CheckToFarm,
+                `*/${schedule} * * * *`
+            );
+        }
+
+        sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
     }
 
     enable(): void {
