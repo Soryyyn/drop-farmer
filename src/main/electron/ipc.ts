@@ -54,10 +54,6 @@ export function sendOneWay(channel: string, ...args: any[]) {
     }
 }
 
-handleAndReply(IpcChannels.getFarms, () => {
-    return getFarmsRendererData();
-});
-
 handleOneWay(
     IpcChannels.farmWindowsVisibility,
     (event, updated: FarmRendererData) => {

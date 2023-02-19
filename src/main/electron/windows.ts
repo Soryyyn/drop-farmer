@@ -5,7 +5,7 @@ import { getBrowserConnection, gotoURL } from '@main/util/puppeteer';
 import { BrowserWindow } from 'electron';
 import { resolve } from 'path';
 import { getPage } from 'puppeteer-in-electron';
-import { getSetting } from '../util/settings';
+import { getSettingValue } from '../util/settings';
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -66,8 +66,10 @@ export function createMainWindow(isProd: boolean): void {
      */
     mainWindow.on('ready-to-show', () => {
         if (
-            (getSetting('application', 'showMainWindowOnLaunch')
-                ?.value as boolean) ||
+            (getSettingValue(
+                'application',
+                'showMainWindowOnLaunch'
+            )! as boolean) ||
             process.platform == 'linux'
         ) {
             log(
@@ -146,7 +148,7 @@ export async function createWindow(url: string, shouldBeShown: boolean) {
     window.on('ready-to-show', () => {
         if (
             shouldBeShown ||
-            (getSetting('application', 'showWindowsForLogin')?.value as boolean)
+            (getSettingValue('application', 'showWindowsForLogin')! as boolean)
         ) {
             window.show();
         }
@@ -161,13 +163,17 @@ export async function createWindow(url: string, shouldBeShown: boolean) {
  *
  * @param {Electron.BrowserWindow} window The window to destroy.t
  */
-export function destroyWindow(window: Electron.BrowserWindow) {
+export function destroyWindow(window: Electron.BrowserWindow): Promise<void> {
     return new Promise((resolve) => {
         window.destroy();
 
-        window.on('closed', () => {
-            log('info', `Destroyed window(${window.id})`);
-            resolve(undefined);
+        window.on('closed', async () => {
+            if (!window.isDestroyed()) {
+                await destroyWindow(window);
+            } else {
+                log('info', `Destroyed window(${window.id})`);
+                resolve();
+            }
         });
     });
 }

@@ -10,8 +10,8 @@ import { log } from '@main/util/logging';
 import { connectToElectron } from '@main/util/puppeteer';
 import {
     deleteSettingsOfOwner,
-    getSetting,
     getSettings,
+    getSettingValue,
     updateSetting
 } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
@@ -42,10 +42,16 @@ export function initFarmsManagement(): void {
     initializeFarmSettings();
 }
 
+/**
+ * Add the default farms from the array to the actual farms.
+ */
 function addDefaultFarms(): void {
     farms.push(...defaultFarms);
 }
 
+/**
+ * Add the custom farms found in the settings file to the farms array.
+ */
 function addUserAddedFarms(): void {
     const settings = getSettings();
 
@@ -68,8 +74,8 @@ function addUserAddedFarms(): void {
                         new YoutubeStream(
                             removeTypeFromText(farmId),
                             false,
-                            getSetting(farmId, 'url')!.value as string,
-                            getSetting(farmId, 'schedule')!.value as number
+                            getSettingValue(farmId, 'farm-url')! as string,
+                            getSettingValue(farmId, 'farm-schedule')! as number
                         )
                     );
                     break;
@@ -78,8 +84,8 @@ function addUserAddedFarms(): void {
                         new TwitchStreamer(
                             removeTypeFromText(farmId),
                             false,
-                            getSetting(farmId, 'url')!.value as string,
-                            getSetting(farmId, 'schedule')!.value as number
+                            getSettingValue(farmId, 'farm-url')! as string,
+                            getSettingValue(farmId, 'farm-schedule')! as number
                         )
                     );
                     break;
@@ -89,11 +95,11 @@ function addUserAddedFarms(): void {
 }
 
 function initializeFarmSettings(): void {
-    farms.forEach((farm) => farm.initialize());
+    farms.forEach(async (farm) => await farm.initialize());
 }
 
 export function applySettingsToFarms(): void {
-    farms.forEach((farm) => farm.applyNewSettings());
+    farms.forEach(async (farm) => await farm.applyNewSettings());
 }
 
 export function getFarms(): FarmTemplate[] {
@@ -121,7 +127,7 @@ export function stopAllFarmJobs(): void {
 export function stopAllTimers(): void {
     farms.forEach((farm) => {
         farm.timer.stopTimer();
-        farm.updateConditionValues();
+        farm.updateConditions();
     });
     log('info', 'Stopped all farm timers');
 }
@@ -300,6 +306,10 @@ handleOneWay(IpcChannels.resetFarmingConditions, async (event, id) => {
             }
         })
     );
+});
+
+handleAndReply(IpcChannels.getFarms, () => {
+    return getFarmsRendererData();
 });
 
 listenForEvent(EventChannels.PCWentToSleep, () => {
