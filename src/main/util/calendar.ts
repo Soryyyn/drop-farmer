@@ -74,10 +74,20 @@ export function getCurrentMonthName(): string {
 /**
  * Parse the wanted string of the needed format to a date.
  */
-export function stringToDate(string: string): Date {
+export function formattedStringToDate(string: string): Date {
     return dayjs(string, 'DD-MM-YYYY').toDate();
 }
 
+/**
+ * Parse a ISO string to a date.
+ */
+export function ISOStringToDate(string: string): Date {
+    return dayjs(string).toDate();
+}
+
+/**
+ * Parse a date to an ISO string.
+ */
 export function dateToISOString(date: Date): string {
     return dayjs(date).toISOString();
 }
@@ -85,6 +95,6 @@ export function dateToISOString(date: Date): string {
 /**
  * Parse a string to a date.
  */
-export function getDate(string: string): Date {
-    return dayjs(string).toDate();
+export function getDate(string: string): Date | undefined {
+    if (string !== '') return dayjs(string).toDate();
 }

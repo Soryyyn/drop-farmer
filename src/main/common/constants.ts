@@ -116,7 +116,7 @@ export const PossibleSettings: Setting[] = [
         id: 'farm-enabled',
         shown: 'Farm enabled',
         desc: 'Enable or disable this farm.',
-        default: true
+        default: false
     },
     {
         id: 'farm-schedule',

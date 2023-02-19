@@ -72,6 +72,19 @@ export function getSettings(): OwnerSettings {
 }
 
 /**
+ * Create a settings owner in the store.
+ */
+export function createSettingsOwner(owner: string): void {
+    if (getSettingsOfOwner(owner) === undefined) {
+        const settings = getSettings();
+        settings[owner] = {};
+        updateSettings(settings);
+
+        log('info', `Created settings owner ${owner}`);
+    }
+}
+
+/**
  * Validate if the value to set is valid for the wanted setting.
  */
 function validateSetting(
@@ -151,10 +164,10 @@ export function getSettingValue(
 export function getSettingOrSet(
     owner: string,
     settingName: string,
-    toSet: SavedSetting
+    toSet?: SavedSetting
 ): SavedSetting | undefined {
     const settings = getSettings();
-    const settingsOfOwner = getSettingsOfOwner(owner);
+    const settingsOfOwner = getSettingsOfOwner(owner)!;
 
     if (getSettingValue(owner, settingName) === undefined) {
         const settingConfig = getSettingConfig(settingName);
@@ -162,9 +175,16 @@ export function getSettingOrSet(
         if (settingConfig === undefined) {
             log('error', "Can't set a setting which isn't a possible setting.");
         } else {
+            if (!toSet) {
+                settingsOfOwner![settingName] = settingConfig.default;
+                settings[owner] = settingsOfOwner!;
+                updateSettings(settings);
+                return;
+            }
+
             if (validateSetting(settingName, toSet)) {
-                settingsOfOwner[settingName] = toSet;
-                settings[owner] = settingsOfOwner;
+                settingsOfOwner![settingName] = toSet;
+                settings[owner] = settingsOfOwner!;
                 updateSettings(settings);
 
                 return toSet;
@@ -192,7 +212,7 @@ export function getSettingConfig(settingName: string): Setting | undefined {
 /**
  * Get all the settings of a specific owner.
  */
-function getSettingsOfOwner(owner: string): SettingsInFile {
+export function getSettingsOfOwner(owner: string): SettingsInFile | undefined {
     return getSettings()[owner];
 }
 
@@ -203,21 +223,27 @@ function getSettingsOfOwner(owner: string): SettingsInFile {
 export function setSettingValue(
     owner: string,
     settingName: string,
-    newValue: SavedSetting
+    newValue?: SavedSetting
 ): void {
     const settings = getSettings();
     const settingsOfOwner = getSettingsOfOwner(owner);
     const settingConfig = getSettingConfig(settingName);
 
     if (settingConfig) {
+        if (!newValue) {
+            settingsOfOwner![settingName] = settingConfig.default;
+            settings[owner] = settingsOfOwner!;
+            updateSettings(settings);
+            return;
+        }
+
         if (validateSetting(settingName, newValue)) {
-            settingsOfOwner[settingName] = newValue;
+            settingsOfOwner![settingName] = newValue;
+            settings[owner] = settingsOfOwner!;
+            updateSettings(settings);
         } else {
             log('error', "New value of setting didn't succeed validation");
         }
-
-        settings[owner] = settingsOfOwner;
-        updateSettings(settings);
     } else {
         log(
             'error',
@@ -242,7 +268,7 @@ function doesSettingExist(owner: string, settingName: string): boolean {
 
     let found = false;
 
-    for (const setting of Object.keys(settingsOfOwner)) {
+    for (const setting of Object.keys(settingsOfOwner!)) {
         if (settingName === setting) {
             found = true;
         }
@@ -258,9 +284,11 @@ export function deleteSetting(owner: string, settingName: string): void {
     const settings = getSettings();
     const settingsOfOwner = getSettingsOfOwner(owner);
 
+    console.log(settingsOfOwner);
+
     if (doesSettingExist(owner, settingName)) {
-        delete settingsOfOwner[settingName];
-        settings[owner] = settingsOfOwner;
+        delete settingsOfOwner![settingName];
+        settings[owner] = settingsOfOwner!;
         updateSettings(settings);
     } else {
         log('error', "Can't delete setting which owner doesn't have.");
@@ -287,8 +315,11 @@ function toggleAutoLaunch(): void {
             'application-launchOnStartup'
         );
 
-        if (!isEnabled && setting) autoLauncher.enable();
-        if (isEnabled && !setting) autoLauncher.disable();
+        if (!isEnabled && setting) {
+            autoLauncher.enable();
+        } else if (isEnabled && !setting) {
+            autoLauncher.disable();
+        }
     });
 }
 
