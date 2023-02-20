@@ -19,3 +19,10 @@ export function capitalize(string: string): string {
         return toReplace.toUpperCase();
     });
 }
+
+/**
+ * Check a string with a regex if it's a valid URL.
+ */
+export function isValidURL(url: string, regex: RegExp): boolean {
+    return regex.test(url);
+}

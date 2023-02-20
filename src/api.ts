@@ -3,7 +3,7 @@ import {
     capitalize,
     capitalizeFirstLetter,
     removeTypeFromText
-} from '@main/common/stringManipulation';
+} from '@main/common/string.helper';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 export default {

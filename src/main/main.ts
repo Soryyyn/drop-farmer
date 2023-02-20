@@ -7,17 +7,11 @@ import {
     getMainWindow,
     setAppQuitting
 } from './electron/windows';
-import {
-    destroyAllFarmWindows,
-    initFarmsManagement,
-    stopAllFarmJobs,
-    stopAllTimers
-} from './farming/management';
+import { initFarmsManagement, stopFarms } from './farming/management';
 import { internetConnectionChecker } from './util/internet';
 import { log } from './util/logging';
 import { initPowermonitor } from './util/powermonitor';
 import { initPuppeteerConnection } from './util/puppeteer';
-import { getStatistics } from './util/statistics';
 
 /**
  * If application is in run in production environment.
@@ -90,16 +84,14 @@ app.whenReady().then(() => {
     /**
      * React to the windows shutdown event firing.
      */
-    ElectronShutdownHandler.on('shutdown', () => {
+    ElectronShutdownHandler.on('shutdown', async () => {
         log('info', 'Received shutdown event, shutting down now');
 
         /**
          * Stop all cron jobs, to prevent unfulfilled promises.
          */
         destroyTray();
-        stopAllFarmJobs();
-        stopAllTimers();
-        destroyAllFarmWindows();
+        await stopFarms();
 
         /**
          * Allow app to shutdown.
@@ -113,11 +105,9 @@ app.whenReady().then(() => {
 /**
  * Quitting routine.
  */
-app.on('before-quit', () => {
+app.on('before-quit', async () => {
     destroyTray();
-    stopAllFarmJobs();
-    stopAllTimers();
-    destroyAllFarmWindows();
+    await stopFarms();
 
     /**
      * Hard quit the app.

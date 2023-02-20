@@ -1,5 +1,5 @@
 import { IpcChannel, IpcChannels } from '@main/common/constants';
-import { removeTypeFromText } from '@main/common/stringManipulation';
+import { removeTypeFromText } from '@main/common/string.helper';
 import {
     applySettingsToFarms,
     getFarmById,

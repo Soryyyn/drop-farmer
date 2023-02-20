@@ -1,18 +1,23 @@
-import { EventChannels, IpcChannels, Toasts } from '@main/common/constants';
+import {
+    EventChannels,
+    IpcChannels,
+    RegularExpressions,
+    Toasts
+} from '@main/common/constants';
 import {
     getTypeFromText,
+    isValidURL,
     removeTypeFromText
-} from '@main/common/stringManipulation';
+} from '@main/common/string.helper';
 import { handleAndReply, handleOneWay, sendOneWay } from '@main/electron/ipc';
-import { stringToDate } from '@main/util/calendar';
-import { listenForEvent } from '@main/util/events';
+import { ISOStringToDate } from '@main/util/calendar';
+import { emitEvent, listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { connectToElectron } from '@main/util/puppeteer';
 import {
-    deleteSettingsOfOwner,
+    deleteAllOwnerSettings,
     getSettings,
-    getSettingValue,
-    updateSetting
+    getSettingValue
 } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
 import LeagueOfLegends from './farms/leagueOfLegends';
@@ -94,18 +99,30 @@ function addUserAddedFarms(): void {
     }
 }
 
+/**
+ * Initialize all farms.
+ */
 function initializeFarmSettings(): void {
     farms.forEach(async (farm) => await farm.initialize());
 }
 
+/**
+ * Apply new settigns to all farms.
+ */
 export function applySettingsToFarms(): void {
     farms.forEach(async (farm) => await farm.applyNewSettings());
 }
 
+/**
+ * Get all farms.
+ */
 export function getFarms(): FarmTemplate[] {
     return farms;
 }
 
+/**
+ * Get a farm by their id.
+ */
 export function getFarmById(id: string): FarmTemplate | undefined {
     return farms.find((farm) => farm.id === id);
 }
@@ -114,142 +131,149 @@ export function getFarmsRendererData(): FarmRendererData[] {
     return farms.map((farm) => farm.getRendererData());
 }
 
-export function destroyAllFarmWindows(): void {
-    farms.forEach(async (farm) => await farm.destroyAllWindows());
-    log('info', 'Destroyed all windows');
-}
+/**
+ * Stop all farms and their things.
+ */
+export function stopFarms(id?: string): Promise<void> {
+    return new Promise((resolve) => {
+        farms.forEach(async (farm) => {
+            if (id === farm.id) {
+                farm.scheduler.stopAll();
 
-export function stopAllFarmJobs(): void {
-    farms.forEach((farm) => farm.scheduler.stopAll());
-    log('info', 'Stopped all farm jobs');
-}
+                farm.timer.stopTimer();
+                farm.updateConditions();
 
-export function stopAllTimers(): void {
-    farms.forEach((farm) => {
-        farm.timer.stopTimer();
-        farm.updateConditions();
+                await farm.destroyAllWindows();
+
+                log('info', `Stopped farm ${farm.id}`);
+                resolve();
+            }
+
+            farm.scheduler.stopAll();
+
+            farm.timer.stopTimer();
+            farm.updateConditions();
+
+            await farm.destroyAllWindows();
+        });
+
+        log('info', 'Stopped all farms');
+        resolve();
     });
-    log('info', 'Stopped all farm timers');
 }
 
+/**
+ * Delete a farm by id.
+ */
 async function deleteFarm(id: string) {
-    /**
-     * Delete the farm from the management.
-     */
     const index = farms.findIndex((farm) => farm.id === id);
-    farms[index].timer.stopTimer();
-    farms[index].scheduler.stopAll();
-    await farms[index].destroyAllWindows();
+    await stopFarms(id);
     farms.splice(index, 1);
 
-    /**
-     * Delete the settings of the farm.
-     */
-    deleteSettingsOfOwner(id);
+    deleteAllOwnerSettings(id);
 
-    sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
-    sendOneWay(IpcChannels.settingsChanged, getSettings());
+    /**
+     * Notify event handler that farms changed.
+     */
+    // sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
+    // sendOneWay(IpcChannels.settingsChanged, getSettings());
 }
 
-function addNewFarm(farm: NewFarm): FarmRendererData[] {
-    validateNewFarm(farm);
-
+/**
+ * Validate the data given from renderer.
+ */
+function validateNewFarm(farm: NewFarm): boolean {
+    /**
+     * Validate the url.
+     */
+    let urlTest = false;
     switch (farm.type) {
         case 'youtube':
-            farms.push(
-                new YoutubeStream(
-                    farm.id,
-                    false,
-                    farm.url,
-                    farm.schedule,
-                    farm.conditions
-                )
-            );
+            urlTest = isValidURL(farm.url, RegularExpressions.YoutubeChannel);
             break;
         case 'twitch':
-            farms.push(
+            urlTest = isValidURL(farm.url, RegularExpressions.TwitchChannel);
+            break;
+    }
+
+    /**
+     * If the from and to date are given.
+     */
+    let dateTest = false;
+    if (
+        (farm.conditions.condition as TimeWindowCondition).from &&
+        (farm.conditions.condition as TimeWindowCondition).to
+    ) {
+        /**
+         * Check if the from date is before the to date.
+         */
+        if (
+            ISOStringToDate(
+                (farm.conditions.condition as TimeWindowCondition).from!
+            ) <
+            ISOStringToDate(
+                (farm.conditions.condition as TimeWindowCondition).to!
+            )
+        ) {
+            dateTest = true;
+        } else {
+            dateTest = false;
+        }
+    } else {
+        dateTest = true;
+    }
+
+    /**
+     * Check if all tests succeeded.
+     */
+    if (urlTest && dateTest) {
+        return true;
+    } else {
+        log('warn', 'Validation for new farm failed');
+        return false;
+    }
+}
+
+/**
+ * Add a new farm with data given.
+ */
+function addNewFarm(farm: NewFarm): void {
+    if (validateNewFarm(farm)) {
+        switch (farm.type) {
+            case 'youtube':
+                farms.push(
+                    new YoutubeStream(
+                        farm.id,
+                        false,
+                        farm.url,
+                        farm.schedule,
+                        farm.conditions
+                    )
+                );
+                break;
+            case 'twitch':
                 new TwitchStreamer(
                     farm.id,
                     false,
                     farm.url,
                     farm.schedule,
                     farm.conditions
-                )
-            );
-            break;
-    }
+                );
+                break;
+        }
 
-    const addedFarm = farms[farms.length - 1];
-    addedFarm.initialize();
-
-    /**
-     * Enable the wanted disabled settings.
-     */
-    const settingToBeUpdated = getSetting(addedFarm.id, 'url');
-    updateSetting(addedFarm.id, 'url', {
-        ...settingToBeUpdated!,
-        default: farm.url,
-        disabled: false
-    } as TextSetting);
-
-    sendOneWay(IpcChannels.settingsChanged, getSettings());
-    return getFarmsRendererData();
-}
-
-function validateNewFarm(farm: NewFarm): void {
-    /**
-     * Validate url.
-     */
-    let urlOk = false;
-    let regex;
-
-    switch (farm.type) {
-        case 'twitch':
-            regex = new RegExp(
-                /(?:www\.|go\.)?twitch\.tv\/([a-zA-Z0-9_]+)($|\?)/
-            );
-            break;
-        case 'youtube':
-            regex = new RegExp(
-                /http(s)?:\/\/(www|m).youtube.com\/((channel|c)\/)?(?!feed|user\/|watch\?)([a-zA-Z0-9-_.])*.*/
-            );
-            break;
-    }
-
-    urlOk = regex.test(farm.url);
-
-    /**
-     * Check if the dates are valid dates and the 'from' date is smaller than
-     * the 'to' date.
-     */
-    // let fromToOk = false;
-
-    // if (farm.conditions.from && farm.conditions.to) {
-    //     if (
-    //         (farm.conditions.from as string).includes('_') ||
-    //         (farm.conditions.to as string).includes('_') ||
-    //         stringToDate(farm.conditions.from as string) <
-    //             stringToDate(farm.conditions.to as string)
-    //     ) {
-    //         fromToOk = true;
-    //     }
-    // } else {
-    //     fromToOk = true;
-    // }
-
-    if (!urlOk) {
         /**
-         * More checks in the future?
+         * Initialize the newly added farm.
          */
-        throw new Error(
-            'URL is not a valid channel URL for the given farm type'
-        );
+        farms[farms.length - 1].initialize();
+
+        /**
+         * Notify about changed farms.
+         */
+        emitEvent(EventChannels.FarmsChanged, null);
+
+        log('info', `Added new farm ${farm.id}`);
     }
-    //  else if (!fromToOk) {
-    //     throw new Error(
-    //         'From or To date is not valid and from date needs to be before the to date.'
-    //     );
-    // }
 }
 
 handleAndReply(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
@@ -312,14 +336,9 @@ handleAndReply(IpcChannels.getFarms, () => {
     return getFarmsRendererData();
 });
 
-listenForEvent(EventChannels.PCWentToSleep, () => {
-    log(
-        'warn',
-        'Stopping farms and destroying windows because PC went to sleep'
-    );
-    stopAllFarmJobs();
-    stopAllTimers();
-    destroyAllFarmWindows();
+listenForEvent(EventChannels.PCWentToSleep, async () => {
+    log('warn', 'Stopping farms because PC went to sleep');
+    await stopFarms();
 });
 
 listenForEvent(EventChannels.PCWokeUp, async () => {
@@ -338,4 +357,12 @@ listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
         id: event[0].id,
         needed: event[0].needed
     });
+});
+
+/**
+ * Once farms changed notify renderer about new settings and farms.
+ */
+listenForEvent(EventChannels.FarmsChanged, () => {
+    sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
+    sendOneWay(IpcChannels.settingsChanged, getSettings());
 });

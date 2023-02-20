@@ -46,7 +46,6 @@ type DisplayedSettingBase = {
     id: string;
     shown: string;
     desc: string;
-    disabled?: boolean;
     requiresRestart?: boolean;
     ignores?: {
         onValue: string | number | boolean;
@@ -178,8 +177,8 @@ type TimeWindowCondition = {
     amount?: number; // in milliseconds
     amountToFulfill?: number; // in hours
     buffer?: number; // in minutes
-    from?: Date | string;
-    to?: Date | string;
+    from?: string;
+    to?: string;
 };
 
 type FarmingConditions = BaseConditions & {

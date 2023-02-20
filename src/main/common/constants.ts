@@ -33,7 +33,8 @@ export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
 export const EventChannels = {
     PCWentToSleep: 'pc-went-to-sleep',
     PCWokeUp: 'pc-woke-up',
-    LoginForFarm: 'login-for-farm'
+    LoginForFarm: 'login-for-farm',
+    FarmsChanged: 'farms-changed'
 } as const;
 export type EventChannel = (typeof EventChannels)[keyof typeof EventChannels];
 
@@ -130,7 +131,6 @@ export const PossibleSettings: Setting[] = [
         id: 'farm-url',
         shown: 'Checking URL',
         desc: 'The URL the farm will check if it can farm.',
-        disabled: true,
         default: ''
     },
 
@@ -191,3 +191,12 @@ export const PossibleSettings: Setting[] = [
         default: ''
     }
 ];
+
+/**
+ * Regular expressions.
+ */
+export const RegularExpressions = {
+    YoutubeChannel:
+        /http(s)?:\/\/(www|m).youtube.com\/((channel|c)\/)?(?!feed|user\/|watch\?)([a-zA-Z0-9-_.])*.*/,
+    TwitchChannel: /(?:www\.|go\.)?twitch\.tv\/([a-zA-Z0-9_]+)($|\?)/
+};

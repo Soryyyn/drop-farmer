@@ -4,11 +4,7 @@ import {
     Schedules,
     Toasts
 } from '@main/common/constants';
-import {
-    destroyAllFarmWindows,
-    stopAllFarmJobs,
-    stopAllTimers
-} from '@main/farming/management';
+import { stopFarms } from '@main/farming/management';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { sendToast } from '@main/util/toast';
@@ -146,11 +142,9 @@ autoUpdater.on('update-downloaded', () => {
     displayToasts = false;
 });
 
-autoUpdater.on('before-quit-for-update', () => {
+autoUpdater.on('before-quit-for-update', async () => {
     destroyTray();
-    stopAllFarmJobs();
-    stopAllTimers();
-    destroyAllFarmWindows();
+    await stopFarms();
 });
 
 autoUpdater.on('error', (err) => {
