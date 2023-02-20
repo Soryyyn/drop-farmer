@@ -32,7 +32,7 @@ export default class TwitchStreamer extends FarmTemplate {
 
         if (conditions) {
             this.conditions = conditions;
-            this.updateConditionValues();
+            this.updateConditions();
         }
     }
 

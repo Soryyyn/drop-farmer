@@ -2,25 +2,17 @@ import NumberInput from '@components/global/Inputs/NumberInput';
 import Select from '@components/global/Inputs/Select';
 import Switch from '@components/global/Inputs/Switch';
 import TextInput from '@components/global/Inputs/TextInput';
-import { Alignment } from '@components/global/Menu';
 import React from 'react';
 import DisabledIndicator from './DisabledIndicator';
 import IgnoredIndicator from './IgnoredIndicator';
 import RestartIndicator from './RestartIndicator';
 
 interface Props {
-    setting: NumberSetting | BoolishSetting | TextSetting | SelectionSetting;
-    ignored: boolean;
-    ignoredBy: string;
+    setting: SettingWithValue;
     onChange: (updated: any) => void;
 }
 
-export default function Setting({
-    setting,
-    ignored,
-    ignoredBy,
-    onChange
-}: Props) {
+export default function Setting({ setting, onChange }: Props) {
     function actionRender() {
         if ((setting as SelectionSetting).options) {
             return (
@@ -76,7 +68,6 @@ export default function Setting({
                     <div className="flex flex-row gap-2 grow">
                         {setting.disabled && <DisabledIndicator />}
                         {setting.requiresRestart && <RestartIndicator />}
-                        {ignored && <IgnoredIndicator ignoredBy={ignoredBy} />}
                     </div>
                 </div>
                 <p className="text-snow-300/50">{setting.desc}</p>

@@ -25,46 +25,6 @@ export default function Settings({ onClose }: Props) {
     const [ignoredSettings, setIgnoredSettings] = useState<string[]>([]);
     const [ignoredBy, setIgnoredBy] = useState<string>('');
 
-    /**
-     * Set the ignored indicator to settings which will be ignored.
-     */
-    useEffect(() => {
-        if (settings && selected) {
-            settings[selected].map((s) => {
-                const setting = s as
-                    | NumberSetting
-                    | BoolishSetting
-                    | TextSetting
-                    | SelectionSetting;
-
-                if (setting.ignores) {
-                    let foundIndex = -1;
-
-                    setting.ignores?.forEach((ignored, index) => {
-                        if (
-                            foundIndex === -1 &&
-                            ignored.onValue === setting.value
-                        )
-                            foundIndex = index;
-                    });
-
-                    if (foundIndex !== -1) {
-                        if (
-                            setting.ignores[foundIndex].onValue ===
-                            setting.value
-                        ) {
-                            setIgnoredSettings(setting.ignores[foundIndex].ids);
-                            setIgnoredBy(setting.shown!);
-                        } else {
-                            setIgnoredSettings([]);
-                            setIgnoredBy('');
-                        }
-                    }
-                }
-            });
-        }
-    }, [selected, settings]);
-
     return (
         <OverlayContainer>
             <OverlayContent
@@ -116,13 +76,7 @@ export default function Settings({ onClose }: Props) {
 
                     {/* Settings */}
                     <ul className="grow flex flex-col gap-4 overflow-y-auto">
-                        {settings?.[selected].map((s) => {
-                            const setting = s as
-                                | NumberSetting
-                                | BoolishSetting
-                                | TextSetting
-                                | SelectionSetting;
-
+                        {settings?.[selected].map((setting) => {
                             /**
                              * Only render a setting, if it has a shown name and
                              * description set (used for setting which don't
@@ -133,10 +87,6 @@ export default function Settings({ onClose }: Props) {
                                     <Setting
                                         key={`${selected}-${setting.id}`}
                                         setting={setting}
-                                        ignored={ignoredSettings.includes(
-                                            setting.id
-                                        )}
-                                        ignoredBy={ignoredBy}
                                         onChange={(updated) => {
                                             const copyOfSettings = {
                                                 ...settings

@@ -7,10 +7,11 @@ import {
 import { stopFarms } from '@main/farming/management';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
+import { getSettingValue } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
 import CrontabManager from 'cron-job-manager';
 import { app, autoUpdater } from 'electron';
-import { getSetting } from '../util/settings';
+// import { getSetting } from '../util/settings';
 import { handleOneWay, sendOneWay } from './ipc';
 import { destroyTray } from './tray';
 import { setAppQuitting } from './windows';
@@ -45,7 +46,10 @@ function setupAppLaunchUpdateRouting() {
     if (!(process.argv.indexOf('--squirrel-firstrun') > -1)) {
         if (process.env.NODE_ENV === 'production') {
             if (
-                getSetting('application', 'checkForUpdates')?.value as boolean
+                getSettingValue(
+                    'application',
+                    'application-checkForUpdates'
+                ) as boolean
             ) {
                 log('info', 'Auto-update-checking is enabled');
                 cron.startAll();
@@ -173,7 +177,9 @@ listenForEvent(EventChannels.PCWentToSleep, () => {
 });
 
 listenForEvent(EventChannels.PCWokeUp, () => {
-    if (getSetting('application', 'checkForUpdates')?.value as boolean) {
+    if (
+        getSettingValue('application', 'application-checkForUpdates') as boolean
+    ) {
         log('info', 'Auto-update-checking is enabled');
         cron.startAll();
     }

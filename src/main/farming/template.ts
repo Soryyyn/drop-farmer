@@ -247,16 +247,14 @@ export default abstract class FarmTemplate {
                         break;
                     case 'farm-condition-from':
                         if (this.conditions.condition.type === 'timeWindow') {
-                            this.conditions.condition.from =
-                                formattedStringToDate(value as string);
+                            this.conditions.condition.from = value as string;
                         } else {
                             deleteSetting(this.id, 'farm-condition-from');
                         }
                         break;
                     case 'farm-condition-to':
                         if (this.conditions.condition.type === 'timeWindow') {
-                            this.conditions.condition.to =
-                                formattedStringToDate(value as string);
+                            this.conditions.condition.to = value as string;
                         } else {
                             deleteSetting(this.id, 'farm-condition-to');
                         }

@@ -67,7 +67,7 @@ const store = new ElectronStore<NewSettingsStoreSchema>({
 /**
  * Get all settings in the settings store.
  */
-export function getSettings(): OwnerSettings {
+export function getSettings(): SettingsOfOwners {
     return store.get('settings');
 }
 
@@ -89,7 +89,7 @@ export function createSettingsOwner(owner: string): void {
  */
 function validateSetting(
     settingName: string,
-    valueToValidate: SavedSetting
+    valueToValidate: SettingValue
 ): boolean {
     const config = getSettingConfig(settingName);
 
@@ -145,10 +145,10 @@ function validateSetting(
 export function getSettingValue(
     owner: string,
     settingName: string
-): SavedSetting | undefined {
+): SettingValue | undefined {
     const settings: SettingsInFile = store.get(`settings.${owner}`);
 
-    let foundSetting: SavedSetting | undefined = undefined;
+    let foundSetting: SettingValue | undefined = undefined;
     for (const [key, value] of Object.entries(settings)) {
         if (key === settingName) {
             foundSetting = value;
@@ -164,8 +164,8 @@ export function getSettingValue(
 export function getSettingOrSet(
     owner: string,
     settingName: string,
-    toSet?: SavedSetting
-): SavedSetting | undefined {
+    toSet?: SettingValue
+): SettingValue | undefined {
     const settings = getSettings();
     const settingsOfOwner = getSettingsOfOwner(owner)!;
 
@@ -223,7 +223,7 @@ export function getSettingsOfOwner(owner: string): SettingsInFile | undefined {
 export function setSettingValue(
     owner: string,
     settingName: string,
-    newValue?: SavedSetting
+    newValue?: SettingValue
 ): void {
     const settings = getSettings();
     const settingsOfOwner = getSettingsOfOwner(owner);
@@ -255,7 +255,7 @@ export function setSettingValue(
 /**
  * Update the settings.
  */
-export function updateSettings(toUpdate: OwnerSettings): void {
+export function updateSettings(toUpdate: SettingsOfOwners): void {
     store.set('settings', toUpdate);
     toggleAutoLaunch();
 }
@@ -283,8 +283,6 @@ function doesSettingExist(owner: string, settingName: string): boolean {
 export function deleteSetting(owner: string, settingName: string): void {
     const settings = getSettings();
     const settingsOfOwner = getSettingsOfOwner(owner);
-
-    console.log(settingsOfOwner);
 
     if (doesSettingExist(owner, settingName)) {
         delete settingsOfOwner![settingName];
@@ -323,9 +321,55 @@ function toggleAutoLaunch(): void {
     });
 }
 
-// handleAndReply(IpcChannels.getSettings, () => {
-//     return getSettings();
-// });
+/**
+ * Get all setting values and their configs.
+ */
+export function getMergedSettings(): MergedSettings {
+    const settings = getSettings();
+    const merged: MergedSettings = {};
+
+    /**
+     * Go through each setting and merge configs with their value set.
+     */
+    for (const [owner, settingsOfOwner] of Object.entries(settings)) {
+        merged[owner] = [];
+
+        for (const [settingName, value] of Object.entries(settingsOfOwner)) {
+            const config = getSettingConfig(settingName);
+            const mergedSetting: SettingWithValue = {
+                ...config!,
+                value: value
+            };
+
+            merged[owner].push(mergedSetting);
+        }
+    }
+
+    return merged;
+}
+
+/**
+ * Extract the actual settings without the config from the merged settings.
+ */
+function extractMergedSettings(
+    mergedSettings: MergedSettings
+): SettingsOfOwners {
+    const extracted: SettingsOfOwners = {};
+
+    for (const [owner, settings] of Object.entries(mergedSettings)) {
+        extracted[owner] = {};
+
+        settings.forEach((setting) => {
+            extracted[owner][setting.id] = setting.value;
+        });
+    }
+
+    return extracted;
+}
+
+handleAndReply(IpcChannels.getSettings, () => {
+    return getMergedSettings();
+});
 
 // handleOneWay(
 //     IpcChannels.saveNewSettings,

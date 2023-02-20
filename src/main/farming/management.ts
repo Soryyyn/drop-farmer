@@ -263,6 +263,14 @@ function addNewFarm(farm: NewFarm): void {
         }
 
         /**
+         * Enable changing of URLs.
+         */
+        // setSettingValue(farm.id, 'farm-url', {
+        //     value: farm.url,
+        //     disabled: false
+        // });
+
+        /**
          * Initialize the newly added farm.
          */
         farms[farms.length - 1].initialize();
@@ -364,5 +372,5 @@ listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
  */
 listenForEvent(EventChannels.FarmsChanged, () => {
     sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
-    sendOneWay(IpcChannels.settingsChanged, getSettings());
+    // sendOneWay(IpcChannels.settingsChanged, getOwnerSettingsAndConfigs());
 });

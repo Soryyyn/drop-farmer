@@ -38,7 +38,6 @@ declare const api: typeof import('../api').default;
  */
 type ReadonlySetting = {
     id: string;
-    // value: string | number | boolean;
     default: string | number | boolean;
 };
 
@@ -54,51 +53,61 @@ type DisplayedSettingBase = {
 };
 
 type NumberSetting = DisplayedSettingBase & {
-    // value: number;
     default: number;
     min: number;
     max: number;
 };
 
 type BoolishSetting = DisplayedSettingBase & {
-    // value: boolean;
     default: boolean;
 };
 
 type TextSetting = DisplayedSettingBase & {
-    // value: string;
     default: string;
 };
 
 type SelectionSetting = DisplayedSettingBase & {
-    // value: string;
     default: string;
     options: any[];
 };
 
-type Setting =
-    | NumberSetting
-    | BoolishSetting
-    | TextSetting
-    | SelectionSetting
-    | ReadonlySetting;
+type Setting = {
+    id: string;
+    default: string | number | boolean;
+    shown?: string;
+    desc?: string;
+    min?: number;
+    max?: number;
+    options?: any[];
+    requiresRestart?: boolean;
+};
+
+type SettingWithValue = Setting & {
+    value: SettingValue;
+};
 
 type SettingsOnly = {
     [name: string]: Setting[];
 };
 
-type SavedSetting = string | number | boolean;
-type SettingsInFile = { [settingName: string]: SavedSetting };
-type OwnerSettings = {
+type SettingValue = string | number | boolean;
+
+type SettingsInFile = { [settingName: string]: SettingValue };
+
+type SettingsOfOwners = {
     [owner: string]: SettingsInFile;
 };
 
 type NewSettingsStoreSchema = {
-    settings: OwnerSettings;
+    settings: SettingsOfOwners;
 };
 
 type SettingsStoreSchema = {
     settings: SettingsOnly;
+};
+
+type MergedSettings = {
+    [name: string]: SettingWithValue[];
 };
 
 type Statistic = {

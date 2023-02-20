@@ -24,10 +24,13 @@ interface DefaultProps {
  * Contexts
  */
 export const SettingsContext = createContext<{
-    settings: SettingsOnly | undefined;
-    setNewSettings: (newSettings: SettingsOnly) => void;
+    settings: MergedSettings | undefined;
+    setNewSettings: (newSettings: MergedSettings) => void;
     resetToDefaultSettings: () => void;
-    getSetting: (settingOwner: string, id: string) => Setting | undefined;
+    getSetting: (
+        settingOwner: string,
+        id: string
+    ) => SettingWithValue | undefined;
 }>({
     settings: undefined,
     setNewSettings() {},
@@ -109,12 +112,12 @@ export const AlignmentContext = createContext<{
  * Provider components
  */
 export function SettingsContextProvider({ children }: DefaultProps) {
-    const [settings, setSettings] = useState<SettingsOnly>();
-    const [oldSettings, setOldSettings] = useState<SettingsOnly>();
+    const [settings, setSettings] = useState<MergedSettings>();
+    const [oldSettings, setOldSettings] = useState<MergedSettings>();
 
     useSendAndWait({
         channel: api.channels.getSettings,
-        callback: (err, settings: SettingsOnly) => {
+        callback: (err, settings: MergedSettings) => {
             if (!err) {
                 setSettings(settings);
                 setOldSettings(cloneDeep(settings));
@@ -124,7 +127,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
 
     useHandleOneWay({
         channel: api.channels.settingsChanged,
-        callback: (event, changedSettings: SettingsOnly) => {
+        callback: (event, changedSettings: MergedSettings) => {
             setSettings(changedSettings);
             setOldSettings(cloneDeep(changedSettings));
         }
@@ -134,7 +137,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
      * Function to save new settings in the main process.
      * Only if new changes actually happened.
      */
-    function setNewSettings(newSettings: SettingsOnly) {
+    function setNewSettings(newSettings: MergedSettings) {
         if (!isEqual(newSettings, oldSettings)) {
             api.sendOneWay(api.channels.saveNewSettings, newSettings);
 
@@ -147,22 +150,23 @@ export function SettingsContextProvider({ children }: DefaultProps) {
      * Reset the settings to the default values.
      */
     function resetToDefaultSettings() {
-        const appliedChanges = cloneDeep(settings!);
-
-        for (const [key, value] of Object.entries(appliedChanges!)) {
-            value.forEach((setting, index) => {
-                appliedChanges[key][index].value = setting.default!;
-            });
-        }
-
-        setNewSettings(appliedChanges);
+        // const appliedChanges = cloneDeep(settings!);
+        // for (const [key, value] of Object.entries(appliedChanges!)) {
+        //     value.forEach((setting, index) => {
+        //         appliedChanges[key][index].value = setting.default!;
+        //     });
+        // }
+        // setNewSettings(appliedChanges);
+        /**
+         * TODO: Change to main process function
+         */
     }
 
     /**
      * Get a specific setting or the settings of the owner, ex. application.
      */
-    function getSetting(settingOwner: string, id: string) {
-        return settings?.[settingOwner].find((setting) => setting.id === id);
+    function getSetting(settingOwner: string, id: string): SettingWithValue {
+        return settings?.[settingOwner].find((setting) => setting.id === id)!;
     }
 
     return (
