@@ -106,7 +106,10 @@ export default abstract class FarmTemplate {
              */
             getSettingOrSet(this.id, 'farm-enabled')! as boolean;
             getSettingOrSet(this.id, 'farm-schedule', this.schedule)! as number;
-            getSettingOrSet(this.id, 'farm-url', this.url)! as string;
+            getSettingOrSet(this.id, 'farm-url', {
+                value: this.url,
+                disabled: true
+            })!;
 
             /**
              * Settings gathered from application.
@@ -147,16 +150,14 @@ export default abstract class FarmTemplate {
             }
 
             if (this.conditions.condition.type === 'timeWindow') {
-                getSettingOrSet(
-                    this.id,
-                    'farm-condition-from',
-                    this.conditions.condition.from as string
-                )! as string;
-                getSettingOrSet(
-                    this.id,
-                    'farm-condition-to',
-                    this.conditions.condition.to as string
-                )! as string;
+                getSettingOrSet(this.id, 'farm-condition-from', {
+                    value: (this.conditions.condition.from as string) ?? '',
+                    isDate: true
+                });
+                getSettingOrSet(this.id, 'farm-condition-to', {
+                    value: (this.conditions.condition.to as string) ?? '',
+                    isDate: true
+                })! as string;
             }
 
             resolve();
@@ -167,7 +168,7 @@ export default abstract class FarmTemplate {
      * Apply new setting values from the store.
      */
     async applyNewSettings(): Promise<void> {
-        return new Promise((resolve) => {
+        return new Promise(async (resolve) => {
             const farmSettings = getSettingsOfOwner(this.id)!;
 
             for (const [settingName, value] of Object.entries(farmSettings)) {
@@ -182,7 +183,8 @@ export default abstract class FarmTemplate {
                         this.updateSchedule(value as number);
                         break;
                     case 'farm-url':
-                        this.url = value as string;
+                        this.url = (value as SettingValueWithSpecial)
+                            .value as string;
                         break;
 
                     /**
@@ -261,6 +263,11 @@ export default abstract class FarmTemplate {
                         break;
                 }
             }
+
+            /**
+             * Create missing settings.
+             */
+            await this.createOrSetFarmSettings();
 
             log('info', `${this.id}: Applied new settings`);
             resolve();

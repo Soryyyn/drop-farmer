@@ -33,8 +33,7 @@ export default function DateInput({
                 mask="99-99-9999"
                 placeholder="DD-MM-YYYY"
                 disabled={disabled}
-                value={value}
-                fullWidth={fullWidth}
+                value={value !== '' ? value : undefined}
                 onChange={onChange}
             />
         </div>

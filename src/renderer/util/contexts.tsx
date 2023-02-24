@@ -140,9 +140,6 @@ export function SettingsContextProvider({ children }: DefaultProps) {
     function setNewSettings(newSettings: MergedSettings) {
         if (!isEqual(newSettings, oldSettings)) {
             api.sendOneWay(api.channels.saveNewSettings, newSettings);
-
-            setSettings(newSettings);
-            setOldSettings(cloneDeep(newSettings));
         }
     }
 
@@ -150,16 +147,7 @@ export function SettingsContextProvider({ children }: DefaultProps) {
      * Reset the settings to the default values.
      */
     function resetToDefaultSettings() {
-        // const appliedChanges = cloneDeep(settings!);
-        // for (const [key, value] of Object.entries(appliedChanges!)) {
-        //     value.forEach((setting, index) => {
-        //         appliedChanges[key][index].value = setting.default!;
-        //     });
-        // }
-        // setNewSettings(appliedChanges);
-        /**
-         * TODO: Change to main process function
-         */
+        api.sendOneWay(api.channels.resetSettingsToDefault, settings);
     }
 
     /**

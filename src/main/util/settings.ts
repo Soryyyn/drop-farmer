@@ -1,7 +1,8 @@
 import {
     FileNames,
     IpcChannels,
-    PossibleSettings
+    PossibleSettings,
+    Toasts
 } from '@main/common/constants';
 import { handleAndReply, handleOneWay, sendOneWay } from '@main/electron/ipc';
 import { applySettingsToFarms } from '@main/farming/management';
@@ -9,6 +10,7 @@ import AutoLaunch from 'auto-launch';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
+import { dateToISOString, formattedStringToDate } from './calendar';
 import { log } from './logging';
 import { sendToast } from './toast';
 
@@ -134,6 +136,13 @@ function validateSetting(
         typeof valueToValidate === 'number'
     ) {
         return true;
+    } else if (
+        /**
+         * If the value is an object.
+         */
+        typeof valueToValidate === 'object'
+    ) {
+        return validateSetting(settingName, valueToValidate.value);
     } else {
         return false;
     }
@@ -175,7 +184,11 @@ export function getSettingOrSet(
         if (settingConfig === undefined) {
             log('error', "Can't set a setting which isn't a possible setting.");
         } else {
-            if (!toSet) {
+            if (toSet === undefined) {
+                if (settingConfig.default === undefined) {
+                    return;
+                }
+
                 settingsOfOwner![settingName] = settingConfig.default;
                 settings[owner] = settingsOfOwner!;
                 updateSettings(settings);
@@ -230,7 +243,11 @@ export function setSettingValue(
     const settingConfig = getSettingConfig(settingName);
 
     if (settingConfig) {
-        if (!newValue) {
+        if (newValue === undefined) {
+            if (settingConfig.default === undefined) {
+                return;
+            }
+
             settingsOfOwner![settingName] = settingConfig.default;
             settings[owner] = settingsOfOwner!;
             updateSettings(settings);
@@ -324,7 +341,7 @@ function toggleAutoLaunch(): void {
 /**
  * Get all setting values and their configs.
  */
-export function getMergedSettings(): MergedSettings {
+function getMergedSettings(): MergedSettings {
     const settings = getSettings();
     const merged: MergedSettings = {};
 
@@ -367,37 +384,90 @@ function extractMergedSettings(
     return extracted;
 }
 
+/**
+ * Reset the settings to their default values.
+ */
+function resetSettingsToDefaultValues(
+    settingsToReset: MergedSettings
+): MergedSettings {
+    for (const [owner, settings] of Object.entries(settingsToReset)) {
+        Object.entries(settings).forEach(([settingName, setting], index) => {
+            if (setting.default) {
+                settingsToReset[owner][index].value = setting.default;
+            }
+        });
+    }
+
+    return settingsToReset;
+}
+
 handleAndReply(IpcChannels.getSettings, () => {
     return getMergedSettings();
 });
 
-// handleOneWay(
-//     IpcChannels.saveNewSettings,
-//     (event, settingsToSave: SettingsOnly) => {
-//         sendToast(
-//             {
-//                 type: 'promise',
-//                 id: 'settings-saving',
-//                 textOnLoading: 'Saving settings...',
-//                 textOnSuccess: 'Saved settings.',
-//                 textOnError: 'Failed saving settings.',
-//                 duration: 4000
-//             },
-//             undefined,
-//             new Promise(async (resolve, reject) => {
-//                 try {
-//                     updateSettings(settingsToSave);
-//                     applySettingsToFarms();
-//                     resolve(undefined);
-//                 } catch (err) {
-//                     reject(err);
-//                 }
-//             })
-//         );
+handleOneWay(
+    IpcChannels.saveNewSettings,
+    (event, settingsToSave: MergedSettings) => {
+        sendToast(
+            {
+                type: 'promise',
+                id: 'settings-saving',
+                textOnLoading: 'Saving settings...',
+                textOnSuccess: 'Saved settings.',
+                textOnError: 'Failed saving settings.',
+                duration: 4000
+            },
+            undefined,
+            new Promise(async (resolve, reject) => {
+                try {
+                    updateSettings(extractMergedSettings(settingsToSave));
+                    applySettingsToFarms();
+                    resolve(undefined);
+                } catch (err) {
+                    reject(err);
+                }
+            })
+        );
 
-//         /**
-//          * Notify renderer of settings changed.
-//          */
-//         sendOneWay(IpcChannels.settingsChanged, getSettings());
-//     }
-// );
+        /**
+         * Notify renderer of settings changed.
+         */
+        sendOneWay(IpcChannels.settingsChanged, getMergedSettings());
+    }
+);
+
+handleOneWay(
+    IpcChannels.resetSettingsToDefault,
+    (event, currentSettings: MergedSettings) => {
+        sendToast(
+            {
+                type: 'promise',
+                id: Toasts.SettingsReset,
+                textOnLoading: 'Resetting settings to default values...',
+                textOnSuccess: 'Reset settings.',
+                textOnError: 'Failed to reset settings.',
+                duration: 4000
+            },
+            undefined,
+            new Promise(async (resolve, reject) => {
+                try {
+                    updateSettings(
+                        extractMergedSettings(
+                            resetSettingsToDefaultValues(currentSettings)
+                        )
+                    );
+                    applySettingsToFarms();
+                    resetSettingsToDefaultValues(currentSettings);
+                    resolve(undefined);
+                } catch (err) {
+                    reject(err);
+                }
+            })
+        );
+
+        /**
+         * Notify renderer of settings changed.
+         */
+        sendOneWay(IpcChannels.settingsChanged, getMergedSettings());
+    }
+);

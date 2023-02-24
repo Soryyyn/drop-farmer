@@ -1,10 +1,10 @@
+import DateInput from '@components/global/Inputs/DateInput';
 import NumberInput from '@components/global/Inputs/NumberInput';
 import Select from '@components/global/Inputs/Select';
 import Switch from '@components/global/Inputs/Switch';
 import TextInput from '@components/global/Inputs/TextInput';
 import React from 'react';
 import DisabledIndicator from './DisabledIndicator';
-import IgnoredIndicator from './IgnoredIndicator';
 import RestartIndicator from './RestartIndicator';
 
 interface Props {
@@ -14,45 +14,98 @@ interface Props {
 
 export default function Setting({ setting, onChange }: Props) {
     function actionRender() {
-        if ((setting as SelectionSetting).options) {
+        if (setting.options) {
             return (
                 <Select
-                    value={setting.value.toString()}
-                    disabled={setting.disabled}
+                    value={
+                        setting.options.find(
+                            (option) => option.value === setting.value
+                        )?.display ?? (setting.value as string)
+                    }
+                    disabled={
+                        (setting.value as SettingValueWithSpecial).disabled ??
+                        false
+                    }
                     fullWidth={true}
                     options={(setting as SelectionSetting).options}
                     onChange={onChange}
                 />
             );
         } else {
-            if (typeof setting.value === 'boolean') {
+            if (
+                typeof setting.value === 'boolean' ||
+                typeof (setting.value as SettingValueWithSpecial).value ===
+                    'boolean'
+            ) {
                 return (
                     <Switch
-                        value={setting.value}
-                        disabled={setting.disabled}
+                        value={
+                            ((setting.value as SettingValueWithSpecial)
+                                .value as boolean) ?? setting.value
+                        }
+                        disabled={
+                            (setting.value as SettingValueWithSpecial)
+                                .disabled ?? false
+                        }
                         onChange={onChange}
                     />
                 );
-            } else if (typeof setting.value === 'number') {
+            } else if (
+                typeof setting.value === 'number' ||
+                typeof (setting.value as SettingValueWithSpecial).value ===
+                    'number'
+            ) {
                 return (
                     <NumberInput
-                        value={setting.value}
+                        value={
+                            ((setting.value as SettingValueWithSpecial)
+                                .value as number) ?? setting.value
+                        }
                         min={setting.min!}
                         max={setting.max!}
-                        disabled={setting.disabled}
+                        disabled={
+                            (setting.value as SettingValueWithSpecial)
+                                .disabled ?? false
+                        }
                         withButtons
                         fullWidth
                         onChange={onChange}
                     />
                 );
-            } else if (typeof setting.value === 'string') {
-                return (
-                    <TextInput
-                        value={setting.value}
-                        disabled={setting.disabled}
-                        onChange={onChange}
-                    />
-                );
+            } else if (
+                typeof setting.value === 'string' ||
+                typeof (setting.value as SettingValueWithSpecial).value ===
+                    'string'
+            ) {
+                if ((setting.value as SettingValueWithSpecial).isDate) {
+                    return (
+                        <DateInput
+                            value={
+                                (setting.value as SettingValueWithSpecial)
+                                    .value as string
+                            }
+                            disabled={
+                                (setting.value as SettingValueWithSpecial)
+                                    .disabled ?? false
+                            }
+                            onChange={onChange}
+                        />
+                    );
+                } else {
+                    return (
+                        <TextInput
+                            value={
+                                ((setting.value as SettingValueWithSpecial)
+                                    .value as string) ?? setting.value
+                            }
+                            disabled={
+                                (setting.value as SettingValueWithSpecial)
+                                    .disabled ?? false
+                            }
+                            onChange={onChange}
+                        />
+                    );
+                }
             }
         }
     }
@@ -66,7 +119,8 @@ export default function Setting({ setting, onChange }: Props) {
                 <div className="flex flex-row gap-4">
                     <p className="font-medium">{setting.shown}</p>
                     <div className="flex flex-row gap-2 grow">
-                        {setting.disabled && <DisabledIndicator />}
+                        {(setting.value as SettingValueWithSpecial)
+                            .disabled && <DisabledIndicator />}
                         {setting.requiresRestart && <RestartIndicator />}
                     </div>
                 </div>

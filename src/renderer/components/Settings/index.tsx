@@ -22,9 +22,6 @@ export default function Settings({ onClose }: Props) {
     const [selected, setSelected] = useState<string>('application');
     const [currentSettings, setCurrentSettings] = useState(settings);
 
-    const [ignoredSettings, setIgnoredSettings] = useState<string[]>([]);
-    const [ignoredBy, setIgnoredBy] = useState<string>('');
-
     return (
         <OverlayContainer>
             <OverlayContent
@@ -88,6 +85,8 @@ export default function Settings({ onClose }: Props) {
                                         key={`${selected}-${setting.id}`}
                                         setting={setting}
                                         onChange={(updated) => {
+                                            console.log(updated);
+
                                             const copyOfSettings = {
                                                 ...settings
                                             };
@@ -101,8 +100,20 @@ export default function Settings({ onClose }: Props) {
                                                         newFarmSetting.id ===
                                                         s.id
                                                     ) {
-                                                        s.value = updated;
-                                                        s = newFarmSetting;
+                                                        if (
+                                                            (
+                                                                s.value as SettingValueWithSpecial
+                                                            ).value !==
+                                                            undefined
+                                                        ) {
+                                                            (
+                                                                s.value as SettingValueWithSpecial
+                                                            ).value = updated;
+                                                            s = newFarmSetting;
+                                                        } else {
+                                                            s.value = updated;
+                                                            s = newFarmSetting;
+                                                        }
                                                     }
                                                 }
                                             );

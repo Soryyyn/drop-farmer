@@ -17,7 +17,8 @@ import { connectToElectron } from '@main/util/puppeteer';
 import {
     deleteAllOwnerSettings,
     getSettings,
-    getSettingValue
+    getSettingValue,
+    setSettingValue
 } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
 import LeagueOfLegends from './farms/leagueOfLegends';
@@ -265,10 +266,10 @@ function addNewFarm(farm: NewFarm): void {
         /**
          * Enable changing of URLs.
          */
-        // setSettingValue(farm.id, 'farm-url', {
-        //     value: farm.url,
-        //     disabled: false
-        // });
+        setSettingValue(farm.id, 'farm-url', {
+            value: farm.url,
+            disabled: true
+        });
 
         /**
          * Initialize the newly added farm.

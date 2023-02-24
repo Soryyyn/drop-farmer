@@ -38,7 +38,7 @@ declare const api: typeof import('../api').default;
  */
 type ReadonlySetting = {
     id: string;
-    default: string | number | boolean;
+    default?: string | number | boolean;
 };
 
 type DisplayedSettingBase = {
@@ -46,10 +46,6 @@ type DisplayedSettingBase = {
     shown: string;
     desc: string;
     requiresRestart?: boolean;
-    ignores?: {
-        onValue: string | number | boolean;
-        ids: string[];
-    }[];
 };
 
 type NumberSetting = DisplayedSettingBase & {
@@ -63,7 +59,7 @@ type BoolishSetting = DisplayedSettingBase & {
 };
 
 type TextSetting = DisplayedSettingBase & {
-    default: string;
+    default?: string;
 };
 
 type SelectionSetting = DisplayedSettingBase & {
@@ -73,12 +69,12 @@ type SelectionSetting = DisplayedSettingBase & {
 
 type Setting = {
     id: string;
-    default: string | number | boolean;
+    default?: string | number | boolean;
     shown?: string;
     desc?: string;
     min?: number;
     max?: number;
-    options?: any[];
+    options?: SelectOption<any>[];
     requiresRestart?: boolean;
 };
 
@@ -90,7 +86,13 @@ type SettingsOnly = {
     [name: string]: Setting[];
 };
 
-type SettingValue = string | number | boolean;
+type SettingValueWithSpecial = {
+    value: string | number | boolean;
+    disabled?: boolean;
+    isDate?: boolean;
+};
+
+type SettingValue = string | number | boolean | SettingValueWithSpecial;
 
 type SettingsInFile = { [settingName: string]: SettingValue };
 

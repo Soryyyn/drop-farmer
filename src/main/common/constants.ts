@@ -1,7 +1,8 @@
 export const Toasts = {
     UpdateChecking: 'update-checking',
     FarmCreation: 'farm-creation',
-    FarmResetConditions: 'farm-reset-conditions'
+    FarmResetConditions: 'farm-reset-conditions',
+    SettingsReset: 'settings-reset'
 } as const;
 export type Toast = (typeof Toasts)[keyof typeof Toasts];
 
@@ -26,7 +27,8 @@ export const IpcChannels = {
     farmsChanged: 'farms-changed',
     settingsChanged: 'settings-changed',
     deleteFarm: 'delete-farm',
-    resetFarmingConditions: 'reset-farming-conditions'
+    resetFarmingConditions: 'reset-farming-conditions',
+    resetSettingsToDefault: 'reset-settings-to-default'
 } as const;
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
 
@@ -51,24 +53,29 @@ export const Schedules = {
 } as const;
 export type Schedule = (typeof Schedules)[keyof typeof Schedules];
 
-export const FarmConditionTypeSelectOptions: SelectOption<ConditionType>[] = [
-    {
-        display: 'Unlimited',
-        value: 'unlimited'
-    },
-    {
-        display: 'Weekly',
-        value: 'weekly'
-    },
-    {
-        display: 'Monthly',
-        value: 'monthly'
-    },
-    {
-        display: 'From ... to ...',
-        value: 'timeWindow'
-    }
-];
+/**
+ * Selections.
+ */
+export const Selections = {
+    FarmConditionSelect: [
+        {
+            display: 'Unlimited',
+            value: 'unlimited'
+        },
+        {
+            display: 'Weekly',
+            value: 'weekly'
+        },
+        {
+            display: 'Monthly',
+            value: 'monthly'
+        },
+        {
+            display: 'From ... to ...',
+            value: 'timeWindow'
+        }
+    ]
+};
 
 /**
  * Possible settings to appear in the settings file.
@@ -130,8 +137,7 @@ export const PossibleSettings: Setting[] = [
     {
         id: 'farm-url',
         shown: 'Checking URL',
-        desc: 'The URL the farm will check if it can farm.',
-        default: ''
+        desc: 'The URL the farm will check if it can farm.'
     },
 
     /**
@@ -142,7 +148,7 @@ export const PossibleSettings: Setting[] = [
         shown: 'Condition type',
         desc: 'The type will control how the farm will when to farm.',
         default: 'unlimited',
-        options: ['unlimited', 'weekly', 'monthly', 'timeWindow']
+        options: Selections.FarmConditionSelect
     },
     {
         id: 'farm-condition-started',
