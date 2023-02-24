@@ -68,9 +68,9 @@ export function createMainWindow(isProd: boolean): void {
         if (
             (getSettingValue(
                 'application',
-                'showMainWindowOnLaunch'
+                'application-showMainWindowOnLaunch'
             )! as boolean) ||
-            process.platform == 'linux'
+            process.platform === 'linux'
         ) {
             log(
                 'info',

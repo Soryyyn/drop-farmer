@@ -10,7 +10,9 @@ interface Props {
 export default function Model({ src, type, loop }: Props) {
     const { getSetting } = useContext(SettingsContext);
 
-    if (getSetting('application', 'reducedMotion')?.value as boolean) {
+    if (
+        getSetting('application', 'application-reducedMotion')?.value as boolean
+    ) {
         return (
             <video loop={loop}>
                 <source src={src} type={type} />

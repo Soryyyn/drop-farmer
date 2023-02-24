@@ -5,7 +5,7 @@ import 'tippy.js/dist/tippy.css';
 
 interface Props {
     children: JSX.Element;
-    text: string;
+    text: string | JSX.Element;
     placement: any;
 }
 
