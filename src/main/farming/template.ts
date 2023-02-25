@@ -122,7 +122,7 @@ export default abstract class FarmTemplate {
             /**
              * Condition settings.
              */
-            this.conditions.condition.type = getSettingOrSet(
+            getSettingOrSet(
                 this.id,
                 'farm-condition-type',
                 this.conditions.condition.type

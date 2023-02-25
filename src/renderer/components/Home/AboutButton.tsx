@@ -17,7 +17,7 @@ export default function AboutButton() {
             }
             placement="left"
         >
-            <div className="bg-snow-300/20 hover:bg-snow-300/30 text-snow-500/80 aspect-square flex items-center justify-center p-1 rounded-full">
+            <div className="bg-snow-300/20 hover:bg-snow-300/30 text-snow-500/80 hover:text-snow-500 aspect-square flex items-center justify-center p-1 rounded-full">
                 <Icon sprite={faQuestion} size="sm" />
             </div>
         </Tooltip>

@@ -37,7 +37,8 @@ const store = new ElectronStore<NewSettingsStoreSchema>({
                 'application-launchOnStartup': false,
                 'application-showMainWindowOnLaunch': true,
                 'application-showWindowsForLogin': false,
-                'application-checkForUpdates': true
+                'application-checkForUpdates': true,
+                'application-reducedMotion': false
             }
         }
     },
@@ -105,7 +106,7 @@ function validateSetting(
     if ((config as SelectionSetting).options) {
         if (
             (config as SelectionSetting).options.findIndex(
-                (option) => option === valueToValidate
+                (option) => option.value === valueToValidate
             ) !== -1
         ) {
             return true;
@@ -134,6 +135,14 @@ function validateSetting(
          */
         typeof config.default === 'number' &&
         typeof valueToValidate === 'number'
+    ) {
+        return true;
+    } else if (
+        /**
+         * If the default value is undefined on a string value.
+         */
+        typeof valueToValidate === 'string' &&
+        config.default === undefined
     ) {
         return true;
     } else if (
@@ -204,7 +213,7 @@ export function getSettingOrSet(
             } else {
                 log(
                     'error',
-                    "Value to set of setting didn't succeed validation"
+                    `Value to set of setting didn't succeed validation, ${settingName} to ${toSet}`
                 );
             }
         }
