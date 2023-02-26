@@ -850,7 +850,6 @@ export default abstract class FarmTemplate {
                              * Wait for 2 seconds for the window to be actually created.
                              */
                             await waitForTimeout(2000);
-
                             this.destroyChecker();
                         })
                         .then(async () => {
@@ -872,7 +871,7 @@ export default abstract class FarmTemplate {
                             );
                             this.updateStatus('attention-required');
                         })
-                        .finally(() => {
+                        .finally(async () => {
                             /**
                              * If the farm has been disabled mid-check, set the status
                              * to disable once again to be sure.
@@ -883,22 +882,25 @@ export default abstract class FarmTemplate {
                             ) {
                                 this.updateStatus('disabled');
                             }
+
+                            /**
+                             * For safety, check and destroy any windows left.
+                             */
+                            if (
+                                this.status === 'idle' &&
+                                this.getAmountOfWindows() > 0
+                            ) {
+                                await this.destroyAllWindows();
+                            }
+
+                            /**
+                             * Update the conditions.
+                             */
+                            this.updateConditions();
+
+                            log('info', `${this.id}: Finished schedule check`);
                         });
-
-                    break;
             }
-
-            /**
-             * For safety, check and destroy any windows left.
-             */
-            if (this.status === 'idle' && this.getAmountOfWindows() > 0) {
-                await this.destroyAllWindows();
-            }
-
-            /**
-             * Update the conditions.
-             */
-            this.updateConditions();
         }
     }
 }
