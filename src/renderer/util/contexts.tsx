@@ -5,6 +5,7 @@ import NewFarm from '@components/NewFarm';
 import Settings from '@components/Settings';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
+import { useSendOneWay } from '@hooks/useSendOneWay';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import React, {
@@ -267,17 +268,11 @@ export function FarmsContextProvider({ children }: DefaultProps) {
         }
     });
 
-    useSendAndWait({
+    useSendOneWay({
         channel: api.channels.addNewFarm,
         args: farmAdded,
         dependency: farmAdded,
-        skipFirstRender: true,
-        callback: (err, updatedFarms: FarmRendererData[] | undefined) => {
-            if (!err && updatedFarms) {
-                setFarms(updatedFarms);
-                setIsValid(true);
-            }
-        }
+        skipFirstRender: true
     });
 
     useHandleOneWay({

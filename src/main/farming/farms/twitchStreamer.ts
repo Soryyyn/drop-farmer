@@ -4,12 +4,10 @@ import { log } from '@main/util/logging';
 import {
     doesElementExist,
     getBrowserConnection,
-    getElementProperty,
     gotoURL,
     waitForElementToAppear,
     waitForTimeout
 } from '@main/util/puppeteer';
-import { normalize } from '@main/util/textManipulation';
 import { getPage } from 'puppeteer-in-electron';
 import FarmTemplate from '../template';
 

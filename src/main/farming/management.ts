@@ -16,6 +16,7 @@ import { log } from '@main/util/logging';
 import { connectToElectron } from '@main/util/puppeteer';
 import {
     deleteAllOwnerSettings,
+    getMergedSettings,
     getSettings,
     getSettingValue,
     setSettingValue
@@ -176,14 +177,15 @@ async function deleteFarm(id: string) {
     /**
      * Notify event handler that farms changed.
      */
-    // sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
-    // sendOneWay(IpcChannels.settingsChanged, getSettings());
+    emitEvent(EventChannels.FarmsChanged, null);
+
+    log('info', `Deleted farm ${id}`);
 }
 
 /**
  * Validate the data given from renderer.
  */
-function validateNewFarm(farm: NewFarm): boolean {
+function validateNewFarm(farm: NewFarm): Error | undefined {
     /**
      * Validate the url.
      */
@@ -227,19 +229,26 @@ function validateNewFarm(farm: NewFarm): boolean {
     /**
      * Check if all tests succeeded.
      */
-    if (urlTest && dateTest) {
-        return true;
+    if (urlTest) {
+        if (!dateTest) {
+            return new Error(
+                'The "From" or/and "To" date are not valid. Also make sure the "From" date is before the "To" date.'
+            );
+        }
     } else {
-        log('warn', 'Validation for new farm failed');
-        return false;
+        return new Error(
+            "The URL defined doesn't match the farming location given or is not a valid URL."
+        );
     }
 }
 
 /**
  * Add a new farm with data given.
  */
-function addNewFarm(farm: NewFarm): void {
-    if (validateNewFarm(farm)) {
+async function addNewFarm(farm: NewFarm): Promise<void> {
+    const validation = validateNewFarm(farm);
+
+    if (validation === undefined) {
         switch (farm.type) {
             case 'youtube':
                 farms.push(
@@ -253,28 +262,37 @@ function addNewFarm(farm: NewFarm): void {
                 );
                 break;
             case 'twitch':
-                new TwitchStreamer(
-                    farm.id,
-                    false,
-                    farm.url,
-                    farm.schedule,
-                    farm.conditions
+                farms.push(
+                    new TwitchStreamer(
+                        farm.id,
+                        false,
+                        farm.url,
+                        farm.schedule,
+                        farm.conditions
+                    )
                 );
                 break;
         }
 
         /**
-         * Enable changing of URLs.
+         * Get newly created farm.
          */
-        setSettingValue(farm.id, 'farm-url', {
-            value: farm.url,
-            disabled: true
-        });
+        const newFarm = farms[farms.length - 1];
 
         /**
          * Initialize the newly added farm.
          */
-        farms[farms.length - 1].initialize();
+        await newFarm.initialize();
+
+        /**
+         * Enable changing of URLs.
+         */
+        setSettingValue(newFarm.id, 'farm-url', {
+            value: farm.url,
+            disabled: false
+        });
+
+        await newFarm.applyNewSettings();
 
         /**
          * Notify about changed farms.
@@ -282,31 +300,43 @@ function addNewFarm(farm: NewFarm): void {
         emitEvent(EventChannels.FarmsChanged, null);
 
         log('info', `Added new farm ${farm.id}`);
+    } else {
+        throw validation;
     }
 }
 
-handleAndReply(IpcChannels.addNewFarm, (event, farm: NewFarm) => {
-    try {
-        sendToast({
+handleOneWay(IpcChannels.addNewFarm, async (event, farm: NewFarm) => {
+    sendToast(
+        {
             id: Toasts.FarmCreation,
-            type: 'success',
+            type: 'promise',
             duration: 4000,
-            textOnSuccess: `Successfully created farm ${farm.id}`
-        });
-        return addNewFarm(farm);
-    } catch (error) {
-        sendToast({
-            id: Toasts.FarmCreation,
-            type: 'error',
-            duration: 4000,
-            textOnError: `Failed creating farm (${error})`
-        });
-        return undefined;
-    }
+            textOnSuccess: `Successfully created farm ${removeTypeFromText(
+                farm.id
+            )}`,
+            textOnLoading: `Creating farm ${removeTypeFromText(farm.id)}...`,
+            textOnError: `Failed creating farm`
+        },
+        undefined,
+        addNewFarm(farm)
+    );
 });
 
 handleOneWay(IpcChannels.deleteFarm, (event, id) => {
-    deleteFarm(id);
+    sendToast(
+        {
+            id: Toasts.FarmDeletion,
+            type: 'promise',
+            duration: 4000,
+            textOnSuccess: `Successfully deleted farm ${removeTypeFromText(
+                id
+            )}`,
+            textOnLoading: `Deleting farm ${removeTypeFromText(id)}...`,
+            textOnError: `Failed deleting farm`
+        },
+        undefined,
+        deleteFarm(id)
+    );
 });
 
 handleOneWay(IpcChannels.resetFarmingConditions, async (event, id) => {
@@ -373,5 +403,5 @@ listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
  */
 listenForEvent(EventChannels.FarmsChanged, () => {
     sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
-    // sendOneWay(IpcChannels.settingsChanged, getOwnerSettingsAndConfigs());
+    sendOneWay(IpcChannels.settingsChanged, getMergedSettings());
 });

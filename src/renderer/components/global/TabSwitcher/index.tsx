@@ -63,9 +63,9 @@ export default function TabSwitcher({ tabs, onLastTab }: Props) {
                             </div>
 
                             {tab.desc && (
-                                <p className="w-2/5 h-full rounded-md p-2 bg-pepper-700/30 text-snow-300">
+                                <span className="w-2/5 h-full rounded-md p-2 bg-pepper-700/30 text-snow-300">
                                     {tab.desc}
-                                </p>
+                                </span>
                             )}
                         </div>
                     );

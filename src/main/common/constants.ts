@@ -1,6 +1,7 @@
 export const Toasts = {
     UpdateChecking: 'update-checking',
     FarmCreation: 'farm-creation',
+    FarmDeletion: 'farm-deletion',
     FarmResetConditions: 'farm-reset-conditions',
     SettingsReset: 'settings-reset'
 } as const;

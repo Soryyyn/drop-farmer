@@ -247,6 +247,8 @@ export function setSettingValue(
     settingName: string,
     newValue?: SettingValue
 ): void {
+    console.log('SHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESH');
+
     const settings = getSettings();
     const settingsOfOwner = getSettingsOfOwner(owner);
     const settingConfig = getSettingConfig(settingName);
@@ -350,7 +352,7 @@ function toggleAutoLaunch(): void {
 /**
  * Get all setting values and their configs.
  */
-function getMergedSettings(): MergedSettings {
+export function getMergedSettings(): MergedSettings {
     const settings = getSettings();
     const merged: MergedSettings = {};
 
