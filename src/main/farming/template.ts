@@ -434,7 +434,7 @@ export default abstract class FarmTemplate {
         return new Promise(async (resolve) => {
             if (window) {
                 array.splice(array.indexOf(window), 1);
-                destroyWindow(window);
+                await destroyWindow(window);
             } else {
                 for (let i = 0; array.length; i++) {
                     await destroyWindow(array[i]);

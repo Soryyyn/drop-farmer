@@ -107,7 +107,8 @@ export default class TwitchStreamer extends FarmTemplate {
                     );
                     resolve(undefined);
                 } else {
-                    this.destroyWindowFromArray(this.farmers, window);
+                    await this.destroyWindowFromArray(this.farmers, window);
+
                     log(
                         'info',
                         `${this.id}: Stream not live anymore, stopping farming`
