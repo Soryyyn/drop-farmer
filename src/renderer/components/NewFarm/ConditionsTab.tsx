@@ -121,7 +121,7 @@ export default function ConditionsTab({ data, onChange }: Props) {
                             onChange={(changed) =>
                                 setConditionsInfo({
                                     ...conditionsInfo,
-                                    from: changed
+                                    to: changed
                                 })
                             }
                         />

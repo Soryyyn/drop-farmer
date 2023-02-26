@@ -18,7 +18,6 @@ export class Timer {
             this.addBuiltUpTime();
 
             this.timer.stop();
-            this.amount = 0;
             log('info', `${this.timerName}: stopped`);
         }
     }
@@ -29,6 +28,7 @@ export class Timer {
     }
 
     private addBuiltUpTime() {
+        this.amount = 0;
         this.amount += this.timer.ms();
         this.timer.clear();
     }

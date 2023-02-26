@@ -10,7 +10,7 @@ import {
     removeTypeFromText
 } from '@main/common/string.helper';
 import { handleAndReply, handleOneWay, sendOneWay } from '@main/electron/ipc';
-import { ISOStringToDate } from '@main/util/calendar';
+import { formattedStringToDate, ISOStringToDate } from '@main/util/calendar';
 import { emitEvent, listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { connectToElectron } from '@main/util/puppeteer';
@@ -211,10 +211,10 @@ function validateNewFarm(farm: NewFarm): Error | undefined {
          * Check if the from date is before the to date.
          */
         if (
-            ISOStringToDate(
+            formattedStringToDate(
                 (farm.conditions.condition as TimeWindowCondition).from!
             ) <
-            ISOStringToDate(
+            formattedStringToDate(
                 (farm.conditions.condition as TimeWindowCondition).to!
             )
         ) {
@@ -247,6 +247,8 @@ function validateNewFarm(farm: NewFarm): Error | undefined {
  */
 async function addNewFarm(farm: NewFarm): Promise<void> {
     const validation = validateNewFarm(farm);
+
+    console.log(farm);
 
     if (validation === undefined) {
         switch (farm.type) {

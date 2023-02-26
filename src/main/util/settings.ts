@@ -247,8 +247,6 @@ export function setSettingValue(
     settingName: string,
     newValue?: SettingValue
 ): void {
-    console.log('SHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESH');
-
     const settings = getSettings();
     const settingsOfOwner = getSettingsOfOwner(owner);
     const settingConfig = getSettingConfig(settingName);

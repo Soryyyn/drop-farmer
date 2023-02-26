@@ -12,6 +12,7 @@ import {
     formattedStringToDate,
     getCurrentDate,
     getDate,
+    isDateBetweenDates,
     ISOStringToDate,
     remainingDaysInMonth,
     remainingDaysInWeek
@@ -72,7 +73,7 @@ export default abstract class FarmTemplate {
          */
         if (!this.enabled) {
             this.status = 'disabled';
-        } else if (this.conditions.fulfilled) {
+        } else if (this.conditions.fulfilled !== undefined) {
             this.status = 'condition-fulfilled';
         } else {
             this.status = 'idle';
@@ -192,18 +193,26 @@ export default abstract class FarmTemplate {
                      */
                     case 'farm-condition-started':
                         if (this.conditions.condition.type !== 'unlimited') {
-                            this.conditions.started = ISOStringToDate(
-                                value as string
-                            );
+                            if ((value as string) !== '') {
+                                this.conditions.started = ISOStringToDate(
+                                    value as string
+                                );
+                            } else {
+                                this.conditions.started = undefined;
+                            }
                         } else {
                             deleteSetting(this.id, 'farm-condition-started');
                         }
                         break;
                     case 'farm-condition-fulfilled':
                         if (this.conditions.condition.type !== 'unlimited') {
-                            this.conditions.fulfilled = ISOStringToDate(
-                                value as string
-                            );
+                            if ((value as string) !== '') {
+                                this.conditions.fulfilled = ISOStringToDate(
+                                    value as string
+                                );
+                            } else {
+                                this.conditions.fulfilled = undefined;
+                            }
                         } else {
                             deleteSetting(this.id, 'farm-condition-fulfilled');
                         }
@@ -249,14 +258,18 @@ export default abstract class FarmTemplate {
                         break;
                     case 'farm-condition-from':
                         if (this.conditions.condition.type === 'timeWindow') {
-                            this.conditions.condition.from = value as string;
+                            this.conditions.condition.from = (
+                                value as SettingValueWithSpecial
+                            ).value as string;
                         } else {
                             deleteSetting(this.id, 'farm-condition-from');
                         }
                         break;
                     case 'farm-condition-to':
                         if (this.conditions.condition.type === 'timeWindow') {
-                            this.conditions.condition.to = value as string;
+                            this.conditions.condition.to = (
+                                value as SettingValueWithSpecial
+                            ).value as string;
                         } else {
                             deleteSetting(this.id, 'farm-condition-to');
                         }
@@ -278,6 +291,8 @@ export default abstract class FarmTemplate {
      * Update the conditions value to keep track.
      */
     updateConditions(): void {
+        console.log('ADASDDADSASDAAASDADADASDASDASDDSA');
+
         if (this.conditions.condition.type !== 'unlimited') {
             if (this.conditions.condition.amount) {
                 setSettingValue(
@@ -603,6 +618,63 @@ export default abstract class FarmTemplate {
         if (this.conditions.condition.type === 'unlimited') {
             log('info', `${this.id}: Timeframe set to unlimited, farming now`);
             return 'farm';
+        } else if (this.conditions.condition.type === 'timeWindow') {
+            const fromDate = formattedStringToDate(
+                this.conditions.condition.from!
+            );
+            const toDate = formattedStringToDate(this.conditions.condition.to!);
+
+            if (isDateBetweenDates(getCurrentDate(), fromDate, toDate)) {
+                /**
+                 * Is in given time window.
+                 */
+                if (!this.conditions.started) {
+                    this.conditions.started = getCurrentDate();
+                }
+
+                /**
+                 * Check if amount has already been achieved.
+                 */
+                if (this.conditions.condition.amount) {
+                    const amountToAchieve = combineTimeUnits({
+                        hours: this.conditions.condition.amountToFulfill,
+                        minutes: this.conditions.condition.buffer
+                    }).asMilliseconds();
+
+                    if (this.conditions.condition.amount >= amountToAchieve) {
+                        if (!this.conditions.fulfilled) {
+                            this.conditions.fulfilled = getCurrentDate();
+                        }
+
+                        log(
+                            'info',
+                            `${this.id}: Has already achieved amount to fulfill, condition fulfilled`
+                        );
+                        return 'conditions-fulfilled';
+                    } else {
+                        log(
+                            'info',
+                            `${this.id}: Has not achieved amount to fulfill, farming now`
+                        );
+                        return 'farm';
+                    }
+                } else {
+                    log(
+                        'info',
+                        `${this.id}: First time farming in time window, farming now`
+                    );
+                    return 'farm';
+                }
+            } else {
+                /**
+                 * Is not in time window.
+                 */
+                log(
+                    'info',
+                    `${this.id}: Current date is not in the given time window, not farming`
+                );
+                return 'conditions-fulfilled';
+            }
         } else {
             /**
              * Check if the condition has a started date set.
@@ -614,7 +686,6 @@ export default abstract class FarmTemplate {
                  * Set the started date.
                  */
                 this.conditions.started = getCurrentDate();
-                this.updateConditions();
                 return 'farm';
             } else {
                 /**
@@ -651,7 +722,6 @@ export default abstract class FarmTemplate {
                                 `${this.id}: Reached timeframe reset, repeating is not enabled, will set fulfilled`
                             );
                             this.conditions.fulfilled = getCurrentDate();
-                            this.updateConditions();
                             return 'conditions-fulfilled';
                         }
                     } else {
@@ -723,7 +793,6 @@ export default abstract class FarmTemplate {
                                 `${this.id}: Reached timeframe reset, repeating is not enabled, will set fulfilled`
                             );
                             this.conditions.fulfilled = getCurrentDate();
-                            this.updateConditions();
                             return 'conditions-fulfilled';
                         }
                     } else {
@@ -826,6 +895,11 @@ export default abstract class FarmTemplate {
             if (this.status === 'idle' && this.getAmountOfWindows() > 0) {
                 await this.destroyAllWindows();
             }
+
+            /**
+             * Update the conditions.
+             */
+            this.updateConditions();
         }
     }
 }

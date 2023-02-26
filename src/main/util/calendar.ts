@@ -74,8 +74,13 @@ export function getCurrentMonthName(): string {
 /**
  * Parse the wanted string of the needed format to a date.
  */
-export function formattedStringToDate(string: string): Date {
-    return dayjs(string, 'DD-MM-YYYY').toDate();
+export function formattedStringToDate(date: string): Date {
+    const params = date.split('-');
+    return dayjs()
+        .set('year', parseInt(params[2]))
+        .set('month', parseInt(params[1]) - 1)
+        .set('date', parseInt(params[0]))
+        .toDate();
 }
 
 /**
@@ -97,4 +102,15 @@ export function dateToISOString(date: Date): string {
  */
 export function getDate(string: string): Date | undefined {
     if (string !== '') return dayjs(string).toDate();
+}
+
+/**
+ * Check if a date is between two other dates.
+ */
+export function isDateBetweenDates(
+    dateToCheck: Date,
+    first: Date,
+    second: Date
+): boolean {
+    return dateToCheck >= first && dateToCheck <= second;
 }
