@@ -248,8 +248,6 @@ function validateNewFarm(farm: NewFarm): Error | undefined {
 async function addNewFarm(farm: NewFarm): Promise<void> {
     const validation = validateNewFarm(farm);
 
-    console.log(farm);
-
     if (validation === undefined) {
         switch (farm.type) {
             case 'youtube':

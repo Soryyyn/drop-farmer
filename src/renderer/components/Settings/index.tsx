@@ -85,8 +85,6 @@ export default function Settings({ onClose }: Props) {
                                         key={`${selected}-${setting.id}`}
                                         setting={setting}
                                         onChange={(updated) => {
-                                            console.log(updated);
-
                                             const copyOfSettings = {
                                                 ...settings
                                             };

@@ -291,8 +291,6 @@ export default abstract class FarmTemplate {
      * Update the conditions value to keep track.
      */
     updateConditions(): void {
-        console.log('ADASDDADSASDAAASDADADASDASDASDDSA');
-
         if (this.conditions.condition.type !== 'unlimited') {
             if (this.conditions.condition.amount) {
                 setSettingValue(
@@ -574,6 +572,7 @@ export default abstract class FarmTemplate {
     async restartScheduler(withStatus?: FarmStatus, steps?: () => void) {
         this.timer.stopTimer();
         await this.addUptimeAmount();
+        this.updateConditions();
         await this.destroyAllWindows();
 
         this.scheduler.stopAll();
