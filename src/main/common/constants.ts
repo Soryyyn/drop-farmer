@@ -57,6 +57,16 @@ export type Schedule = (typeof Schedules)[keyof typeof Schedules];
  * Selections.
  */
 export const Selections = {
+    FarmingLocation: [
+        {
+            display: 'YouTube',
+            value: 'youtube'
+        },
+        {
+            display: 'Twitch',
+            value: 'twitch'
+        }
+    ],
     FarmConditionSelect: [
         {
             display: 'Unlimited',

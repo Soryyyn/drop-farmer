@@ -1,7 +1,6 @@
 import NumberInput from '@components/global/Inputs/NumberInput';
 import Select from '@components/global/Inputs/Select';
 import TextInput from '@components/global/Inputs/TextInput';
-import { Alignment } from '@components/global/Menu';
 import React, { useEffect, useState } from 'react';
 
 export type BasicInfoObject = {
@@ -12,16 +11,12 @@ export type BasicInfoObject = {
 };
 
 interface Props {
+    data: BasicInfoObject;
     onChange: (changedBasicInfo: BasicInfoObject) => void;
 }
 
-export default function BasicInfoTab({ onChange }: Props) {
-    const [basicInfo, setBasicInfo] = useState<BasicInfoObject>({
-        id: '',
-        url: '',
-        type: 'twitch',
-        schedule: 30
-    });
+export default function BasicInfoTab({ data, onChange }: Props) {
+    const [basicInfo, setBasicInfo] = useState<BasicInfoObject>(data);
 
     useEffect(() => {
         onChange(basicInfo);

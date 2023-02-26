@@ -16,22 +16,17 @@ export default function NewFarm({ onClose }: Props) {
     const { addFarm, isValid, resetValidation } = useContext(FarmsContext);
 
     const [finishedFillingOut, setFinishedFillingOut] = useState(false);
-    const [details, setDetails] = useState<NewFarm>();
-
-    // const [farmDetails, setFarmDetails] = useState<NewFarm>({
-    //     id: '',
-    //     schedule: 30,
-    //     type: 'youtube',
-    //     url: '',
-    //     conditions: {
-    //         condition: {
-    //             type: 'monthly',
-    //             amountToFulfill: 4,
-    //             buffer: 30,
-    //             repeating: false
-    //         }
-    //     }
-    // });
+    const [details, setDetails] = useState<NewFarm>({
+        id: '',
+        schedule: 30,
+        type: 'youtube',
+        url: '',
+        conditions: {
+            condition: {
+                type: 'unlimited'
+            }
+        }
+    });
 
     /**
      * Close the modal if the validation succeeded.
@@ -74,7 +69,15 @@ export default function NewFarm({ onClose }: Props) {
                             desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
                             content: (
                                 <BasicInfoTab
-                                    onChange={(info) => console.log(info)}
+                                    data={{
+                                        ...details
+                                    }}
+                                    onChange={(info) =>
+                                        setDetails({
+                                            ...details,
+                                            ...info
+                                        })
+                                    }
                                 />
                             )
                         },
@@ -83,198 +86,22 @@ export default function NewFarm({ onClose }: Props) {
                             desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
                             content: (
                                 <ConditionsTab
-                                    onChange={(info) => console.log(info)}
+                                    data={{ ...details.conditions.condition }}
+                                    onChange={(info) =>
+                                        setDetails({
+                                            ...details,
+                                            conditions: {
+                                                condition: {
+                                                    ...info
+                                                }
+                                            }
+                                        })
+                                    }
                                 />
                             )
                         }
                     ]}
                 />
-
-                {/* <div className="flex flex-col h-full w-full gap-4 overflow-y-auto">
-                    <Section title="Details">
-                        <div className="flex flex-col gap-4">
-                            <div className="flex flex-row gap-4">
-                                <div className="w-4/5">
-                                    <TextInput
-                                        label="Name"
-                                        value={farmDetails.id}
-                                        required={true}
-                                        onChange={(changed) =>
-                                            setFarmDetails({
-                                                ...farmDetails,
-                                                id: changed
-                                            })
-                                        }
-                                    />
-                                </div>
-                                <NumberInput
-                                    label="Schedule (in minutes)"
-                                    value={farmDetails.schedule}
-                                    required={true}
-                                    min={1}
-                                    max={60}
-                                    onChange={(changed) =>
-                                        setFarmDetails({
-                                            ...farmDetails,
-                                            schedule: changed
-                                        })
-                                    }
-                                />
-                            </div>
-                            <Select
-                                label="Farming location"
-                                value={farmDetails.type}
-                                required={true}
-                                options={['youtube', 'twitch']}
-                                onSelected={(selected: FarmType) => {
-                                    setFarmDetails({
-                                        ...farmDetails,
-                                        type: selected
-                                    });
-                                }}
-                            />
-                            <TextInput
-                                label="URL"
-                                value={farmDetails.url}
-                                required={true}
-                                onChange={(changed) =>
-                                    setFarmDetails({
-                                        ...farmDetails,
-                                        url: changed
-                                    })
-                                }
-                            />
-
-                            <TextInformation
-                                label="Important"
-                                text="For drop-farmer to actually be able to farm drops from Twitch, YouTube, etc. you must connect your accounts to the wanted platforms. If not done, you will only rack up on watchtime and nothing else, which defeats the purpose of drop-farmer."
-                            />
-                        </div>
-                    </Section>
-
-                    <Section title="Farming Conditions">
-                        <div className="flex flex-col gap-4">
-                            <Select
-                                label="Timeframe"
-                                value={farmDetails.conditions.condition.type}
-                                required={true}
-                                options={[
-                                    'unlimited',
-                                    'weekly',
-                                    'monthly',
-                                    'from ... to ...'
-                                ]}
-                                onSelected={(selected: Timeframe) => {
-                                    setFarmDetails({
-                                        ...farmDetails,
-                                        conditions: {
-                                            ...farmDetails.conditions,
-                                            timeframe: selected
-                                        }
-                                    });
-                                }}
-                            />
-
-                            {farmDetails.conditions.timeframe ===
-                                'from ... to ...' && (
-                                <div className="flex flex-row gap-4">
-                                    <DateInput
-                                        label="From"
-                                        required={true}
-                                        onChange={(changed: string) => {
-                                            setFarmDetails({
-                                                ...farmDetails,
-                                                conditions: {
-                                                    ...farmDetails.conditions,
-                                                    from: changed
-                                                }
-                                            });
-                                        }}
-                                    />
-                                    <DateInput
-                                        label="To"
-                                        required={true}
-                                        onChange={(changed: string) => {
-                                            setFarmDetails({
-                                                ...farmDetails,
-                                                conditions: {
-                                                    ...farmDetails.conditions,
-                                                    to: changed
-                                                }
-                                            });
-                                        }}
-                                    />
-                                </div>
-                            )}
-
-                            <div className="flex flex-row gap-4">
-                                <NumberInput
-                                    label="Amount to fulfill condition (in hours)"
-                                    value={
-                                        farmDetails.conditions.amountToFulfill!
-                                    }
-                                    required={
-                                        farmDetails.conditions.timeframe !==
-                                        'unlimited'
-                                    }
-                                    min={1}
-                                    max={730}
-                                    onChange={(changed) =>
-                                        setFarmDetails({
-                                            ...farmDetails,
-                                            conditions: {
-                                                ...farmDetails.conditions,
-                                                amountToFulfill: changed
-                                            }
-                                        })
-                                    }
-                                />
-                                <NumberInput
-                                    label="Buffer (in minutes)"
-                                    value={farmDetails.conditions.buffer!}
-                                    required={
-                                        farmDetails.conditions.timeframe !==
-                                        'unlimited'
-                                    }
-                                    min={0}
-                                    max={60}
-                                    onChange={(changed) =>
-                                        setFarmDetails({
-                                            ...farmDetails,
-                                            conditions: {
-                                                ...farmDetails.conditions,
-                                                buffer: changed
-                                            }
-                                        })
-                                    }
-                                />
-                            </div>
-
-                            <SwitchToggle
-                                label="Repeating"
-                                required={
-                                    farmDetails.conditions.timeframe !==
-                                    'unlimited'
-                                }
-                                value={farmDetails.conditions.repeating!}
-                                onChange={(changed) =>
-                                    setFarmDetails({
-                                        ...farmDetails,
-                                        conditions: {
-                                            ...farmDetails.conditions,
-                                            repeating: changed
-                                        }
-                                    })
-                                }
-                            />
-
-                            <TextInformation
-                                label="Important"
-                                text="For drop-farmer to actually be able to farm drops from Twitch, YouTube, etc. you must connect your accounts to the wanted platforms. If not done, you will only rack up on watchtime and nothing else, which defeats the purpose of drop-farmer."
-                            />
-                        </div>
-                    </Section>
-                </div> */}
             </OverlayContent>
         </OverlayContainer>
     );

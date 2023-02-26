@@ -1,4 +1,4 @@
-import { IpcChannel, IpcChannels } from '@main/common/constants';
+import { IpcChannel, IpcChannels, Selections } from '@main/common/constants';
 import {
     capitalize,
     capitalizeFirstLetter,
@@ -8,6 +8,7 @@ import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 export default {
     channels: IpcChannels,
+    selections: Selections,
     removeTypeFromText: (text: string) => removeTypeFromText(text),
     capitalizeFirstLetter: (text: string) => capitalizeFirstLetter(text),
     capitalize: (text: string) => capitalize(text),
