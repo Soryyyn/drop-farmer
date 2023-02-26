@@ -15,7 +15,6 @@ interface Props {
 export default function NewFarm({ onClose }: Props) {
     const { addFarm, isValid, resetValidation } = useContext(FarmsContext);
 
-    const [finishedFillingOut, setFinishedFillingOut] = useState(false);
     const [details, setDetails] = useState<NewFarm>({
         id: '',
         schedule: 30,
@@ -42,16 +41,12 @@ export default function NewFarm({ onClose }: Props) {
         <OverlayContainer>
             <OverlayContent
                 buttons={[
-                    ...(finishedFillingOut
-                        ? [
-                              <ActionButton
-                                  key="newFarm"
-                                  icon={faFloppyDisk}
-                                  tooltip="Create a new farm with the filled out details"
-                                  onClick={() => {}}
-                              />
-                          ]
-                        : []),
+                    <ActionButton
+                        key="newFarm"
+                        icon={faFloppyDisk}
+                        tooltip="Create a new farm with the filled out details"
+                        onClick={() => addFarm(details)}
+                    />,
                     <ActionButton
                         key="close"
                         icon={faXmark}
@@ -60,13 +55,25 @@ export default function NewFarm({ onClose }: Props) {
                 ]}
             >
                 <TabSwitcher
-                    onLastTab={(isOnLastTab) =>
-                        setFinishedFillingOut(isOnLastTab)
-                    }
                     tabs={[
                         {
                             title: 'Basic Settings',
-                            desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
+                            desc: (
+                                <p>
+                                    On this tab basic details about the farm you
+                                    want to add are defined.
+                                    <br />
+                                    <br />
+                                    It is important to set the farming location
+                                    to correct value. If you want to farm from a
+                                    twitch stream, set the location to twitch.
+                                    <br />
+                                    <br />
+                                    The schedule defines how drop-farmer will
+                                    check if it can farm for the given farm
+                                    every set minutes.
+                                </p>
+                            ),
                             content: (
                                 <BasicInfoTab
                                     data={{
@@ -83,7 +90,36 @@ export default function NewFarm({ onClose }: Props) {
                         },
                         {
                             title: 'Conditions',
-                            desc: 'Test desc asdasdadsasdasd as sdasasd sdsd aasdasdasdasdasdasd as',
+                            desc: (
+                                <p>
+                                    On this tab the conditions on how to farm
+                                    are defined.
+                                    <br />
+                                    <br />
+                                    When the type is set to
+                                    &quot;Unlimited&quot; drop-farmer will try
+                                    to farm to farm as much as possible. When
+                                    set to &quot;Weekly&quot; or
+                                    &quot;Monthly&quot; drop-farmer will try to
+                                    fulfill the amount given (in hours) in the
+                                    given timespan.
+                                    <br />
+                                    A buffer (in minutes), which is added on top
+                                    of the amount to fulfill can also be defined
+                                    if the drop times are a bit flaky.
+                                    <br />
+                                    When enabling the repeating setting, the
+                                    farm will reset the condition and timespan
+                                    after it reached either the amount to
+                                    fulfill or the timespan.
+                                    <br />
+                                    <br />
+                                    When the type is set to &quot;From ... to
+                                    ...&quot;, drop-farmer will try to fulfill
+                                    the amount given in that exact timespan.
+                                    <br />
+                                </p>
+                            ),
                             content: (
                                 <ConditionsTab
                                     data={{ ...details.conditions.condition }}

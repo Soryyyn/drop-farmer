@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 interface Props {
     tabs: {
         title: string;
-        desc?: string;
+        desc?: string | JSX.Element;
         content: JSX.Element;
     }[];
-    onLastTab: (isOnLastTab: boolean) => void;
+    onLastTab?: (isOnLastTab: boolean) => void;
 }
 
 export default function TabSwitcher({ tabs, onLastTab }: Props) {
@@ -23,10 +23,12 @@ export default function TabSwitcher({ tabs, onLastTab }: Props) {
                             onClick={() => {
                                 setCurrentTab(tab.title);
 
-                                if (index === tabs.length - 1) {
-                                    onLastTab(true);
-                                } else {
-                                    onLastTab(false);
+                                if (onLastTab) {
+                                    if (index === tabs.length - 1) {
+                                        onLastTab(true);
+                                    } else {
+                                        onLastTab(false);
+                                    }
                                 }
                             }}
                             className={clsx(
@@ -53,7 +55,7 @@ export default function TabSwitcher({ tabs, onLastTab }: Props) {
                         >
                             <div
                                 className={clsx('overflow-y-auto', {
-                                    'w-3/4': tab.desc,
+                                    '!w-3/5': tab.desc,
                                     'w-full': !tab.desc
                                 })}
                             >
@@ -61,7 +63,7 @@ export default function TabSwitcher({ tabs, onLastTab }: Props) {
                             </div>
 
                             {tab.desc && (
-                                <p className="h-full rounded-md p-2 bg-pepper-700/30 text-snow-300">
+                                <p className="w-2/5 h-full rounded-md p-2 bg-pepper-700/30 text-snow-300">
                                     {tab.desc}
                                 </p>
                             )}

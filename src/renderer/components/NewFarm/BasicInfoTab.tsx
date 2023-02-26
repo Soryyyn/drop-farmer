@@ -45,7 +45,7 @@ export default function BasicInfoTab({ data, onChange }: Props) {
                 }
             />
             <Select
-                label="Farming location (Stream site)"
+                label="Farming location (stream site)"
                 value={basicInfo.type}
                 fullWidth
                 options={[
@@ -66,7 +66,7 @@ export default function BasicInfoTab({ data, onChange }: Props) {
                 }}
             />
             <NumberInput
-                label="Farming schedule"
+                label="Farming schedule (in minutes)"
                 value={basicInfo.schedule}
                 withButtons
                 fullWidth

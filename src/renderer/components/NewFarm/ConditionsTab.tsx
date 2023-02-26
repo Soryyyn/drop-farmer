@@ -103,7 +103,7 @@ export default function ConditionsTab({ data, onChange }: Props) {
 
                     <div className="flex flex-row justify-evenly gap-2">
                         <DateInput
-                            label="From when on to farm"
+                            label="From (start date)"
                             fullWidth
                             value={conditionsInfo.from}
                             onChange={(changed) =>
@@ -115,7 +115,7 @@ export default function ConditionsTab({ data, onChange }: Props) {
                         />
 
                         <DateInput
-                            label="Until when to farm"
+                            label="To (end date)"
                             fullWidth
                             value={conditionsInfo.to}
                             onChange={(changed) =>
