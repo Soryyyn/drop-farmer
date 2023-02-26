@@ -390,6 +390,7 @@ listenForEvent(EventChannels.PCWokeUp, async () => {
      */
     await connectToElectron();
 
+    await stopFarms();
     farms.forEach(async (farm) => await farm.restartScheduler());
 });
 
