@@ -14,7 +14,7 @@ export default function Tooltip({ children, text, placement }: Props) {
         <Tippy
             content={text}
             placement={placement}
-            delay={[500, 0]}
+            delay={[300, 0]}
             theme="dark"
             animation="shift-away-subtle"
         >
