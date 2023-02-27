@@ -201,7 +201,7 @@ export function gotoURL(
             resolve();
         } catch (error) {
             log('warn', 'Retrying to goto url');
-            await gotoURL(page, url, timeout);
+            gotoURL(page, url, timeout);
         }
     });
 }
