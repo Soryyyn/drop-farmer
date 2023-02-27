@@ -1,6 +1,5 @@
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
-import { uniqueId } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import Icon from '../Icon';
 
@@ -24,25 +23,16 @@ export default function NumberInput({
     fullWidth,
     disabled,
     withButtons,
-    inputWidth,
     onChange
 }: Props) {
     const [inputValue, setInputValue] = useState<number>(value);
 
     useEffect(() => {
-        if (value < 0) setInputValue(0);
-
-        if (value < min) {
-            setInputValue(min);
-        } else if (value > max) {
-            setInputValue(max);
-        } else {
-            onChange(inputValue);
-        }
+        onChange(inputValue);
     }, [inputValue]);
 
     return (
-        <div className="flex flex-col gap-2 grow" key={uniqueId()}>
+        <div className="flex flex-col gap-2 grow">
             {label && (
                 <div className="flex flex-row leading-none gap-1">
                     <span className="text-snow-300">{label}</span>
@@ -77,12 +67,20 @@ export default function NumberInput({
                             'hover:bg-pepper-800 focus:bg-pepper-800': !disabled
                         }
                     )}
+                    type="number"
                     disabled={disabled}
                     value={value}
-                    type="number"
-                    onInput={(event) => {
-                        setInputValue(parseInt(event.currentTarget.value));
+                    onChange={(event) => {
+                        const { value, min, max } = event.target;
+                        const adjustedValue = Math.max(
+                            Number(min),
+                            Math.min(Number(max), Number(value))
+                        );
+
+                        setInputValue(adjustedValue);
                     }}
+                    min={min}
+                    max={max}
                 />
                 {withButtons && (
                     <button

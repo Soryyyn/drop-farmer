@@ -46,18 +46,13 @@ export default function BasicInfoTab({ data, onChange }: Props) {
             />
             <Select
                 label="Farming location (stream site)"
-                value={basicInfo.type}
+                value={
+                    api.selections.FarmingLocation.find(
+                        (select) => select.value === basicInfo.type
+                    )?.display ?? ''
+                }
                 fullWidth
-                options={[
-                    {
-                        display: 'Twitch',
-                        value: 'twitch'
-                    },
-                    {
-                        display: 'YouTube',
-                        value: 'youtube'
-                    }
-                ]}
+                options={api.selections.FarmingLocation}
                 onChange={(changed) => {
                     setBasicInfo({
                         ...basicInfo,
@@ -66,6 +61,7 @@ export default function BasicInfoTab({ data, onChange }: Props) {
                 }}
             />
             <NumberInput
+                key="schedule-input"
                 label="Farming schedule (in minutes)"
                 value={basicInfo.schedule}
                 withButtons

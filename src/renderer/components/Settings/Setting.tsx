@@ -57,6 +57,7 @@ export default function Setting({ setting, onChange }: Props) {
             ) {
                 return (
                     <NumberInput
+                        key={`${setting.id}-number-input`}
                         value={
                             ((setting.value as SettingValueWithSpecial)
                                 .value as number) ?? setting.value

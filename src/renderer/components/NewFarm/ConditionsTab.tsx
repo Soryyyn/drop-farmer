@@ -30,7 +30,11 @@ export default function ConditionsTab({ data, onChange }: Props) {
         <div className="flex flex-col gap-4">
             <Select
                 label="Type of condition"
-                value={conditionsInfo.type}
+                value={
+                    api.selections.FarmConditionSelect.find(
+                        (select) => select.value === conditionsInfo.type
+                    )?.display ?? ''
+                }
                 fullWidth
                 options={api.selections.FarmConditionSelect}
                 onChange={(changed) =>
@@ -48,6 +52,7 @@ export default function ConditionsTab({ data, onChange }: Props) {
                     <span className="bg-pepper-400 h-0.5 w-[98%] rounded-full self-center" />
 
                     <NumberInput
+                        key="amount-to-fulfill-input"
                         label="Amount to fulfill in timespan (in hours)"
                         value={conditionsInfo.amountToFulFill ?? 4}
                         min={1}
@@ -63,6 +68,7 @@ export default function ConditionsTab({ data, onChange }: Props) {
                     />
 
                     <NumberInput
+                        key="buffer-input"
                         label="Buffer for fulfillment (in minutes)"
                         value={conditionsInfo.buffer ?? 30}
                         min={0}
