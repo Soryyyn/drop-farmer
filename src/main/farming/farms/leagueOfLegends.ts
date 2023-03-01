@@ -196,7 +196,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                      * window urls have an entry in the current live matches.
                      * If it is not found, then destroy the farming window.
                      */
-                    for (const farmingWindow of this.farmers) {
+                    this.farmers.forEach(async (farmingWindow) => {
                         let found: boolean = false;
 
                         /**
@@ -205,7 +205,6 @@ export default class LeagueOfLegends extends FarmTemplate {
                         for (const liveMatch of currentLiveMatches) {
                             const url: string =
                                 farmingWindow.webContents.getURL();
-
                             if (url.includes(liveMatch)) found = true;
                         }
 
@@ -220,7 +219,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                             );
                             destroyedWindowsAmount++;
                         }
-                    }
+                    });
 
                     if (destroyedWindowsAmount > 0)
                         log('info', `${this.id}: No farming windows destroyed`);
