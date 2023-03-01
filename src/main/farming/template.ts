@@ -569,21 +569,33 @@ export default abstract class FarmTemplate {
         sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
     }
 
+    /**
+     * Restart the scheduler with a status to set after and steps to execute in
+     * the meantime.
+     */
     async restartScheduler(withStatus?: FarmStatus, steps?: () => void) {
-        this.timer.stopTimer();
-        await this.addUptimeAmount();
-        this.updateConditions();
-        await this.destroyAllWindows();
+        return new Promise<void>(async (resolve) => {
+            this.timer.stopTimer();
+            await this.addUptimeAmount();
+            this.updateConditions();
+            await this.destroyAllWindows();
 
-        this.scheduler.stopAll();
-        if (steps) Promise.all([steps()]);
-        this.scheduler.startAll();
+            this.scheduler.stopAll();
+            if (steps) Promise.all([steps()]);
+            this.scheduler.startAll();
 
-        if (this.status === 'disabled') {
-            this.updateStatus('disabled');
-        } else {
-            this.updateStatus(withStatus ?? 'idle');
-        }
+            /**
+             * Update the status if wanted or disable it if it was disabled in
+             * the meantime.
+             */
+            if (this.status === 'disabled') {
+                this.updateStatus('disabled');
+            } else {
+                this.updateStatus(withStatus ?? 'idle');
+            }
+
+            resolve();
+        });
     }
 
     async clearCache(): Promise<any> {

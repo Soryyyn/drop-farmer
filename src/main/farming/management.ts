@@ -358,9 +358,9 @@ handleOneWay(IpcChannels.resetFarmingConditions, async (event, id) => {
             )}...`
         },
         undefined,
-        new Promise((resolve, reject) => {
+        new Promise(async (resolve, reject) => {
             try {
-                farm?.restartScheduler();
+                await farm?.restartScheduler();
                 farm?.resetConditions();
 
                 resolve(undefined);
@@ -377,7 +377,6 @@ handleAndReply(IpcChannels.getFarms, () => {
 
 listenForEvent(EventChannels.PCWentToSleep, async () => {
     log('warn', 'Stopping farms because PC went to sleep');
-    await stopFarms();
 });
 
 listenForEvent(EventChannels.PCWokeUp, async () => {
@@ -388,7 +387,6 @@ listenForEvent(EventChannels.PCWokeUp, async () => {
      */
     await connectToElectron();
 
-    await stopFarms();
     farms.forEach(async (farm) => await farm.restartScheduler());
 });
 
