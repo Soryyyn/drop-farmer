@@ -1,4 +1,4 @@
-import { IpcChannels, Schedules } from '@main/common/constants';
+import { EventChannels, IpcChannels, Schedules } from '@main/common/constants';
 import { sendOneWay } from '@main/electron/ipc';
 import {
     createWindow,
@@ -17,6 +17,7 @@ import {
     remainingDaysInMonth,
     remainingDaysInWeek
 } from '@main/util/calendar';
+import { emitEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
 import { updateFarmStatistic } from '@main/util/statistics';
@@ -594,6 +595,11 @@ export default abstract class FarmTemplate {
             } else {
                 this.updateStatus(withStatus ?? 'idle');
             }
+
+            /**
+             * Notify renderer of changed farms.
+             */
+            emitEvent(EventChannels.FarmsChanged);
 
             resolve();
         });
