@@ -74,10 +74,12 @@ handleOneWay(IpcChannels.updateCheck, () => {
     displayToasts = true;
     if (displayToasts) {
         sendToast({
-            type: 'loading',
-            id: Toasts.UpdateChecking,
-            textOnLoading: 'Checking if update is available...',
-            duration: Infinity
+            toast: {
+                type: 'loading',
+                id: Toasts.UpdateChecking,
+                textOnLoading: 'Checking if update is available...',
+                duration: Infinity
+            }
         });
     }
 
@@ -96,10 +98,12 @@ autoUpdater.on('checking-for-update', () => {
 
     if (displayToasts) {
         sendToast({
-            type: 'loading',
-            id: Toasts.UpdateChecking,
-            duration: Infinity,
-            textOnLoading: 'Checking if update is available...'
+            toast: {
+                type: 'loading',
+                id: Toasts.UpdateChecking,
+                duration: Infinity,
+                textOnLoading: 'Checking if update is available...'
+            }
         });
     }
 });
@@ -111,10 +115,12 @@ autoUpdater.on('update-not-available', () => {
 
     if (displayToasts) {
         sendToast({
-            type: 'error',
-            id: Toasts.UpdateChecking,
-            duration: 4000,
-            textOnError: 'No update available.'
+            toast: {
+                type: 'error',
+                id: Toasts.UpdateChecking,
+                duration: 4000,
+                textOnError: 'No update available.'
+            }
         });
     }
 
@@ -136,10 +142,12 @@ autoUpdater.on('update-downloaded', () => {
 
     if (displayToasts) {
         sendToast({
-            type: 'success',
-            id: Toasts.UpdateChecking,
-            duration: 4000,
-            textOnSuccess: 'Update available.'
+            toast: {
+                type: 'success',
+                id: Toasts.UpdateChecking,
+                duration: 4000,
+                textOnSuccess: 'Update available.'
+            }
         });
     }
 
@@ -158,11 +166,13 @@ autoUpdater.on('error', (err) => {
 
     if (displayToasts) {
         sendToast({
-            type: 'error',
-            id: Toasts.UpdateChecking,
-            duration: 4000,
-            textOnError:
-                'Error occured while checking for update. Please check the logfile.'
+            toast: {
+                type: 'error',
+                id: Toasts.UpdateChecking,
+                duration: 4000,
+                textOnError:
+                    'Error occured while checking for update. Please check the logfile.'
+            }
         });
     }
 

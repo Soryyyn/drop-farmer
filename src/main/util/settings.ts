@@ -10,7 +10,6 @@ import AutoLaunch from 'auto-launch';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
-import { dateToISOString, formattedStringToDate } from './calendar';
 import { log } from './logging';
 import { sendToast } from './toast';
 
@@ -420,17 +419,16 @@ handleAndReply(IpcChannels.getSettings, () => {
 handleOneWay(
     IpcChannels.saveNewSettings,
     (event, settingsToSave: MergedSettings) => {
-        sendToast(
-            {
+        sendToast({
+            toast: {
                 type: 'promise',
-                id: 'settings-saving',
+                id: Toasts.SettingsSaving,
                 textOnLoading: 'Saving settings...',
                 textOnSuccess: 'Saved settings.',
                 textOnError: 'Failed saving settings.',
                 duration: 4000
             },
-            undefined,
-            new Promise(async (resolve, reject) => {
+            promise: new Promise(async (resolve, reject) => {
                 try {
                     updateSettings(extractMergedSettings(settingsToSave));
                     applySettingsToFarms();
@@ -439,7 +437,7 @@ handleOneWay(
                     reject(err);
                 }
             })
-        );
+        });
 
         /**
          * Notify renderer of settings changed.
@@ -451,8 +449,8 @@ handleOneWay(
 handleOneWay(
     IpcChannels.resetSettingsToDefault,
     (event, currentSettings: MergedSettings) => {
-        sendToast(
-            {
+        sendToast({
+            toast: {
                 type: 'promise',
                 id: Toasts.SettingsReset,
                 textOnLoading: 'Resetting settings to default values...',
@@ -460,8 +458,7 @@ handleOneWay(
                 textOnError: 'Failed to reset settings.',
                 duration: 4000
             },
-            undefined,
-            new Promise(async (resolve, reject) => {
+            promise: new Promise(async (resolve, reject) => {
                 try {
                     updateSettings(
                         extractMergedSettings(
@@ -475,7 +472,7 @@ handleOneWay(
                     reject(err);
                 }
             })
-        );
+        });
 
         /**
          * Notify renderer of settings changed.

@@ -22,10 +22,12 @@ export function internetConnectionChecker(): void {
              */
             if (!connection) {
                 sendToast({
-                    type: 'error',
-                    id: 'no-internet',
-                    textOnError: 'No internet connection.',
-                    duration: 4000
+                    toast: {
+                        type: 'error',
+                        id: 'no-internet',
+                        textOnError: 'No internet connection.',
+                        duration: 4000
+                    }
                 });
 
                 sendOneWay(IpcChannels.internet, false);

@@ -15,11 +15,15 @@ const toastBacklog: (BasicToast | PromiseToast | ForcedTypeToast)[] = [];
 /**
  * Send a toast to the frontend.
  */
-export function sendToast(
-    toast: Toast,
-    callback?: () => void,
-    promise?: Promise<any>
-): void {
+export function sendToast({
+    toast,
+    callback,
+    promise
+}: {
+    toast: Toast;
+    callback?: () => void;
+    promise?: Promise<any>;
+}): void {
     /**
      * Forced type toast.
      */

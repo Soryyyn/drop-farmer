@@ -306,8 +306,8 @@ async function addNewFarm(farm: NewFarm): Promise<void> {
 }
 
 handleOneWay(IpcChannels.addNewFarm, async (event, farm: NewFarm) => {
-    sendToast(
-        {
+    sendToast({
+        toast: {
             id: Toasts.FarmCreation,
             type: 'promise',
             duration: 4000,
@@ -317,14 +317,13 @@ handleOneWay(IpcChannels.addNewFarm, async (event, farm: NewFarm) => {
             textOnLoading: `Creating farm ${removeTypeFromText(farm.id)}...`,
             textOnError: `Failed creating farm`
         },
-        undefined,
-        addNewFarm(farm)
-    );
+        promise: addNewFarm(farm)
+    });
 });
 
 handleOneWay(IpcChannels.deleteFarm, (event, id) => {
-    sendToast(
-        {
+    sendToast({
+        toast: {
             id: Toasts.FarmDeletion,
             type: 'promise',
             duration: 4000,
@@ -334,16 +333,15 @@ handleOneWay(IpcChannels.deleteFarm, (event, id) => {
             textOnLoading: `Deleting farm ${removeTypeFromText(id)}...`,
             textOnError: `Failed deleting farm`
         },
-        undefined,
-        deleteFarm(id)
-    );
+        promise: deleteFarm(id)
+    });
 });
 
 handleOneWay(IpcChannels.resetFarmingConditions, async (event, id) => {
     const farm = getFarmById(id);
 
-    sendToast(
-        {
+    sendToast({
+        toast: {
             id: Toasts.FarmResetConditions,
             type: 'promise',
             duration: 4000,
@@ -357,8 +355,7 @@ handleOneWay(IpcChannels.resetFarmingConditions, async (event, id) => {
                 farm?.id!
             )}...`
         },
-        undefined,
-        new Promise(async (resolve, reject) => {
+        promise: new Promise(async (resolve, reject) => {
             try {
                 await farm?.restartScheduler();
                 farm?.resetConditions();
@@ -368,7 +365,7 @@ handleOneWay(IpcChannels.resetFarmingConditions, async (event, id) => {
                 reject(error);
             }
         })
-    );
+    });
 });
 
 handleAndReply(IpcChannels.getFarms, () => {

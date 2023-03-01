@@ -3,7 +3,8 @@ export const Toasts = {
     FarmCreation: 'farm-creation',
     FarmDeletion: 'farm-deletion',
     FarmResetConditions: 'farm-reset-conditions',
-    SettingsReset: 'settings-reset'
+    SettingsReset: 'settings-reset',
+    SettingsSaving: 'settings-saving'
 } as const;
 export type Toast = (typeof Toasts)[keyof typeof Toasts];
 

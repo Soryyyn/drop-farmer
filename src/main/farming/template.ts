@@ -21,6 +21,7 @@ import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
 import { updateFarmStatistic } from '@main/util/statistics';
 import CrontabManager from 'cron-job-manager';
+import { app } from 'electron';
 import {
     createSettingsOwner,
     deleteSetting,
@@ -598,8 +599,11 @@ export default abstract class FarmTemplate {
         });
     }
 
+    /**
+     * Clear the cache of the farm.
+     */
     async clearCache(): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             this.createArrayWindow(this.url, this.extras)
                 .then(async (window) => {
                     await window.webContents.session.clearCache();
@@ -608,7 +612,7 @@ export default abstract class FarmTemplate {
                 })
                 .then((window) => {
                     this.destroyWindowFromArray(this.extras, window);
-                    resolve(undefined);
+                    resolve();
                 })
                 .catch((err) => {
                     reject(err);

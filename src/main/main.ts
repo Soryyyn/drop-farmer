@@ -1,5 +1,6 @@
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
-import { app, session } from 'electron';
+import { app, powerMonitor, session } from 'electron';
+import { EventChannels } from './common/constants';
 import { createTray, destroyTray } from './electron/tray';
 import { initUpdater } from './electron/update';
 import {
@@ -8,9 +9,9 @@ import {
     setAppQuitting
 } from './electron/windows';
 import { initFarmsManagement, stopFarms } from './farming/management';
+import { emitEvent } from './util/events';
 import { internetConnectionChecker } from './util/internet';
 import { log } from './util/logging';
-import { initPowermonitor } from './util/powermonitor';
 import { initPuppeteerConnection } from './util/puppeteer';
 
 /**
@@ -28,7 +29,6 @@ if (require('electron-squirrel-startup')) {
 initFarmsManagement();
 initPuppeteerConnection();
 initUpdater();
-initPowermonitor();
 
 /**
  * Gets executed when electron has finished starting.
@@ -127,4 +127,20 @@ app.on('quit', () => {
  */
 app.on('window-all-closed', () => {
     if (process.platform != 'darwin') app.quit();
+});
+
+/**
+ * When client goes to sleep.
+ */
+powerMonitor.on('suspend', () => {
+    log('info', 'PC went to sleep');
+    emitEvent(EventChannels.PCWentToSleep);
+});
+
+/**
+ * When client wakes up.
+ */
+powerMonitor.on('resume', () => {
+    log('info', 'PC woke up');
+    emitEvent(EventChannels.PCWokeUp);
 });

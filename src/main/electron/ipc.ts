@@ -78,8 +78,8 @@ handleAndReply(IpcChannels.getApplicationVersion, () => {
 handleOneWay(IpcChannels.clearCache, (event, id) => {
     const farm = getFarmById(id);
     if (farm != undefined) {
-        sendToast(
-            {
+        sendToast({
+            toast: {
                 type: 'basic',
                 id: `cleared-cache-${farm.id}`,
                 textOnSuccess: `Cleared cache for ${removeTypeFromText(
@@ -90,20 +90,20 @@ handleOneWay(IpcChannels.clearCache, (event, id) => {
                 )}}.`,
                 duration: 4000
             },
-            async () => {
+            callback: async () => {
                 await farm.restartScheduler(undefined, async () => {
                     await farm.clearCache();
                 });
             }
-        );
+        });
     }
 });
 
 handleOneWay(IpcChannels.restartScheduler, (event, name) => {
     const farm = getFarmById(name);
     if (farm != undefined) {
-        sendToast(
-            {
+        sendToast({
+            toast: {
                 type: 'basic',
                 id: `restart-schedule-${farm.id}`,
                 textOnSuccess: `Restarted schedule for ${removeTypeFromText(
@@ -114,9 +114,9 @@ handleOneWay(IpcChannels.restartScheduler, (event, name) => {
                 )}}.`,
                 duration: 4000
             },
-            async () => {
+            callback: async () => {
                 await farm.restartScheduler();
             }
-        );
+        });
     }
 });

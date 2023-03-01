@@ -13,7 +13,10 @@ const logManager = createLogManager();
 /**
  * Add a file appender to the logger so it also gets logged to a file.
  */
-logManager.createFileAppender({ logFilePath: filePath });
+logManager.createFileAppender({
+    logFilePath: filePath,
+    timestampFormat: 'DD-MM-YYYY HH:mm:ss.SSS'
+});
 
 const logger: SimpleLogger.Logger = logManager.createLogger();
 
