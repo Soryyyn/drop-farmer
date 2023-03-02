@@ -2,7 +2,7 @@ import { getFarms } from '@main/farming/management';
 import FarmTemplate from '@main/farming/template';
 import { log } from '@main/util/logging';
 import { getBrowserConnection, gotoURL } from '@main/util/puppeteer';
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { resolve } from 'path';
 import { getPage } from 'puppeteer-in-electron';
 import { getSettingValue } from '../util/settings';
@@ -236,3 +236,13 @@ function muteWindow(window: Electron.BrowserWindow): Promise<void> {
 export function setAppQuitting(quitting: boolean): void {
     appQuitting = quitting;
 }
+
+/**
+ * Listen for window closing.
+ */
+app.on('render-process-gone', (event, webContents, details) => {
+    log(
+        'warn',
+        `Renderer ${webContents.id} gone, reason: ${details.reason} with exit code ${details.exitCode}`
+    );
+});
