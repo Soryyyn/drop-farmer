@@ -108,11 +108,6 @@ app.whenReady().then(() => {
 app.on('before-quit', async () => {
     destroyTray();
     await stopFarms();
-
-    /**
-     * Hard quit the app.
-     */
-    process.exit();
 });
 
 /**

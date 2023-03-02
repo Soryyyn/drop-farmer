@@ -4906,6 +4906,11 @@ lzma-native@^8.0.5:
     node-gyp-build "^4.2.1"
     readable-stream "^3.6.0"
 
+make-cancellable-promise@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/make-cancellable-promise/-/make-cancellable-promise-1.2.1.tgz#b644fbc1ead91ef4968ac63da762476a462732ac"
+  integrity sha512-nigEn7brgUhjUb2lEobWUW4ZiJdIZ/Wct0UsmDsqaZhgLMvY1OC6FGLa/5SU2RvnyuilkjM7g5JGxt6CJZQGNw==
+
 make-dir@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-2.1.0.tgz#5f0310e18b8be898cc07009295a30ae41e91e6f5"

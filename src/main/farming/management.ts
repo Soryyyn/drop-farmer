@@ -141,6 +141,8 @@ export function stopFarms(id?: string): Promise<void> {
     return new Promise((resolve) => {
         farms.forEach(async (farm) => {
             if (id === farm.id) {
+                farm.runningSchedule?.cancel();
+
                 farm.scheduler.stopAll();
 
                 farm.timer.stopTimer();
