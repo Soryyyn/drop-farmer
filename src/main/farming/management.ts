@@ -22,6 +22,7 @@ import {
     setSettingValue
 } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
+import { app } from 'electron';
 import LeagueOfLegends from './farms/leagueOfLegends';
 import TwitchStreamer from './farms/twitchStreamer';
 import YoutubeStream from './farms/youtubeStream';
@@ -377,14 +378,10 @@ listenForEvent(EventChannels.PCWentToSleep, async () => {
 });
 
 listenForEvent(EventChannels.PCWokeUp, async () => {
-    log('warn', 'Starting farms again because PC woke up');
+    log('warn', 'Starting farms again because PC woke up, relaunching app');
 
-    /**
-     * Reconnect puppeteer to electron.
-     */
-    await connectToElectron();
-
-    farms.forEach(async (farm) => await farm.restartScheduler());
+    app.relaunch();
+    app.quit();
 });
 
 listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
