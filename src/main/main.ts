@@ -138,4 +138,14 @@ powerMonitor.on('suspend', () => {
 powerMonitor.on('resume', () => {
     log('info', 'PC woke up');
     emitEvent(EventChannels.PCWokeUp);
+
+    log('warn', 'Starting farms again because PC woke up, relaunching app');
+
+    app.relaunch();
+
+    /**
+     * Need to call quit here, else the currently running app will continue running.
+     */
+    setAppQuitting(true);
+    app.quit();
 });

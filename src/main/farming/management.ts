@@ -375,17 +375,6 @@ handleAndReply(IpcChannels.getFarms, () => {
     return getFarmsRendererData();
 });
 
-listenForEvent(EventChannels.PCWentToSleep, async () => {
-    log('warn', 'Stopping farms because PC went to sleep');
-});
-
-listenForEvent(EventChannels.PCWokeUp, async () => {
-    log('warn', 'Starting farms again because PC woke up, relaunching app');
-
-    app.relaunch();
-    app.quit();
-});
-
 listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
     sendOneWay(IpcChannels.farmLogin, {
         id: event[0].id,
