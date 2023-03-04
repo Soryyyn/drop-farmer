@@ -6,8 +6,7 @@
     "version": "1.0.0-beta42",
     "main": ".webpack/main",
     "scripts": {
-        "start": "set CLEAR_CACHE=0 && set MINIMIZE=0 && electron-forge start",
-        "start:fresh": "set CLEAR_CACHE=1 && set MINIMIZE=0 && electron-forge start",
+        "start": "set MINIMIZE=0 && electron-forge start",
         "make": "electron-forge make",
         "publish": "electron-forge publish",
         "prepare": "husky install",

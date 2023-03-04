@@ -1,28 +1,18 @@
-import {
-    EventChannels,
-    IpcChannels,
-    RegularExpressions,
-    Toasts
-} from '@main/common/constants';
+import { EventChannels, RegularExpressions } from '@main/common/constants';
 import {
     getTypeFromText,
     isValidURL,
     removeTypeFromText
 } from '@main/common/string.helper';
-import { handleAndReply, handleOneWay, sendOneWay } from '@main/electron/ipc';
-import { formattedStringToDate, ISOStringToDate } from '@main/util/calendar';
-import { emitEvent, listenForEvent } from '@main/util/events';
+import { formattedStringToDate } from '@main/util/calendar';
+import { emitEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
-import { connectToElectron } from '@main/util/puppeteer';
 import {
     deleteAllOwnerSettings,
-    getMergedSettings,
     getSettings,
     getSettingValue,
     setSettingValue
 } from '@main/util/settings';
-import { sendToast } from '@main/util/toast';
-import { app } from 'electron';
 import LeagueOfLegends from './farms/leagueOfLegends';
 import TwitchStreamer from './farms/twitchStreamer';
 import YoutubeStream from './farms/youtubeStream';
@@ -170,7 +160,7 @@ export function stopFarms(id?: string): Promise<void> {
 /**
  * Delete a farm by id.
  */
-async function deleteFarm(id: string) {
+export async function deleteFarm(id: string) {
     const index = farms.findIndex((farm) => farm.id === id);
     await stopFarms(id);
     farms.splice(index, 1);
@@ -248,7 +238,7 @@ function validateNewFarm(farm: NewFarm): Error | undefined {
 /**
  * Add a new farm with data given.
  */
-async function addNewFarm(farm: NewFarm): Promise<void> {
+export async function addNewFarm(farm: NewFarm): Promise<void> {
     const validation = validateNewFarm(farm);
 
     if (validation === undefined) {
@@ -307,85 +297,3 @@ async function addNewFarm(farm: NewFarm): Promise<void> {
         throw validation;
     }
 }
-
-handleOneWay(IpcChannels.addNewFarm, async (event, farm: NewFarm) => {
-    sendToast({
-        toast: {
-            id: Toasts.FarmCreation,
-            type: 'promise',
-            duration: 4000,
-            textOnSuccess: `Successfully created farm ${removeTypeFromText(
-                farm.id
-            )}`,
-            textOnLoading: `Creating farm ${removeTypeFromText(farm.id)}...`,
-            textOnError: `Failed creating farm`
-        },
-        promise: addNewFarm(farm)
-    });
-});
-
-handleOneWay(IpcChannels.deleteFarm, (event, id) => {
-    sendToast({
-        toast: {
-            id: Toasts.FarmDeletion,
-            type: 'promise',
-            duration: 4000,
-            textOnSuccess: `Successfully deleted farm ${removeTypeFromText(
-                id
-            )}`,
-            textOnLoading: `Deleting farm ${removeTypeFromText(id)}...`,
-            textOnError: `Failed deleting farm`
-        },
-        promise: deleteFarm(id)
-    });
-});
-
-handleOneWay(IpcChannels.resetFarmingConditions, async (event, id) => {
-    const farm = getFarmById(id);
-
-    sendToast({
-        toast: {
-            id: Toasts.FarmResetConditions,
-            type: 'promise',
-            duration: 4000,
-            textOnSuccess: `Reset farming conditions for farm ${removeTypeFromText(
-                farm?.id!
-            )}`,
-            textOnError: `Failed resetting farming conditions for farm ${removeTypeFromText(
-                farm?.id!
-            )}`,
-            textOnLoading: `Resetting farming conditions for farm ${removeTypeFromText(
-                farm?.id!
-            )}...`
-        },
-        promise: new Promise(async (resolve, reject) => {
-            try {
-                await farm?.restartScheduler();
-                farm?.resetConditions();
-
-                resolve(undefined);
-            } catch (error) {
-                reject(error);
-            }
-        })
-    });
-});
-
-handleAndReply(IpcChannels.getFarms, () => {
-    return getFarmsRendererData();
-});
-
-listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
-    sendOneWay(IpcChannels.farmLogin, {
-        id: event[0].id,
-        needed: event[0].needed
-    });
-});
-
-/**
- * Once farms changed notify renderer about new settings and farms.
- */
-listenForEvent(EventChannels.FarmsChanged, () => {
-    sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
-    sendOneWay(IpcChannels.settingsChanged, getMergedSettings());
-});

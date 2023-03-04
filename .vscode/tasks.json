@@ -26,16 +26,6 @@
         },
         {
             "type": "shell",
-            "label": "Start fresh",
-            "command": "yarn start:fresh || npm run start:fresh",
-            "problemMatcher": [],
-            "presentation": {
-                "showReuseMessage": false,
-                "clear": false
-            }
-        },
-        {
-            "type": "shell",
             "label": "Lint",
             "command": "yarn lint || npm run lint",
             "problemMatcher": [],
