@@ -5,11 +5,15 @@ import {
     addNewFarm,
     deleteFarm,
     getFarmById,
-    getFarmsRendererData
+    getFarms,
+    getFarmsRendererData,
+    stopFarms
 } from '@main/farming/management';
 import { listenForEvent } from '@main/util/events';
+import { connectToElectron } from '@main/util/puppeteer';
 import { getMergedSettings } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
+import { log } from 'console';
 
 handleOneWay(IpcChannels.addNewFarm, async (event, farm: NewFarm) => {
     sendToast({
@@ -145,4 +149,17 @@ listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
 listenForEvent(EventChannels.FarmsChanged, () => {
     sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
     sendOneWay(IpcChannels.settingsChanged, getMergedSettings());
+});
+
+listenForEvent(EventChannels.PCWentToSleep, async () => {
+    log('warn', 'Stopping farms (if possible)');
+
+    await stopFarms();
+});
+
+listenForEvent(EventChannels.PCWokeUp, async () => {
+    log('warn', 'Restarting farms for wakeup');
+
+    connectToElectron();
+    getFarms().forEach(async (farm) => await farm.restartScheduler());
 });

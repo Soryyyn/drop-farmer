@@ -13,6 +13,10 @@ let browserConnection: puppeteer.Browser;
  */
 export async function connectToElectron() {
     browserConnection = await connect(app, puppeteer);
+    log(
+        'info',
+        `Connected puppeteer to electron, connection: ${browserConnection.isConnected}`
+    );
 }
 
 /**
@@ -21,7 +25,7 @@ export async function connectToElectron() {
 export async function initPuppeteerConnection() {
     await initialize(app);
     connectToElectron();
-    log('info', 'Connected puppeteer to electron application');
+    log('info', 'Initialized puppeteer connection');
 }
 
 /**
@@ -29,6 +33,10 @@ export async function initPuppeteerConnection() {
  */
 export function getBrowserConnection(): Browser {
     return browserConnection;
+}
+
+export function disconnectPuppeteer(): void {
+    browserConnection.disconnect();
 }
 
 /**
