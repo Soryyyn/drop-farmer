@@ -297,8 +297,11 @@ listenForEvent(EventChannels.PCWentToSleep, async () => {
 });
 
 listenForEvent(EventChannels.PCWokeUp, async () => {
-    log('warn', 'Restarting farms for wakeup');
+    log('warn', 'Restarting app for wakeup');
 
-    connectToElectron();
-    getFarms().forEach(async (farm) => await farm.restartScheduler());
+    await stopFarms();
+
+    setAppQuitting(true);
+    app.relaunch();
+    app.exit();
 });
