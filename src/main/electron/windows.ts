@@ -26,11 +26,9 @@ let mainWindow: BrowserWindow;
 let appQuitting: boolean = false;
 
 /**
- * Creates the main react window.
- *
- * @param {boolean} isProd If the app is run in production environment.
+ * Creates the main window.
  */
-export function createMainWindow(isProd: boolean): void {
+export function createMainWindow(): void {
     mainWindow = new BrowserWindow({
         icon: resolve(
             __dirname,
@@ -51,7 +49,7 @@ export function createMainWindow(isProd: boolean): void {
         },
         webPreferences: {
             preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-            devTools: !isProd,
+            devTools: process.env.NODE_ENV === 'development',
             sandbox: false
         }
     });
@@ -74,14 +72,18 @@ export function createMainWindow(isProd: boolean): void {
         ) {
             log(
                 'info',
-                `Created main window (shown) ${!isProd ? 'in dev mode' : ''}`
+                `Created main window (shown) ${
+                    process.env.NODE_ENV === 'development' ? 'in dev mode' : ''
+                }`
             );
             mainWindow.show();
             mainWindow.focus();
         } else {
             log(
                 'info',
-                `Created main window (hidden) ${!isProd ? 'in dev mode' : ''}`
+                `Created main window (hidden) ${
+                    process.env.NODE_ENV === 'development' ? 'in dev mode' : ''
+                }`
             );
         }
     });

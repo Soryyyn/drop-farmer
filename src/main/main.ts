@@ -1,20 +1,15 @@
 import { app, powerMonitor } from 'electron';
 import { EventChannels } from './common/constants';
+import './electron/ipc';
 import { handleClientShutdown } from './electron/shutdownHandler';
 import { createTray, destroyTray } from './electron/tray';
 import { initUpdater } from './electron/update';
-import { createMainWindow, setAppQuitting } from './electron/windows';
+import { createMainWindow } from './electron/windows';
 import { initFarmsManagement, stopFarms } from './farming/management';
-import './ipcAndEvents/index';
 import { emitEvent } from './util/events';
-import { internetConnectionChecker } from './util/internet';
+import './util/internet';
 import { log } from './util/logging';
 import { initPuppeteerConnection } from './util/puppeteer';
-
-/**
- * If application is in run in production environment.
- */
-const inProd: boolean = process.env.NODE_ENV === 'production';
 
 /**
  * Handling the creating/deletion of shortcuts when installing/uninstalling via squirrel.
@@ -32,9 +27,8 @@ initUpdater();
  * Some API's might only be available after it has started.
  */
 app.whenReady().then(() => {
-    createTray(inProd);
-    createMainWindow(inProd);
-    internetConnectionChecker();
+    createTray();
+    createMainWindow();
     handleClientShutdown();
 });
 

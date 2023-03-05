@@ -1,51 +1,60 @@
-import { IpcChannels } from '@main/common/constants';
-import { sendOneWay } from '@main/electron/ipc';
+import { Schedules, Toasts } from '@main/common/constants';
+import CrontabManager from 'cron-job-manager';
 import isOnline from 'is-online';
 import { log } from './logging';
 import { sendToast } from './toast';
 
-/**
- * The current internet connection.
- */
-let internetConnection: boolean = false;
+const schedule: number = 2;
+let isConnectedToInternet: boolean = true;
 
 /**
- * Repeatedly (every 5s) check the internet connection and notify via ipc.
+ * Cron timer to check if the user still connected.
  */
-export function internetConnectionChecker(): void {
-    isOnline()
-        .then((connection: boolean) => {
-            internetConnection = connection;
+export async function internetConectionListener(): Promise<void> {
+    const lastConnectionStatus = isConnectedToInternet;
+    isConnectedToInternet = await isOnline();
 
-            /**
-             * If user has no internet connection, notify via toast.
-             */
-            if (!connection) {
-                sendToast({
-                    toast: {
-                        type: 'error',
-                        id: 'no-internet',
-                        textOnError: 'No internet connection.',
-                        duration: 4000
-                    }
-                });
-
-                sendOneWay(IpcChannels.internet, false);
-            }
-        })
-        .catch((err) => {
-            log('error', `Error checking internet connection. ${err}`);
-        });
+    log(
+        'info',
+        `Checked for internet connection, connection: ${isConnectedToInternet.toString()}`
+    );
 
     /**
-     * Recursive calling.
+     * If no change in connection.
      */
-    setTimeout(internetConnectionChecker, 15000);
+    if (isConnectedToInternet === lastConnectionStatus) {
+        return;
+    }
+
+    if (!isConnectedToInternet && lastConnectionStatus) {
+        sendToast({
+            toast: {
+                type: 'error',
+                id: Toasts.InternetConnection,
+                textOnError: 'No internet connection',
+                duration: Infinity
+            }
+        });
+    } else if (isConnectedToInternet && !lastConnectionStatus) {
+        sendToast({
+            toast: {
+                type: 'success',
+                id: Toasts.InternetConnection,
+                textOnError: 'Connected to internet',
+                duration: 4000
+            }
+        });
+    }
 }
 
 /**
- * Returns the current internet connection.
+ * Set up the cron schedule.
  */
-export async function getCurrentInternetConnection(): Promise<boolean> {
-    return internetConnection;
-}
+new CrontabManager(
+    Schedules.InternetConnection,
+    `*/${schedule} * * * *`,
+    internetConectionListener,
+    {
+        start: true
+    }
+);

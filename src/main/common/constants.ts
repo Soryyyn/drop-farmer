@@ -4,7 +4,8 @@ export const Toasts = {
     FarmDeletion: 'farm-deletion',
     FarmResetConditions: 'farm-reset-conditions',
     SettingsReset: 'settings-reset',
-    SettingsSaving: 'settings-saving'
+    SettingsSaving: 'settings-saving',
+    InternetConnection: 'internet-connection'
 } as const;
 export type Toast = (typeof Toasts)[keyof typeof Toasts];
 
@@ -51,7 +52,8 @@ export type FileName = (typeof FileNames)[keyof typeof FileNames];
 
 export const Schedules = {
     CheckToFarm: 'check-to-farm',
-    Update: 'update'
+    Update: 'update',
+    InternetConnection: 'internet-connection'
 } as const;
 export type Schedule = (typeof Schedules)[keyof typeof Schedules];
 

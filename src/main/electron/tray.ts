@@ -10,10 +10,8 @@ let tray: Tray;
 
 /**
  * Create the tray on app start.
- *
- * @param {boolean} isProd If the app is run in production environment.
  */
-export function createTray(isProd: boolean): void {
+export function createTray(): void {
     tray = new Tray(getTrayicon());
 
     const contextMenu = Menu.buildFromTemplate([
@@ -48,7 +46,11 @@ export function createTray(isProd: boolean): void {
     /**
      * Set tooltip and context menu.
      */
-    tray.setToolTip(`drop-farmer ${!isProd ? '(dev environment)' : ''}`);
+    tray.setToolTip(
+        `drop-farmer ${
+            process.env.NODE_ENV === 'production' ? '' : '(dev environment)'
+        }`
+    );
     tray.setContextMenu(contextMenu);
 
     /**

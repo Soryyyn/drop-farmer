@@ -15,7 +15,7 @@ export async function connectToElectron() {
     browserConnection = await connect(app, puppeteer);
     log(
         'info',
-        `Connected puppeteer to electron, connection: ${browserConnection.isConnected}`
+        `Connected puppeteer to electron, connection: ${browserConnection.isConnected()}`
     );
 }
 
