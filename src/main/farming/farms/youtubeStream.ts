@@ -97,13 +97,9 @@ export default class YoutubeStream extends FarmTemplate {
                 /**
                  * Check if user agreement is shown.
                  */
-                const userAgreementSelector =
-                    '#yDmH0d > c-wiz > div > div > div > div.NIoIEf > div.G4njw > div.qqtRac > div.VtwTSb > form:nth-child(3) > div > div > button > div.VfPpkd-RLmnJb';
-
-                if (await doesElementExist(page, userAgreementSelector)) {
-                    await page.click(userAgreementSelector);
+                if (await pageUrlContains(page, 'consent.youtube.com')) {
+                    await page.click('div.VfPpkd-Jh9lGc');
                     await page.waitForNavigation();
-
                     log('info', `${this.id}: Accepted user agreement`);
                 }
 
