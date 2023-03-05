@@ -40,7 +40,6 @@
         "@electron-forge/plugin-auto-unpack-natives": "^6.0.5",
         "@electron-forge/plugin-webpack": "6.0.5",
         "@electron-forge/publisher-github": "^6.0.5",
-        "@fortawesome/fontawesome-svg-core": "^6.2.0",
         "@types/auto-launch": "^5.0.2",
         "@types/lodash.clonedeep": "^4.5.7",
         "@types/lodash.isequal": "^4.5.6",

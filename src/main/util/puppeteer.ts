@@ -6,13 +6,13 @@ import { log } from './logging';
 /**
  * The connection to the electron application.
  */
-let browserConnection: puppeteer.Browser;
+let browserConnection: Browser;
 
 /**
  * (Re-) Connect the puppeteer controller to the electron app.
  */
 export async function connectToElectron() {
-    browserConnection = await connect(app, puppeteer);
+    browserConnection = await connect(app, puppeteer as any);
     log(
         'info',
         `Connected puppeteer to electron, connection: ${browserConnection.isConnected()}`
