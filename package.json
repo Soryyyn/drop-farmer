@@ -59,7 +59,7 @@
         "lodash.get": "^4.4.2",
         "node-loader": "^2.0.0",
         "postcss": "^8.4.19",
-        "postcss-loader": "^7.0.1",
+        "postcss-loader": "^7.0.2",
         "sass": "^1.57.0",
         "sass-loader": "^13.1.0",
         "style-loader": "^3.3.1",
