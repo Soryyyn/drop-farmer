@@ -45,6 +45,7 @@ app.on('before-quit', async () => {
  */
 app.on('quit', () => {
     log('info', 'Quitting application');
+    process.exit();
 });
 
 /**

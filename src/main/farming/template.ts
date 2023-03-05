@@ -97,6 +97,8 @@ export default abstract class FarmTemplate {
                 this.runningSchedule = makeCancellablePromise(
                     this.farmingSchedule()
                 );
+
+                await this.runningSchedule.promise;
             }
         );
 
@@ -384,11 +386,17 @@ export default abstract class FarmTemplate {
         };
     }
 
+    /**
+     * Update the status of a farm.
+     */
     protected updateStatus(status: FarmStatus): void {
         this.status = status;
         sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
     }
 
+    /**
+     * Update the checking schedule.
+     */
     protected updateSchedule(schedule: number): void {
         this.schedule = schedule;
 
@@ -420,8 +428,11 @@ export default abstract class FarmTemplate {
     disable(): void {
         this.enabled = false;
         this.updateStatus('disabled');
-        this.runningSchedule?.cancel();
+
+        this.cancelFarmingSchedule();
+
         this.scheduler.stopAll();
+
         this.destroyAllWindows();
 
         /**
@@ -430,6 +441,25 @@ export default abstract class FarmTemplate {
         this.timer.stopTimer();
     }
 
+    /**
+     * Stop the farm and all its thingies.
+     */
+    async stop(): Promise<void> {
+        this.cancelFarmingSchedule();
+
+        this.scheduler.stopAll();
+
+        this.updateConditions();
+        this.timer.stopTimer();
+
+        await this.destroyAllWindows();
+
+        log('info', `${this.id}: Stopped farm`);
+    }
+
+    /**
+     * Destroy the checker window.
+     */
     protected destroyChecker() {
         if (this.checker) {
             destroyWindow(this.checker);
@@ -873,6 +903,7 @@ export default abstract class FarmTemplate {
                             `${this.id}: Condition fulfilled, will not farm`
                         );
                         this.updateStatus('condition-fulfilled');
+                        resolve();
                         break;
                     case 'farm':
                         this.createCheckerWindow()
@@ -952,5 +983,17 @@ export default abstract class FarmTemplate {
                 resolve();
             }
         });
+    }
+
+    /**
+     * Cancel the farming schedule if it's running.
+     */
+    private cancelFarmingSchedule(): void {
+        if (this.runningSchedule) {
+            this.runningSchedule?.cancel();
+            this.runningSchedule = undefined;
+
+            log('info', `${this.id}: Canceled farming schedule`);
+        }
     }
 }

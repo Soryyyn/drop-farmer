@@ -130,26 +130,11 @@ export function getFarmsRendererData(): FarmRendererData[] {
 export function stopFarms(id?: string): Promise<void> {
     return new Promise((resolve) => {
         farms.forEach(async (farm) => {
-            if (id === farm.id) {
-                farm.runningSchedule?.cancel();
-
-                farm.scheduler.stopAll();
-
-                farm.timer.stopTimer();
-                farm.updateConditions();
-
-                await farm.destroyAllWindows();
-
-                log('info', `Stopped farm ${farm.id}`);
-                resolve();
+            if (id && id === farm.id) {
+                await farm.stop();
             }
 
-            farm.scheduler.stopAll();
-
-            farm.timer.stopTimer();
-            farm.updateConditions();
-
-            await farm.destroyAllWindows();
+            await farm.stop();
         });
 
         log('info', 'Stopped all farms');

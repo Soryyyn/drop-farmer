@@ -45,7 +45,6 @@ export default class YoutubeStream extends FarmTemplate {
         return new Promise<any>(async (resolve, reject) => {
             try {
                 const page = await getPage(getBrowserConnection(), window);
-                await page.waitForNetworkIdle();
                 await waitForTimeout(10000);
 
                 /**
@@ -92,21 +91,18 @@ export default class YoutubeStream extends FarmTemplate {
 
             try {
                 const page = await getPage(getBrowserConnection(), window);
-                await page.waitForNetworkIdle();
 
                 /**
                  * Check if user agreement is shown.
                  */
                 if (await pageUrlContains(page, 'consent.youtube.com')) {
                     await page.click('div.VfPpkd-Jh9lGc');
-                    await page.waitForNavigation();
                     log('info', `${this.id}: Accepted user agreement`);
                 }
 
                 /**
                  * Small timeout for safety.
                  */
-                await page.waitForNetworkIdle();
                 await waitForTimeout(1000);
 
                 /**
@@ -182,7 +178,6 @@ export default class YoutubeStream extends FarmTemplate {
             try {
                 if (this.farmers.length === 0) {
                     const page = await getPage(getBrowserConnection(), window);
-                    await page.waitForNetworkIdle();
 
                     /**
                      * Re-route to checker route for safety.
