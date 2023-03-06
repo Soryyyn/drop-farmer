@@ -96,17 +96,18 @@ handleOneWay(
                 try {
                     updateSettings(extractMergedSettings(settingsToSave));
                     applySettingsToFarms();
+
+                    sendOneWay(
+                        IpcChannels.settingsChanged,
+                        getMergedSettings()
+                    );
+
                     resolve(undefined);
                 } catch (err) {
                     reject(err);
                 }
             })
         });
-
-        /**
-         * Notify renderer of settings changed.
-         */
-        sendOneWay(IpcChannels.settingsChanged, getMergedSettings());
     }
 );
 
@@ -131,17 +132,18 @@ handleOneWay(
                     );
                     applySettingsToFarms();
                     resetSettingsToDefaultValues(currentSettings);
+
+                    sendOneWay(
+                        IpcChannels.settingsChanged,
+                        getMergedSettings()
+                    );
+
                     resolve(undefined);
                 } catch (err) {
                     reject(err);
                 }
             })
         });
-
-        /**
-         * Notify renderer of settings changed.
-         */
-        sendOneWay(IpcChannels.settingsChanged, getMergedSettings());
     }
 );
 

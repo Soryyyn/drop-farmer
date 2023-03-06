@@ -1,13 +1,7 @@
 import { Menu as HeadlessMenu } from '@headlessui/react';
 import { AlignmentContext } from '@renderer/util/contexts';
 import clsx from 'clsx';
-import React, {
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState
-} from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 export type MenuEntry = {
     type: 'normal' | 'seperator';
@@ -90,12 +84,14 @@ export default function Menu({ button, entries, fullWidth, disabled }: Props) {
                                 key={index}
                                 as="div"
                                 className={clsx(
-                                    'flex flex-row gap-2 rounded leading-none py-1.5 pr-2 hover:bg-pepper-400 active:bg-pepper-500 text-snow-500 cursor-pointer min-w-[200px]',
+                                    'flex flex-row gap-2 rounded leading-none py-1.5 pr-2 hover:bg-pepper-400 active:bg-pepper-500 cursor-pointer min-w-[200px]',
                                     {
                                         'pl-2': !entry.icon
                                     },
                                     entry.styling,
                                     {
+                                        'text-snow-500':
+                                            !disabled && !entry.caution,
                                         'text-blood-400': entry.caution,
                                         'text-snow-500/50 cursor-default':
                                             entry.disabled && !entry.caution,
