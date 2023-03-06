@@ -1,7 +1,7 @@
 import { log } from '@main/util/logging';
 import { app, Menu, NativeImage, nativeImage, Tray } from 'electron';
 import { resolve } from 'path';
-import { getMainWindow, setAppQuitting, showWindow } from './windows';
+import { getMainWindow, showWindow } from './windows';
 
 /**
  * The tray object reference.
@@ -37,7 +37,6 @@ export function createTray(): void {
             label: 'Quit drop-farmer',
             type: 'normal',
             click: () => {
-                setAppQuitting(true);
                 app.quit();
             }
         }

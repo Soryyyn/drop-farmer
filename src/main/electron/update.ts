@@ -4,17 +4,14 @@ import {
     Schedules,
     Toasts
 } from '@main/common/constants';
-import { stopFarms } from '@main/farming/management';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { getSettingValue } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
 import CrontabManager from 'cron-job-manager';
 import { app, autoUpdater } from 'electron';
-// import { getSetting } from '../util/settings';
+import { handleAppBeforeQuit } from './appEvents';
 import { handleOneWay, sendOneWay } from './ipc';
-import { destroyTray } from './tray';
-import { setAppQuitting } from './windows';
 
 let displayToasts: boolean = false;
 
@@ -86,7 +83,6 @@ handleOneWay(IpcChannels.updateCheck, () => {
     autoUpdater.checkForUpdates();
 });
 handleOneWay(IpcChannels.installUpdate, () => {
-    setAppQuitting(true);
     autoUpdater.quitAndInstall();
 });
 
@@ -155,8 +151,7 @@ autoUpdater.on('update-downloaded', () => {
 });
 
 autoUpdater.on('before-quit-for-update', async () => {
-    destroyTray();
-    await stopFarms();
+    await handleAppBeforeQuit();
 });
 
 autoUpdater.on('error', (err) => {

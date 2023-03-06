@@ -128,14 +128,17 @@ export function getFarmsRendererData(): FarmRendererData[] {
  * Stop all farms and their things.
  */
 export function stopFarms(id?: string): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
+        const toStop: Promise<any>[] = [];
+
         farms.forEach(async (farm) => {
             if (id && id === farm.id) {
-                await farm.stop();
+                toStop.push(farm.stop());
             }
-
-            await farm.stop();
+            toStop.push(farm.stop());
         });
+
+        await Promise.all(toStop);
 
         log('info', 'Stopped all farms');
         resolve();

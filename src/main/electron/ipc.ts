@@ -10,13 +10,12 @@ import {
     applySettingsToFarms,
     deleteFarm,
     getFarmById,
-    getFarms,
     getFarmsRendererData,
     stopFarms
 } from '@main/farming/management';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
-import { connectToElectron, disconnectPuppeteer } from '@main/util/puppeteer';
+import { disconnectPuppeteer } from '@main/util/puppeteer';
 import {
     extractMergedSettings,
     getMergedSettings,
@@ -25,7 +24,7 @@ import {
 } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
 import { app, ipcMain, shell } from 'electron';
-import { getMainWindow, setAppQuitting } from './windows';
+import { getMainWindow } from './windows';
 
 /**
  * Function for handling a one-way signal coming from the renderer process.
@@ -68,7 +67,6 @@ handleOneWay(IpcChannels.openLinkInExternal, (event, link: string) => {
 });
 
 handleOneWay(IpcChannels.shutdown, () => {
-    setAppQuitting(true);
     app.quit();
 });
 
@@ -301,9 +299,6 @@ listenForEvent(EventChannels.PCWentToSleep, async () => {
 listenForEvent(EventChannels.PCWokeUp, async () => {
     log('warn', 'Restarting app for wakeup');
 
-    await stopFarms();
-
-    setAppQuitting(true);
     app.relaunch();
-    app.exit();
+    app.quit();
 });

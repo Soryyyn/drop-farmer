@@ -6,6 +6,7 @@ import { app, BrowserWindow } from 'electron';
 import { resolve } from 'path';
 import { getPage } from 'puppeteer-in-electron';
 import { getSettingValue } from '../util/settings';
+import { getIsQuitting } from './appEvents';
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -19,11 +20,6 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
  * The main window reference.
  */
 let mainWindow: BrowserWindow;
-
-/**
- * To control wether the app is quitting or just the "closing" the main window.
- */
-let appQuitting: boolean = false;
 
 /**
  * Creates the main window.
@@ -94,7 +90,7 @@ export function createMainWindow(): void {
      */
     mainWindow.on('close', (event) => {
         event.preventDefault();
-        if (!appQuitting) {
+        if (!getIsQuitting()) {
             hideWindow(mainWindow, true);
 
             /**
@@ -232,15 +228,6 @@ function muteWindow(window: Electron.BrowserWindow): Promise<void> {
         window.webContents.setAudioMuted(true);
         resolve();
     });
-}
-
-/**
- * Determine wether the app is quitting or just closing.
- *
- * @param {boolean} quitting The new quitting status.
- */
-export function setAppQuitting(quitting: boolean): void {
-    appQuitting = quitting;
 }
 
 /**
