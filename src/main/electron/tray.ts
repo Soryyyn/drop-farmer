@@ -66,13 +66,17 @@ export function createTray(): void {
 /**
  * Destroy the tray.
  */
-export function destroyTray(): void {
-    try {
-        tray.destroy();
-        log('info', 'Destroyed tray');
-    } catch (err) {
-        log('error', `Failed destroying tray. "${err}"`);
-    }
+export async function destroyTray(): Promise<void> {
+    return new Promise((resolve) => {
+        try {
+            tray.destroy();
+            log('info', 'Destroyed tray');
+        } catch (err) {
+            log('error', `Failed destroying tray. "${err}"`);
+        }
+
+        resolve();
+    });
 }
 
 /**

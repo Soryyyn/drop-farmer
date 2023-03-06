@@ -4,7 +4,7 @@ import './electron/ipc';
 import { handleClientShutdown } from './electron/shutdownHandler';
 import { createTray, destroyTray } from './electron/tray';
 import { initUpdater } from './electron/update';
-import { createMainWindow } from './electron/windows';
+import { createMainWindow, setAppQuitting } from './electron/windows';
 import { initFarmsManagement, stopFarms } from './farming/management';
 import { emitEvent } from './util/events';
 import './util/internet';
@@ -36,7 +36,7 @@ app.whenReady().then(() => {
  * Quitting routine.
  */
 app.on('before-quit', async () => {
-    destroyTray();
+    await destroyTray();
     await stopFarms();
 });
 

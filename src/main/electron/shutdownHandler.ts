@@ -21,7 +21,7 @@ export function handleClientShutdown(): void {
         /**
          * Stop all cron jobs, to prevent unfulfilled promises.
          */
-        destroyTray();
+        await destroyTray();
         await stopFarms();
 
         /**
