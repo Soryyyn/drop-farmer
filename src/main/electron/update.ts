@@ -155,7 +155,7 @@ autoUpdater.on('update-downloaded', () => {
 });
 
 autoUpdater.on('before-quit-for-update', async () => {
-    await destroyTray();
+    destroyTray();
     await stopFarms();
 });
 
