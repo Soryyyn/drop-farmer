@@ -190,13 +190,15 @@ export function showWindow(
     window: Electron.BrowserWindow,
     isMainWindow: boolean
 ): void {
-    log(
-        'info',
-        `Showing window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
-    );
+    if (window) {
+        log(
+            'info',
+            `Showing window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
+        );
 
-    window.show();
-    window.focus();
+        window.show();
+        window.focus();
+    }
 }
 
 /**
@@ -209,12 +211,14 @@ export function hideWindow(
     window: Electron.BrowserWindow,
     isMainWindow: boolean
 ): void {
-    log(
-        'info',
-        `Hidding window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
-    );
+    if (window) {
+        log(
+            'info',
+            `Hidding window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
+        );
 
-    window.hide();
+        window.hide();
+    }
 }
 
 /**
