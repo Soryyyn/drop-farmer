@@ -77,20 +77,20 @@ export function handleAppQuit(): void {
  * Handle the client going to sleep.
  */
 export async function handlePCSleep(): Promise<void> {
-    log('info', 'PC went to sleep');
+    log('warn', 'PC went to sleep');
 }
 
 /**
  * Handle the client waking back up.
  */
 export async function handlePCWakeUp(): Promise<void> {
-    log('info', 'PC woke up');
+    log('warn', 'PC woke up');
 
     /**
      * Relaunch the app.
      */
     app.relaunch();
-    log('info', 'Relaunching app for wakeup');
+    log('warn', 'Relaunching app for wakeup');
 
     app.quit();
 }
