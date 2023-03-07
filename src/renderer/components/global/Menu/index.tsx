@@ -1,5 +1,5 @@
 import { Menu as HeadlessMenu } from '@headlessui/react';
-import { AlignmentContext } from '@renderer/util/contexts';
+import { ModalContext } from '@renderer/util/contexts';
 import clsx from 'clsx';
 import React, { useCallback, useContext, useState } from 'react';
 
@@ -28,15 +28,48 @@ interface Props {
 }
 
 export default function Menu({ button, entries, fullWidth, disabled }: Props) {
-    const { getAlignment } = useContext(AlignmentContext);
+    const { isModalShowing } = useContext(ModalContext);
     const [alignment, setAlignment] = useState<Alignment | undefined>();
     const menuRef = useCallback(
         (element: HTMLDivElement) => {
             /**
              * Only set the alignment if it not already defined.
              */
-            if (element !== null && alignment === undefined) {
-                setAlignment(getAlignment(element.getBoundingClientRect()));
+            if (alignment === undefined) {
+                const bounding = isModalShowing
+                    ? {
+                          width: 1040,
+                          height: 640
+                      }
+                    : {
+                          width: 1136,
+                          height: 736
+                      };
+
+                const elementBounding = element.getBoundingClientRect();
+
+                if (
+                    elementBounding.y + elementBounding.height <
+                    bounding.height
+                ) {
+                    if (
+                        elementBounding.x + elementBounding.width <
+                        bounding.width
+                    ) {
+                        setAlignment(Alignment.BottomLeft);
+                    } else {
+                        setAlignment(Alignment.BottomRight);
+                    }
+                } else {
+                    if (
+                        elementBounding.x + elementBounding.width <
+                        bounding.width
+                    ) {
+                        setAlignment(Alignment.TopLeft);
+                    } else {
+                        setAlignment(Alignment.TopRight);
+                    }
+                }
             }
         },
         [alignment]
