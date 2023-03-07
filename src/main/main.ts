@@ -3,7 +3,9 @@ import { EventChannels } from './common/constants';
 import {
     handleAppBeforeQuit,
     handleAppQuit,
-    handleAppReady
+    handleAppReady,
+    handlePCSleep,
+    handlePCWakeUp
 } from './electron/appEvents';
 import './electron/ipc';
 import { emitEvent } from './util/events';
@@ -25,16 +27,10 @@ initPuppeteerConnection();
 
 app.on('ready', () => handleAppReady());
 
-app.on('before-quit', (event) => handleAppBeforeQuit(event));
+app.on('before-quit', async (event) => await handleAppBeforeQuit(event));
 
 app.on('quit', () => handleAppQuit());
 
-powerMonitor.on('suspend', () => {
-    log('info', 'PC went to sleep');
-    emitEvent(EventChannels.PCWentToSleep);
-});
+powerMonitor.on('suspend', async () => await handlePCSleep());
 
-powerMonitor.on('resume', () => {
-    log('info', 'PC woke up');
-    emitEvent(EventChannels.PCWokeUp);
-});
+powerMonitor.on('resume', async () => await handlePCWakeUp());

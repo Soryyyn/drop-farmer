@@ -289,16 +289,3 @@ listenForEvent(EventChannels.FarmsChanged, () => {
     sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
     sendOneWay(IpcChannels.settingsChanged, getMergedSettings());
 });
-
-listenForEvent(EventChannels.PCWentToSleep, async () => {
-    log('warn', 'Stopping farms (if possible)');
-
-    await stopFarms();
-});
-
-listenForEvent(EventChannels.PCWokeUp, async () => {
-    log('warn', 'Restarting app for wakeup');
-
-    app.relaunch();
-    app.quit();
-});
