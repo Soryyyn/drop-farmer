@@ -86,11 +86,9 @@ export async function handlePCSleep(): Promise<void> {
 export async function handlePCWakeUp(): Promise<void> {
     log('warn', 'PC woke up');
 
-    /**
-     * Relaunch the app.
-     */
-    app.relaunch();
+    isQuitting = true;
     log('warn', 'Relaunching app for wakeup');
+    app.relaunch();
 
-    app.quit();
+    await handleAppBeforeQuit();
 }
