@@ -1,6 +1,10 @@
 import { getWindowIcon } from '@main/util/icons';
 import { log } from '@main/util/logging';
-import { getBrowserConnection, gotoURL } from '@main/util/puppeteer';
+import {
+    getBrowserConnection,
+    gotoURL,
+    waitForTimeout
+} from '@main/util/puppeteer';
 import { getSettingValue } from '@main/util/settings';
 import { BrowserWindow } from 'electron';
 import { getPage } from 'puppeteer-in-electron';
@@ -105,13 +109,9 @@ export function createWindow(
         const window = new BrowserWindow({
             ...DefaultWindowOptions,
             height: 1080,
-            width: 1920
+            width: 1920,
+            closable: true
         });
-
-        /**
-         * Push it into the windows array.
-         */
-        windows.push(window);
 
         /**
          * Mute the window.
@@ -128,6 +128,8 @@ export function createWindow(
          *
          */
         window.webContents.on('dom-ready', () => {
+            windows.push(window);
+
             if (shown) {
                 window.show();
             }
@@ -135,52 +137,56 @@ export function createWindow(
             log('info', `Created window:${window.id}`);
             resolve(window);
         });
+
+        /**
+         * Prevent the manual user close.
+         */
+        window.on('close', (event) => {
+            event.preventDefault();
+            hideWindow(window);
+        });
     });
 }
 
 /**
  * Destroy the window and remove it from the array.
  */
-export function destroyWindow(windowToDestroy: BrowserWindow): Promise<void> {
-    return new Promise(async (resolve) => {
-        /**
-         * Remove it from the windows array.
-         */
-        windows.splice(
-            windows.findIndex((window) => window === windowToDestroy),
-            1
-        );
+export async function destroyWindow(
+    windowToDestroy: BrowserWindow | undefined
+) {
+    if (windowToDestroy === undefined) {
+        return;
+    }
 
-        log('info', `Destroying window:${windowToDestroy.id}`);
-        windowToDestroy.destroy();
+    windows.splice(
+        windows.findIndex((window) => window === windowToDestroy),
+        1
+    );
 
-        resolve();
-    });
+    windowToDestroy.destroy();
+    log('info', 'Destroyed window');
 }
 
 /**
  * Destroy all the windows left in the windows array.
  */
-export function destroyAllWindowsLeft(): Promise<void> {
+export async function destroyAllWindowsLeft(): Promise<void> {
     return new Promise(async (resolve) => {
         /**
          * Destroy the main window.
          */
-        await destroyMainWindow();
+        destroyMainWindow();
 
         /**
          * Destroy each window.
          */
-        windows.forEach(async (window) => await destroyWindow(window));
+        windows.forEach(async (window) => {
+            if (window && window.webContents) await destroyWindow(window);
+        });
 
         /**
          * Check if there are windows left there and destroy them all again.
          */
-        if (windows.length === 0) {
-            resolve();
-        }
-
-        destroyAllWindowsLeft();
         resolve();
     });
 }
@@ -188,9 +194,11 @@ export function destroyAllWindowsLeft(): Promise<void> {
 /**
  * Destroy the main window.
  */
-async function destroyMainWindow(): Promise<void> {
-    await destroyWindow(mainWindow);
-    log('info', 'Destroyed main window');
+function destroyMainWindow(): void {
+    if (mainWindow !== undefined) {
+        destroyWindow(mainWindow);
+        log('info', 'Destroyed main window');
+    }
 }
 
 /**

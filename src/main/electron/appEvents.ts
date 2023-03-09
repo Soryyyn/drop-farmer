@@ -51,7 +51,7 @@ export async function handleAppBeforeQuit(
         if (event) event.preventDefault();
 
         destroyTray();
-        await stopFarms();
+        stopFarms();
         await destroyAllWindowsLeft();
 
         finishedBeforeQuit = true;

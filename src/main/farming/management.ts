@@ -127,18 +127,16 @@ export function getFarmsRendererData(): FarmRendererData[] {
 /**
  * Stop all farms and their things.
  */
-export function stopFarms(id?: string): Promise<void> {
-    return new Promise(async (resolve) => {
-        if (id) {
-            await getFarmById(id)?.stop();
-            resolve();
-        } else {
-            farms.forEach(async (farm) => {
-                await farm.stop();
-            });
-            resolve();
-        }
-    });
+export function stopFarms(id?: string): void {
+    // return new Promise(async (resolve) => {
+    if (id) {
+        getFarmById(id)?.stop();
+    } else {
+        farms.forEach(async (farm) => {
+            farm.stop();
+        });
+    }
+    // });
 }
 
 /**
@@ -146,7 +144,7 @@ export function stopFarms(id?: string): Promise<void> {
  */
 export async function deleteFarm(id: string) {
     const index = farms.findIndex((farm) => farm.id === id);
-    await stopFarms(id);
+    stopFarms(id);
     farms.splice(index, 1);
 
     deleteAllOwnerSettings(id);

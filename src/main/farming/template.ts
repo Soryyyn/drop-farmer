@@ -445,7 +445,7 @@ export default abstract class FarmTemplate {
     /**
      * Stop the farm and all its thingies.
      */
-    async stop(): Promise<void> {
+    stop(): void {
         this.cancelFarmingSchedule();
 
         this.scheduler.stopAll();
@@ -453,17 +453,15 @@ export default abstract class FarmTemplate {
         this.updateConditions();
         this.timer.stopTimer();
 
-        await this.destroyAllWindows();
-
         log('info', `${this.id}: Stopped farm`);
     }
 
     /**
      * Destroy the checker window.
      */
-    protected async destroyChecker() {
+    protected destroyChecker() {
         if (this.checker) {
-            await destroyWindow(this.checker);
+            destroyWindow(this.checker);
             this.checker = undefined;
         }
     }
@@ -476,26 +474,22 @@ export default abstract class FarmTemplate {
         array: Electron.BrowserWindow[],
         window?: Electron.BrowserWindow
     ) {
-        return new Promise(async (resolve) => {
-            if (window) {
-                array.splice(array.indexOf(window), 1);
-                await destroyWindow(window);
-            } else {
-                for (let i = 0; array.length; i++) {
-                    await destroyWindow(array[i]);
-                    array.splice(i, 1);
-                }
+        if (window) {
+            array.splice(array.indexOf(window), 1);
+            destroyWindow(window);
+        } else {
+            while (array.length > 0) {
+                array.splice(array.length, 1);
+                destroyWindow(array[array.length - 1]);
             }
-
-            resolve(undefined);
-        });
+        }
     }
 
-    async destroyAllWindows() {
-        await this.destroyChecker();
+    destroyAllWindows() {
+        this.destroyChecker();
 
-        await this.destroyWindowFromArray(this.farmers);
-        await this.destroyWindowFromArray(this.extras);
+        this.destroyWindowFromArray(this.farmers);
+        this.destroyWindowFromArray(this.extras);
     }
 
     private async addWindowStatistic(): Promise<void> {
@@ -623,7 +617,7 @@ export default abstract class FarmTemplate {
             this.timer.stopTimer();
             await this.addUptimeAmount();
             this.updateConditions();
-            await this.destroyAllWindows();
+            this.destroyAllWindows();
 
             /**
              * Cancel the schedule promise.
@@ -968,7 +962,7 @@ export default abstract class FarmTemplate {
                                 this.status === 'idle' &&
                                 this.getAmountOfWindows() > 0
                             ) {
-                                await this.destroyAllWindows();
+                                this.destroyAllWindows();
                             }
 
                             /**
