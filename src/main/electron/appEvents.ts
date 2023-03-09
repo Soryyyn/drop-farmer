@@ -72,7 +72,6 @@ export async function handleAppBeforeQuit(
  */
 export function handleAppQuit(): void {
     log('warn', 'Quit finished');
-    process.exit();
 }
 
 /**
