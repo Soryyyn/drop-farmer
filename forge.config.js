@@ -16,7 +16,7 @@ function allowAsar() {
 
 module.exports = {
     packagerConfig: {
-        icon: 'resources/icon',
+        icon: 'resources/icon-normal',
         asar: allowAsar()
     },
     makers: [
@@ -28,14 +28,18 @@ module.exports = {
                 authors: 'Soryn Bächli',
                 iconUrl:
                     'https://www.dropbox.com/s/gckge20qqx0t4sk/icon.ico?dl=1',
-                setupIcon: path.resolve(__dirname, 'resources', 'icon.ico')
+                setupIcon: path.resolve(
+                    __dirname,
+                    'resources',
+                    'icon-normal.ico'
+                )
             }
         },
         {
             name: '@electron-forge/maker-deb',
             platforms: ['linux'],
             config: {
-                icon: path.resolve(__dirname, 'resources', 'icon.png')
+                icon: path.resolve(__dirname, 'resources', 'icon-normal.png')
             }
         },
         {
