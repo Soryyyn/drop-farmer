@@ -1,0 +1,16 @@
+name: Purge old artifacts
+
+on:
+    schedule:
+        - cron: '0 0 * * SUN'
+
+jobs:
+    delete old caches:
+        name: Delete all caches
+        runs-on: ubuntu-20.04
+
+        steps:
+            - name: Clear caches
+              uses: easimon/wipe-cache@main
+              with:
+                  dry-run: 'true'
