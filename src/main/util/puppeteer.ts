@@ -1,3 +1,4 @@
+import { getIsQuitting } from '@main/electron/appEvents';
 import { app } from 'electron';
 import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer-core';
 import { connect, initialize } from 'puppeteer-in-electron';
@@ -204,6 +205,13 @@ export function gotoURL(
 ): Promise<void> {
     return new Promise(async (resolve) => {
         try {
+            /**
+             * Quit trying if the app is quitting.
+             */
+            if (getIsQuitting()) {
+                resolve();
+            }
+
             await page.goto(url);
             if (timeout) await waitForTimeout(timeout);
             resolve();

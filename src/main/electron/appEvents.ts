@@ -1,11 +1,11 @@
 import { initFarmsManagement, stopFarms } from '@main/farming/management';
 import { log } from '@main/util/logging';
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
-import { app } from 'electron';
+import { app, RenderProcessGoneDetails, WebContents } from 'electron';
 import { handleClientShutdown } from './shutdownHandler';
 import { createTray, destroyTray } from './tray';
 import { initUpdater } from './update';
-import { createMainWindow } from './windows';
+import { createMainWindow, destroyAllWindowsLeft } from './windows';
 
 /**
  * The variable to check if the app really want's to quit.
@@ -27,12 +27,12 @@ export function getIsQuitting(): boolean {
 /**
  * Handle the app ready state.
  */
-export function handleAppReady(): void {
+export async function handleAppReady(): Promise<void> {
     initUpdater();
     initFarmsManagement();
 
     createTray();
-    createMainWindow();
+    await createMainWindow();
     handleClientShutdown();
 
     log('warn', 'Ready finished');
@@ -50,8 +50,9 @@ export async function handleAppBeforeQuit(
     if (!finishedBeforeQuit) {
         if (event) event.preventDefault();
 
-        await stopFarms();
         destroyTray();
+        await stopFarms();
+        await destroyAllWindowsLeft();
 
         finishedBeforeQuit = true;
         isQuitting = true;
@@ -85,6 +86,26 @@ export async function handlePCSleep(): Promise<void> {
  */
 export async function handlePCWakeUp(): Promise<void> {
     log('warn', 'PC woke up');
+
+    isQuitting = true;
+    log('warn', 'Relaunching app for wakeup');
+    app.relaunch();
+
+    await handleAppBeforeQuit();
+}
+
+/**
+ * Handle the event when a renderer process crashes.
+ */
+export async function handleRendererProcessGone(
+    event: Electron.Event,
+    webContents: WebContents,
+    details: RenderProcessGoneDetails
+) {
+    log(
+        'error',
+        `Renderer ${webContents.id} gone, reason: ${details.reason} with exit code ${details.exitCode}. Relaunching app`
+    );
 
     isQuitting = true;
     log('warn', 'Relaunching app for wakeup');

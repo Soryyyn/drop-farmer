@@ -1,16 +1,14 @@
 import { app, powerMonitor } from 'electron';
-import { EventChannels } from './common/constants';
 import {
     handleAppBeforeQuit,
     handleAppQuit,
     handleAppReady,
     handlePCSleep,
-    handlePCWakeUp
+    handlePCWakeUp,
+    handleRendererProcessGone
 } from './electron/appEvents';
 import './electron/ipc';
-import { emitEvent } from './util/events';
 import './util/internet';
-import { log } from './util/logging';
 import { initPuppeteerConnection } from './util/puppeteer';
 
 /**
@@ -25,11 +23,13 @@ if (require('electron-squirrel-startup')) {
  */
 initPuppeteerConnection();
 
-app.on('ready', () => handleAppReady());
+app.on('ready', async () => await handleAppReady());
 
 app.on('before-quit', async (event) => await handleAppBeforeQuit(event));
 
 app.on('quit', () => handleAppQuit());
+
+app.on('render-process-gone', handleRendererProcessGone);
 
 powerMonitor.on('suspend', async () => await handlePCSleep());
 

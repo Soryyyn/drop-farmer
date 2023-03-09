@@ -1,15 +1,13 @@
 import { log } from '@main/util/logging';
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
 import { handleAppBeforeQuit } from './appEvents';
-import { getMainWindow } from './windows';
+import { getMainWindowNativeHandle } from './windows';
 
 /**
  * Handle the client shutdown to firstly gracefully quit the app.
  */
 export function handleClientShutdown(): void {
-    ElectronShutdownHandler.setWindowHandle(
-        getMainWindow().getNativeWindowHandle()
-    );
+    ElectronShutdownHandler.setWindowHandle(getMainWindowNativeHandle());
 
     ElectronShutdownHandler.blockShutdown('Please wait for graceful shutdown');
 

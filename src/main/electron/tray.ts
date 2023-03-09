@@ -1,6 +1,6 @@
+import { getTrayicon } from '@main/util/icons';
 import { log } from '@main/util/logging';
-import { app, Menu, NativeImage, nativeImage, Tray } from 'electron';
-import { resolve } from 'path';
+import { app, Menu, Tray } from 'electron';
 import { getMainWindow, showWindow } from './windows';
 
 /**
@@ -27,7 +27,7 @@ export function createTray(): void {
             label: 'Show Window',
             type: 'normal',
             click: () => {
-                showWindow(getMainWindow(), true);
+                showWindow(getMainWindow());
             }
         },
         {
@@ -56,7 +56,7 @@ export function createTray(): void {
      * On double click, show the main window.
      */
     tray.on('double-click', () => {
-        showWindow(getMainWindow(), true);
+        showWindow(getMainWindow());
     });
 
     log('info', 'Created system tray');
@@ -71,26 +71,5 @@ export function destroyTray(): void {
         log('info', 'Destroyed tray');
     } catch (err) {
         log('error', `Failed destroying tray. "${err}"`);
-    }
-}
-
-/**
- * Get the approriate image for the tray depending on os.
- */
-function getTrayicon(): NativeImage {
-    const iconPath = 'resources/icon';
-
-    if (process.platform === 'win32') {
-        return nativeImage.createFromPath(
-            resolve(__dirname, `${iconPath}.ico`)
-        );
-    } else if (process.platform === 'darwin') {
-        return nativeImage.createFromPath(
-            resolve(__dirname, `${iconPath}Template.png`)
-        );
-    } else {
-        return nativeImage.createFromPath(
-            resolve(__dirname, `${iconPath}.png`)
-        );
     }
 }

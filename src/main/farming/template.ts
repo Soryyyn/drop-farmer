@@ -460,9 +460,9 @@ export default abstract class FarmTemplate {
     /**
      * Destroy the checker window.
      */
-    protected destroyChecker() {
+    protected async destroyChecker() {
         if (this.checker) {
-            destroyWindow(this.checker);
+            await destroyWindow(this.checker);
             this.checker = undefined;
         }
     }
@@ -491,7 +491,7 @@ export default abstract class FarmTemplate {
     }
 
     async destroyAllWindows() {
-        this.destroyChecker();
+        await this.destroyChecker();
 
         await this.destroyWindowFromArray(this.farmers);
         await this.destroyWindowFromArray(this.extras);
@@ -583,25 +583,25 @@ export default abstract class FarmTemplate {
     toggleWindowsVisibility(forcedVisibility?: boolean): void {
         if (forcedVisibility === undefined) {
             if (this.windowsCurrentlyShown) {
-                if (this.checker) hideWindow(this.checker, false);
-                for (const window of this.farmers) hideWindow(window, false);
-                for (const window of this.extras) hideWindow(window, false);
+                if (this.checker) hideWindow(this.checker);
+                for (const window of this.farmers) hideWindow(window);
+                for (const window of this.extras) hideWindow(window);
             } else {
-                if (this.checker) showWindow(this.checker, false);
-                for (const window of this.farmers) showWindow(window, false);
-                for (const window of this.extras) showWindow(window, false);
+                if (this.checker) showWindow(this.checker);
+                for (const window of this.farmers) showWindow(window);
+                for (const window of this.extras) showWindow(window);
             }
 
             this.windowsCurrentlyShown = !this.windowsCurrentlyShown;
         } else {
             if (!forcedVisibility) {
-                if (this.checker) hideWindow(this.checker, false);
-                for (const window of this.farmers) hideWindow(window, false);
-                for (const window of this.extras) hideWindow(window, false);
+                if (this.checker) hideWindow(this.checker);
+                for (const window of this.farmers) hideWindow(window);
+                for (const window of this.extras) hideWindow(window);
             } else {
-                if (this.checker) showWindow(this.checker, false);
-                for (const window of this.farmers) showWindow(window, false);
-                for (const window of this.extras) showWindow(window, false);
+                if (this.checker) showWindow(this.checker);
+                for (const window of this.farmers) showWindow(window);
+                for (const window of this.extras) showWindow(window);
             }
 
             this.windowsCurrentlyShown = forcedVisibility;
@@ -888,99 +888,97 @@ export default abstract class FarmTemplate {
     private async farmingSchedule(): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             if (
-                this.status !== 'checking' &&
-                this.status !== 'attention-required'
+                this.status === 'checking' ||
+                this.status === 'attention-required'
             ) {
-                /**
-                 * Check for conditions.
-                 */
-                switch (await this.conditionCheck()) {
-                    case 'conditions-fulfilled':
-                        await this.restartScheduler();
-
-                        log(
-                            'info',
-                            `${this.id}: Condition fulfilled, will not farm`
-                        );
-                        this.updateStatus('condition-fulfilled');
-                        resolve();
-                        break;
-                    case 'farm':
-                        this.createCheckerWindow()
-                            .then(async (window) => {
-                                this.updateStatus('checking');
-
-                                await this.login(window);
-                                if (this.farmers.length > 0) {
-                                    await this.stillFarming(window);
-                                }
-                                await this.startFarming(window);
-                            })
-                            .then(async () => {
-                                /**
-                                 * Wait for 2 seconds for the window to be actually created.
-                                 */
-                                await waitForTimeout(2000);
-                                this.destroyChecker();
-                            })
-                            .then(async () => {
-                                /**
-                                 * Set the status to farming if there are >0 farming
-                                 * windows, otherwise set it to idle.
-                                 */
-                                if (this.farmers.length > 0) {
-                                    this.updateStatus('farming');
-                                    this.timer.startTimer();
-                                } else {
-                                    this.updateStatus('idle');
-                                }
-                            })
-                            .catch((err) => {
-                                log(
-                                    'error',
-                                    `${this.id}: Error occurred while checking the farm. ${err}`
-                                );
-                                this.updateStatus('attention-required');
-
-                                reject();
-                            })
-                            .finally(async () => {
-                                /**
-                                 * If the farm has been disabled mid-check, set the status
-                                 * to disable once again to be sure.
-                                 */
-                                if (
-                                    !this.enabled &&
-                                    this.status !== 'attention-required'
-                                ) {
-                                    this.updateStatus('disabled');
-                                }
-
-                                /**
-                                 * For safety, check and destroy any windows left.
-                                 */
-                                if (
-                                    this.status === 'idle' &&
-                                    this.getAmountOfWindows() > 0
-                                ) {
-                                    await this.destroyAllWindows();
-                                }
-
-                                /**
-                                 * Update the conditions.
-                                 */
-                                this.updateConditions();
-
-                                log(
-                                    'info',
-                                    `${this.id}: Finished schedule check`
-                                );
-
-                                resolve();
-                            });
-                }
-            } else {
                 resolve();
+            }
+
+            /**
+             * Check for conditions.
+             */
+            switch (await this.conditionCheck()) {
+                case 'conditions-fulfilled':
+                    await this.restartScheduler();
+
+                    log(
+                        'info',
+                        `${this.id}: Condition fulfilled, will not farm`
+                    );
+                    this.updateStatus('condition-fulfilled');
+                    resolve();
+                    break;
+
+                case 'farm':
+                    this.createCheckerWindow()
+                        .then(async (window) => {
+                            this.updateStatus('checking');
+
+                            await this.login(window);
+                            if (this.farmers.length > 0) {
+                                await this.stillFarming(window);
+                            }
+                            await this.startFarming(window);
+                        })
+                        .then(async () => {
+                            /**
+                             * Wait for 2 seconds for the window to be actually created.
+                             */
+                            await waitForTimeout(2000);
+                            await this.destroyChecker();
+                        })
+                        .then(async () => {
+                            /**
+                             * Set the status to farming if there are >0 farming
+                             * windows, otherwise set it to idle.
+                             */
+                            if (this.farmers.length > 0) {
+                                this.updateStatus('farming');
+                                this.timer.startTimer();
+                            } else {
+                                this.updateStatus('idle');
+                            }
+                        })
+                        .catch((err) => {
+                            log(
+                                'error',
+                                `${this.id}: Error occurred while checking the farm. ${err}`
+                            );
+                            this.updateStatus('attention-required');
+
+                            reject();
+                        })
+                        .finally(async () => {
+                            /**
+                             * If the farm has been disabled mid-check, set the status
+                             * to disable once again to be sure.
+                             */
+                            if (
+                                !this.enabled &&
+                                this.status !== 'attention-required'
+                            ) {
+                                this.updateStatus('disabled');
+                            }
+
+                            /**
+                             * For safety, check and destroy any windows left.
+                             */
+                            if (
+                                this.status === 'idle' &&
+                                this.getAmountOfWindows() > 0
+                            ) {
+                                await this.destroyAllWindows();
+                            }
+
+                            /**
+                             * Update the conditions.
+                             */
+                            this.updateConditions();
+
+                            log('info', `${this.id}: Finished schedule check`);
+
+                            resolve();
+                        });
             }
         });
     }

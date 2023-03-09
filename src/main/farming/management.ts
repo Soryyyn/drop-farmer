@@ -129,19 +129,15 @@ export function getFarmsRendererData(): FarmRendererData[] {
  */
 export function stopFarms(id?: string): Promise<void> {
     return new Promise(async (resolve) => {
-        const toStop: Promise<any>[] = [];
-
-        farms.forEach(async (farm) => {
-            if (id && id === farm.id) {
-                toStop.push(farm.stop());
-            }
-            toStop.push(farm.stop());
-        });
-
-        await Promise.all(toStop);
-
-        log('info', 'Stopped all farms');
-        resolve();
+        if (id) {
+            await getFarmById(id)?.stop();
+            resolve();
+        } else {
+            farms.forEach(async (farm) => {
+                await farm.stop();
+            });
+            resolve();
+        }
     });
 }
 

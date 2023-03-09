@@ -1,12 +1,9 @@
-import { getFarms } from '@main/farming/management';
-import FarmTemplate from '@main/farming/template';
+import { getWindowIcon } from '@main/util/icons';
 import { log } from '@main/util/logging';
 import { getBrowserConnection, gotoURL } from '@main/util/puppeteer';
-import { app, BrowserWindow } from 'electron';
-import { resolve } from 'path';
+import { getSettingValue } from '@main/util/settings';
+import { BrowserWindow } from 'electron';
 import { getPage } from 'puppeteer-in-electron';
-import { getSettingValue } from '../util/settings';
-import { getIsQuitting } from './appEvents';
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -17,225 +14,223 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 /**
- * The main window reference.
+ * All of the windows.
  */
 let mainWindow: BrowserWindow;
+const windows: BrowserWindow[] = [];
 
 /**
- * Creates the main window.
+ * Default created window options.
  */
-export function createMainWindow(): void {
-    mainWindow = new BrowserWindow({
-        icon: resolve(
-            __dirname,
-            `resources/icon.${process.platform != 'linux' ? 'ico' : 'png'}`
-        ),
-        height: 800,
-        width: 1200,
-        center: true,
-        maximizable: false,
-        resizable: false,
-        show: process.platform === 'linux' ? true : false,
-        title: 'drop-farmer',
-        autoHideMenuBar: true,
-        titleBarStyle: 'hidden',
-        titleBarOverlay: {
-            color: '#c8def5',
-            symbolColor: '#000000'
-        },
-        webPreferences: {
-            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-            devTools: process.env.NODE_ENV === 'development',
-            sandbox: false
-        }
-    });
+const DefaultWindowOptions = {
+    icon: getWindowIcon(),
+    center: true,
+    show: false,
+    closable: false,
+    webPreferences: {
+        devTools: !(process.env.NODE_ENV === 'production')
+    }
+};
 
-    /**
-     * Load the react app into the main window.
-     */
-    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+/**
+ * Create the main app window.
+ */
+export function createMainWindow(): Promise<void> {
+    return new Promise(async (resolve) => {
+        mainWindow = new BrowserWindow({
+            ...DefaultWindowOptions,
+            show: process.platform === 'linux' ? true : false,
+            title: 'drop-farmer',
+            height: 800,
+            width: 1200,
+            maximizable: false,
+            resizable: false,
+            autoHideMenuBar: true,
+            titleBarStyle: 'hidden',
+            titleBarOverlay: {
+                color: '#c8def5',
+                symbolColor: '#000000'
+            },
+            webPreferences: {
+                preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+                sandbox: false
+            }
+        });
 
-    /**
-     * Show when the window is ready.
-     */
-    mainWindow.on('ready-to-show', () => {
-        if (
-            (getSettingValue(
+        mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+
+        /**
+         * When window is ready.
+         */
+        mainWindow.on('ready-to-show', () => {
+            const shouldBeShownBySetting = getSettingValue(
                 'application',
                 'application-showMainWindowOnLaunch'
-            )! as boolean) ||
-            process.platform === 'linux'
-        ) {
-            log(
-                'info',
-                `Created main window (shown) ${
-                    process.env.NODE_ENV === 'development' ? 'in dev mode' : ''
-                }`
-            );
-            mainWindow.show();
-            mainWindow.focus();
-        } else {
-            log(
-                'info',
-                `Created main window (hidden) ${
-                    process.env.NODE_ENV === 'development' ? 'in dev mode' : ''
-                }`
-            );
-        }
-    });
-
-    /**
-     * When close button on main windows is clicked.
-     * Prevent default electron action from close.
-     */
-    mainWindow.on('close', (event) => {
-        event.preventDefault();
-        if (!getIsQuitting()) {
-            hideWindow(mainWindow, true);
+            ) as boolean;
 
             /**
-             * Hide all farm windows as well.
+             * Show the window if the setting is set or the app is run on linux.
              */
-            getFarms().forEach((farm: FarmTemplate) => {
-                farm.toggleWindowsVisibility(false);
-            });
-        } else {
-            destroyWindow(mainWindow);
-        }
-    });
-}
-
-/**
- * Returns the main react application window.
- */
-export function getMainWindow(): BrowserWindow {
-    return mainWindow;
-}
-
-/**
- * Create the farm window.
- */
-export async function createWindow(url: string, shouldBeShown: boolean) {
-    const window = new BrowserWindow({
-        icon: resolve(
-            __dirname,
-            `resources/icon.${process.platform != 'linux' ? 'ico' : 'png'}`
-        ),
-        height: 1080,
-        width: 1920,
-        show: false,
-        closable: false,
-        webPreferences: {
-            devTools: !(process.env.NODE_ENV === 'production')
-        }
-    });
-
-    /**
-     * Mute window.
-     */
-    await muteWindow(window);
-
-    /**
-     * Load the url.
-     * (Reloading to route for safety)
-     */
-    await window.loadURL(url);
-    const page = await getPage(getBrowserConnection(), window);
-    await gotoURL(page, url);
-
-    window.on('ready-to-show', () => {
-        if (
-            shouldBeShown ||
-            (getSettingValue('application', 'showWindowsForLogin')! as boolean)
-        ) {
-            window.show();
-        }
-    });
-
-    log('info', 'Created window');
-    return window;
-}
-
-/**
- * Destroy the wanted window.
- *
- * @param {Electron.BrowserWindow} window The window to destroy.t
- */
-export function destroyWindow(window: Electron.BrowserWindow): Promise<void> {
-    return new Promise((resolve) => {
-        window.destroy();
-
-        window.on('closed', async () => {
-            if (!window.isDestroyed()) {
-                await destroyWindow(window);
-            } else {
-                log('info', `Destroyed window(${window.id})`);
-                resolve();
+            if (shouldBeShownBySetting || process.platform === 'linux') {
+                mainWindow.show();
+                mainWindow.focus();
             }
+
+            log('info', 'Created main window');
+            resolve();
+        });
+
+        /**
+         * Prevent the app from shutting down.
+         * Also hide all windows if the close event is fired.
+         */
+        mainWindow.on('close', (event) => {
+            event.preventDefault();
+
+            mainWindow.hide();
+            windows.forEach((window) => window.hide());
         });
     });
 }
 
 /**
- * Show the wanted window.
- *
- * @param {Electron.BrowserWindow} window The window to show.
- * @param {boolean} isMainWindow If the window is the main application window.
+ * Create a window for the app.
  */
-export function showWindow(
-    window: Electron.BrowserWindow,
-    isMainWindow: boolean
-): void {
-    if (window) {
-        log(
-            'info',
-            `Showing window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
-        );
+export function createWindow(
+    url: string,
+    shown: boolean
+): Promise<BrowserWindow> {
+    return new Promise(async (resolve) => {
+        const window = new BrowserWindow({
+            ...DefaultWindowOptions,
+            height: 1080,
+            width: 1920
+        });
 
-        window.show();
-        window.focus();
-    }
-}
+        /**
+         * Push it into the windows array.
+         */
+        windows.push(window);
 
-/**
- * Hide the wanted window.
- *
- * @param {Electron.BrowserWindow} window The window to show.
- * @param {boolean} isMainWindow If the window is the main application window.
- */
-export function hideWindow(
-    window: Electron.BrowserWindow,
-    isMainWindow: boolean
-): void {
-    if (window) {
-        log(
-            'info',
-            `Hidding window ${isMainWindow ? '(main)' : '(' + window.id + ')'}`
-        );
-
-        window.hide();
-    }
-}
-
-/**
- * Mute the wanted window.
- *
- * @param {Electron.BrowserWindow} window The window to mute.
- */
-function muteWindow(window: Electron.BrowserWindow): Promise<void> {
-    return new Promise((resolve) => {
-        log('info', `Muted window(${window.id})`);
+        /**
+         * Mute the window.
+         */
         window.webContents.setAudioMuted(true);
+
+        /**
+         * Goto the wanted url.
+         */
+        window.loadURL(url);
+
+        /**
+         * Resolve the creationg once the dom or the window is ready.
+         *
+         */
+        window.webContents.on('dom-ready', () => {
+            if (shown) {
+                window.show();
+            }
+
+            log('info', `Created window:${window.id}`);
+            resolve(window);
+        });
+    });
+}
+
+/**
+ * Destroy the window and remove it from the array.
+ */
+export function destroyWindow(windowToDestroy: BrowserWindow): Promise<void> {
+    return new Promise(async (resolve) => {
+        /**
+         * Remove it from the windows array.
+         */
+        windows.splice(
+            windows.findIndex((window) => window === windowToDestroy),
+            1
+        );
+
+        log('info', `Destroying window:${windowToDestroy.id}`);
+        windowToDestroy.destroy();
+
         resolve();
     });
 }
 
 /**
- * Listen for window closing.
+ * Destroy all the windows left in the windows array.
  */
-app.on('render-process-gone', (event, webContents, details) => {
-    log(
-        'warn',
-        `Renderer ${webContents.id} gone, reason: ${details.reason} with exit code ${details.exitCode}`
-    );
-});
+export function destroyAllWindowsLeft(): Promise<void> {
+    return new Promise(async (resolve) => {
+        /**
+         * Destroy the main window.
+         */
+        await destroyMainWindow();
+
+        /**
+         * Destroy each window.
+         */
+        windows.forEach(async (window) => await destroyWindow(window));
+
+        /**
+         * Check if there are windows left there and destroy them all again.
+         */
+        if (windows.length === 0) {
+            resolve();
+        }
+
+        destroyAllWindowsLeft();
+        resolve();
+    });
+}
+
+/**
+ * Destroy the main window.
+ */
+async function destroyMainWindow(): Promise<void> {
+    await destroyWindow(mainWindow);
+    log('info', 'Destroyed main window');
+}
+
+/**
+ * Show a window.
+ */
+export function showWindow(window: BrowserWindow): void {
+    try {
+        if (window) {
+            window.show();
+            window.focus();
+            log('info', `Showing window:${window.id}`);
+        }
+    } catch (error) {
+        log('error', `Couldn't show window:${window.id}, reason: ${error}`);
+    }
+}
+
+/**
+ * Hide a window.
+ */
+export function hideWindow(window: BrowserWindow): void {
+    try {
+        if (window) {
+            window.hide();
+            log('info', `Hidden window:${window.id}`);
+        }
+    } catch (error) {
+        log('error', `Couldn't show window:${window.id}, reason: ${error}`);
+    }
+}
+
+/**
+ * Get the native window handle for the shutdown handler.
+ */
+export function getMainWindowNativeHandle(): Buffer {
+    return mainWindow.getNativeWindowHandle();
+}
+
+/**
+ * Get the main window.
+ */
+export function getMainWindow(): BrowserWindow {
+    return mainWindow;
+}

@@ -136,7 +136,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                         )
                 );
 
-                await waitForTimeout(2000);
+                await waitForTimeout(3000);
 
                 /**
                  * Get all elements from the schedule.
