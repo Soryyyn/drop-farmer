@@ -94,6 +94,7 @@ export default abstract class FarmTemplate {
             Schedules.CheckToFarm,
             `*/${this.schedule} * * * *`,
             async () => {
+                this.runningSchedule?.cancel();
                 this.runningSchedule = makeCancellablePromise(
                     this.farmingSchedule()
                 );
