@@ -1,4 +1,4 @@
-name: Purge old artifacts
+name: Delete all caches
 
 on:
     schedule:
