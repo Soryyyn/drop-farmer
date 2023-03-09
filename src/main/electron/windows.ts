@@ -45,6 +45,7 @@ export function createMainWindow(): Promise<void> {
             width: 1200,
             maximizable: false,
             resizable: false,
+            closable: true,
             autoHideMenuBar: true,
             titleBarStyle: 'hidden',
             titleBarOverlay: {
