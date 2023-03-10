@@ -204,20 +204,19 @@ export function gotoURL(
     timeout?: number
 ): Promise<void> {
     return new Promise(async (resolve) => {
-        try {
-            /**
-             * Quit trying if the app is quitting.
-             */
-            if (getIsQuitting()) {
-                resolve();
-            }
+        /**
+         * Quit trying if the app is quitting.
+         */
+        if (getIsQuitting()) {
+            resolve();
+        }
 
+        try {
             await page.goto(url);
             if (timeout) await waitForTimeout(timeout);
             resolve();
         } catch (error) {
-            log('warn', 'Retrying to goto url');
-            gotoURL(page, url, timeout);
+            log('error', `Failed going to URL, error: ${error}`);
         }
     });
 }

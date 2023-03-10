@@ -24,6 +24,7 @@ import {
 } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
 import { app, ipcMain, shell } from 'electron';
+import { setIsQuitting } from './appEvents';
 import { getMainWindow } from './windows';
 
 /**
@@ -33,7 +34,6 @@ export function handleOneWay(
     channel: IpcChannel,
     listener: (event: Electron.IpcMainEvent, ...args: any[]) => void
 ) {
-    log('info', `Handling one-way signal on ${channel}`);
     ipcMain.on(channel, listener);
 }
 
@@ -44,7 +44,6 @@ export function handleAndReply(
     channel: string,
     listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any
 ) {
-    log('info', `Handling two-way signal on ${channel}`);
     ipcMain.handle(channel, listener);
 }
 
@@ -53,8 +52,7 @@ export function handleAndReply(
  */
 export function sendOneWay(channel: string, ...args: any[]) {
     const window = getMainWindow();
-    if (window !== undefined && window.webContents !== undefined) {
-        log('info', `Sending one-way signal on ${channel}`);
+    if (window !== undefined) {
         window.webContents.send(channel, ...args);
     }
 }
@@ -67,6 +65,7 @@ handleOneWay(IpcChannels.openLinkInExternal, (event, link: string) => {
 });
 
 handleOneWay(IpcChannels.shutdown, () => {
+    setIsQuitting();
     app.quit();
 });
 

@@ -87,11 +87,7 @@ export async function handlePCSleep(): Promise<void> {
 export async function handlePCWakeUp(): Promise<void> {
     log('warn', 'PC woke up');
 
-    isQuitting = true;
-    log('warn', 'Relaunching app for wakeup');
-    app.relaunch();
-
-    await handleAppBeforeQuit();
+    await relaunchApp();
 }
 
 /**
@@ -107,8 +103,16 @@ export async function handleRendererProcessGone(
         `Renderer ${webContents.id} gone, reason: ${details.reason} with exit code ${details.exitCode}. Relaunching app`
     );
 
+    await relaunchApp();
+}
+
+/**
+ * Relaunch the app.
+ */
+async function relaunchApp(): Promise<void> {
+    log('warn', 'Relaunching app');
+
     isQuitting = true;
-    log('warn', 'Relaunching app for wakeup');
     app.relaunch();
 
     await handleAppBeforeQuit();

@@ -94,12 +94,19 @@ export default abstract class FarmTemplate {
             Schedules.CheckToFarm,
             `*/${this.schedule} * * * *`,
             async () => {
-                this.runningSchedule?.cancel();
-                this.runningSchedule = makeCancellablePromise(
-                    this.farmingSchedule()
-                );
+                try {
+                    this.runningSchedule?.cancel();
+                    this.runningSchedule = makeCancellablePromise(
+                        this.farmingSchedule()
+                    );
 
-                await this.runningSchedule.promise;
+                    await this.runningSchedule.promise;
+                } catch (error) {
+                    log(
+                        'error',
+                        `${this.id}: Failed running schedule check, error ${error}`
+                    );
+                }
             }
         );
 

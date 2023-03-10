@@ -20,7 +20,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 /**
  * All of the windows.
  */
-let mainWindow: BrowserWindow;
+let mainWindow: BrowserWindow | undefined;
 const windows: BrowserWindow[] = [];
 
 /**
@@ -77,8 +77,8 @@ export function createMainWindow(): Promise<void> {
              * Show the window if the setting is set or the app is run on linux.
              */
             if (shouldBeShownBySetting || process.platform === 'linux') {
-                mainWindow.show();
-                mainWindow.focus();
+                mainWindow!.show();
+                mainWindow!.focus();
             }
 
             log('info', 'Created main window');
@@ -92,8 +92,15 @@ export function createMainWindow(): Promise<void> {
         mainWindow.on('close', (event) => {
             event.preventDefault();
 
-            mainWindow.hide();
+            mainWindow!.hide();
             windows.forEach((window) => window.hide());
+        });
+
+        /**
+         * Remove the reference after its closed.
+         */
+        mainWindow.on('closed', () => {
+            mainWindow = undefined;
         });
     });
 }
@@ -110,7 +117,8 @@ export function createWindow(
             ...DefaultWindowOptions,
             height: 1080,
             width: 1920,
-            closable: true
+            closable: true,
+            show: true
         });
 
         /**
@@ -144,6 +152,16 @@ export function createWindow(
         window.on('close', (event) => {
             event.preventDefault();
             hideWindow(window);
+        });
+
+        /**
+         * Remove the window from the array once its closed.
+         */
+        window.on('closed', () => {
+            windows.slice(
+                windows.findIndex((w) => w === window),
+                1
+            );
         });
     });
 }
@@ -181,7 +199,7 @@ export async function destroyAllWindowsLeft(): Promise<void> {
          * Destroy each window.
          */
         windows.forEach(async (window) => {
-            if (window && window.webContents) await destroyWindow(window);
+            if (window !== undefined) await destroyWindow(window);
         });
 
         /**
@@ -234,12 +252,12 @@ export function hideWindow(window: BrowserWindow): void {
  * Get the native window handle for the shutdown handler.
  */
 export function getMainWindowNativeHandle(): Buffer {
-    return mainWindow.getNativeWindowHandle();
+    return mainWindow!.getNativeWindowHandle();
 }
 
 /**
  * Get the main window.
  */
 export function getMainWindow(): BrowserWindow {
-    return mainWindow;
+    return mainWindow!;
 }
