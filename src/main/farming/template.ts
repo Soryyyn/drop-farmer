@@ -306,6 +306,7 @@ export default abstract class FarmTemplate {
             await this.createOrSetFarmSettings();
 
             log('info', `${this.id}: Applied new settings`);
+            sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
             resolve();
         });
     }

@@ -1,3 +1,4 @@
+import { LaunchArgs } from '@main/common/constants';
 import { initFarmsManagement, stopFarms } from '@main/farming/management';
 import { log } from '@main/util/logging';
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
@@ -5,7 +6,13 @@ import { app, RenderProcessGoneDetails, WebContents } from 'electron';
 import { handleClientShutdown } from './shutdownHandler';
 import { createTray, destroyTray } from './tray';
 import { initUpdater } from './update';
-import { createMainWindow, destroyAllWindowsLeft } from './windows';
+import {
+    createMainWindow,
+    destroyAllWindowsLeft,
+    getMainWindow,
+    isMainWindowShown,
+    showWindow
+} from './windows';
 
 /**
  * The variable to check if the app really want's to quit.
@@ -34,6 +41,13 @@ export async function handleAppReady(): Promise<void> {
     createTray();
     await createMainWindow();
     handleClientShutdown();
+
+    /**
+     * Show if window should be shown by relaunch.
+     */
+    if (process.argv.find((arg) => arg === LaunchArgs.ShowMainWindow)) {
+        showWindow(getMainWindow());
+    }
 
     log('warn', 'Ready finished');
 }
@@ -87,7 +101,7 @@ export async function handlePCSleep(): Promise<void> {
 export async function handlePCWakeUp(): Promise<void> {
     log('warn', 'PC woke up');
 
-    await relaunchApp();
+    await relaunchApp([isMainWindowShown() ? LaunchArgs.ShowMainWindow : '']);
 }
 
 /**
@@ -107,13 +121,13 @@ export async function handleRendererProcessGone(
 }
 
 /**
- * Relaunch the app.
+ * Relaunch the app with args.
  */
-async function relaunchApp(): Promise<void> {
+async function relaunchApp(args?: string[]): Promise<void> {
     log('warn', 'Relaunching app');
 
     isQuitting = true;
-    app.relaunch();
+    app.relaunch({ args: args });
 
     await handleAppBeforeQuit();
 }

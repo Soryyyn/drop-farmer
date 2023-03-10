@@ -57,6 +57,10 @@ export const Schedules = {
 } as const;
 export type Schedule = (typeof Schedules)[keyof typeof Schedules];
 
+export const LaunchArgs = {
+    ShowMainWindow: '--showMainWindow'
+} as const;
+
 /**
  * Selections.
  */

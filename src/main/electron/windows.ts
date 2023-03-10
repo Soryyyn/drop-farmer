@@ -260,3 +260,10 @@ export function getMainWindowNativeHandle(): Buffer {
 export function getMainWindow(): BrowserWindow {
     return mainWindow!;
 }
+
+/**
+ * Check if the main window is shown/visible.
+ */
+export function isMainWindowShown(): boolean {
+    return mainWindow!.isVisible();
+}
