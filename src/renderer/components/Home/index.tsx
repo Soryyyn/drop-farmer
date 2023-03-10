@@ -22,7 +22,7 @@ export default function Home() {
                             />
                         </div>
                         <h1 className="text-center font-semibold text-5xl text-pepper-200 leading-none">
-                            DROP-FARMER
+                            DROP FARMER
                         </h1>
                         <p className="text-center text-pepper-200/60 text-xl font-medium leading-none mb-2 -mt-2">
                             Stream drops farmer application

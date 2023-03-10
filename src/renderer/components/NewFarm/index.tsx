@@ -69,7 +69,7 @@ export default function NewFarm({ onClose }: Props) {
                                     twitch stream, set the location to twitch.
                                     <br />
                                     <br />
-                                    The schedule defines how drop-farmer will
+                                    The schedule defines how Drop Farmer will
                                     check if it can farm for the given farm
                                     every set minutes.
                                 </p>
@@ -97,10 +97,10 @@ export default function NewFarm({ onClose }: Props) {
                                     <br />
                                     <br />
                                     When the type is set to
-                                    &quot;Unlimited&quot; drop-farmer will try
+                                    &quot;Unlimited&quot; Drop Farmer will try
                                     to farm to farm as much as possible. When
                                     set to &quot;Weekly&quot; or
-                                    &quot;Monthly&quot; drop-farmer will try to
+                                    &quot;Monthly&quot; Drop Farmer will try to
                                     fulfill the amount given (in hours) in the
                                     given timespan.
                                     <br />
@@ -115,7 +115,7 @@ export default function NewFarm({ onClose }: Props) {
                                     <br />
                                     <br />
                                     When the type is set to &quot;From ... to
-                                    ...&quot;, drop-farmer will try to fulfill
+                                    ...&quot;, Drop Farmer will try to fulfill
                                     the amount given in that exact timespan.
                                     <br />
                                 </p>

@@ -34,7 +34,7 @@ export function createTray(): void {
             type: 'separator'
         },
         {
-            label: 'Quit drop-farmer',
+            label: 'Quit Drop Farmer',
             type: 'normal',
             click: () => {
                 app.quit();
@@ -46,7 +46,7 @@ export function createTray(): void {
      * Set tooltip and context menu.
      */
     tray.setToolTip(
-        `drop-farmer ${
+        `Drop Farmer ${
             process.env.NODE_ENV === 'production' ? '' : '(dev environment)'
         }`
     );

@@ -44,7 +44,7 @@ export function createMainWindow(): Promise<void> {
         mainWindow = new BrowserWindow({
             ...DefaultWindowOptions,
             show: process.platform === 'linux' ? true : false,
-            title: 'drop-farmer',
+            title: 'Drop Farmer',
             height: 800,
             width: 1200,
             maximizable: false,

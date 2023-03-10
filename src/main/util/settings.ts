@@ -13,7 +13,7 @@ import { join } from 'path';
 import { log } from './logging';
 import { sendToast } from './toast';
 
-const autoLauncher = new AutoLaunch({ name: 'drop-farmer' });
+const autoLauncher = new AutoLaunch({ name: 'Drop Farmer' });
 
 /**
  * The settings/config store of the app.

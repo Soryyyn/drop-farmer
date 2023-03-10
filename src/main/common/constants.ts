@@ -101,13 +101,13 @@ export const PossibleSettings: Setting[] = [
     {
         id: 'application-launchOnStartup',
         shown: 'Launch on startup',
-        desc: 'Enable or disable if drop-farmer should be started when your PC has finished booting.',
+        desc: 'Enable or disable if Drop Farmer should be started when your PC has finished booting.',
         default: false
     },
     {
         id: 'application-showMainWindowOnLaunch',
         shown: 'Show main window on launch',
-        desc: 'If the main window should be shown when drop-farmer starts.',
+        desc: 'If the main window should be shown when Drop Farmer starts.',
         default: true
     },
     {
@@ -143,7 +143,7 @@ export const PossibleSettings: Setting[] = [
     {
         id: 'farm-schedule',
         shown: 'Farming schedule',
-        desc: 'The schedule (in minutes) on which drop-farmer will check if farming is possible.',
+        desc: 'The schedule (in minutes) on which Drop Farmer will check if farming is possible.',
         default: 30,
         max: 60,
         min: 1

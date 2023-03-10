@@ -7,7 +7,7 @@ export default function ProtecedIndicator() {
     return (
         <Tooltip
             placement="bottom"
-            text="This farm is protected and comes with drop-farmer. This means, this farm can't be deleted."
+            text="This farm is protected and comes with Drop Farmer. This means, this farm can't be deleted."
         >
             <div className="h-[33px] w-[33px] flex items-center justify-center text-snow-300 aspect-square p-1 rounded bg-pepper-800">
                 <Icon sprite={faShieldHalved} size="1x" />
