@@ -41,11 +41,11 @@ export default function Navigation() {
                     )
                 }
             />
-            <NavigationItem
+            {/* <NavigationItem
                 icon={faChartSimple}
                 tooltip="Statistics & Conditions"
                 onClick={() => {}}
-            />
+            /> */}
             <NavigationItem
                 icon={faGear}
                 tooltip="Settings"

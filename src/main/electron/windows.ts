@@ -117,8 +117,7 @@ export function createWindow(
             ...DefaultWindowOptions,
             height: 1080,
             width: 1920,
-            closable: true,
-            show: true
+            closable: true
         });
 
         /**
