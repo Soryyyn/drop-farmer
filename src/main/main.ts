@@ -5,7 +5,8 @@ import {
     handleAppReady,
     handlePCSleep,
     handlePCWakeUp,
-    handleRendererProcessGone
+    handleRendererProcessGone,
+    handleSecondInstanceOpened
 } from './electron/appEvents';
 import './electron/ipc';
 import './util/internet';
@@ -30,6 +31,8 @@ app.on('before-quit', async (event) => await handleAppBeforeQuit(event));
 app.on('quit', () => handleAppQuit());
 
 app.on('render-process-gone', handleRendererProcessGone);
+
+app.on('second-instance', () => handleSecondInstanceOpened());
 
 powerMonitor.on('suspend', async () => await handlePCSleep());
 

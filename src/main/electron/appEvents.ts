@@ -3,6 +3,7 @@ import { initFarmsManagement, stopFarms } from '@main/farming/management';
 import { log } from '@main/util/logging';
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
 import { app, RenderProcessGoneDetails, WebContents } from 'electron';
+import { requestSingleInstanceLock } from './instanceLock';
 import { handleClientShutdown } from './shutdownHandler';
 import { createTray, destroyTray } from './tray';
 import { initUpdater } from './update';
@@ -35,6 +36,14 @@ export function getIsQuitting(): boolean {
  * Handle the app ready state.
  */
 export async function handleAppReady(): Promise<void> {
+    /**
+     * Check the single instance lock.
+     * Quit the new instance if a lock is already set.
+     */
+    if (!requestSingleInstanceLock()) {
+        app.quit();
+    }
+
     initUpdater();
     initFarmsManagement();
 
@@ -130,4 +139,11 @@ async function relaunchApp(args?: string[]): Promise<void> {
     app.relaunch({ args: args });
 
     await handleAppBeforeQuit();
+}
+
+/**
+ * If a new instance has been opened, open the main window.
+ */
+export function handleSecondInstanceOpened(): void {
+    showWindow(getMainWindow());
 }
