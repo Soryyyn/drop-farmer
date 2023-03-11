@@ -10,7 +10,7 @@ import { getSettingValue } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
 import CrontabManager from 'cron-job-manager';
 import { app, autoUpdater } from 'electron';
-import { handleAppBeforeQuit } from './appEvents';
+import { handleAppBeforeQuit, handleQuitForUpdate } from './appEvents';
 import { handleOneWay, sendOneWay } from './ipc';
 
 let displayToasts: boolean = false;
@@ -82,6 +82,7 @@ handleOneWay(IpcChannels.updateCheck, () => {
 
     autoUpdater.checkForUpdates();
 });
+
 handleOneWay(IpcChannels.installUpdate, () => {
     autoUpdater.quitAndInstall();
 });
@@ -125,6 +126,17 @@ autoUpdater.on('update-not-available', () => {
 
 autoUpdater.on('update-available', () => {
     log('info', 'Update to application is available, downloading...');
+
+    if (displayToasts) {
+        sendToast({
+            toast: {
+                type: 'loading',
+                id: Toasts.UpdateChecking,
+                duration: Infinity,
+                textOnLoading: 'Update available, downloading...'
+            }
+        });
+    }
 });
 
 autoUpdater.on('update-downloaded', () => {
@@ -142,7 +154,7 @@ autoUpdater.on('update-downloaded', () => {
                 type: 'success',
                 id: Toasts.UpdateChecking,
                 duration: 4000,
-                textOnSuccess: 'Update available.'
+                textOnSuccess: 'Update download, ready to install.'
             }
         });
     }
@@ -150,9 +162,7 @@ autoUpdater.on('update-downloaded', () => {
     displayToasts = false;
 });
 
-autoUpdater.on('before-quit-for-update', async () => {
-    await handleAppBeforeQuit();
-});
+autoUpdater.on('before-quit-for-update', () => handleQuitForUpdate());
 
 autoUpdater.on('error', (err) => {
     log('error', `Failed downloading / installing update. ${err}`);

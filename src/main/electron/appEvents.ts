@@ -2,7 +2,12 @@ import { LaunchArgs } from '@main/common/constants';
 import { initFarmsManagement, stopFarms } from '@main/farming/management';
 import { log } from '@main/util/logging';
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
-import { app, RenderProcessGoneDetails, WebContents } from 'electron';
+import {
+    app,
+    autoUpdater,
+    RenderProcessGoneDetails,
+    WebContents
+} from 'electron';
 import { requestSingleInstanceLock } from './instanceLock';
 import { handleClientShutdown } from './shutdownHandler';
 import { createTray, destroyTray } from './tray';
@@ -89,6 +94,13 @@ export async function handleAppBeforeQuit(
         log('warn', 'Before quit finished');
         app.quit();
     }
+}
+
+/**
+ * Handle the quit for the update.
+ */
+export function handleQuitForUpdate(): void {
+    autoUpdater.quitAndInstall();
 }
 
 /**
