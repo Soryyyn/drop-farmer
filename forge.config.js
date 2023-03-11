@@ -24,7 +24,7 @@ module.exports = {
             name: '@electron-forge/maker-squirrel',
             platforms: ['win32'],
             config: {
-                name: 'Drop Farmer',
+                name: 'drop-farmer',
                 authors: 'Soryn Bächli',
                 iconUrl:
                     'https://www.dropbox.com/s/gckge20qqx0t4sk/icon.ico?dl=1',

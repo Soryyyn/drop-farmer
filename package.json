@@ -1,7 +1,7 @@
 {
     "name": "drop-farmer",
     "private": true,
-    "productName": "Drop Farmer",
+    "productName": "drop-farmer",
     "description": "Application to farm your stream drops",
     "version": "1.0.0-beta45",
     "main": ".webpack/main",
