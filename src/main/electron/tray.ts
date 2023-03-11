@@ -16,7 +16,7 @@ export function createTray(): void {
 
     const contextMenu = Menu.buildFromTemplate([
         {
-            label: `Current version: ${app.getVersion()}`,
+            label: `Version: ${app.getVersion()}`,
             type: 'normal',
             enabled: false
         },

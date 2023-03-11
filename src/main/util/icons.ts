@@ -6,7 +6,7 @@ import { resolve } from 'path';
  */
 const defaultIcon: string = 'icon-normal';
 const devIcon: string = 'icon-dev';
-const dawinTemplateIcon: string = 'icon-template';
+const dawinTemplateIcon: string = 'icon-macosTemplate';
 
 /**
  * Get the icon name depending on the environment.
