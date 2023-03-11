@@ -93,7 +93,11 @@ export function createMainWindow(): Promise<void> {
             event.preventDefault();
 
             mainWindow!.hide();
-            windows.forEach((window) => hideWindow(window));
+            windows.forEach((window) => {
+                if (canWindowBeHidden(window)) hideWindow(window);
+            });
+
+            log('info', 'Hidden main and all other windows');
         });
 
         /**
@@ -168,20 +172,16 @@ export function createWindow(
 /**
  * Destroy the window and remove it from the array.
  */
-export async function destroyWindow(
-    windowToDestroy: BrowserWindow | undefined
-) {
-    if (windowToDestroy === undefined) {
-        return;
+export function destroyWindow(windowToDestroy: BrowserWindow | undefined) {
+    if (canWindowBeDestroyed(windowToDestroy)) {
+        windows.splice(
+            windows.findIndex((window) => window === windowToDestroy),
+            1
+        );
+
+        windowToDestroy!.destroy();
+        log('info', 'Destroyed window');
     }
-
-    windows.splice(
-        windows.findIndex((window) => window === windowToDestroy),
-        1
-    );
-
-    windowToDestroy.destroy();
-    log('info', 'Destroyed window');
 }
 
 /**
@@ -197,9 +197,7 @@ export async function destroyAllWindowsLeft(): Promise<void> {
         /**
          * Destroy each window.
          */
-        windows.forEach(async (window) => {
-            if (window !== undefined) await destroyWindow(window);
-        });
+        windows.forEach((window) => destroyWindow(window));
 
         /**
          * Check if there are windows left there and destroy them all again.
@@ -212,7 +210,7 @@ export async function destroyAllWindowsLeft(): Promise<void> {
  * Destroy the main window.
  */
 function destroyMainWindow(): void {
-    if (mainWindow !== undefined) {
+    if (canWindowBeDestroyed(mainWindow)) {
         destroyWindow(mainWindow);
         log('info', 'Destroyed main window');
     }
@@ -222,14 +220,10 @@ function destroyMainWindow(): void {
  * Show a window.
  */
 export function showWindow(window: BrowserWindow): void {
-    try {
-        if (!window.isDestroyed() || window !== undefined) {
-            window.show();
-            window.focus();
-            log('info', `Showing window:${window.id}`);
-        }
-    } catch (error) {
-        log('error', `Couldn't show window:${window.id}, reason: ${error}`);
+    if (canWindowBeShown(window)) {
+        window.show();
+        window.focus();
+        log('info', `Showing window:${window.id}`);
     }
 }
 
@@ -237,13 +231,9 @@ export function showWindow(window: BrowserWindow): void {
  * Hide a window.
  */
 export function hideWindow(window: BrowserWindow): void {
-    try {
-        if (!window.isDestroyed() || window !== undefined) {
-            window.hide();
-            log('info', `Hidden window:${window.id}`);
-        }
-    } catch (error) {
-        log('error', `Couldn't show window:${window.id}, reason: ${error}`);
+    if (canWindowBeHidden(window)) {
+        window.hide();
+        log('info', `Hidden window:${window.id}`);
     }
 }
 
@@ -266,4 +256,32 @@ export function getMainWindow(): BrowserWindow {
  */
 export function isMainWindowShown(): boolean {
     return mainWindow!.isVisible();
+}
+
+/**
+ * Check if a window can be destroyed.
+ */
+export function canWindowBeDestroyed(
+    window: BrowserWindow | undefined
+): boolean {
+    if (window === undefined || window.isDestroyed()) return false;
+    return true;
+}
+
+/**
+ * Check if a window can be shown.
+ */
+export function canWindowBeShown(window: BrowserWindow | undefined): boolean {
+    if (window === undefined || window.isDestroyed()) return false;
+    else if (window.isVisible()) return false;
+    else return true;
+}
+
+/**
+ * Check if a window can be hidden
+ */
+export function canWindowBeHidden(window: BrowserWindow | undefined): boolean {
+    if (window === undefined || window.isDestroyed()) return false;
+    else if (window.isVisible()) return true;
+    else return false;
 }

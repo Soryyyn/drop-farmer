@@ -45,13 +45,16 @@ export async function handleAppReady(): Promise<void> {
      * Check the single instance lock.
      * Quit the new instance if a lock is already set.
      */
-    if (!requestSingleInstanceLock()) {
-        app.quit();
+    if (!requestSingleInstanceLock() && process.env.NODE_END === 'production') {
+        log(
+            'warn',
+            'Hard exiting app because another instance is already running'
+        );
+        process.exit();
     }
 
     initUpdater();
     initFarmsManagement();
-
     createTray();
     await createMainWindow();
     handleClientShutdown();
@@ -158,6 +161,8 @@ async function relaunchApp(args?: string[]): Promise<void> {
  * If a new instance has been opened, open the main window.
  */
 export function handleSecondInstanceOpened(): void {
-    showWindow(getMainWindow());
-    log('info', 'Showing main window because second instance triggered');
+    if (process.env.NODE_ENV === 'production') {
+        showWindow(getMainWindow());
+        log('info', 'Showing main window because second instance triggered');
+    }
 }

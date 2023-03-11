@@ -439,15 +439,7 @@ export default abstract class FarmTemplate {
         this.updateStatus('disabled');
 
         this.cancelFarmingSchedule();
-
-        this.scheduler.stopAll();
-
         this.destroyAllWindows();
-
-        /**
-         * Stop the timer if the farm has been disabled.
-         */
-        this.timer.stopTimer();
     }
 
     /**
@@ -455,11 +447,6 @@ export default abstract class FarmTemplate {
      */
     stop(): void {
         this.cancelFarmingSchedule();
-
-        this.scheduler.stopAll();
-
-        this.updateConditions();
-        this.timer.stopTimer();
 
         log('info', `${this.id}: Stopped farm`);
     }
@@ -999,6 +986,10 @@ export default abstract class FarmTemplate {
      */
     private cancelFarmingSchedule(): void {
         if (this.runningSchedule) {
+            this.scheduler.stopAll();
+            this.updateConditions();
+            this.timer.stopTimer();
+
             this.runningSchedule?.cancel();
             this.runningSchedule = undefined;
 
