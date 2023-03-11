@@ -3,7 +3,7 @@
     "private": true,
     "productName": "Drop Farmer",
     "description": "Application to farm your stream drops",
-    "version": "1.0.0-beta44",
+    "version": "1.0.0-beta45",
     "main": ".webpack/main",
     "scripts": {
         "start": "set MINIMIZE=0 && electron-forge start",
