@@ -93,7 +93,7 @@ export function createMainWindow(): Promise<void> {
             event.preventDefault();
 
             mainWindow!.hide();
-            windows.forEach((window) => window.hide());
+            windows.forEach((window) => hideWindow(window));
         });
 
         /**
@@ -223,7 +223,7 @@ function destroyMainWindow(): void {
  */
 export function showWindow(window: BrowserWindow): void {
     try {
-        if (window) {
+        if (!window.isDestroyed() || window !== undefined) {
             window.show();
             window.focus();
             log('info', `Showing window:${window.id}`);
@@ -238,7 +238,7 @@ export function showWindow(window: BrowserWindow): void {
  */
 export function hideWindow(window: BrowserWindow): void {
     try {
-        if (window) {
+        if (!window.isDestroyed() || window !== undefined) {
             window.hide();
             log('info', `Hidden window:${window.id}`);
         }
