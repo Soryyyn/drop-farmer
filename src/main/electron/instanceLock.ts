@@ -1,3 +1,4 @@
+import { log } from '@main/util/logging';
 import { app } from 'electron';
 
 /**
@@ -5,6 +6,7 @@ import { app } from 'electron';
  * Return if the app is holding the current lock.
  */
 export function requestSingleInstanceLock(): boolean {
+    log('info', 'Requested single instance lock');
     return app.requestSingleInstanceLock();
 }
 

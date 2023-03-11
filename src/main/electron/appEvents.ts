@@ -56,6 +56,7 @@ export async function handleAppReady(): Promise<void> {
      */
     if (process.argv.find((arg) => arg === LaunchArgs.ShowMainWindow)) {
         showWindow(getMainWindow());
+        log('info', 'Showing main window because it was shown before relaunch');
     }
 
     log('warn', 'Ready finished');
@@ -146,4 +147,5 @@ async function relaunchApp(args?: string[]): Promise<void> {
  */
 export function handleSecondInstanceOpened(): void {
     showWindow(getMainWindow());
+    log('info', 'Showing main window because second instance triggered');
 }
