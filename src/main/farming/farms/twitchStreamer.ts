@@ -107,7 +107,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     );
                     resolve(undefined);
                 } else {
-                    await this.destroyWindowFromArray(this.farmers, window);
+                    this.destroyWindowFromArray(this.farmers, window);
 
                     log(
                         'info',
@@ -147,12 +147,36 @@ export default class TwitchStreamer extends FarmTemplate {
                          * Create the farming window and open the livestream.
                          */
                         this.createArrayWindow(this.url, this.farmers).then(
-                            () => {
+                            async (window) => {
+                                const page = await getPage(
+                                    getBrowserConnection(),
+                                    window
+                                );
+
+                                /**
+                                 * Check if the stream is only for mature users.
+                                 */
+                                if (
+                                    await doesElementExist(
+                                        page,
+                                        'button[data-a-target="player-overlay-mature-accept"]'
+                                    )
+                                ) {
+                                    await page.click(
+                                        'button[data-a-target="player-overlay-mature-accept"]'
+                                    );
+                                    await waitForTimeout(2000);
+
+                                    log(
+                                        'info',
+                                        `${this.id}: Needed to accept mature stream`
+                                    );
+                                }
+
                                 log(
                                     'info',
                                     `${this.id}: Farming with "${this.farmers.length}" windows`
                                 );
-
                                 resolve(undefined);
                             }
                         );

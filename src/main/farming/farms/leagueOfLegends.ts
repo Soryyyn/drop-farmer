@@ -213,7 +213,7 @@ export default class LeagueOfLegends extends FarmTemplate {
                          * array, destroy the window.
                          */
                         if (!found) {
-                            await this.destroyWindowFromArray(
+                            this.destroyWindowFromArray(
                                 this.farmers,
                                 farmingWindow
                             );
