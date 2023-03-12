@@ -45,12 +45,14 @@ export async function handleAppReady(): Promise<void> {
      * Check the single instance lock.
      * Quit the new instance if a lock is already set.
      */
-    if (!requestSingleInstanceLock() && process.env.NODE_END === 'production') {
-        log(
-            'warn',
-            'Hard exiting app because another instance is already running'
-        );
-        process.exit();
+    if (process.env.NODE_END === 'production') {
+        if (!requestSingleInstanceLock()) {
+            log(
+                'warn',
+                'Hard exiting app because another instance is already running'
+            );
+            process.exit();
+        }
     }
 
     initUpdater();
@@ -84,7 +86,7 @@ export async function handleAppBeforeQuit(
 
         destroyTray();
         stopFarms();
-        await destroyAllWindowsLeft();
+        destroyAllWindowsLeft();
 
         finishedBeforeQuit = true;
         isQuitting = true;

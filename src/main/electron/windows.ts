@@ -1,13 +1,8 @@
 import { getWindowIcon } from '@main/util/icons';
 import { log } from '@main/util/logging';
-import {
-    getBrowserConnection,
-    gotoURL,
-    waitForTimeout
-} from '@main/util/puppeteer';
 import { getSettingValue } from '@main/util/settings';
-import { BrowserWindow } from 'electron';
-import { getPage } from 'puppeteer-in-electron';
+import { BrowserWindow, Event } from 'electron';
+import { getIsQuitting } from './appEvents';
 
 /**
  * Pick up constant from electron-forge for the main window entry and the
@@ -90,21 +85,16 @@ export function createMainWindow(): Promise<void> {
          * Also hide all windows if the close event is fired.
          */
         mainWindow.on('close', (event) => {
-            event.preventDefault();
+            if (!getIsQuitting()) {
+                event.preventDefault();
 
-            mainWindow!.hide();
-            windows.forEach((window) => {
-                if (canWindowBeHidden(window)) hideWindow(window);
-            });
+                mainWindow!.hide();
+                windows.forEach((window) => {
+                    if (canWindowBeHidden(window)) hideWindow(window);
+                });
 
-            log('info', 'Hidden main and all other windows');
-        });
-
-        /**
-         * Remove the reference after its closed.
-         */
-        mainWindow.on('closed', () => {
-            mainWindow = undefined;
+                log('info', 'Hidden main and all other windows');
+            }
         });
     });
 }
@@ -153,18 +143,10 @@ export function createWindow(
          * Prevent the manual user close.
          */
         window.on('close', (event) => {
-            event.preventDefault();
-            hideWindow(window);
-        });
-
-        /**
-         * Remove the window from the array once its closed.
-         */
-        window.on('closed', () => {
-            windows.slice(
-                windows.findIndex((w) => w === window),
-                1
-            );
+            if (!getIsQuitting()) {
+                event.preventDefault();
+                hideWindow(window);
+            }
         });
     });
 }
@@ -187,23 +169,16 @@ export function destroyWindow(windowToDestroy: BrowserWindow | undefined) {
 /**
  * Destroy all the windows left in the windows array.
  */
-export async function destroyAllWindowsLeft(): Promise<void> {
-    return new Promise(async (resolve) => {
-        /**
-         * Destroy the main window.
-         */
-        destroyMainWindow();
+export function destroyAllWindowsLeft(): void {
+    /**
+     * Destroy the main window.
+     */
+    destroyMainWindow();
 
-        /**
-         * Destroy each window.
-         */
-        windows.forEach((window) => destroyWindow(window));
-
-        /**
-         * Check if there are windows left there and destroy them all again.
-         */
-        resolve();
-    });
+    /**
+     * Destroy each window.
+     */
+    windows.forEach((window) => destroyWindow(window));
 }
 
 /**
@@ -212,6 +187,7 @@ export async function destroyAllWindowsLeft(): Promise<void> {
 function destroyMainWindow(): void {
     if (canWindowBeDestroyed(mainWindow)) {
         destroyWindow(mainWindow);
+        mainWindow = undefined;
         log('info', 'Destroyed main window');
     }
 }
