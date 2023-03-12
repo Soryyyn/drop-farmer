@@ -24,11 +24,17 @@ if (require('electron-squirrel-startup')) {
  */
 initPuppeteerConnection();
 
+/**
+ * Handle app events.
+ */
 app.on('ready', async () => await handleAppReady());
 app.on('before-quit', (event) => handleAppBeforeQuit(event));
 app.on('quit', () => handleAppQuit());
 app.on('render-process-gone', handleRendererProcessGone);
 app.on('second-instance', () => handleSecondInstanceOpened());
 
+/**
+ * Handle powermonitor events.
+ */
 powerMonitor.on('suspend', async () => await handlePCSleep());
 powerMonitor.on('resume', async () => await handlePCWakeUp());
