@@ -1,4 +1,4 @@
-import { LaunchArgs } from '@main/common/constants';
+import { LaunchArg, LaunchArgs } from '@main/common/constants';
 import { initFarmsManagement, stopFarms } from '@main/farming/management';
 import { log } from '@main/util/logging';
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
@@ -67,7 +67,7 @@ export async function handleAppReady(): Promise<void> {
     /**
      * Show if window should be shown by relaunch.
      */
-    if (process.argv.find((arg) => arg === LaunchArgs.ShowMainWindow)) {
+    if (isLaunchArgPresent(LaunchArgs.ShowMainWindow)) {
         showWindow(getMainWindow());
         log('info', 'Showing main window because it was shown before relaunch');
     }
@@ -151,11 +151,11 @@ export async function handleRendererProcessGone(
 /**
  * Relaunch the app with args.
  */
-function relaunchApp(args?: string[]): void {
+function relaunchApp(args?: LaunchArg | string[]): void {
     log('warn', 'Relaunching app');
 
     isQuitting = true;
-    app.relaunch({ args: args });
+    app.relaunch({ args: args as string[] });
 
     handleAppBeforeQuit();
 }
@@ -168,4 +168,11 @@ export function handleSecondInstanceOpened(): void {
         showWindow(getMainWindow());
         log('info', 'Showing main window because second instance triggered');
     }
+}
+
+/**
+ * Check if the app is launched with a certain argument.
+ */
+export function isLaunchArgPresent(launchArg: LaunchArg): boolean {
+    return process.argv.findIndex((arg) => arg === launchArg) > -1;
 }

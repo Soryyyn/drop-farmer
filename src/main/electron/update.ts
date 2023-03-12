@@ -2,7 +2,7 @@ import { IpcChannels, LaunchArgs, Toasts } from '@main/common/constants';
 import { log } from '@main/util/logging';
 import { sendToast } from '@main/util/toast';
 import { app, autoUpdater } from 'electron';
-import { handleAppBeforeQuit } from './appEvents';
+import { handleAppBeforeQuit, isLaunchArgPresent } from './appEvents';
 import { sendOneWay } from './ipc';
 
 /**
@@ -15,17 +15,10 @@ autoUpdater.setFeedURL({
 });
 
 /**
- * Check if its the apps first run after an update or install.
- */
-function isFirstRunAfterUpdate(): boolean {
-    return process.argv.indexOf(LaunchArgs.SquirrelFirstRun) > -1;
-}
-
-/**
  * Check if the app can update.
  */
 export function checkIfCanUpdate(): void {
-    if (isFirstRunAfterUpdate()) {
+    if (isLaunchArgPresent(LaunchArgs.SquirrelFirstRun)) {
         sendToast({
             toast: {
                 id: Toasts.UpdateChecking,
