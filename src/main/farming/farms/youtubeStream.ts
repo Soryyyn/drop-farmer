@@ -66,7 +66,7 @@ export default class YoutubeStream extends FarmTemplate {
                     /**
                      * Close the farming window.
                      */
-                    this.destroyWindowFromArray(this.farmers, window);
+                    this.destroyWindowFromArray(this.farmers, this.farmers[0]);
 
                     log(
                         'info',

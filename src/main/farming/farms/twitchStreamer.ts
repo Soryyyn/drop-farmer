@@ -107,7 +107,7 @@ export default class TwitchStreamer extends FarmTemplate {
                     );
                     resolve(undefined);
                 } else {
-                    this.destroyWindowFromArray(this.farmers, window);
+                    this.destroyWindowFromArray(this.farmers, this.farmers[0]);
 
                     log(
                         'info',
