@@ -58,7 +58,8 @@ export const Schedules = {
 export type Schedule = (typeof Schedules)[keyof typeof Schedules];
 
 export const LaunchArgs = {
-    ShowMainWindow: '--showMainWindow'
+    ShowMainWindow: '--showMainWindow',
+    SquirrelFirstRun: '--squirrel-firstrun'
 } as const;
 
 /**
@@ -120,13 +121,13 @@ export const PossibleSettings: Setting[] = [
         desc: 'If enabled, the window of a farm, where login is required to continue, will automatically be shown.',
         default: false
     },
-    {
-        id: 'application-checkForUpdates',
-        shown: 'Automatically check for updates',
-        desc: "Enable to automatically check for updates. If you don't wan't to update, disable this setting.",
-        default: true,
-        requiresRestart: true
-    },
+    // {
+    //     id: 'application-checkForUpdates',
+    //     shown: 'Automatically check for updates',
+    //     desc: "Enable to automatically check for updates. If you don't wan't to update, disable this setting.",
+    //     default: true,
+    //     requiresRestart: true
+    // },
     {
         id: 'application-reducedMotion',
         shown: 'Prefer reduced motion',

@@ -36,7 +36,6 @@ const store = new ElectronStore<NewSettingsStoreSchema>({
                 'application-launchOnStartup': false,
                 'application-showMainWindowOnLaunch': true,
                 'application-showWindowsForLogin': false,
-                'application-checkForUpdates': true,
                 'application-reducedMotion': false
             }
         }
@@ -65,6 +64,10 @@ const store = new ElectronStore<NewSettingsStoreSchema>({
         },
         'v1.0.0-beta39': (store) => {
             store.clear();
+        },
+        'v1.0.0-beta47': (store) => {
+            // @ts-ignore
+            store.delete('settings.application.application-checkForUpdates');
         }
     }
 });

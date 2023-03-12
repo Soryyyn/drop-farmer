@@ -25,7 +25,7 @@ if (require('electron-squirrel-startup')) {
 initPuppeteerConnection();
 
 app.on('ready', async () => await handleAppReady());
-app.on('before-quit', async (event) => await handleAppBeforeQuit(event));
+app.on('before-quit', (event) => handleAppBeforeQuit(event));
 app.on('quit', () => handleAppQuit());
 app.on('render-process-gone', handleRendererProcessGone);
 app.on('second-instance', () => handleSecondInstanceOpened());

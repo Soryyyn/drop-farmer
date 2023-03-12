@@ -438,7 +438,7 @@ export default abstract class FarmTemplate {
         this.enabled = false;
         this.updateStatus('disabled');
 
-        this.cancelFarmingSchedule();
+        this.stop();
         this.destroyAllWindows();
     }
 
@@ -609,17 +609,9 @@ export default abstract class FarmTemplate {
      */
     async restartScheduler(withStatus?: FarmStatus, steps?: () => void) {
         return new Promise<void>(async (resolve) => {
-            this.timer.stopTimer();
             await this.addUptimeAmount();
-            this.updateConditions();
-            this.destroyAllWindows();
 
-            /**
-             * Cancel the schedule promise.
-             */
-            this.runningSchedule?.cancel();
-
-            this.scheduler.stopAll();
+            this.stop();
             if (steps) Promise.all([steps()]);
             this.scheduler.startAll();
 
@@ -636,7 +628,7 @@ export default abstract class FarmTemplate {
             /**
              * Notify renderer of changed farms.
              */
-            emitEvent(EventChannels.FarmsChanged);
+            sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
 
             resolve();
         });

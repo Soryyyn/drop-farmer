@@ -11,7 +11,6 @@ import {
 import { requestSingleInstanceLock } from './instanceLock';
 import { handleClientShutdown } from './shutdownHandler';
 import { createTray, destroyTray } from './tray';
-import { initUpdater } from './update';
 import {
     createMainWindow,
     destroyAllWindowsLeft,
@@ -55,7 +54,11 @@ export async function handleAppReady(): Promise<void> {
         }
     }
 
-    initUpdater();
+    /**
+     * Set the user model id.
+     */
+    app.setAppUserModelId('com.squirrel.soryn.DropFarmer');
+
     initFarmsManagement();
     createTray();
     await createMainWindow();
@@ -75,9 +78,7 @@ export async function handleAppReady(): Promise<void> {
 /**
  * Handle the state before app quits.
  */
-export async function handleAppBeforeQuit(
-    event?: Electron.Event
-): Promise<void> {
+export function handleAppBeforeQuit(event?: Electron.Event): void {
     /**
      * Wait for cleanup to finish before actually quitting.
      */
@@ -128,7 +129,7 @@ export async function handlePCSleep(): Promise<void> {
 export async function handlePCWakeUp(): Promise<void> {
     log('warn', 'PC woke up');
 
-    await relaunchApp([isMainWindowShown() ? LaunchArgs.ShowMainWindow : '']);
+    relaunchApp([isMainWindowShown() ? LaunchArgs.ShowMainWindow : '']);
 }
 
 /**
@@ -144,19 +145,19 @@ export async function handleRendererProcessGone(
         `Renderer ${webContents.id} gone, reason: ${details.reason} with exit code ${details.exitCode}. Relaunching app`
     );
 
-    await relaunchApp();
+    relaunchApp();
 }
 
 /**
  * Relaunch the app with args.
  */
-async function relaunchApp(args?: string[]): Promise<void> {
+function relaunchApp(args?: string[]): void {
     log('warn', 'Relaunching app');
 
     isQuitting = true;
     app.relaunch({ args: args });
 
-    await handleAppBeforeQuit();
+    handleAppBeforeQuit();
 }
 
 /**

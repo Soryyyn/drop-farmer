@@ -10,8 +10,7 @@ import {
     applySettingsToFarms,
     deleteFarm,
     getFarmById,
-    getFarmsRendererData,
-    stopFarms
+    getFarmsRendererData
 } from '@main/farming/management';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
@@ -25,6 +24,7 @@ import {
 import { sendToast } from '@main/util/toast';
 import { app, ipcMain, shell } from 'electron';
 import { setIsQuitting } from './appEvents';
+import { checkIfCanUpdate, handleInstallOfUpdate } from './update';
 import { getMainWindow } from './windows';
 
 /**
@@ -264,6 +264,10 @@ handleOneWay(
         farm?.toggleWindowsVisibility();
     }
 );
+
+handleOneWay(IpcChannels.updateCheck, () => checkIfCanUpdate());
+
+handleOneWay(IpcChannels.installUpdate, () => handleInstallOfUpdate());
 
 /**
  * INTERNAL EVENTS.

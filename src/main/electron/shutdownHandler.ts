@@ -11,9 +11,9 @@ export function handleClientShutdown(): void {
 
     ElectronShutdownHandler.blockShutdown('Please wait for graceful shutdown');
 
-    ElectronShutdownHandler.on('shutdown', async () => {
+    ElectronShutdownHandler.on('shutdown', () => {
         log('info', 'Received shutdown event, gracefully quitting app');
-        await handleAppBeforeQuit();
+        handleAppBeforeQuit();
     });
 
     log('info', 'Handling shutdown of client');
