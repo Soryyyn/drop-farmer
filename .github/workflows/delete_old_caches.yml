@@ -5,7 +5,7 @@ on:
         - cron: '0 0 * * SUN'
 
 jobs:
-    delete old caches:
+    delete-old-caches:
         name: Delete all caches
         runs-on: ubuntu-20.04
 
