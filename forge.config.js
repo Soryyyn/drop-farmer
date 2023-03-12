@@ -17,7 +17,8 @@ function allowAsar() {
 module.exports = {
     packagerConfig: {
         icon: 'resources/icon-normal',
-        asar: allowAsar()
+        asar: allowAsar(),
+        name: 'Drop Farmer'
     },
     makers: [
         {
