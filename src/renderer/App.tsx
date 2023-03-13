@@ -1,6 +1,6 @@
+import Dashboard from '@components/Dashboard';
 import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
-import Home from '@components/Home';
 import {
     FarmsContextProvider,
     InternetConnectionContextProvider,
@@ -27,7 +27,7 @@ export default function App() {
                                         <Routes>
                                             <Route
                                                 path="/"
-                                                element={<Home />}
+                                                element={<Dashboard />}
                                             />
                                         </Routes>
                                     </HashRouter>

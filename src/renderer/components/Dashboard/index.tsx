@@ -7,7 +7,7 @@ import Sidebar from './Sidebar';
 /**
  * The route for the main page of the application.
  */
-export default function Home() {
+export default function Dashboard() {
     return (
         <>
             <div className="flex flex-row h-full gap-8">
