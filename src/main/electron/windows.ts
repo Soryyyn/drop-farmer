@@ -237,9 +237,7 @@ export function isMainWindowShown(): boolean {
 /**
  * Check if a window can be destroyed.
  */
-export function canWindowBeDestroyed(
-    window: BrowserWindow | undefined
-): boolean {
+function canWindowBeDestroyed(window: BrowserWindow | undefined): boolean {
     if (window === undefined || window.isDestroyed()) return false;
     return true;
 }
@@ -247,7 +245,7 @@ export function canWindowBeDestroyed(
 /**
  * Check if a window can be shown.
  */
-export function canWindowBeShown(window: BrowserWindow | undefined): boolean {
+function canWindowBeShown(window: BrowserWindow | undefined): boolean {
     if (window === undefined || window.isDestroyed()) return false;
     else if (window.isVisible()) return false;
     else return true;
@@ -256,7 +254,7 @@ export function canWindowBeShown(window: BrowserWindow | undefined): boolean {
 /**
  * Check if a window can be hidden
  */
-export function canWindowBeHidden(window: BrowserWindow | undefined): boolean {
+function canWindowBeHidden(window: BrowserWindow | undefined): boolean {
     if (window === undefined || window.isDestroyed()) return false;
     else if (window.isVisible()) return true;
     else return false;
