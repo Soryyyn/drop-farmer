@@ -78,7 +78,7 @@
         "@tippyjs/react": "^4.2.6",
         "@types/react": "^18.0.28",
         "@types/react-dom": "^18.0.11",
-        "@typescript-eslint/eslint-plugin": "^5.54.0",
+        "@typescript-eslint/eslint-plugin": "^5.54.1",
         "@typescript-eslint/parser": "^5.54.0",
         "auto-launch": "^5.0.5",
         "clsx": "^1.2.1",
