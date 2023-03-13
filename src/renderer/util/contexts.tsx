@@ -5,6 +5,7 @@ import Settings from '@components/Settings';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import { useSendOneWay } from '@hooks/useSendOneWay';
+import { Session } from '@supabase/supabase-js';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import React, { createContext, useCallback, useState } from 'react';
@@ -85,6 +86,18 @@ export const FarmContext = createContext<{
     clearCache: () => {},
     deleteSelf: () => {},
     resetConditions: () => {}
+});
+
+export const AuthContext = createContext<{
+    session: Session | null;
+    signIn: (email: string, password: string) => void;
+    signUp: (email: string, password: string) => void;
+    signOut: () => void;
+}>({
+    session: null,
+    signIn: () => {},
+    signUp: () => {},
+    signOut: () => {}
 });
 
 /**
@@ -344,5 +357,21 @@ export function FarmContextProvider({
         >
             {children}
         </FarmContext.Provider>
+    );
+}
+
+export function AuthContextProvider({ children }: DefaultProps) {
+    const [session, setSession] = useState<Session | null>(null);
+
+    function signIn(email: string, password: string) {}
+
+    function signUp(email: string, password: string) {}
+
+    function signOut() {}
+
+    return (
+        <AuthContext.Provider value={{ session, signIn, signUp, signOut }}>
+            {children}
+        </AuthContext.Provider>
     );
 }

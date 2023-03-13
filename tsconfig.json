@@ -24,7 +24,8 @@
             "@main/common/*": ["src/main/common/*"],
             "@main/electron/*": ["src/main/electron/*"],
             "@main/farming/*": ["src/main/farming/*"],
-            "@main/util/*": ["src/main/util/*"]
+            "@main/util/*": ["src/main/util/*"],
+            "@main/auth/*": ["src/main/auth/*"],
         },
         "typeRoots": ["./node_modules/@types", "src/types"]
     },

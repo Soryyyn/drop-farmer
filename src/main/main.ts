@@ -1,4 +1,5 @@
 import { app, powerMonitor } from 'electron';
+import { initAuth } from './auth/clientConnection';
 import {
     handleAppBeforeQuit,
     handleAppQuit,
@@ -23,6 +24,11 @@ if (require('electron-squirrel-startup')) {
  * Is called before electron is ready.
  */
 initPuppeteerConnection();
+
+/**
+ * The supabase & backend flow.
+ */
+initAuth();
 
 /**
  * Handle app events.
