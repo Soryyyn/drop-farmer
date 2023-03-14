@@ -1,6 +1,5 @@
 import Icon from '@components/global/Icon';
 import Menu from '@components/global/Menu';
-import NotificationBadge from '@components/global/NotificationBadge';
 import SquareContainer from '@components/global/SquareContainer';
 import {
     faBroom,

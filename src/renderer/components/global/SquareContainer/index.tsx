@@ -9,6 +9,7 @@ interface Props {
     tooltip?: string | JSX.Element;
     tooltipPlacement?: any;
     notificationBadge?: boolean;
+    onClick?: () => void;
 }
 
 export default function SquareContainer({
@@ -16,12 +17,14 @@ export default function SquareContainer({
     className,
     tooltip,
     tooltipPlacement,
-    notificationBadge
+    notificationBadge,
+    onClick
 }: Props) {
     return (
         <NotificationBadge showing={notificationBadge ?? false}>
             <Tooltip placement={tooltipPlacement} text={tooltip}>
                 <div
+                    onClick={onClick}
                     className={clsx(
                         'h-full aspect-square flex items-center justify-center',
                         className
