@@ -3,12 +3,13 @@ import { Overlays } from '@components/global/Overlay/types';
 import NewFarm from '@components/NewFarm';
 import Settings from '@components/Settings';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
+import { useKeyPress } from '@hooks/useKeyPress';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import { useSendOneWay } from '@hooks/useSendOneWay';
 import { Session } from '@supabase/supabase-js';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
-import React, { createContext, useCallback, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 interface DefaultProps {
     children: JSX.Element | JSX.Element[];
@@ -186,6 +187,7 @@ export function ModalContextProvider({ children }: DefaultProps) {
         undefined
     );
     const [showing, setShowing] = useState<boolean>(false);
+    const escape = useKeyPress('Escape');
 
     function toggleOverlay() {
         setShowing(!showing);
@@ -204,6 +206,13 @@ export function ModalContextProvider({ children }: DefaultProps) {
 
         return <></>;
     }, [currentOverlay]);
+
+    /**
+     * Close the modal if its shown and the user tries to close it via escape key.
+     */
+    useEffect(() => {
+        if (escape) toggleOverlay();
+    }, [escape]);
 
     return (
         <ModalContext.Provider
