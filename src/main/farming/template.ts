@@ -435,11 +435,11 @@ export default abstract class FarmTemplate {
     }
 
     disable(): void {
-        this.enabled = false;
-        this.updateStatus('disabled');
-
         this.stop();
         this.destroyAllWindows();
+
+        this.enabled = false;
+        this.updateStatus('disabled');
     }
 
     /**
@@ -470,13 +470,14 @@ export default abstract class FarmTemplate {
         window?: Electron.BrowserWindow
     ) {
         if (window) {
-            array.splice(array.indexOf(window), 1);
+            const index = array.indexOf(window);
+            array.splice(index, 1);
             destroyWindow(window);
         } else {
-            while (array.length > 0) {
-                array.splice(array.length, 1);
-                destroyWindow(array[array.length - 1]);
-            }
+            array.forEach((window, index) => {
+                array.splice(index, 1);
+                destroyWindow(window);
+            });
         }
     }
 

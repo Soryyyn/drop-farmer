@@ -1,17 +1,9 @@
-import {
-    FileNames,
-    IpcChannels,
-    PossibleSettings,
-    Toasts
-} from '@main/common/constants';
-import { handleAndReply, handleOneWay, sendOneWay } from '@main/electron/ipc';
-import { applySettingsToFarms } from '@main/farming/management';
+import { FileNames, PossibleSettings } from '@main/common/constants';
 import AutoLaunch from 'auto-launch';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
 import { log } from './logging';
-import { sendToast } from './toast';
 
 const autoLauncher = new AutoLaunch({ name: 'Drop Farmer' });
 
