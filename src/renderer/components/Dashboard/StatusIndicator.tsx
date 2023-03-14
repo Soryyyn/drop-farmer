@@ -30,14 +30,17 @@ export default function StatusIndicator({ status }: Props) {
         <Tooltip placement="bottom" text={getTooltipText()}>
             <div
                 className={clsx(
-                    'h-[33px] w-[33px] flex items-center justify-center text-pepper-200 aspect-square p-1 rounded',
+                    'h-[33px] w-[33px] flex items-center justify-center text-pepper-200 aspect-square p-1 rounded bg-gradient-to-tr',
                     {
-                        'bg-blood-500': status === 'disabled',
-                        'bg-sky-500': status === 'attention-required',
-                        'bg-amber-500': status === 'idle',
-                        'bg-pineapple-500': status === 'checking',
-                        'bg-leaf-500': status === 'farming',
-                        'bg-amethyst-500': status === 'condition-fulfilled'
+                        'from-blood-500 to-blood-550': status === 'disabled',
+                        'from-sky-500 to-sky-550':
+                            status === 'attention-required',
+                        'from-amber-500 to-amber-550': status === 'idle',
+                        'from-pineapple-500 to-pineapple-550':
+                            status === 'checking',
+                        'from-leaf-500 to-leaf-550': status === 'farming',
+                        'from-amethyst-500 to-amethyst-550':
+                            status === 'condition-fulfilled'
                     }
                 )}
             >

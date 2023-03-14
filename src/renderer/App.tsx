@@ -32,11 +32,11 @@ export default function App() {
                                             <Route
                                                 path="/"
                                                 element={
-                                                    !session ? (
-                                                        <Auth />
-                                                    ) : (
-                                                        <Dashboard />
-                                                    )
+                                                    // !session ? (
+                                                    //     <Auth />
+                                                    // ) : (
+                                                    <Dashboard />
+                                                    // )
                                                 }
                                             />
                                         </Routes>
