@@ -7,7 +7,7 @@ export default function RestartIndicator() {
             placement="bottom"
             text="For this setting to take effect, you need to restart Drop Farmer"
         >
-            <div className="flex items-center bg-amber-500 py-1 px-2 rounded ">
+            <div className="flex items-center bg-gradient-to-tr from-amber-500 to-amber-550 py-1 px-2 rounded ">
                 <p className="text-pepper-200 font-semibold text-center leading-none text-sm">
                     RESTART
                 </p>
