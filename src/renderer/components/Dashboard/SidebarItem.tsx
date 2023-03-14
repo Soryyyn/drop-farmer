@@ -1,6 +1,7 @@
 import Icon from '@components/global/Icon';
 import Menu from '@components/global/Menu';
 import NotificationBadge from '@components/global/NotificationBadge';
+import SquareContainer from '@components/global/SquareContainer';
 import {
     faBroom,
     faCalendarDays,
@@ -61,7 +62,7 @@ export default function SidebarItem() {
     }, [farm!.schedule, farm!.status]);
 
     return (
-        <div className="w-full p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
+        <div className="w-full h-min p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
             <span className="grow flex flex-row gap-2 items-center text-pepper-200 text-lg capitalize font-medium leading-none">
                 {api.removeTypeFromText(farm!.id)}
             </span>
@@ -71,11 +72,12 @@ export default function SidebarItem() {
 
             <Menu
                 button={
-                    <NotificationBadge showing={loginNeeded}>
-                        <div className="h-full flex items-center justify-items-center text-pepper-200 bg-pepper-800/50 hover:bg-pepper-800/75 active:bg-pepper-800 active:text-snow-500 aspect-square p-1 rounded cursor-pointer">
-                            <Icon sprite={faEllipsisVertical} size="lg" />
-                        </div>
-                    </NotificationBadge>
+                    <SquareContainer
+                        notificationBadge={loginNeeded}
+                        className="text-pepper-200 bg-pepper-800/50 hover:bg-pepper-800/75 active:bg-pepper-800 active:text-snow-500 aspect-square p-1 rounded cursor-pointer"
+                    >
+                        <Icon sprite={faEllipsisVertical} size="lg" />
+                    </SquareContainer>
                 }
                 entries={[
                     {

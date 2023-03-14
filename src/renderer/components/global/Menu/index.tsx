@@ -78,12 +78,12 @@ export default function Menu({ button, entries, fullWidth, disabled }: Props) {
     return (
         <HeadlessMenu
             as="div"
-            className={clsx('relative box-border', {
+            className={clsx('relative', {
                 'w-full': fullWidth,
                 'w-fit': !fullWidth
             })}
         >
-            <HeadlessMenu.Button className="w-full" disabled={disabled}>
+            <HeadlessMenu.Button className="w-full block" disabled={disabled}>
                 {button}
             </HeadlessMenu.Button>
 
