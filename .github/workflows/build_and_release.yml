@@ -19,9 +19,9 @@ jobs:
             - name: Create environment file
               uses: ozaytsev86/create-env-file@v1
               with:
-                  STORES_ENCRYPTION_KEY: ${{secrets.STORES_ENCRYPTION_KEY}}
-                  SUPABASE_BACKEND_URL: ${{secrets.SUPABASE_BACKEND_URL}}
-                  SUPABASE_BACKEND_ANON_KEY: ${{secrets.SUPABASE_BACKEND_ANON_KEY}}
+                  ENV_STORES_ENCRYPTION_KEY: ${{secrets.STORES_ENCRYPTION_KEY}}
+                  ENV_SUPABASE_BACKEND_URL: ${{secrets.SUPABASE_BACKEND_URL}}
+                  ENV_SUPABASE_BACKEND_ANON_KEY: ${{secrets.SUPABASE_BACKEND_ANON_KEY}}
 
             - name: Setup Node.js
               uses: actions/setup-node@v3
