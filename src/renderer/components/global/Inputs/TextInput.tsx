@@ -5,12 +5,19 @@ interface Props {
     value: string;
     label?: string;
     disabled?: boolean;
+    isPassword?: boolean;
     onChange: (changed: string) => void;
 }
 
-export default function TextInput({ label, value, disabled, onChange }: Props) {
+export default function TextInput({
+    label,
+    value,
+    disabled,
+    isPassword,
+    onChange
+}: Props) {
     return (
-        <div className="flex flex-col gap-2 grow">
+        <div className="flex flex-col gap-2">
             {label && (
                 <div className="flex flex-row leading-none gap-1">
                     <span className="text-snow-300">{label}</span>
@@ -19,6 +26,7 @@ export default function TextInput({ label, value, disabled, onChange }: Props) {
 
             <input
                 disabled={disabled}
+                type={isPassword ? 'password' : 'text'}
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
                 className={clsx(

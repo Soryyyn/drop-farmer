@@ -1,22 +1,19 @@
-import Auth from '@components/Auth';
+import { default as SignIn } from '@components/Auth/SignIn';
 import Dashboard from '@components/Dashboard';
 import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
 import {
-    AuthContext,
     FarmsContextProvider,
     InternetConnectionContextProvider,
     ModalContextProvider,
     SettingsContextProvider,
     UpdateContextProvider
 } from '@renderer/util/contexts';
-import React, { useContext } from 'react';
+import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import './global.css';
 
 export default function App() {
-    const { session } = useContext(AuthContext);
-
     return (
         <>
             <Dragbar />
@@ -31,13 +28,11 @@ export default function App() {
                                         <Routes>
                                             <Route
                                                 path="/"
-                                                element={
-                                                    // !session ? (
-                                                    //     <Auth />
-                                                    // ) : (
-                                                    <Dashboard />
-                                                    // )
-                                                }
+                                                element={<Dashboard />}
+                                            />
+                                            <Route
+                                                path="/signIn"
+                                                element={<SignIn />}
                                             />
                                         </Routes>
                                     </HashRouter>

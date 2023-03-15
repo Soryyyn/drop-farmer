@@ -1,6 +1,8 @@
 import Model from '@components/global/Model';
 import Navigation from '@components/global/Navigation';
-import React from 'react';
+import { AuthContext } from '@renderer/util/contexts';
+import React, { useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AboutButton from './AboutButton';
 import Sidebar from './Sidebar';
 
@@ -8,6 +10,17 @@ import Sidebar from './Sidebar';
  * The route for the main page of the application.
  */
 export default function Dashboard() {
+    /**
+     * Move the user to the sign in route if he has no session.
+     */
+    const { session } = useContext(AuthContext);
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!session) {
+            navigate('/signIn');
+        }
+    }, [session]);
+
     return (
         <>
             <div className="flex flex-row h-full gap-8">
