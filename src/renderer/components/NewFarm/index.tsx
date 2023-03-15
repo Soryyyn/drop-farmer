@@ -1,11 +1,10 @@
 import OverlayContainer from '@components/global/Overlay/OverlayContainer';
 import OverlayContent from '@components/global/Overlay/OverlayContent';
 import TabSwitcher from '@components/global/TabSwitcher';
-import ActionButton from '@components/Settings/ActionButton';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FarmsContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
-import BasicInfoTab, { BasicInfoObject } from './BasicInfoTab';
+import BasicInfoTab from './BasicInfoTab';
 import ConditionsTab from './ConditionsTab';
 
 interface Props {
@@ -41,17 +40,16 @@ export default function NewFarm({ onClose }: Props) {
         <OverlayContainer>
             <OverlayContent
                 buttons={[
-                    <ActionButton
-                        key="newFarm"
-                        icon={faFloppyDisk}
-                        tooltip="Create a new farm with the filled out details"
-                        onClick={() => addFarm(details)}
-                    />,
-                    <ActionButton
-                        key="close"
-                        icon={faXmark}
-                        onClick={onClose}
-                    />
+                    {
+                        icon: faFloppyDisk,
+                        tooltip:
+                            'Create a new farm with the filled out details',
+                        onClick: () => addFarm(details)
+                    },
+                    {
+                        icon: faXmark,
+                        onClick: () => onClose()
+                    }
                 ]}
             >
                 <TabSwitcher

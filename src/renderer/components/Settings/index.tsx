@@ -6,8 +6,7 @@ import {
     faXmark
 } from '@fortawesome/free-solid-svg-icons';
 import { FarmsContext, SettingsContext } from '@renderer/util/contexts';
-import React, { useContext, useEffect, useState } from 'react';
-import ActionButton from './ActionButton';
+import React, { useContext, useState } from 'react';
 import Selector from './Selector';
 import Setting from './Setting';
 
@@ -26,23 +25,20 @@ export default function Settings({ onClose }: Props) {
         <OverlayContainer>
             <OverlayContent
                 buttons={[
-                    <ActionButton
-                        key="reset"
-                        icon={faRotateRight}
-                        tooltip="Reset settings to default"
-                        onClick={resetToDefaultSettings}
-                    />,
-                    <ActionButton
-                        key="save"
-                        icon={faFloppyDisk}
-                        tooltip="Save settings"
-                        onClick={() => setNewSettings(currentSettings!)}
-                    />,
-                    <ActionButton
-                        key="close"
-                        icon={faXmark}
-                        onClick={onClose}
-                    />
+                    {
+                        icon: faRotateRight,
+                        tooltip: 'Reset settings to default',
+                        onClick: () => resetToDefaultSettings()
+                    },
+                    {
+                        icon: faFloppyDisk,
+                        tooltip: 'Save settings',
+                        onClick: () => setNewSettings(currentSettings!)
+                    },
+                    {
+                        icon: faXmark,
+                        onClick: () => onClose()
+                    }
                 ]}
             >
                 <div className="flex flex-row h-full w-full gap-8 overflow-y-auto">
