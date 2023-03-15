@@ -48,6 +48,7 @@ export default function NewFarm({ onClose }: Props) {
                     },
                     {
                         icon: faXmark,
+                        caution: true,
                         onClick: () => onClose()
                     }
                 ]}

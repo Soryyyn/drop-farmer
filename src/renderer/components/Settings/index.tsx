@@ -37,6 +37,7 @@ export default function Settings({ onClose }: Props) {
                     },
                     {
                         icon: faXmark,
+                        caution: true,
                         onClick: () => onClose()
                     }
                 ]}

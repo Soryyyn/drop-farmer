@@ -30,10 +30,10 @@ export default function Switch({
                 onChange={onChange}
                 disabled={disabled}
                 className={clsx(
-                    'relative w-16 flex items-center rounded-md p-1 transition-all',
+                    'relative w-16 flex items-center rounded-md p-1 transition-all bg-gradient-to-tr',
                     {
                         'bg-pepper-700': !value,
-                        'bg-blood-500': value
+                        'from-blood-500 to-blood-550': value
                     }
                 )}
             >

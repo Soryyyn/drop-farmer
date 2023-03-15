@@ -1,5 +1,4 @@
 import {
-    faChartSimple,
     faDownload,
     faGear,
     faGlobe,
@@ -22,6 +21,7 @@ export default function Navigation() {
                 <NavigationItem
                     icon={faDownload}
                     tooltip="Install update"
+                    className="bg-gradient-to-tr from-leaf-500 to-leaf-550 hover:brightness-95 active:brightness-[85%] active:text-pepper-200"
                     onClick={installUpdate}
                 />
             ) : (
@@ -41,11 +41,6 @@ export default function Navigation() {
                     )
                 }
             />
-            {/* <NavigationItem
-                icon={faChartSimple}
-                tooltip="Statistics & Conditions"
-                onClick={() => {}}
-            /> */}
             <NavigationItem
                 icon={faGear}
                 tooltip="Settings"
