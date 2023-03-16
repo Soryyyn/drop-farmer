@@ -1,8 +1,8 @@
 import Icon from '@components/global/Icon';
 import TextInput from '@components/global/Inputs/TextInput';
 import SquareContainer from '@components/global/SquareContainer';
+import { AuthContext } from '@contexts/AuthContext';
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from '@renderer/util/contexts';
 import React, { useContext } from 'react';
 
 export default function SignIn() {

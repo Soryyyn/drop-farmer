@@ -1,11 +1,12 @@
 import OverlayContainer from '@components/global/Overlay/OverlayContainer';
 import OverlayContent from '@components/global/Overlay/OverlayContent';
+import { FarmsContext } from '@contexts/FarmsContext';
+import { SettingsContext } from '@contexts/SettingsContext';
 import {
     faFloppyDisk,
     faRotateRight,
     faXmark
 } from '@fortawesome/free-solid-svg-icons';
-import { FarmsContext, SettingsContext } from '@renderer/util/contexts';
 import React, { useContext, useState } from 'react';
 import Selector from './Selector';
 import Setting from './Setting';

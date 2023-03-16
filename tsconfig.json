@@ -20,6 +20,7 @@
             "@assets/*": ["src/renderer/assets/*"],
             "@components/*": ["src/renderer/components/*"],
             "@hooks/*": ["src/renderer/hooks/*"],
+            "@contexts/*": ["src/renderer/contexts/*"],
             "@renderer/util/*": ["src/renderer/util/*"],
             "@main/common/*": ["src/main/common/*"],
             "@main/electron/*": ["src/main/electron/*"],

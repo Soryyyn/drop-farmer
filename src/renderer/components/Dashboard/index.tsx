@@ -1,6 +1,6 @@
 import Model from '@components/global/Model';
 import Navigation from '@components/global/Navigation';
-import { AuthContext } from '@renderer/util/contexts';
+import { AuthContext } from '@contexts/AuthContext';
 import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AboutButton from './AboutButton';

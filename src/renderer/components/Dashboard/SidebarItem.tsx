@@ -1,6 +1,7 @@
 import Icon from '@components/global/Icon';
 import Menu from '@components/global/Menu';
 import SquareContainer from '@components/global/SquareContainer';
+import { FarmContext } from '@contexts/FarmContext';
 import {
     faBroom,
     faCalendarDays,
@@ -14,7 +15,6 @@ import {
     faTrash,
     faWindowRestore
 } from '@fortawesome/free-solid-svg-icons';
-import { FarmContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
 import ProtecedIndicator from './ProtectedIndicator';
 import StatusIndicator from './StatusIndicator';

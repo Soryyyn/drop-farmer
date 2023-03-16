@@ -2,13 +2,11 @@ import { default as SignIn } from '@components/Auth/SignIn';
 import Dashboard from '@components/Dashboard';
 import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
-import {
-    FarmsContextProvider,
-    InternetConnectionContextProvider,
-    ModalContextProvider,
-    SettingsContextProvider,
-    UpdateContextProvider
-} from '@renderer/util/contexts';
+import { FarmsContextProvider } from '@contexts/FarmsContext';
+import { InternetConnectionContextProvider } from '@contexts/InternetConnectionContext';
+import { ModalContextProvider } from '@contexts/ModalContext';
+import { SettingsContextProvider } from '@contexts/SettingsContext';
+import { UpdateContextProvider } from '@contexts/UpdateContext';
 import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import './global.css';

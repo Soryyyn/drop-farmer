@@ -1,8 +1,8 @@
 import OverlayContainer from '@components/global/Overlay/OverlayContainer';
 import OverlayContent from '@components/global/Overlay/OverlayContent';
 import TabSwitcher from '@components/global/TabSwitcher';
+import { FarmsContext } from '@contexts/FarmsContext';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { FarmsContext } from '@renderer/util/contexts';
 import React, { useContext, useEffect, useState } from 'react';
 import BasicInfoTab from './BasicInfoTab';
 import ConditionsTab from './ConditionsTab';

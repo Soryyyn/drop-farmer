@@ -1,3 +1,5 @@
+import { ModalContext } from '@contexts/ModalContext';
+import { UpdateContext } from '@contexts/UpdateContext';
 import {
     faDownload,
     faGear,
@@ -5,7 +7,6 @@ import {
     faPowerOff,
     faRotate
 } from '@fortawesome/free-solid-svg-icons';
-import { ModalContext, UpdateContext } from '@renderer/util/contexts';
 import React, { useContext } from 'react';
 import { Overlays } from '../Overlay/types';
 import NavigationItem from './NavigationItem';
