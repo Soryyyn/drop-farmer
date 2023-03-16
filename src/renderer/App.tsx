@@ -2,6 +2,7 @@ import { default as SignIn } from '@components/Auth/SignIn';
 import Dashboard from '@components/Dashboard';
 import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
+import { AuthContextProvider } from '@contexts/AuthContext';
 import { FarmsContextProvider } from '@contexts/FarmsContext';
 import { InternetConnectionContextProvider } from '@contexts/InternetConnectionContext';
 import { ModalContextProvider } from '@contexts/ModalContext';
@@ -23,16 +24,18 @@ export default function App() {
                             <ModalContextProvider>
                                 <div className="p-8 flex flex-col h-screen">
                                     <HashRouter>
-                                        <Routes>
-                                            <Route
-                                                path="/"
-                                                element={<Dashboard />}
-                                            />
-                                            <Route
-                                                path="/signIn"
-                                                element={<SignIn />}
-                                            />
-                                        </Routes>
+                                        <AuthContextProvider>
+                                            <Routes>
+                                                <Route
+                                                    path="/"
+                                                    element={<Dashboard />}
+                                                />
+                                                <Route
+                                                    path="/signIn"
+                                                    element={<SignIn />}
+                                                />
+                                            </Routes>
+                                        </AuthContextProvider>
                                     </HashRouter>
                                 </div>
                             </ModalContextProvider>

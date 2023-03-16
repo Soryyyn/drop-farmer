@@ -26,7 +26,7 @@ export default function OverlayContent({ children, buttons }: Props) {
                             tooltipPlacement="bottom"
                             onClick={button.onClick}
                             className={clsx('rounded-md p-2.5 cursor-pointer', {
-                                'bg-pepper-700 text-snow-500 hover:bg-gradient-to-tr hover:from-blood-500 hover:to-blood-550 hover:text-pepper-200':
+                                'bg-pepper-700 text-snow-500 hover:bg-gradient-to-tr hover:from-blood-500 hover:to-blood-550 hover:text-pepper-200 active:brightness-90':
                                     button.caution,
                                 'text-snow-500 bg-pepper-700 hover:bg-pepper-800':
                                     !button.caution

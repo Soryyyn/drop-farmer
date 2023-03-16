@@ -60,7 +60,7 @@ export default function NumberInput({
                 )}
                 <input
                     className={clsx(
-                        'text-center bg-pepper-700 px-2 py-1 rounded focus:outline-none text-snow-300 caret-snow-500',
+                        'text-center bg-pepper-700 px-2 py-1 rounded focus:outline-none text-snow-300 caret-snow-500 selection:bg-amethyst-550 selection:text-pepper-200',
                         {
                             'w-full': fullWidth,
                             'w-1/3': !fullWidth,

@@ -37,7 +37,7 @@ export default function MaskedInput({
             onChange={(event) => setCurrentValue(event.currentTarget.value)}
             disabled={disabled}
             className={clsx(
-                'w-full bg-pepper-700 px-2 py-1 rounded focus:outline-none text-snow-300 h-[33.5px] placeholder:text-snow-300/50 caret-snow-500',
+                'w-full bg-pepper-700 px-2 py-1 rounded focus:outline-none text-snow-300 h-[33.5px] placeholder:text-snow-300/50 caret-snow-500 selection:bg-amethyst-550 selection:text-pepper-200',
                 {
                     'hover:bg-pepper-800 focus:bg-pepper-800': !disabled
                 }

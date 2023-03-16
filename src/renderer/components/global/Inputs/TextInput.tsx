@@ -26,11 +26,12 @@ export default function TextInput({
 
             <input
                 disabled={disabled}
+                spellCheck={false}
                 type={isPassword ? 'password' : 'text'}
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
                 className={clsx(
-                    'w-full bg-pepper-700 px-2 py-1 rounded focus:outline-none text-snow-300 text-left h-[33.5px]',
+                    'w-full bg-pepper-700 px-2 py-1 rounded focus:outline-none text-snow-300 caret-snow-500 text-left h-[33.5px] selection:bg-amethyst-550 selection:text-pepper-200',
                     {
                         'hover:bg-pepper-800 focus:bg-pepper-800': !disabled
                     }
