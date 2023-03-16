@@ -211,7 +211,7 @@ export function ModalContextProvider({ children }: DefaultProps) {
      * Close the modal if its shown and the user tries to close it via escape key.
      */
     useEffect(() => {
-        if (escape) toggleOverlay();
+        if (escape && showing) toggleOverlay();
     }, [escape]);
 
     return (
