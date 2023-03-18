@@ -1,4 +1,4 @@
-import { default as SignIn } from '@components/Auth/SignIn';
+import SignIn from '@components/Auth/SignIn';
 import Dashboard from '@components/Dashboard';
 import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
