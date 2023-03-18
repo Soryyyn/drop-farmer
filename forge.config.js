@@ -35,17 +35,6 @@ module.exports = {
                     'icon-normal.ico'
                 )
             }
-        },
-        {
-            name: '@electron-forge/maker-deb',
-            platforms: ['linux'],
-            config: {
-                icon: path.resolve(__dirname, 'resources', 'icon-normal.png')
-            }
-        },
-        {
-            name: '@electron-forge/maker-zip',
-            platforms: ['darwin']
         }
     ],
     publishers: [

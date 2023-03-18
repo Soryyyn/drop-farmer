@@ -74,7 +74,7 @@ export default function SignIn() {
                 </div>
             </div>
 
-            <p className="bg-pepper-600 text-snow-300 shadow-xl shadow-pepper-600/25 px-4 pb-1 rounded-b-lg">
+            <p className="bg-pepper-600/70 text-snow-300 shadow-xl shadow-pepper-600/25 px-8 py-1 rounded-b-lg">
                 {appVersion}
             </p>
         </div>
