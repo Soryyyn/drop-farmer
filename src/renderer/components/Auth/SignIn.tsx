@@ -14,7 +14,7 @@ export default function SignIn() {
     const [password, setPassword] = useState('');
 
     return (
-        <div className="h-full w-full flex items-center justify-center">
+        <div className="h-full w-full flex flex-col items-center justify-center">
             <div className="bg-pepper-600 rounded-xl shadow-xl shadow-pepper-600/25 h-fit w-1/2 p-8 flex flex-col gap-4">
                 <p className="text-snow-300 text-center font-semibold text-3xl leading-none">
                     Authentication
@@ -55,10 +55,6 @@ export default function SignIn() {
                         />
                     </p>
 
-                    <p className="leading-none text-center text-snow-300/30 -mb-2">
-                        {appVersion}
-                    </p>
-
                     <div className="flex flex-row gap-2">
                         <button
                             onClick={() => signIn(email, password)}
@@ -77,6 +73,10 @@ export default function SignIn() {
                     </div>
                 </div>
             </div>
+
+            <p className="bg-pepper-600 text-snow-300 shadow-xl shadow-pepper-600/25 px-4 pb-1 rounded-b-lg">
+                {appVersion}
+            </p>
         </div>
     );
 }

@@ -1,11 +1,5 @@
 import { Session } from 'electron';
-import React, {
-    createContext,
-    useEffect,
-    useLayoutEffect,
-    useState
-} from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useState } from 'react';
 
 export const AuthContext = createContext<{
     session: Session | null;
@@ -23,18 +17,6 @@ export const AuthContext = createContext<{
 
 export function AuthContextProvider({ children }: DefaultContextProps) {
     const [session, setSession] = useState<Session | null>(null);
-    const navigate = useNavigate();
-
-    /**
-     * Move the user to the sign in route if he has no session.
-     */
-    useEffect(() => {
-        if (session === null) {
-            navigate('/signIn');
-        } else {
-            navigate('/');
-        }
-    }, [session]);
 
     function signIn(email: string, password: string) {}
 

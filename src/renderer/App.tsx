@@ -2,17 +2,19 @@ import { default as SignIn } from '@components/Auth/SignIn';
 import Dashboard from '@components/Dashboard';
 import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
-import { AuthContextProvider } from '@contexts/AuthContext';
+import { AuthContext } from '@contexts/AuthContext';
 import { FarmsContextProvider } from '@contexts/FarmsContext';
 import { InternetConnectionContextProvider } from '@contexts/InternetConnectionContext';
 import { ModalContextProvider } from '@contexts/ModalContext';
 import { SettingsContextProvider } from '@contexts/SettingsContext';
 import { UpdateContextProvider } from '@contexts/UpdateContext';
-import React from 'react';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './global.css';
 
 export default function App() {
+    const { session } = useContext(AuthContext);
+
     return (
         <>
             <Dragbar />
@@ -24,18 +26,34 @@ export default function App() {
                             <ModalContextProvider>
                                 <div className="p-8 flex flex-col h-screen">
                                     <HashRouter>
-                                        <AuthContextProvider>
-                                            <Routes>
-                                                <Route
-                                                    path="/"
-                                                    element={<Dashboard />}
-                                                />
-                                                <Route
-                                                    path="/signIn"
-                                                    element={<SignIn />}
-                                                />
-                                            </Routes>
-                                        </AuthContextProvider>
+                                        <Routes>
+                                            <Route
+                                                path="/"
+                                                element={
+                                                    <>
+                                                        {session ? (
+                                                            <Navigate
+                                                                to="/dashboard"
+                                                                replace
+                                                            />
+                                                        ) : (
+                                                            <Navigate
+                                                                to="/signIn"
+                                                                replace
+                                                            />
+                                                        )}
+                                                    </>
+                                                }
+                                            />
+                                            <Route
+                                                path="/dashboard"
+                                                element={<Dashboard />}
+                                            />
+                                            <Route
+                                                path="/signIn"
+                                                element={<SignIn />}
+                                            />
+                                        </Routes>
                                     </HashRouter>
                                 </div>
                             </ModalContextProvider>
