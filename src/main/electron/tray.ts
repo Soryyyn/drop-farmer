@@ -14,43 +14,45 @@ let tray: Tray;
 export function createTray(): void {
     tray = new Tray(getTrayicon());
 
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: `Version: ${app.getVersion()}`,
-            type: 'normal',
-            enabled: false
-        },
-        {
-            type: 'separator'
-        },
-        {
-            label: 'Show Window',
-            type: 'normal',
-            click: () => {
-                showWindow(getMainWindow());
-            }
-        },
-        {
-            type: 'separator'
-        },
-        {
-            label: 'Quit Drop Farmer',
-            type: 'normal',
-            click: () => {
-                app.quit();
-            }
-        }
-    ]);
-
     /**
-     * Set tooltip and context menu.
+     * Hover tooltip.
      */
     tray.setToolTip(
-        `Drop Farmer ${
-            process.env.NODE_ENV === 'production' ? '' : '(dev environment)'
-        }`
+        `Drop Farmer ${process.env.NODE_ENV === 'production' ? '' : '(DEV)'}`
     );
-    tray.setContextMenu(contextMenu);
+
+    /**
+     * Set the context menu (right click menu).
+     */
+    tray.setContextMenu(
+        Menu.buildFromTemplate([
+            {
+                label: `Version: ${app.getVersion()}`,
+                type: 'normal',
+                enabled: false
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Show Window',
+                type: 'normal',
+                click: () => {
+                    showWindow(getMainWindow());
+                }
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Quit Drop Farmer',
+                type: 'normal',
+                click: () => {
+                    app.quit();
+                }
+            }
+        ])
+    );
 
     /**
      * On double click, show the main window.
@@ -66,10 +68,6 @@ export function createTray(): void {
  * Destroy the tray.
  */
 export function destroyTray(): void {
-    try {
-        tray.destroy();
-        log('info', 'Destroyed tray');
-    } catch (err) {
-        log('error', `Failed destroying tray. "${err}"`);
-    }
+    tray.destroy();
+    log('info', 'Destroyed tray');
 }
