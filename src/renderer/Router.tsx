@@ -15,9 +15,9 @@ export default function Router() {
                     element={
                         <>
                             {session ? (
-                                <Navigate to="/dashboard" replace />
+                                <Navigate to="/dashboard" />
                             ) : (
-                                <Navigate to="/signIn" replace />
+                                <Navigate to="/signIn" />
                             )}
                         </>
                     }
