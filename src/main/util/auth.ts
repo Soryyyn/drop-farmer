@@ -81,6 +81,8 @@ export function signIn(signInObject: SignInObject): void {
      * The sign in promise to handle inside the toast.
      */
     const signInPromise = new Promise(async (resolve, reject) => {
+        log('info', 'Trying to sign in user');
+
         /**
          * Hash the password.
          */
@@ -90,6 +92,7 @@ export function signIn(signInObject: SignInObject): void {
             signInObject.email.trim().length === 0 ||
             signInObject.password.trim().length === 0
         ) {
+            log('warn', 'Email or/and password may be empty and not valid');
             reject(new Error('Email or password are not valid'));
         }
 
@@ -107,8 +110,11 @@ export function signIn(signInObject: SignInObject): void {
         if (!error) {
             currentSession = data.session;
             currentUser = data.user;
+
+            log('info', 'Succeeded with sign in, session and user are set');
             resolve(undefined);
         } else {
+            log('warn', `Failed signing in user, reason: ${error.message}`);
             reject(error.message);
         }
     });
@@ -129,7 +135,36 @@ export function signIn(signInObject: SignInObject): void {
 /**
  * Sign out the user.
  */
-export function signOut(): void {}
+export function signOut(): void {
+    const signOutPromise = new Promise(async (resolve, reject) => {
+        log('info', 'Trying to sign out user');
+
+        const { error } = await supabase.auth.signOut();
+
+        if (!error) {
+            currentSession = null;
+            currentUser = null;
+
+            log('info', 'Succeeded with sign out');
+            resolve(undefined);
+        } else {
+            log('warn', `Failed signing out user, reason: ${error.message}`);
+            reject(error.message);
+        }
+    });
+
+    sendToast({
+        toast: {
+            id: Toasts.SignOut,
+            type: 'promise',
+            duration: 4000,
+            textOnLoading: 'Signing out...',
+            textOnSuccess: 'Signed out successfully.',
+            textOnError: 'Failed to sign out.'
+        },
+        promise: signOutPromise
+    });
+}
 
 /**
  * The initial auth flow.
@@ -146,8 +181,7 @@ function handleSessionChange(
     session: Session | null
 ): void {
     currentSession = session;
-
-    log('info', 'Session changed');
+    log('info', `Session changed, event: ${event}`);
 }
 
 /**

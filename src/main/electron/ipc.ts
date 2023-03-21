@@ -12,7 +12,7 @@ import {
     getFarmById,
     getFarmsRendererData
 } from '@main/farming/management';
-import { signIn } from '@main/util/auth';
+import { signIn, signOut } from '@main/util/auth';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { disconnectPuppeteer } from '@main/util/puppeteer';
@@ -273,6 +273,8 @@ handleOneWay(IpcChannels.installUpdate, () => handleInstallOfUpdate());
 handleOneWay(IpcChannels.signIn, (event, signInObject: SignInObject) =>
     signIn(signInObject)
 );
+
+handleOneWay(IpcChannels.signOut, () => signOut());
 
 /**
  * INTERNAL EVENTS.

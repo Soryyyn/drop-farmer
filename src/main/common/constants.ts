@@ -6,7 +6,8 @@ export const Toasts = {
     SettingsReset: 'settings-reset',
     SettingsSaving: 'settings-saving',
     InternetConnection: 'internet-connection',
-    SignIn: 'sign-in'
+    SignIn: 'sign-in',
+    SignOut: 'sign-out'
 } as const;
 export type Toast = (typeof Toasts)[keyof typeof Toasts];
 
@@ -33,7 +34,8 @@ export const IpcChannels = {
     deleteFarm: 'delete-farm',
     resetFarmingConditions: 'reset-farming-conditions',
     resetSettingsToDefault: 'reset-settings-to-default',
-    signIn: 'sign-in'
+    signIn: 'sign-in',
+    signOut: 'sign-out'
 } as const;
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
 

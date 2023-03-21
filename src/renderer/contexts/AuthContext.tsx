@@ -22,6 +22,10 @@ export function AuthContextProvider({ children }: DefaultContextProps) {
         api.sendOneWay(api.channels.signIn, signInObject);
     }
 
+    function signOut() {
+        api.sendOneWay(api.channels.signOut);
+    }
+
     /**
      * Move the user to the sign up page in the browser.
      */
@@ -31,8 +35,6 @@ export function AuthContextProvider({ children }: DefaultContextProps) {
             'https://drop-farmer.soryn.dev/sign-up'
         );
     }
-
-    function signOut() {}
 
     function resetPassword() {}
 
