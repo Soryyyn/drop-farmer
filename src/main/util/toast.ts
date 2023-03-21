@@ -61,11 +61,11 @@ export function sendToast({
             .then(() =>
                 sendOneWay(IpcChannels.toast, { ...toast, type: 'success' })
             )
-            .catch((error) =>
+            .catch((error: Error) =>
                 sendOneWay(IpcChannels.toast, {
                     ...toast,
                     type: 'error',
-                    textOnError: `${toast.textOnError} (${error})`
+                    textOnError: `${toast.textOnError} (${error.message})`
                 })
             );
     }
