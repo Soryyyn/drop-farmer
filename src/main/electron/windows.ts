@@ -34,68 +34,64 @@ const DefaultWindowOptions = {
 /**
  * Create the main app window.
  */
-export function createMainWindow(): Promise<void> {
-    return new Promise(async (resolve) => {
-        mainWindow = new BrowserWindow({
-            ...DefaultWindowOptions,
-            show: process.platform === 'linux' ? true : false,
-            title: 'Drop Farmer',
-            height: 800,
-            width: 1200,
-            maximizable: false,
-            resizable: false,
-            closable: true,
-            autoHideMenuBar: true,
-            titleBarStyle: 'hidden',
-            titleBarOverlay: {
-                color: '#c8def5',
-                symbolColor: '#000000'
-            },
-            webPreferences: {
-                preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-                sandbox: false
-            }
-        });
+export function createMainWindow(): void {
+    mainWindow = new BrowserWindow({
+        ...DefaultWindowOptions,
+        show: process.platform === 'linux' ? true : false,
+        title: 'Drop Farmer',
+        height: 800,
+        width: 1200,
+        maximizable: false,
+        resizable: false,
+        closable: true,
+        autoHideMenuBar: true,
+        titleBarStyle: 'hidden',
+        titleBarOverlay: {
+            color: '#c8def5',
+            symbolColor: '#000000'
+        },
+        webPreferences: {
+            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+            sandbox: false
+        }
+    });
 
-        mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-        /**
-         * When window is ready.
-         */
-        mainWindow.on('ready-to-show', () => {
-            const shouldBeShownBySetting = getSettingValue(
-                'application',
-                'application-showMainWindowOnLaunch'
-            ) as boolean;
-
-            /**
-             * Show the window if the setting is set or the app is run on linux.
-             */
-            if (shouldBeShownBySetting || process.platform === 'linux') {
-                mainWindow!.show();
-                mainWindow!.focus();
-            }
-
-            log('info', 'Created main window');
-            resolve();
-        });
+    /**
+     * When window is ready.
+     */
+    mainWindow.on('ready-to-show', () => {
+        const shouldBeShownBySetting = getSettingValue(
+            'application',
+            'application-showMainWindowOnLaunch'
+        ) as boolean;
 
         /**
-         * Prevent the app from shutting down.
-         * Also hide all windows if the close event is fired.
+         * Show the window if the setting is set or the app is run on linux.
          */
-        mainWindow.on('close', (event) => {
-            if (!getIsQuitting()) {
-                event.preventDefault();
+        if (shouldBeShownBySetting || process.platform === 'linux') {
+            showWindow(mainWindow!);
+        }
 
-                mainWindow!.hide();
-                windows.forEach((window) => {
-                    if (canWindowBeHidden(window)) hideWindow(window);
-                });
+        log('info', 'Created main window');
+    });
 
-                log('info', 'Hidden main and all other windows');
-            }
-        });
+    /**
+     * Prevent the app from shutting down.
+     * Also hide all windows if the close event is fired.
+     */
+    mainWindow.on('close', (event) => {
+        if (!getIsQuitting()) {
+            event.preventDefault();
+
+            hideWindow(mainWindow!);
+            windows.forEach((window) => {
+                if (canWindowBeHidden(window)) hideWindow(window);
+            });
+
+            log('info', 'Hidden main and all other windows');
+        }
     });
 }
 

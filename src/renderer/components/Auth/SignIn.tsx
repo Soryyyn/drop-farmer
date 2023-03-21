@@ -5,13 +5,20 @@ import SquareContainer from '@components/global/SquareContainer';
 import { AuthContext } from '@contexts/AuthContext';
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons';
 import { useAppVersion } from '@hooks/useAppVersion';
-import React, { useContext, useState } from 'react';
+import { useKeyPress } from '@hooks/useKeyPress';
+import clsx from 'clsx';
+import React, { useContext, useEffect, useState } from 'react';
 
 export default function SignIn() {
     const { signIn, signUp, resetPassword } = useContext(AuthContext);
     const appVersion = useAppVersion();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const enter = useKeyPress('Enter');
+
+    useEffect(() => {
+        if (enter) signIn({ email, password });
+    }, [enter]);
 
     return (
         <>
@@ -58,8 +65,13 @@ export default function SignIn() {
 
                         <div className="flex flex-row gap-2">
                             <button
-                                onClick={() => signIn(email, password)}
-                                className="w-full bg-pepper-700 hover:bg-pepper-900 active:brightness-90 rounded-lg text-snow-300 font-medium"
+                                onClick={() => signIn({ email, password })}
+                                className={clsx(
+                                    'w-full bg-pepper-700 hover:bg-pepper-900 active:brightness-90 rounded-lg text-snow-300 font-medium',
+                                    {
+                                        'brightness-90': enter
+                                    }
+                                )}
                             >
                                 Sign in
                             </button>

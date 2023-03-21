@@ -3,7 +3,7 @@ import React, { createContext, useState } from 'react';
 
 export const AuthContext = createContext<{
     session: Session | null;
-    signIn: (email: string, password: string) => void;
+    signIn: (singInObject: SignInObject) => void;
     signUp: () => void;
     signOut: () => void;
     resetPassword: () => void;
@@ -18,7 +18,9 @@ export const AuthContext = createContext<{
 export function AuthContextProvider({ children }: DefaultContextProps) {
     const [session, setSession] = useState<Session | null>(null);
 
-    function signIn(email: string, password: string) {}
+    function signIn(signInObject: SignInObject) {
+        api.sendOneWay(api.channels.signIn, signInObject);
+    }
 
     /**
      * Move the user to the sign up page in the browser.

@@ -218,3 +218,11 @@ type SelectOption<T> = {
     display: string;
     value: T;
 };
+
+/**
+ * Auth.
+ */
+type SignInObject = {
+    email: string;
+    password: string;
+};

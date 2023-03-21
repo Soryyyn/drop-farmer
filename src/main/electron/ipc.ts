@@ -12,6 +12,7 @@ import {
     getFarmById,
     getFarmsRendererData
 } from '@main/farming/management';
+import { signIn } from '@main/util/auth';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { disconnectPuppeteer } from '@main/util/puppeteer';
@@ -269,6 +270,10 @@ handleOneWay(IpcChannels.updateCheck, () => checkIfCanUpdate());
 
 handleOneWay(IpcChannels.installUpdate, () => handleInstallOfUpdate());
 
+handleOneWay(IpcChannels.signIn, (event, signInObject: SignInObject) =>
+    signIn(signInObject)
+);
+
 /**
  * INTERNAL EVENTS.
  */
@@ -285,9 +290,6 @@ listenForEvent(EventChannels.LoginForFarm, (event: LoginForFarmObject[]) => {
     });
 });
 
-/**
- * Once farms changed notify renderer about new settings and farms.
- */
 listenForEvent(EventChannels.FarmsChanged, () => {
     sendOneWay(IpcChannels.farmsChanged, getFarmsRendererData());
     sendOneWay(IpcChannels.settingsChanged, getMergedSettings());

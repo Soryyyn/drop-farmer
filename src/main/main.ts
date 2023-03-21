@@ -1,5 +1,4 @@
 import { app, powerMonitor } from 'electron';
-import { initAuth } from './auth/clientConnection';
 import {
     handleAppBeforeQuit,
     handleAppQuit,
@@ -10,6 +9,7 @@ import {
     handleSecondInstanceOpened
 } from './electron/appEvents';
 import './electron/ipc';
+import { initAuth } from './util/auth';
 import './util/internet';
 import { initPuppeteerConnection } from './util/puppeteer';
 
@@ -33,7 +33,7 @@ initAuth();
 /**
  * Handle app events.
  */
-app.on('ready', async () => await handleAppReady());
+app.on('ready', () => handleAppReady());
 app.on('before-quit', (event) => handleAppBeforeQuit(event));
 app.on('quit', () => handleAppQuit());
 app.on('render-process-gone', handleRendererProcessGone);

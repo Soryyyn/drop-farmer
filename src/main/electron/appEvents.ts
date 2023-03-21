@@ -39,7 +39,7 @@ export function getIsQuitting(): boolean {
 /**
  * Handle the app ready state.
  */
-export async function handleAppReady(): Promise<void> {
+export function handleAppReady(): void {
     /**
      * Check the single instance lock.
      * Quit the new instance if a lock is already set.
@@ -61,7 +61,7 @@ export async function handleAppReady(): Promise<void> {
 
     initFarmsManagement();
     createTray();
-    await createMainWindow();
+    createMainWindow();
     handleClientShutdown();
 
     /**
