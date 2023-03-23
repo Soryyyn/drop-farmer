@@ -23,7 +23,10 @@ export default function NavigationItem({
             tooltip={tooltip}
             tooltipPlacement="bottom"
             className={clsx(
-                'rounded-lg select-none p-3 cursor-pointer bg-pepper-900/75 hover:bg-pepper-900 active:bg-pepper-800 active:text-snow-300 text-pepper-200',
+                {
+                    'rounded-lg select-none p-3 cursor-pointer bg-pepper-900/75 hover:bg-pepper-900 active:bg-pepper-800 active:text-snow-300 text-pepper-200':
+                        !className
+                },
                 className
             )}
         >

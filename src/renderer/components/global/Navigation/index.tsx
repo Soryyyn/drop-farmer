@@ -22,7 +22,7 @@ export default function Navigation() {
                 <NavigationItem
                     icon={faDownload}
                     tooltip="Install update"
-                    className="bg-gradient-to-tr from-leaf-500 to-leaf-550 hover:brightness-95 active:brightness-[85%] active:text-pepper-200"
+                    className="rounded-lg select-none p-3 cursor-pointer bg-gradient-to-tr from-leaf-500 to-leaf-550 hover:brightness-95 active:brightness-[85%] active:text-pepper-200"
                     onClick={installUpdate}
                 />
             ) : (
@@ -53,6 +53,7 @@ export default function Navigation() {
             <NavigationItem
                 icon={faPowerOff}
                 tooltip="Quit"
+                className="rounded-lg select-none p-3 cursor-pointer bg-pepper-900/75 hover:bg-gradient-to-tr hover:from-blood-500 hover:to-blood-550 hover:brightness-95 active:brightness-[85%] text-pepper-200"
                 onClick={() => api.sendOneWay(api.channels.shutdown)}
             />
         </div>
