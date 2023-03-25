@@ -32,7 +32,7 @@ export function AuthContextProvider({ children }: DefaultContextProps) {
     function signUp() {
         api.sendOneWay(
             api.channels.openLinkInExternal,
-            'https://drop-farmer.soryn.dev/sign-up'
+            'https://drop-farmer.soryn.dev/signup'
         );
     }
 
