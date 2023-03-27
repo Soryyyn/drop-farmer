@@ -40,19 +40,7 @@ export function getIsQuitting(): boolean {
  * Handle the app ready state.
  */
 export function handleAppReady(): void {
-    /**
-     * Check the single instance lock.
-     * Quit the new instance if a lock is already set.
-     */
-    if (process.env.NODE_END === 'production') {
-        if (!requestSingleInstanceLock()) {
-            log(
-                'warn',
-                'Hard exiting app because another instance is already running'
-            );
-            process.exit();
-        }
-    }
+    checkForSingleInstance();
 
     /**
      * Set the user model id.
@@ -167,6 +155,21 @@ export function handleSecondInstanceOpened(): void {
     if (process.env.NODE_ENV === 'production') {
         showWindow(getMainWindow());
         log('info', 'Showing main window because second instance triggered');
+    }
+}
+
+/**
+ * Check for the single instance on app start.
+ */
+function checkForSingleInstance(): void {
+    if (process.env.NODE_END === 'production') {
+        if (!requestSingleInstanceLock()) {
+            log(
+                'warn',
+                'Hard exiting app because another instance is already running'
+            );
+            process.exit();
+        }
     }
 }
 
