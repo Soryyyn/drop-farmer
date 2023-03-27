@@ -43,7 +43,7 @@
         "@types/auto-launch": "^5.0.2",
         "@types/lodash.clonedeep": "^4.5.7",
         "@types/lodash.isequal": "^4.5.6",
-        "@types/node": "^18.15.3",
+        "@types/node": "^18.15.10",
         "@types/react-input-mask": "^3.0.2",
         "@types/uglifyjs-webpack-plugin": "^1.1.2",
         "@vercel/webpack-asset-relocator-loader": "^1.7.3",
