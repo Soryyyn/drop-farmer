@@ -58,8 +58,11 @@ const store = new ElectronStore<NewSettingsStoreSchema>({
             store.clear();
         },
         'v1.0.0-beta47': (store) => {
-            // @ts-ignore
-            store.delete('settings.application.application-checkForUpdates');
+            deleteSettingForMigration(
+                store,
+                'application',
+                'application-checkForUpdates'
+            );
         }
     }
 });
@@ -405,4 +408,27 @@ export function resetSettingsToDefaultValues(
     }
 
     return settingsToReset;
+}
+
+/**
+ * Delete a specific setting for the migration.
+ */
+function deleteSettingForMigration(
+    store: any,
+    owner: 'application' | 'farms',
+    id: string
+): void {
+    if (owner === 'application') {
+        // @ts-ignore
+        store.delete(`settings.${owner}.${id}`);
+    } else {
+        const settings = store.get('settings');
+
+        Object.entries(settings).map(([key, setting]) => {
+            if (key !== 'application') {
+                // @ts-ignore
+                store.delete(`settings.${key}.${id}`);
+            }
+        });
+    }
 }
