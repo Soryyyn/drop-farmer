@@ -7,6 +7,11 @@ module.exports = [
         use: 'node-loader'
     },
     {
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ['@svgr/webpack']
+    },
+    {
         test: /\.(m?js|node)$/,
         parser: { amd: false },
         use: {

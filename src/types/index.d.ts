@@ -1,3 +1,17 @@
+/**
+ * For renderer to know the preload types.
+ */
+declare const api: typeof import('../api').default;
+
+/**
+ * So the renderer can not svg files.
+ */
+declare module '*.svg' {
+    import React from 'react';
+    const SVG: React.VFC<React.SVGProps<SVGSVGElement>>;
+    export default SVG;
+}
+
 type FarmStatus =
     | 'farming'
     | 'idle'
@@ -27,11 +41,6 @@ type ForcedTypeToast = {
     text: string;
     duration: number;
 };
-
-/**
- * For renderer to know the preload types.
- */
-declare const api: typeof import('../api').default;
 
 /**
  * Store.

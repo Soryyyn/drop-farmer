@@ -23,7 +23,7 @@ export default function SignIn() {
     return (
         <>
             <div className="h-full w-full flex items-center justify-center">
-                <div className="bg-pepper-600 rounded-xl shadow-xl shadow-pepper-600/25 h-fit w-1/2 p-8 flex flex-col gap-4">
+                <div className="bg-pepper-600 rounded-xl shadow-xl shadow-pepper-600/25 backdrop-blur-2xl h-fit w-1/2 p-8 flex flex-col gap-4">
                     <p className="text-snow-300 text-center font-semibold text-3xl leading-none">
                         Authentication
                     </p>
@@ -88,7 +88,7 @@ export default function SignIn() {
                 </div>
             </div>
 
-            <p className="bg-pepper-600/70 text-snow-300 shadow-xl shadow-pepper-600/25 px-6 py-1.5 rounded-lg text-center absolute bottom-8 left-1/2 -translate-x-1/2 w-fit">
+            <p className="bg-pepper-600/70 text-snow-300 shadow-xl shadow-pepper-600/25 backdrop-blur-2xl px-6 py-1.5 rounded-lg text-center absolute bottom-8 left-1/2 -translate-x-1/2 w-fit">
                 {appVersion}
             </p>
         </>

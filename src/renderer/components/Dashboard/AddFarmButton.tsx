@@ -9,7 +9,7 @@ export default function AddFarmButton() {
 
     return (
         <div
-            className="bg-pepper-900/75 rounded-lg py-4 px-8 hover:bg-pepper-900 active:bg-pepper-800 active:text-snow-300 flex flex-row items-center gap-2 justify-center leading-none font-semibold cursor-pointer"
+            className="bg-pepper-900/75 rounded-lg py-4 px-8 hover:bg-pepper-900 active:bg-pepper-800 active:text-snow-300 backdrop-blur-lg flex flex-row items-center gap-2 justify-center leading-none font-semibold cursor-pointer"
             onClick={() => {
                 setCurrentOverlay(Overlays.NewFarm);
                 toggleOverlay();

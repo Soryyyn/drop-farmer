@@ -1,3 +1,4 @@
+import Clouds from '@components/global/Clouds';
 import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
 import { FarmsContextProvider } from '@contexts/FarmsContext';
@@ -12,6 +13,7 @@ export default function App() {
     return (
         <>
             <Dragbar />
+            <Clouds />
             <ToastNotifications />
             <UpdateContextProvider>
                 <SettingsContextProvider>
