@@ -114,3 +114,16 @@ export function isDateBetweenDates(
 ): boolean {
     return dateToCheck >= first && dateToCheck <= second;
 }
+
+/**
+ * Convert a time (99:99) to milliseconds.
+ */
+export function minutesAndSecondsToMS(time: string): number {
+    const times = time.split(':');
+    return dayjs
+        .duration({
+            minutes: parseInt(times[0]),
+            seconds: parseInt(times[1])
+        })
+        .asMilliseconds();
+}

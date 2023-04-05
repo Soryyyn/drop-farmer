@@ -1,10 +1,14 @@
 import { EventChannels, IpcChannels } from '@main/common/constants';
+import { getNumbersInsideString } from '@main/common/string.helper';
 import { sendOneWay } from '@main/electron/ipc';
+import { minutesAndSecondsToMS } from '@main/util/calendar';
 import { emitEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import {
     doesElementExist,
     getBrowserConnection,
+    getElementChildren,
+    getInnerHTMLOfElement,
     gotoURL,
     pageUrlContains,
     waitForElementToAppear,
@@ -36,11 +40,6 @@ export default class YoutubeStream extends FarmTemplate {
         }
     }
 
-    /**
-     * Check if farm can still farm.
-     *
-     * @param {Electron.BrowserWindow} window The window to control.
-     */
     stillFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
@@ -80,11 +79,6 @@ export default class YoutubeStream extends FarmTemplate {
         });
     }
 
-    /**
-     * Login on the yt website for drops.
-     *
-     * @param {Electron.BrowserWindow} window The window to control.
-     */
     login(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             let wasLoginNeeded = false;
@@ -168,11 +162,6 @@ export default class YoutubeStream extends FarmTemplate {
         });
     }
 
-    /**
-     * Start farming.
-     *
-     * @param {Electron.BrowserWindow} window The window to control.
-     */
     startFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
@@ -215,10 +204,12 @@ export default class YoutubeStream extends FarmTemplate {
                                      * first one.
                                      */
                                     const firstVideoSelector =
-                                        '#contents > ytd-video-renderer';
+                                        'div.style-scope.ytd-video-renderer';
                                     await farmingWindowPage.click(
                                         firstVideoSelector
                                     );
+
+                                    await this.handleAds();
 
                                     log(
                                         'info',
@@ -247,6 +238,101 @@ export default class YoutubeStream extends FarmTemplate {
                 }
             } catch (err) {
                 reject(err);
+            }
+        });
+    }
+
+    handleAds(): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const page = await getPage(
+                    getBrowserConnection(),
+                    this.farmers[0]
+                );
+
+                const adContainer = await waitForElementToAppear(
+                    page,
+                    'div.video-ads.ytp-ad-module'
+                );
+
+                await waitForTimeout(2000);
+
+                const adContainerChildren = await getElementChildren(
+                    adContainer
+                );
+
+                if (adContainerChildren.length > 0) {
+                    /**
+                     * Get the amount of ads.
+                     */
+                    const amountOfAds = getNumbersInsideString(
+                        await getInnerHTMLOfElement(
+                            page,
+                            'span.ytp-ad-simple-ad-badge > div'
+                        )
+                    );
+
+                    log(
+                        'info',
+                        `${this.id}: ${amountOfAds[1]} Ads found, waiting for ads to finish`
+                    );
+
+                    /**
+                     * Wait for each ad to finish.
+                     */
+                    for await (const ad of amountOfAds) {
+                        /**
+                         * Get the rest of ad time on the current ad.
+                         */
+                        const timeAsString = await getInnerHTMLOfElement(
+                            page,
+                            'span.ytp-ad-duration-remaining > div'
+                        );
+                        const milliseconds =
+                            minutesAndSecondsToMS(timeAsString);
+
+                        await waitForTimeout(milliseconds);
+
+                        console.log(`${ad} done`);
+                    }
+                } else {
+                    log('info', `${this.id}: No ads found`);
+                }
+
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    setLowestQualityPossible(): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const page = await getPage(
+                    getBrowserConnection(),
+                    this.farmers[0]
+                );
+
+                /**
+                 * Click on the settings button.
+                 */
+                await page.click('button.ytp-settings-button');
+
+                if (await doesElementExist(page, 'div.ytp-settings-menu')) {
+                    const videoSettingsMenu = await page.$(
+                        'div.ytp-settings-menu'
+                    );
+                    const videoSettings = await getElementChildren(
+                        videoSettingsMenu
+                    );
+
+                    console.log(await videoSettings[0].jsonValue());
+                }
+
+                log('info', `${this.id}: Set to lowest resolution`);
+            } catch (error) {
+                reject(error);
             }
         });
     }

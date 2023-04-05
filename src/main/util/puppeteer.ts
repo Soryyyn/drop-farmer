@@ -220,3 +220,39 @@ export function gotoURL(
         }
     });
 }
+
+/**
+ * Get the children of an element handle.
+ */
+export function getElementChildren(
+    element: ElementHandle<any> | null
+): Promise<ElementHandle<any>[]> {
+    return new Promise(async (resolve, reject) => {
+        if (element === null) {
+            reject(new Error("Can't get children of an element which is null"));
+            return;
+        }
+
+        try {
+            resolve((await element.$$(':scope > *')) ?? []);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+/**
+ * Get the innerhtml of an element.
+ */
+export function getInnerHTMLOfElement(
+    page: Page,
+    elementSelector: string
+): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            resolve(await page.$eval(elementSelector, (el) => el.innerHTML));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}

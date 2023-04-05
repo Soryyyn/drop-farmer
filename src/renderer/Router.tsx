@@ -13,13 +13,13 @@ export default function Router() {
                 <Route
                     path="/"
                     element={
-                        <>
-                            {session ? (
-                                <Navigate to="/dashboard" />
-                            ) : (
-                                <Navigate to="/signIn" />
-                            )}
-                        </>
+                        // <>
+                        //     {session ? (
+                        <Navigate to="/dashboard" />
+                        //     ) : (
+                        //         <Navigate to="/signIn" />
+                        //     )}
+                        // </>
                     }
                 />
                 <Route path="/dashboard" element={<Dashboard />} />

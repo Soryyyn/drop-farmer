@@ -7,12 +7,12 @@ import {
     showWindow
 } from '@main/electron/windows';
 import {
+    ISOStringToDate,
     combineTimeUnits,
     dateToISOString,
     formattedStringToDate,
     getCurrentDate,
     isDateBetweenDates,
-    ISOStringToDate,
     remainingDaysInMonth,
     remainingDaysInWeek
 } from '@main/util/calendar';
@@ -21,13 +21,14 @@ import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
 import { updateFarmStatistic } from '@main/util/statistics';
 import CrontabManager from 'cron-job-manager';
+import { BrowserWindow } from 'electron';
 import makeCancellablePromise from 'make-cancellable-promise';
 import {
     createSettingsOwner,
     deleteSetting,
     getSettingOrSet,
-    getSettingsOfOwner,
     getSettingValue,
+    getSettingsOfOwner,
     setSettingValue
 } from '../util/settings';
 import { Timer } from './timer';
@@ -47,9 +48,9 @@ export default abstract class FarmTemplate {
 
     scheduler: CrontabManager = new CrontabManager();
 
-    checker: Electron.BrowserWindow | undefined = undefined;
-    farmers: Electron.BrowserWindow[] = [];
-    extras: Electron.BrowserWindow[] = [];
+    checker: BrowserWindow | undefined = undefined;
+    farmers: BrowserWindow[] = [];
+    extras: BrowserWindow[] = [];
 
     /**
      * The currently running schedule.
@@ -466,8 +467,8 @@ export default abstract class FarmTemplate {
      * array, or destroy all windows inside the array via recursion.
      */
     protected destroyWindowFromArray(
-        array: Electron.BrowserWindow[],
-        window?: Electron.BrowserWindow
+        array: BrowserWindow[],
+        window?: BrowserWindow
     ) {
         if (window) {
             const index = array.indexOf(window);
@@ -525,8 +526,8 @@ export default abstract class FarmTemplate {
         });
     }
 
-    protected createCheckerWindow(): Promise<Electron.BrowserWindow> {
-        return new Promise<Electron.BrowserWindow>((resolve, reject) => {
+    protected createCheckerWindow(): Promise<BrowserWindow> {
+        return new Promise<BrowserWindow>((resolve, reject) => {
             if (this.checker) {
                 resolve(this.checker);
             } else {
@@ -534,7 +535,7 @@ export default abstract class FarmTemplate {
                     this.url,
                     this.windowsShownByDefault || this.windowsCurrentlyShown
                 )
-                    .then(async (window: Electron.BrowserWindow) => {
+                    .then(async (window: BrowserWindow) => {
                         this.checker = window;
 
                         await this.addWindowStatistic();
@@ -551,14 +552,14 @@ export default abstract class FarmTemplate {
 
     protected createArrayWindow(
         url: string,
-        array: Electron.BrowserWindow[]
-    ): Promise<Electron.BrowserWindow> {
-        return new Promise<Electron.BrowserWindow>((resolve, reject) => {
+        array: BrowserWindow[]
+    ): Promise<BrowserWindow> {
+        return new Promise<BrowserWindow>((resolve, reject) => {
             createWindow(
                 url,
                 this.windowsShownByDefault || this.windowsCurrentlyShown
             )
-                .then(async (window: Electron.BrowserWindow) => {
+                .then(async (window: BrowserWindow) => {
                     array.push(window);
                     await this.addWindowStatistic();
                 })
@@ -861,9 +862,10 @@ export default abstract class FarmTemplate {
     /**
      * The farming flow function which need to be defined by each farm themselves.
      */
-    abstract login(window: Electron.BrowserWindow): Promise<void>;
-    abstract stillFarming(window: Electron.BrowserWindow): Promise<void>;
-    abstract startFarming(window: Electron.BrowserWindow): Promise<void>;
+    abstract login(window: BrowserWindow): Promise<void>;
+    abstract stillFarming(window: BrowserWindow): Promise<void>;
+    abstract startFarming(window: BrowserWindow): Promise<void>;
+    abstract setLowestQualityPossible(): Promise<void>;
 
     /**
      * The farming schedule itself which will start if the farm is enabled.
@@ -899,10 +901,14 @@ export default abstract class FarmTemplate {
                                 this.updateStatus('checking');
 
                                 await this.login(window);
-                                if (this.farmers.length > 0) {
+
+                                if (this.farmers.length > 0)
                                     await this.stillFarming(window);
-                                }
+
                                 await this.startFarming(window);
+
+                                if (this.farmers.length > 0)
+                                    await this.setLowestQualityPossible();
                             })
                             .then(async () => {
                                 /**

@@ -318,4 +318,8 @@ export default class LeagueOfLegends extends FarmTemplate {
             }
         });
     }
+
+    setLowestQualityPossible(): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
 }

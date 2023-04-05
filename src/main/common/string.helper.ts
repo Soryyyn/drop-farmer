@@ -26,3 +26,16 @@ export function capitalize(string: string): string {
 export function isValidURL(url: string, regex: RegExp): boolean {
     return regex.test(url);
 }
+
+/**
+ * Get all numbers inside a string.
+ */
+export function getNumbersInsideString(string: string): number[] {
+    const numbers = string.match(/(\d+)/)?.map((char) => parseInt(char));
+
+    if (!numbers) {
+        return [];
+    }
+
+    return numbers;
+}
