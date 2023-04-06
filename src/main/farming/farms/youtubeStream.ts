@@ -262,15 +262,20 @@ export default class YoutubeStream extends FarmTemplate {
                 );
 
                 if (adContainerChildren.length > 0) {
-                    /**
-                     * Get the amount of ads.
-                     */
                     const amountOfAds = getNumbersInsideString(
                         await getInnerHTMLOfElement(
                             page,
                             'span.ytp-ad-simple-ad-badge > div'
                         )
                     );
+
+                    /**
+                     * If there is a single ad, add it to the array.
+                     */
+                    if (amountOfAds.length === 0) {
+                        amountOfAds.push(1);
+                        amountOfAds.push(1);
+                    }
 
                     log(
                         'info',
@@ -292,8 +297,6 @@ export default class YoutubeStream extends FarmTemplate {
                             minutesAndSecondsToMS(timeAsString);
 
                         await waitForTimeout(milliseconds);
-
-                        console.log(`${ad} done`);
                     }
                 } else {
                     log('info', `${this.id}: No ads found`);

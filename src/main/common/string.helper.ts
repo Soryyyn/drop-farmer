@@ -31,11 +31,7 @@ export function isValidURL(url: string, regex: RegExp): boolean {
  * Get all numbers inside a string.
  */
 export function getNumbersInsideString(string: string): number[] {
-    const numbers = string.match(/(\d+)/)?.map((char) => parseInt(char));
-
-    if (!numbers) {
-        return [];
-    }
-
-    return numbers;
+    return [...string.matchAll(/(\d+)/g)].map((entry) =>
+        parseInt(entry.toString())
+    );
 }
