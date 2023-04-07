@@ -1,4 +1,8 @@
-import { FileNames, PossibleSettings } from '@main/common/constants';
+import {
+    FileNames,
+    PossibleSettingId,
+    PossibleSettings
+} from '@main/common/constants';
 import AutoLaunch from 'auto-launch';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
@@ -28,7 +32,8 @@ const store = new ElectronStore<NewSettingsStoreSchema>({
                 'application-launchOnStartup': false,
                 'application-showMainWindowOnLaunch': true,
                 'application-showWindowsForLogin': false,
-                'application-reducedMotion': false
+                'application-reducedMotion': false,
+                'application-automaticLowResolution': true
             }
         }
     },
@@ -63,6 +68,14 @@ const store = new ElectronStore<NewSettingsStoreSchema>({
                 'application',
                 'application-checkForUpdates'
             );
+        },
+        'v1.0.0-beta49': (store) => {
+            addSettingForMigration(
+                store,
+                'application',
+                'application-automaticLowResolution',
+                getSettingConfig('application-automaticLowResolution')!
+            );
         }
     }
 });
@@ -91,7 +104,7 @@ export function createSettingsOwner(owner: string): void {
  * Validate if the value to set is valid for the wanted setting.
  */
 function validateSetting(
-    settingName: string,
+    settingName: PossibleSettingId,
     valueToValidate: SettingValue
 ): boolean {
     const config = getSettingConfig(settingName);
@@ -162,7 +175,7 @@ function validateSetting(
  */
 export function getSettingValue(
     owner: string,
-    settingName: string
+    settingName: PossibleSettingId
 ): SettingValue | undefined {
     const settings: SettingsInFile = store.get(`settings.${owner}`);
 
@@ -181,7 +194,7 @@ export function getSettingValue(
  */
 export function getSettingOrSet(
     owner: string,
-    settingName: string,
+    settingName: PossibleSettingId,
     toSet?: SettingValue
 ): SettingValue | undefined {
     const settings = getSettings();
@@ -225,7 +238,9 @@ export function getSettingOrSet(
 /**
  * Get the configuration of a setting based on it's name.
  */
-export function getSettingConfig(settingName: string): Setting | undefined {
+export function getSettingConfig(
+    settingName: PossibleSettingId
+): Setting | undefined {
     return PossibleSettings.find(
         (possibleSetting) => possibleSetting.id === settingName
     );
@@ -244,7 +259,7 @@ export function getSettingsOfOwner(owner: string): SettingsInFile | undefined {
  */
 export function setSettingValue(
     owner: string,
-    settingName: string,
+    settingName: PossibleSettingId,
     newValue?: SettingValue
 ): void {
     const settings = getSettings();
@@ -289,7 +304,10 @@ export function updateSettings(toUpdate: SettingsOfOwners): void {
 /**
  * Check if an owner has a specific setting set.
  */
-function doesSettingExist(owner: string, settingName: string): boolean {
+function doesSettingExist(
+    owner: string,
+    settingName: PossibleSettingId
+): boolean {
     const settingsOfOwner = getSettingsOfOwner(owner);
 
     let found = false;
@@ -306,7 +324,10 @@ function doesSettingExist(owner: string, settingName: string): boolean {
 /**
  * Delete a setting of the owner by name.
  */
-export function deleteSetting(owner: string, settingName: string): void {
+export function deleteSetting(
+    owner: string,
+    settingName: PossibleSettingId
+): void {
     const settings = getSettings();
     const settingsOfOwner = getSettingsOfOwner(owner);
 
@@ -361,7 +382,7 @@ export function getMergedSettings(): MergedSettings {
         merged[owner] = [];
 
         for (const [settingName, value] of Object.entries(settingsOfOwner)) {
-            const config = getSettingConfig(settingName);
+            const config = getSettingConfig(settingName as PossibleSettingId);
             const mergedSetting: SettingWithValue = {
                 ...config!,
                 value: value
@@ -431,4 +452,18 @@ function deleteSettingForMigration(
             }
         });
     }
+}
+
+/**
+ * Add a setting during the migration of a new version.
+ */
+function addSettingForMigration(
+    store: any,
+    owner: string,
+    id: PossibleSettingId,
+    value: Setting
+): void {
+    console.log(store);
+    store.set(`settings.${owner}.${id}`, value.default);
+    console.log(store);
 }

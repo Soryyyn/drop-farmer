@@ -104,7 +104,7 @@ export const Selections = {
 /**
  * Possible settings to appear in the settings file.
  */
-export const PossibleSettings: Setting[] = [
+export const PossibleSettings = [
     /**
      * Application settings
      */
@@ -132,6 +132,12 @@ export const PossibleSettings: Setting[] = [
         desc: 'Enable this setting to keep animations & transitions to the minimum.',
         default: false,
         requiresRestart: true
+    },
+    {
+        id: 'application-automaticLowResolution',
+        shown: 'Low resolution streams',
+        desc: 'Enable this setting to automatically set the lowest resolution possible on all streams.',
+        default: true
     },
 
     /**
@@ -213,7 +219,9 @@ export const PossibleSettings: Setting[] = [
         desc: "The ending date; When the farm should stop trying to fulfill it's condition.",
         default: ''
     }
-];
+] as const;
+export type PossibleSetting = (typeof PossibleSettings)[number];
+export type PossibleSettingId = (typeof PossibleSettings)[number]['id'];
 
 /**
  * Regular expressions.

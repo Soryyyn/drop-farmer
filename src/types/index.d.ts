@@ -20,28 +20,6 @@ type FarmStatus =
     | 'attention-required'
     | 'condition-fulfilled';
 
-type BasicToast = {
-    id: string;
-    textOnSuccess: string;
-    textOnError: string;
-    duration: number;
-};
-
-type PromiseToast = {
-    id: string;
-    textOnLoading: string;
-    textOnSuccess: string;
-    textOnError: string;
-    duration: number;
-};
-
-type ForcedTypeToast = {
-    id: string;
-    type: 'success' | 'error' | 'loading';
-    text: string;
-    duration: number;
-};
-
 /**
  * Store.
  */
@@ -208,20 +186,6 @@ type FarmingConditions = BaseConditions & {
 type ConditionType = 'unlimited' | 'weekly' | 'monthly' | 'timeWindow';
 
 type ConditionCheckReturn = 'farm' | 'conditions-fulfilled';
-
-/**
- * Toasts.
- */
-type ToastType = 'success' | 'error' | 'loading' | 'basic' | 'promise';
-
-type Toast = {
-    type: ToastType;
-    id: string;
-    duration: number;
-    textOnSuccess?: string;
-    textOnError?: string;
-    textOnLoading?: string;
-};
 
 type SelectOption<T> = {
     display: string;

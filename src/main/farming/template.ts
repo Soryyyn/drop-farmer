@@ -912,7 +912,16 @@ export default abstract class FarmTemplate {
 
                                 await this.startFarming(window);
 
-                                if (this.farmers.length > 0)
+                                /**
+                                 * Set low resolution if the setting is enabled.
+                                 */
+                                if (
+                                    this.farmers.length > 0 &&
+                                    getSettingValue(
+                                        'application',
+                                        'application-automaticLowResolution'
+                                    )
+                                )
                                     await this.setLowestQualityPossible();
                             })
                             .then(async () => {

@@ -42,7 +42,7 @@ export function handleOneWay(
  * Function for handling a signal coming from the renderer process and return a response.
  */
 export function handleAndReply(
-    channel: string,
+    channel: IpcChannel,
     listener: (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any
 ) {
     ipcMain.handle(channel, listener);
@@ -51,7 +51,7 @@ export function handleAndReply(
 /**
  * Send a one-way signal to the wanted window.
  */
-export function sendOneWay(channel: string, ...args: any[]) {
+export function sendOneWay(channel: IpcChannel, ...args: any[]) {
     const window = getMainWindow();
     if (window !== undefined) {
         window.webContents.send(channel, ...args);
