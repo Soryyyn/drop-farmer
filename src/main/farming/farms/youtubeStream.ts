@@ -270,7 +270,8 @@ export default class YoutubeStream extends FarmTemplate {
                     );
 
                     /**
-                     * If there is a single ad, add it to the array.
+                     * If there is a single ad, the "Ad ? of ?" will not be
+                     * displayed, so pushing a "ad" to the array.
                      */
                     if (amountOfAds.length === 0) {
                         amountOfAds.push(1);
@@ -296,8 +297,10 @@ export default class YoutubeStream extends FarmTemplate {
                         const milliseconds =
                             minutesAndSecondsToMS(timeAsString);
 
-                        await waitForTimeout(milliseconds);
+                        await waitForTimeout(milliseconds + 10000);
                     }
+
+                    log('info', `${this.id}: Finished awaiting ads`);
                 } else {
                     log('info', `${this.id}: No ads found`);
                 }
@@ -323,17 +326,42 @@ export default class YoutubeStream extends FarmTemplate {
                 await page.click('button.ytp-settings-button');
 
                 if (await doesElementExist(page, 'div.ytp-settings-menu')) {
-                    const videoSettingsMenu = await page.$(
-                        'div.ytp-settings-menu'
-                    );
-                    const videoSettings = await getElementChildren(
-                        videoSettingsMenu
+                    /**
+                     * Click the quality setting on the settings menu.
+                     */
+                    await page.click(
+                        'div.ytp-popup.ytp-settings-menu.ytp-rounded-menu > div.ytp-panel > div.ytp-panel-menu > div.ytp-menuitem:nth-child(3)'
                     );
 
-                    console.log(await videoSettings[0].jsonValue());
+                    /**
+                     * Get all quality options.
+                     */
+                    const qualityMenu = await page.$(
+                        'div.ytp-panel.ytp-quality-menu'
+                    );
+
+                    await waitForTimeout(1000);
+
+                    /**
+                     * Quality options.
+                     */
+                    const qualityOptions = (
+                        await getElementChildren(qualityMenu)
+                    )[1];
+
+                    /**
+                     * Click the last quality option (excluding the automatic).
+                     */
+                    const allQualityOptions = await getElementChildren(
+                        qualityOptions
+                    );
+                    await allQualityOptions[
+                        allQualityOptions.length - 2
+                    ].click();
                 }
 
-                log('info', `${this.id}: Set to lowest resolution`);
+                log('info', `${this.id}: Set to lowest resolution possible`);
+                resolve();
             } catch (error) {
                 reject(error);
             }

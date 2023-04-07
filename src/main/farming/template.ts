@@ -876,7 +876,12 @@ export default abstract class FarmTemplate {
                 this.status === 'checking' ||
                 this.status === 'attention-required'
             ) {
+                log(
+                    'warn',
+                    `${this.id}: Already checking or attention required, skipping schedule check`
+                );
                 resolve();
+                return;
             }
 
             /**
