@@ -10,7 +10,9 @@
 - Changed some colors to gradients.
 
 ### Bug fixes
-- Fixed a bug where the app would try to launch again even if it already was
+- Fixed a bug, where the app would try to launch again even if it already was
   running.
-- Fixed a bug where updating to a new version with new/removed settings would
+- Fixed a bug, where updating to a new version with new/removed settings would
   crash the app.
+- Fixed a bug, where the schedule check would still run even if the farm was
+  previously disabled.
