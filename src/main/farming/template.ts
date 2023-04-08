@@ -1005,15 +1005,13 @@ export default abstract class FarmTemplate {
      * Cancel the farming schedule if it's running.
      */
     private cancelFarmingSchedule(): void {
-        if (this.runningSchedule) {
-            this.scheduler.stopAll();
-            this.updateConditions();
-            this.timer.stopTimer();
+        this.scheduler.stopAll();
+        this.updateConditions();
+        this.timer.stopTimer();
 
-            this.runningSchedule?.cancel();
-            this.runningSchedule = undefined;
+        this.runningSchedule?.cancel();
+        this.runningSchedule = undefined;
 
-            log('info', `${this.id}: Canceled farming schedule`);
-        }
+        log('info', `${this.id}: Canceled farming schedule`);
     }
 }

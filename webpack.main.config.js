@@ -34,6 +34,14 @@ module.exports = {
                 {
                     from: path.resolve(__dirname, 'resources'),
                     to: path.resolve(__dirname, '.webpack/main', 'resources')
+                },
+
+                /**
+                 * Copy the changelog to the main folder to access during runtime.
+                 */
+                {
+                    from: path.resolve(__dirname, 'CHANGELOG.md'),
+                    to: path.resolve(__dirname, '.webpack/main')
                 }
             ]
         })
