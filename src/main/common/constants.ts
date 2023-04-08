@@ -35,7 +35,8 @@ export const IpcChannels = {
     resetFarmingConditions: 'reset-farming-conditions',
     resetSettingsToDefault: 'reset-settings-to-default',
     signIn: 'sign-in',
-    signOut: 'sign-out'
+    signOut: 'sign-out',
+    getChangelog: 'get-changelog'
 } as const;
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
 

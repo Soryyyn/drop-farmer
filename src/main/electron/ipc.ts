@@ -31,6 +31,7 @@ import {
 } from '@main/util/settings';
 import { sendToast } from '@main/util/toast';
 import { app, ipcMain, shell } from 'electron';
+import { readFileSync } from 'fs';
 import { setIsQuitting } from './appEvents';
 import { checkIfCanUpdate, handleInstallOfUpdate } from './update';
 import { getMainWindow } from './windows';
@@ -282,6 +283,10 @@ handleOneWay(IpcChannels.signIn, (event, signInObject: SignInObject) =>
 );
 
 handleOneWay(IpcChannels.signOut, () => signOut());
+
+handleAndReply(IpcChannels.getChangelog, () => {
+    return readFileSync('CHANGELOG.md').toString();
+});
 
 /**
  * INTERNAL EVENTS.
