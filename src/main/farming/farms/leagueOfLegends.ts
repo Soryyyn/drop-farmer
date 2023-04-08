@@ -319,6 +319,41 @@ export default class LeagueOfLegends extends FarmTemplate {
     }
 
     setLowestQualityPossible(): Promise<void> {
-        throw new Error('Method not implemented.');
+        return new Promise(async (resolve, reject) => {
+            try {
+                for await (const window of this.farmers) {
+                    const page = await getPage(getBrowserConnection(), window);
+
+                    /**
+                     * Go to the embedded twitch player site to set the localstorage key.
+                     */
+                    await gotoURL(page, 'https://player.twitch.tv/');
+
+                    /**
+                     * Set the default quality in the localstorage.
+                     */
+                    await page.evaluate(() => {
+                        localStorage.setItem(
+                            'video-quality',
+                            '{"default":"160p30"}'
+                        );
+                    });
+
+                    /**
+                     * Go back to the stream site and reload the site.
+                     */
+                    await page.goBack();
+                    await page.reload();
+                }
+
+                log(
+                    'info',
+                    `${this.id}: Set to lowest resolution possible on all windows`
+                );
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 }
