@@ -3,3 +3,4 @@ out/
 yarn.lock
 node_modules/
 **/*.json
+**/*.md
