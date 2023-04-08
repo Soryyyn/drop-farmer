@@ -76,7 +76,7 @@
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@headlessui/react": "^1.7.13",
         "@paymoapp/electron-shutdown-handler": "^1.0.14",
-        "@supabase/supabase-js": "^2.12.1",
+        "@supabase/supabase-js": "^2.13.1",
         "@tippyjs/react": "^4.2.6",
         "@types/react": "^18.0.31",
         "@types/react-dom": "^18.0.11",
