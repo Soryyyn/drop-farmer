@@ -1,16 +1,6 @@
-import { IpcChannels, Toast as ToastId } from '@main/common/constants';
+import { Toast } from '@df-types/toast.types';
+import { IpcChannels } from '@main/common/constants';
 import { sendOneWay } from '@main/electron/ipc';
-
-type ToastType = 'success' | 'error' | 'loading' | 'basic' | 'promise';
-
-type Toast = {
-    type: ToastType;
-    id: ToastId;
-    duration: number;
-    textOnSuccess?: string;
-    textOnError?: string;
-    textOnLoading?: string;
-};
 
 /**
  * Send a toast to the frontend.

@@ -1,3 +1,8 @@
+import {
+    Statistic,
+    StatisticsOnly,
+    StatisticsStoreSchema
+} from '@df-types/statistics.types';
 import { FileNames } from '@main/common/constants';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';

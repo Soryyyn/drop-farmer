@@ -1,3 +1,4 @@
+import { FarmingConditions } from '@df-types/farms.types';
 import { EventChannels, IpcChannels } from '@main/common/constants';
 import { getNumbersInsideString } from '@main/common/string.helper';
 import { sendOneWay } from '@main/electron/ipc';

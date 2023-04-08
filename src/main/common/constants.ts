@@ -99,7 +99,8 @@ export const Selections = {
             value: 'timeWindow'
         }
     ]
-};
+} as const;
+export type Selection = (typeof Selections)[keyof typeof Selections];
 
 /**
  * Possible settings to appear in the settings file.
@@ -230,4 +231,6 @@ export const RegularExpressions = {
     YoutubeChannel:
         /http(s)?:\/\/(www|m).youtube.com\/((channel|c)\/)?(?!feed|user\/|watch\?)([a-zA-Z0-9-_.])*.*/,
     TwitchChannel: /(?:www\.|go\.)?twitch\.tv\/([a-zA-Z0-9_]+)($|\?)/
-};
+} as const;
+export type RegularExpression =
+    (typeof RegularExpressions)[keyof typeof RegularExpressions];

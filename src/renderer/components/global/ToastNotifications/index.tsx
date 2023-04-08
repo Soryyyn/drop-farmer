@@ -1,3 +1,4 @@
+import { Toast } from '@df-types/toast.types';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import React from 'react';
 import toast, { Toaster } from 'react-hot-toast';

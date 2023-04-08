@@ -6,7 +6,6 @@ import {
     doesElementExist,
     getBrowserConnection,
     getElementProperty,
-    getElementTagName,
     gotoURL,
     pageUrlContains,
     waitForElementToAppear,

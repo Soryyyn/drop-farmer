@@ -1,3 +1,5 @@
+import { FarmType } from '@df-types/farms.types';
+
 export function removeTypeFromText(text: string): string {
     if (text.includes('/')) {
         return text.split('/')[1];

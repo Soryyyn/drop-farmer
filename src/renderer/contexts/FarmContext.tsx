@@ -1,3 +1,4 @@
+import { FarmRendererData, LoginForFarmObject } from '@df-types/farms.types';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import React, { createContext, useState } from 'react';
 

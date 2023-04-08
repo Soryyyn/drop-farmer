@@ -3,6 +3,11 @@ import NumberInput from '@components/global/Inputs/NumberInput';
 import Select from '@components/global/Inputs/Select';
 import Switch from '@components/global/Inputs/Switch';
 import TextInput from '@components/global/Inputs/TextInput';
+import {
+    SelectionSetting,
+    SettingValueWithSpecial,
+    SettingWithValue
+} from '@df-types/settings.types';
 import React from 'react';
 import DisabledIndicator from './DisabledIndicator';
 import RestartIndicator from './RestartIndicator';
@@ -14,13 +19,13 @@ interface Props {
 
 export default function Setting({ setting, onChange }: Props) {
     function actionRender() {
-        if (setting.options) {
+        if ('options' in setting) {
             return (
                 <Select
                     value={
-                        setting.options.find(
+                        setting.options!.find(
                             (option) => option.value === setting.value
-                        )?.display ?? (setting.value as string)
+                        )!
                     }
                     disabled={
                         (setting.value as SettingValueWithSpecial).disabled ??

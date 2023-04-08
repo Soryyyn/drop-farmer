@@ -2,6 +2,7 @@ import OverlayContainer from '@components/global/Overlay/OverlayContainer';
 import OverlayContent from '@components/global/Overlay/OverlayContent';
 import TabSwitcher from '@components/global/TabSwitcher';
 import { FarmsContext } from '@contexts/FarmsContext';
+import { NewFarm } from '@df-types/farms.types';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
 import React, { useContext, useEffect, useState } from 'react';
 import BasicInfoTab from './BasicInfoTab';

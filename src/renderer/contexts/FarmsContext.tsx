@@ -1,3 +1,4 @@
+import { FarmRendererData, NewFarm } from '@df-types/farms.types';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import { useSendOneWay } from '@hooks/useSendOneWay';

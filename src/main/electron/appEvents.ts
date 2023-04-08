@@ -3,10 +3,10 @@ import { initFarmsManagement, stopFarms } from '@main/farming/management';
 import { log } from '@main/util/logging';
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
 import {
-    app,
-    autoUpdater,
     RenderProcessGoneDetails,
-    WebContents
+    WebContents,
+    app,
+    autoUpdater
 } from 'electron';
 import { requestSingleInstanceLock } from './instanceLock';
 import { handleClientShutdown } from './shutdownHandler';

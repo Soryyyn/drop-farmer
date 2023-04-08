@@ -4,7 +4,7 @@ import {
     capitalizeFirstLetter,
     removeTypeFromText
 } from '@main/common/string.helper';
-import { ipcRenderer, IpcRendererEvent } from 'electron';
+import { IpcRendererEvent, ipcRenderer } from 'electron';
 
 export default {
     channels: IpcChannels,

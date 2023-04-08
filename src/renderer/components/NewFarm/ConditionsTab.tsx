@@ -2,6 +2,8 @@ import DateInput from '@components/global/Inputs/DateInput';
 import NumberInput from '@components/global/Inputs/NumberInput';
 import Select from '@components/global/Inputs/Select';
 import Switch from '@components/global/Inputs/Switch';
+import { ConditionType } from '@df-types/farms.types';
+import { SelectOption } from '@df-types/settings.types';
 import React, { useEffect, useState } from 'react';
 
 export type ConditionsObject = {
@@ -33,10 +35,13 @@ export default function ConditionsTab({ data, onChange }: Props) {
                 value={
                     api.selections.FarmConditionSelect.find(
                         (select) => select.value === conditionsInfo.type
-                    )?.display ?? ''
+                    ) as SelectOption<string>
                 }
                 fullWidth
-                options={api.selections.FarmConditionSelect}
+                options={
+                    api.selections
+                        .FarmConditionSelect as unknown as SelectOption<string>[]
+                }
                 onChange={(changed) =>
                     setConditionsInfo({
                         ...conditionsInfo,

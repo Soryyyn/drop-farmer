@@ -1,3 +1,4 @@
+import { SelectOption } from '@df-types/settings.types';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import React from 'react';
@@ -6,13 +7,10 @@ import Menu from '../Menu';
 
 interface Props {
     label?: string;
-    value: string;
+    value: SelectOption<any>;
     fullWidth?: boolean;
     disabled?: boolean;
-    options: {
-        display: string;
-        value: string;
-    }[];
+    options: SelectOption<any>[];
     onChange: (changed: any) => void;
 }
 
@@ -52,7 +50,7 @@ export default function Select({
                             }
                         )}
                     >
-                        <span>{value}</span>
+                        <span>{value.display}</span>
                         <Icon
                             sprite={faChevronDown}
                             size="sm"

@@ -2,6 +2,7 @@ import OverlayContainer from '@components/global/Overlay/OverlayContainer';
 import OverlayContent from '@components/global/Overlay/OverlayContent';
 import { FarmsContext } from '@contexts/FarmsContext';
 import { SettingsContext } from '@contexts/SettingsContext';
+import { SettingValueWithSpecial } from '@df-types/settings.types';
 import {
     faFloppyDisk,
     faRotateRight,

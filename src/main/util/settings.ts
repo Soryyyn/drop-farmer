@@ -1,4 +1,14 @@
 import {
+    MergedSettings,
+    SelectionSetting,
+    Setting,
+    SettingValue,
+    SettingWithValue,
+    SettingsInFile,
+    SettingsOfOwners,
+    SettingsStoreSchema
+} from '@df-types/settings.types';
+import {
     FileNames,
     PossibleSettingId,
     PossibleSettings
@@ -15,7 +25,7 @@ const autoLauncher = new AutoLaunch({ name: 'Drop Farmer' });
  * The settings/config store of the app.
  * After this store is created, the farm settings still need to be added.
  */
-const store = new ElectronStore<NewSettingsStoreSchema>({
+const store = new ElectronStore<SettingsStoreSchema>({
     name: FileNames.SettingsStoreFileName,
     clearInvalidConfig: true,
     encryptionKey:
@@ -116,9 +126,9 @@ function validateSetting(
     /**
      * If it is a selection setting.
      */
-    if ((config as SelectionSetting).options) {
+    if ('options' in config) {
         if (
-            (config as SelectionSetting).options.findIndex(
+            config!.options!.findIndex(
                 (option) => option.value === valueToValidate
             ) !== -1
         ) {
@@ -243,7 +253,7 @@ export function getSettingConfig(
 ): Setting | undefined {
     return PossibleSettings.find(
         (possibleSetting) => possibleSetting.id === settingName
-    );
+    ) as Setting;
 }
 
 /**

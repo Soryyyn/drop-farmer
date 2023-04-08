@@ -1,5 +1,6 @@
 import Icon from '@components/global/Icon';
 import SquareContainer from '@components/global/SquareContainer';
+import { FarmStatus } from '@df-types/farms.types';
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';

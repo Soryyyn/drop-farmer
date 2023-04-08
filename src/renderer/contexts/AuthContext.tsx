@@ -1,3 +1,4 @@
+import { SignInObject } from '@df-types/auth.types';
 import { Session } from 'electron';
 import React, { createContext, useState } from 'react';
 

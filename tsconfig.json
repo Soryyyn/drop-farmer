@@ -18,6 +18,7 @@
         "downlevelIteration": true,
         "paths": {
             "*": ["node_modules/*"],
+            "@df-types/*": ["src/types/*"],
             "@assets/*": ["src/renderer/assets/*"],
             "@components/*": ["src/renderer/components/*"],
             "@hooks/*": ["src/renderer/hooks/*"],
@@ -29,7 +30,7 @@
             "@main/util/*": ["src/main/util/*"],
             "@main/auth/*": ["src/main/auth/*"],
         },
-        "typeRoots": ["./node_modules/@types", "src/types"]
+        "typeRoots": ["./node_modules/@types", "src/types/renderer.d.ts"]
     },
     "include": ["src/**/*", "src/types/*.d.ts"]
 }

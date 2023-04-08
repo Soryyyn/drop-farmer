@@ -1,3 +1,4 @@
+import { MergedSettings, SettingWithValue } from '@df-types/settings.types';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import cloneDeep from 'lodash.clonedeep';

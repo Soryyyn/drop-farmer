@@ -1,6 +1,7 @@
 import NumberInput from '@components/global/Inputs/NumberInput';
 import Select from '@components/global/Inputs/Select';
 import TextInput from '@components/global/Inputs/TextInput';
+import { SelectOption } from '@df-types/settings.types';
 import React, { useEffect, useState } from 'react';
 
 export type BasicInfoObject = {
@@ -49,10 +50,13 @@ export default function BasicInfoTab({ data, onChange }: Props) {
                 value={
                     api.selections.FarmingLocation.find(
                         (select) => select.value === basicInfo.type
-                    )?.display ?? ''
+                    ) as SelectOption<string>
                 }
                 fullWidth
-                options={api.selections.FarmingLocation}
+                options={
+                    api.selections
+                        .FarmingLocation as unknown as SelectOption<string>[]
+                }
                 onChange={(changed) => {
                     setBasicInfo({
                         ...basicInfo,

@@ -1,3 +1,8 @@
+import {
+    FarmRendererData,
+    NewFarm,
+    TimeWindowCondition
+} from '@df-types/farms.types';
 import { EventChannels, RegularExpressions } from '@main/common/constants';
 import {
     getTypeFromText,
@@ -9,8 +14,8 @@ import { emitEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import {
     deleteAllOwnerSettings,
-    getSettings,
     getSettingValue,
+    getSettings,
     setSettingValue
 } from '@main/util/settings';
 import LeagueOfLegends from './farms/leagueOfLegends';
