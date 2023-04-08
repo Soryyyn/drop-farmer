@@ -5,6 +5,7 @@ import { log } from '@main/util/logging';
 import {
     doesElementExist,
     getBrowserConnection,
+    getElementChildren,
     gotoURL,
     waitForElementToAppear,
     waitForTimeout
@@ -204,6 +205,33 @@ export default class TwitchStreamer extends FarmTemplate {
     }
 
     setLowestQualityPossible(): Promise<void> {
-        throw new Error('Method not implemented.');
+        return new Promise(async (resolve, reject) => {
+            try {
+                const page = await getPage(
+                    getBrowserConnection(),
+                    this.farmers[0]
+                );
+
+                /**
+                 * Set the default quality in the localstorage.
+                 */
+                await page.evaluate(() => {
+                    localStorage.setItem(
+                        'video-quality',
+                        '{"default":"160p30"}'
+                    );
+                });
+
+                /**
+                 * Reload the page.
+                 */
+                await page.reload();
+
+                log('info', `${this.id}: Set to lowest resolution possible`);
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 }
