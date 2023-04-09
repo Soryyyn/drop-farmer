@@ -7,6 +7,8 @@
   streams.
 
 ### Changes
+- Updated dashboard layout,
+- Removed some transparent components to opaque colors to prevent rendering glitches.
 - Changed some colors to gradients.
 
 ### Bug fixes
