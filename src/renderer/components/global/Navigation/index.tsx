@@ -1,8 +1,10 @@
 import { ModalContext } from '@contexts/ModalContext';
 import { UpdateContext } from '@contexts/UpdateContext';
 import {
+    faCircleInfo,
     faDownload,
     faGear,
+    faInfo,
     faPowerOff,
     faRotate
 } from '@fortawesome/free-solid-svg-icons';
@@ -16,7 +18,7 @@ export default function Navigation() {
     const { setCurrentOverlay, toggleOverlay } = useContext(ModalContext);
 
     return (
-        <ul className="w-full flex flex-row gap-2 justify-end">
+        <ul className="w-full flex flex-row gap-2 relative justify-center">
             <NavItem
                 icon={faGear}
                 label="Settings"
@@ -41,6 +43,13 @@ export default function Navigation() {
                 label="Quit"
                 className="hover:bg-gradient-to-tr hover:from-blood-500 hover:to-blood-550 hover:text-pepper-200 active:brightness-90 active:text-pepper-200"
                 onClick={() => api.sendOneWay(api.channels.shutdown)}
+            />
+
+            <NavItem
+                icon={faInfo}
+                label="About"
+                className="absolute right-0"
+                onClick={() => {}}
             />
         </ul>
     );
