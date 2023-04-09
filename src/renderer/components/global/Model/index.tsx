@@ -14,13 +14,13 @@ export default function Model({ src, type, loop }: Props) {
         getSetting('application', 'application-reducedMotion')?.value as boolean
     ) {
         return (
-            <video loop={loop}>
+            <video loop={loop} className="relative -z-10">
                 <source src={src} type={type} />
             </video>
         );
     } else {
         return (
-            <video loop={loop} autoPlay>
+            <video loop={loop} autoPlay className="relative -z-10">
                 <source src={src} type={type} />
             </video>
         );

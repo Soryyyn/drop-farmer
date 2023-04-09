@@ -14,7 +14,7 @@ export default function Dashboard() {
         <>
             <div className="flex flex-row h-full gap-8">
                 <Sidebar />
-                <div className="relative flex grow justify-center items-center">
+                <div className="flex grow justify-center items-center">
                     <div className="w-full h-full flex flex-col">
                         <div className="h-full w-full flex flex-col justify-center">
                             <span className="w-3/4 self-center">
@@ -24,7 +24,7 @@ export default function Dashboard() {
                                     loop={true}
                                 />
                             </span>
-                            <p className="self-center w-fit font-extrabold tracking-wide text-5xl text-center uppercase bg-gradient-to-tr from-pepper-200 to-pepper-500 text-transparent bg-clip-text drop-shadow-lg">
+                            <p className="self-center w-fit font-extrabold tracking-wide text-5xl text-center uppercase bg-gradient-to-tr from-pepper-200 to-pepper-500 text-transparent bg-clip-text drop-shadow-lg -z-10">
                                 Drop Farmer
                             </p>
                             <span className="text-center w-fit self-center text-pepper-200/75 -mt-1 font-medium flex flex-row gap-1 items-center">

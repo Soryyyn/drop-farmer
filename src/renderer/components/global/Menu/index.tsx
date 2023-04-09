@@ -91,7 +91,7 @@ export default function Menu({ button, entries, fullWidth, disabled }: Props) {
                 ref={menuRef}
                 as="div"
                 className={clsx(
-                    'w-max absolute flex flex-col box-border z-50 bg-pepper-200/95 backdrop-blur-2xl rounded-md p-2 gap-1 shadow-xl shadow-pepper-200/25',
+                    'w-max absolute flex flex-col box-border z-[999] bg-pepper-200 rounded-md p-2 gap-1 shadow-xl shadow-pepper-200/25',
                     {
                         'left-0 mt-1': alignment === Alignment.BottomLeft,
                         'right-0 mt-1': alignment === Alignment.BottomRight,
@@ -108,7 +108,7 @@ export default function Menu({ button, entries, fullWidth, disabled }: Props) {
                             <HeadlessMenu.Item
                                 key={index}
                                 as="div"
-                                className="bg-pepper-200/50 h-0.5 w-[98%] rounded-full self-center"
+                                className="bg-pepper-300 h-0.5 w-[98%] rounded-full self-center"
                             />
                         );
                     } else {
