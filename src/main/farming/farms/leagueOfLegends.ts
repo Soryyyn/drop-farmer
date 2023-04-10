@@ -17,7 +17,7 @@ import FarmTemplate from '../template';
 
 export default class LeagueOfLegends extends FarmTemplate {
     constructor() {
-        super('League Of Legends', 'https://lolesports.com/', true);
+        super('League Of Legends', 'https://lolesports.com/');
     }
 
     login(window: Electron.BrowserWindow): Promise<any> {

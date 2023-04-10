@@ -7,22 +7,13 @@ import { getMainWindowNativeHandle } from './windows';
  * Handle the client shutdown to firstly gracefully quit the app.
  */
 export function handleClientShutdown(): void {
-    if (process.env.NODE_ENV !== 'production') {
-        /**
-         * Don't handle the shutdown for prod env.
-         */
-        log('warn', 'Not handling shutdown because of dev env');
-    } else {
-        ElectronShutdownHandler.setWindowHandle(getMainWindowNativeHandle());
-        ElectronShutdownHandler.blockShutdown(
-            'Please wait for graceful shutdown'
-        );
+    ElectronShutdownHandler.setWindowHandle(getMainWindowNativeHandle());
+    ElectronShutdownHandler.blockShutdown('Please wait for graceful shutdown');
 
-        ElectronShutdownHandler.on('shutdown', () => {
-            log('info', 'Received shutdown event, gracefully quitting app');
-            handleAppBeforeQuit();
-        });
+    ElectronShutdownHandler.on('shutdown', () => {
+        log('info', 'Received shutdown event, gracefully quitting app');
+        handleAppBeforeQuit();
+    });
 
-        log('info', 'Handling shutdown of client');
-    }
+    log('info', 'Handling shutdown of client');
 }

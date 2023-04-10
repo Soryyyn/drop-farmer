@@ -21,12 +21,11 @@ import FarmTemplate from '../template';
 export default class YoutubeStream extends FarmTemplate {
     constructor(
         id: string,
-        isProtected: boolean,
         url: string,
         schedule?: number,
         conditions?: FarmingConditions
     ) {
-        super(`youtube/${id}`, url, isProtected);
+        super(`youtube/${id}`, url);
 
         /**
          * If a schedule is provided, set it too.

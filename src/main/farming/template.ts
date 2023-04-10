@@ -43,7 +43,6 @@ import { Timer } from './timer';
 export default abstract class FarmTemplate {
     id: string;
     url: string;
-    isProtected: boolean;
 
     enabled: boolean = false;
     status: FarmStatus = 'disabled';
@@ -75,10 +74,9 @@ export default abstract class FarmTemplate {
         }
     };
 
-    constructor(id: string, url: string, isProtected: boolean) {
+    constructor(id: string, url: string) {
         this.id = id;
         this.url = url;
-        this.isProtected = isProtected;
 
         this.timer = new Timer(id);
     }
@@ -384,7 +382,7 @@ export default abstract class FarmTemplate {
             id: this.id,
             status: this.status,
             schedule: this.schedule,
-            isProtected: this.isProtected,
+            isProtected: false,
             amountOfWindows: this.getAmountOfWindows(),
             windowsShown: this.windowsCurrentlyShown
             // amountLeftToFulfill: msInHours(

@@ -28,12 +28,10 @@ const defaultFarms: FarmTemplate[] = [
     new LeagueOfLegends(),
     new YoutubeStream(
         'Overwatch: League',
-        true,
         'https://www.youtube.com/c/overwatchleague'
     ),
     new YoutubeStream(
         'Overwatch: Contenders',
-        true,
         'https://www.youtube.com/c/OverwatchContenders'
     )
 ];
@@ -76,7 +74,6 @@ function addUserAddedFarms(): void {
                     farms.push(
                         new YoutubeStream(
                             removeTypeFromText(farmId),
-                            false,
                             getSettingValue(farmId, 'farm-url')! as string,
                             getSettingValue(farmId, 'farm-schedule')! as number
                         )
@@ -86,7 +83,6 @@ function addUserAddedFarms(): void {
                     farms.push(
                         new TwitchStreamer(
                             removeTypeFromText(farmId),
-                            false,
                             getSettingValue(farmId, 'farm-url')! as string,
                             getSettingValue(farmId, 'farm-schedule')! as number
                         )
@@ -234,7 +230,6 @@ export async function addNewFarm(farm: NewFarm): Promise<void> {
                 farms.push(
                     new YoutubeStream(
                         farm.id,
-                        false,
                         farm.url,
                         farm.schedule,
                         farm.conditions
@@ -245,7 +240,6 @@ export async function addNewFarm(farm: NewFarm): Promise<void> {
                 farms.push(
                     new TwitchStreamer(
                         farm.id,
-                        false,
                         farm.url,
                         farm.schedule,
                         farm.conditions

@@ -24,7 +24,7 @@ export default function NavItem({
         <li
             className={clsx(
                 className,
-                'bg-pepper-900/75 hover:bg-pepper-900 active:bg-pepper-800 active:text-snow-300 text-pepper-200 h-[44px] flex flex-row items-center justify-center gap-1.5 rounded-lg select-none cursor-pointer transition-all',
+                'h-[44px] flex flex-row items-center justify-center gap-1.5 rounded-lg select-none cursor-pointer transition-all',
                 {
                     'aspect-square': !isHovering,
                     'px-2.5': isHovering

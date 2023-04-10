@@ -16,12 +16,11 @@ import FarmTemplate from '../template';
 export default class TwitchStreamer extends FarmTemplate {
     constructor(
         id: string,
-        isProtected: boolean,
         url: string,
         schedule?: number,
         conditions?: FarmingConditions
     ) {
-        super(`twitch/${id}`, url, isProtected);
+        super(`twitch/${id}`, url);
 
         /**
          * If a schedule is provided, set it too.
