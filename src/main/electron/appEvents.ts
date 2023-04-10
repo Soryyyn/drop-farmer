@@ -50,11 +50,7 @@ export function handleAppReady(): void {
     initFarmsManagement();
     createTray();
     createMainWindow();
-
-    /**
-     * Don't handle client shutdown on dev.
-     */
-    if (process.env.NODE_ENV === 'production') handleClientShutdown();
+    handleClientShutdown();
 
     /**
      * Show if window should be shown by relaunch.
