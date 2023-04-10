@@ -1129,13 +1129,13 @@
     fs-extra "^10.0.0"
     got "^11.8.5"
 
-"@electron-forge/plugin-auto-unpack-natives@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@electron-forge/plugin-auto-unpack-natives/-/plugin-auto-unpack-natives-6.1.0.tgz#74e44451bbbc96dd47e20f10e6ed47877b114636"
-  integrity sha512-blQPNtscQl/e7yx7jWgFWWBQecoK9ydF0RR0nVEYVjsba1mZGKapfAb3x7AjdeCYyiHGdxukml13fMSeU5iaFw==
+"@electron-forge/plugin-auto-unpack-natives@^6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@electron-forge/plugin-auto-unpack-natives/-/plugin-auto-unpack-natives-6.1.1.tgz#13e309172dc93ccb132317a2f403eee1ffabb1b9"
+  integrity sha512-Vl36aRxb8KJ1X6Zgqx6B3ay6qqiwWNxe6JF6gClmXwlKUP7P/NqMYKbAGlMBzq7V7CypddkJWBf48LamTPfKiQ==
   dependencies:
-    "@electron-forge/plugin-base" "6.1.0"
-    "@electron-forge/shared-types" "6.1.0"
+    "@electron-forge/plugin-base" "6.1.1"
+    "@electron-forge/shared-types" "6.1.1"
 
 "@electron-forge/plugin-base@6.1.0":
   version "6.1.0"
@@ -1143,6 +1143,13 @@
   integrity sha512-uf8G5J4OUKQ3m9SIhMCq/FWoT5tEu6iH1w0CZJIellDJidK3vGWv0eA+ZiY/7RsM8o5gHWTQNVWCkddBDvmDhA==
   dependencies:
     "@electron-forge/shared-types" "6.1.0"
+
+"@electron-forge/plugin-base@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@electron-forge/plugin-base/-/plugin-base-6.1.1.tgz#73f4688654cd29591af533be53c2a3a656405331"
+  integrity sha512-xZWZxvD2fQYnkFREK+46FS59vMEsPFINwydtD24QGTBoRMOKXkfXv16yN4eexVi+02Hj6mihYY8zhxJi56OmxA==
+  dependencies:
+    "@electron-forge/shared-types" "6.1.1"
 
 "@electron-forge/plugin-webpack@^6.1.0":
   version "6.1.0"
@@ -1187,6 +1194,15 @@
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@electron-forge/shared-types/-/shared-types-6.1.0.tgz#62e4bb4191fbf72fedbe56e5c4adbd5caa854f9c"
   integrity sha512-XemHvhVv/wvPfs5wHCp1keNZ7nFsC4U88ySLLznVNYdbe5yORNZhCiZC/vd4RykGIh+37jNnKBLXqzwxygqM4g==
+  dependencies:
+    "@electron/rebuild" "^3.2.10"
+    electron-packager "^17.1.1"
+    listr2 "^5.0.3"
+
+"@electron-forge/shared-types@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@electron-forge/shared-types/-/shared-types-6.1.1.tgz#f08cf783bf0a086331784b9f13110b4fade84846"
+  integrity sha512-sFQQ2ldMq5mlNv4m7lZOZLf9aOn6MLNc8QVeTzOBQ+psxI3mVTDjb+/Lhs/jU8dm2igVfEqAmlj57Gi+C4u4Vw==
   dependencies:
     "@electron/rebuild" "^3.2.10"
     electron-packager "^17.1.1"
