@@ -3,5 +3,6 @@
  */
 export enum Overlays {
     Settings = 0,
-    NewFarm = 1
+    NewFarm = 1,
+    Changelog = 2
 }

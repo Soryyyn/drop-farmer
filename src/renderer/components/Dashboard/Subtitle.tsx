@@ -1,10 +1,12 @@
 import ChangelogRenderer from '@components/global/ChangelogRenderer';
+import { Overlays } from '@components/global/Overlay/types';
 import Popup from '@components/global/Popup';
+import { ModalContext } from '@contexts/ModalContext';
 import { useAppVersion } from '@hooks/useAppVersion';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 export default function Subtitle() {
-    const [isChangelogShowing, setIsChangelogShowing] = useState(false);
+    const { setCurrentOverlay, toggleOverlay } = useContext(ModalContext);
     const appVersion = useAppVersion();
 
     return (
@@ -14,19 +16,14 @@ export default function Subtitle() {
                 <p>-</p>
                 <p
                     className="hover:bg-pepper-900/50 rounded px-1 py-0.5 cursor-pointer transition-all"
-                    onClick={() => setIsChangelogShowing(true)}
+                    onClick={() => {
+                        setCurrentOverlay(Overlays.Changelog);
+                        toggleOverlay();
+                    }}
                 >
                     Changelog
                 </p>
             </span>
-
-            <Popup
-                showing={isChangelogShowing}
-                title="Changelog"
-                onClose={() => setIsChangelogShowing(false)}
-            >
-                <ChangelogRenderer />
-            </Popup>
         </>
     );
 }

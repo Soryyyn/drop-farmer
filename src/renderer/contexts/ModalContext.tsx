@@ -1,3 +1,4 @@
+import Changelog from '@components/Changelog';
 import Overlay from '@components/global/Overlay';
 import { Overlays } from '@components/global/Overlay/types';
 import NewFarm from '@components/NewFarm';
@@ -37,6 +38,8 @@ export function ModalContextProvider({ children }: DefaultContextProps) {
             return <Settings onClose={toggleOverlay} />;
         } else if (currentOverlay === Overlays.NewFarm) {
             return <NewFarm onClose={toggleOverlay} />;
+        } else if (currentOverlay === Overlays.Changelog) {
+            return <Changelog onClose={toggleOverlay} />;
         }
 
         return <></>;
