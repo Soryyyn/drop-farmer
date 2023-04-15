@@ -32,8 +32,9 @@ export default function Switch({
                 className={clsx(
                     'relative w-16 flex items-center rounded-md p-1 transition-all bg-gradient-to-tr',
                     {
-                        'bg-pepper-700': !value,
-                        'from-blood-500 to-blood-550': value
+                        'bg-pepper-700 hover:bg-pepper-800': !value,
+                        'from-blood-500 to-blood-550 hover:brightness-110':
+                            value
                     }
                 )}
             >

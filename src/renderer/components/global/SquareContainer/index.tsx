@@ -26,7 +26,7 @@ export default function SquareContainer({
                 <div
                     onClick={onClick}
                     className={clsx(
-                        'h-full aspect-square flex items-center justify-center',
+                        'h-full aspect-square flex items-center justify-center transition-all',
                         className
                     )}
                 >
