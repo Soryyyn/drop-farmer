@@ -78,7 +78,7 @@
         "@paymoapp/electron-shutdown-handler": "^1.0.14",
         "@supabase/supabase-js": "^2.13.1",
         "@tippyjs/react": "^4.2.6",
-        "@types/react": "^18.0.31",
+        "@types/react": "^18.0.35",
         "@types/react-dom": "^18.0.11",
         "@typescript-eslint/eslint-plugin": "^5.57.0",
         "@typescript-eslint/parser": "^5.57.0",
