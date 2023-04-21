@@ -473,7 +473,5 @@ function addSettingForMigration(
     id: PossibleSettingId,
     value: Setting
 ): void {
-    console.log(store);
     store.set(`settings.${owner}.${id}`, value.default);
-    console.log(store);
 }

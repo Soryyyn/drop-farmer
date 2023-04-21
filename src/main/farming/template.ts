@@ -20,6 +20,8 @@ import {
     dateToISOString,
     formattedStringToDate,
     getCurrentDate,
+    getNextConditionReset,
+    getTimeLeftToFulfill,
     isDateBetweenDates,
     remainingDaysInMonth,
     remainingDaysInWeek
@@ -384,20 +386,9 @@ export default abstract class FarmTemplate {
             schedule: this.schedule,
             isProtected: false,
             amountOfWindows: this.getAmountOfWindows(),
-            windowsShown: this.windowsCurrentlyShown
-            // amountLeftToFulfill: msInHours(
-            //     combineTimeUnits({
-            //         hours: this.conditions.condition.amountToFulfill,
-            //         minutes: this.conditions.buffer
-            //     }).asMilliseconds() - this.conditions.amount!,
-            //     true
-            // ),
-            // nextConditionReset:
-            //     this.conditions.timeframe === 'weekly'
-            //         ? remainingDaysInWeek()
-            //         : this.conditions.timeframe === 'monthly'
-            //         ? remainingDaysInMonth()
-            //         : Infinity
+            windowsShown: this.windowsCurrentlyShown,
+            amountLeftToFulfill: getTimeLeftToFulfill(this),
+            nextConditionReset: getNextConditionReset(this)
         };
     }
 

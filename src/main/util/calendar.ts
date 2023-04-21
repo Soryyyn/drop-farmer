@@ -1,3 +1,4 @@
+import FarmTemplate from '@main/farming/template';
 import dayjs from 'dayjs';
 import CustomParseFormatPlugin from 'dayjs/plugin/customParseFormat';
 import DurationPlugin, { Duration } from 'dayjs/plugin/duration';
@@ -126,4 +127,38 @@ export function minutesAndSecondsToMS(time: string): number {
             seconds: parseInt(times[1])
         })
         .asMilliseconds();
+}
+
+/**
+ * Get the time left to fulfill for a specific farm.
+ */
+export function getTimeLeftToFulfill(farm: FarmTemplate): number {
+    switch (farm.conditions.condition.type) {
+        case 'unlimited':
+            return 0;
+        default:
+            return msInHours(
+                combineTimeUnits({
+                    hours: farm.conditions.condition.amountToFulfill,
+                    minutes: farm.conditions.condition.buffer
+                }).asMilliseconds() - farm.conditions.condition.amount!,
+                true
+            );
+    }
+}
+
+/**
+ * Get the next condition reset.
+ */
+export function getNextConditionReset(farm: FarmTemplate): number {
+    switch (farm.conditions.condition.type) {
+        case 'monthly':
+            return remainingDaysInMonth();
+        case 'weekly':
+            return remainingDaysInWeek();
+        case 'timeWindow':
+            return Infinity;
+        default:
+            return Infinity;
+    }
 }
