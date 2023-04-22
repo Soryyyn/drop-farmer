@@ -29,7 +29,9 @@ export default function Changelog({ onClose }: Props) {
                     }
                 ]}
             >
-                <p>{changelog}</p>
+                <div className="flex flex-col gap-2">
+                    <h1>What&apos;s new?</h1>
+                </div>
             </OverlayContent>
         </OverlayContainer>
     );

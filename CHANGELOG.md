@@ -1,4 +1,4 @@
-## Version 1.0.0-beta49
+## 1.0.0-beta49
 ### New features
 - Streams will now wait and not skip ads.
 - New setting to automatically set the lowest possible resolution on most

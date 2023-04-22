@@ -130,6 +130,13 @@ export function minutesAndSecondsToMS(time: string): number {
 }
 
 /**
+ * Get the number of days between two dates.
+ */
+export function getDaysBetweenDates(first: Date, second: Date): number {
+    return dayjs(first).diff(second, 'day');
+}
+
+/**
  * Get the time left to fulfill for a specific farm.
  */
 export function getTimeLeftToFulfill(farm: FarmTemplate): number {
@@ -157,7 +164,10 @@ export function getNextConditionReset(farm: FarmTemplate): number {
         case 'weekly':
             return remainingDaysInWeek();
         case 'timeWindow':
-            return Infinity;
+            return getDaysBetweenDates(
+                getCurrentDate(),
+                getDate(farm.conditions.condition.to!)!
+            );
         default:
             return Infinity;
     }
