@@ -9,14 +9,14 @@ export default function AddFarmButton() {
 
     return (
         <div
-            className="bg-pepper-900/75 rounded-lg py-3 px-6 hover:bg-pepper-900 active:bg-pepper-800 active:text-snow-300 backdrop-blur-lg flex flex-row items-center gap-2 justify-center leading-none font-semibold cursor-pointer transition-all"
+            className="h-[40px] bg-pepper-900/75 rounded-lg py-3 px-6 hover:bg-pepper-900 active:bg-pepper-800 active:text-snow-300 backdrop-blur-lg flex flex-row items-center gap-2 justify-center leading-none font-semibold cursor-pointer transition-all"
             onClick={() => {
                 setCurrentOverlay(Overlays.NewFarm);
                 toggleOverlay();
             }}
         >
             <Icon sprite={faPlus} size="lg" />
-            <p>Add new farm</p>
+            <p className="leading-none font-semibold text-sm">Add new farm</p>
         </div>
     );
 }

@@ -1,13 +1,14 @@
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import clsx from 'clsx';
-import React, { useState } from 'react';
+import React from 'react';
 import Icon from '../Icon';
+import NotificationBadge from '../NotificationBadge';
 
 type Props = {
     label: string;
     icon: IconDefinition;
     className?: string;
-    labelShown?: boolean;
+    withBadge?: boolean;
     onClick: () => void;
 };
 
@@ -15,29 +16,21 @@ export default function NavItem({
     label,
     icon,
     className,
-    labelShown,
+    withBadge,
     onClick
 }: Props) {
-    const [isHovering, setIsHovering] = useState(labelShown ?? false);
-
     return (
-        <li
-            className={clsx(
-                className,
-                'h-[44px] flex flex-row items-center justify-center gap-1.5 rounded-lg select-none cursor-pointer transition-all',
-                {
-                    'aspect-square': !isHovering,
-                    'px-2.5': isHovering
-                }
-            )}
-            onMouseOver={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-            onClick={onClick}
-        >
-            <Icon sprite={icon} size="lg" />
-            {isHovering && (
-                <p className="leading-none font-semibold">{label}</p>
-            )}
-        </li>
+        <NotificationBadge showing={withBadge ?? false}>
+            <li
+                className={clsx(
+                    className,
+                    'h-[40px] flex flex-row items-center justify-center gap-1.5 rounded-lg select-none cursor-pointer transition-all p-3 active:outline outline-2 outline-offset-2 outline-snow-300/50'
+                )}
+                onClick={onClick}
+            >
+                <Icon sprite={icon} size="1x" />
+                <p className="leading-none font-semibold text-sm">{label}</p>
+            </li>
+        </NotificationBadge>
     );
 }

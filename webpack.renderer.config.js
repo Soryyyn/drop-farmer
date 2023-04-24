@@ -36,5 +36,8 @@ module.exports = {
     resolve: {
         plugins: [new TsconfigPathsPlugin()],
         extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss']
+    },
+    watchOptions: {
+        ignored: /node_modules/
     }
 };
