@@ -3,7 +3,7 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = [
     new ForkTsCheckerWebpackPlugin({
-        async: true
+        async: false
     }),
     new Dotenv()
 ];

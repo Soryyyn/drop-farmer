@@ -12,7 +12,7 @@ type ToastContentProps = {
 
 function ToastContent({ label, onDismiss }: ToastContentProps) {
     return (
-        <div className="flex flex-row gap-4 items-center">
+        <div className="flex flex-row gap-4 items-center w-full">
             <p>{label}</p>
             <button
                 onClick={onDismiss}
@@ -71,7 +71,7 @@ export default function ToastNotifications() {
             toastOptions={{
                 style: {
                     minWidth: '450px',
-                    textAlign: 'center',
+                    textAlign: 'left',
                     background: 'rgb(21 22 32)',
                     boxShadow:
                         '0 20px 25px -5px rgb(21 22 32 / 0.25), 0 8px 10px -6px rgb(21 22 32 / 0.25)',

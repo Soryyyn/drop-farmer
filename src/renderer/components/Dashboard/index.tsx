@@ -14,7 +14,7 @@ export default function Dashboard() {
             <div className="w-full h-full flex flex-col">
                 <div className="flex flex-col h-full">
                     <div className="h-full w-full flex flex-col justify-center">
-                        <span className="w-[40%] self-center">
+                        <span className="w-[45%] self-center mb-4">
                             <Model
                                 src="../assets/crate-falling.webm"
                                 type="video/webm"
