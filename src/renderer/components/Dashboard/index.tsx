@@ -1,7 +1,6 @@
 import Model from '@components/global/Model';
-import Navigation from '@components/global/Navigation';
 import React from 'react';
-import Sidebar from './Sidebar';
+import Navigation from './Navigation';
 import Subtitle from './Subtitle';
 
 /**

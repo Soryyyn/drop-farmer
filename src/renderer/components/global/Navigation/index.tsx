@@ -1,7 +1,6 @@
 import { ModalContext } from '@contexts/ModalContext';
 import { UpdateContext } from '@contexts/UpdateContext';
 import {
-    faChartSimple,
     faDownload,
     faGear,
     faPowerOff,
@@ -9,7 +8,7 @@ import {
     faTractor
 } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Overlays } from '../Overlay/types';
 import NavItem from './NavItem';
 
@@ -18,20 +17,30 @@ export default function Navigation() {
         useContext(UpdateContext);
     const { setCurrentOverlay, toggleOverlay } = useContext(ModalContext);
 
+    const [displayingFarms, setDisplayingFarms] = useState(false);
+
     return (
-        <ul className="w-full flex flex-row gap-2 relative justify-center">
-            <NavItem
-                icon={faTractor}
-                label="Farms"
-                onClick={() => {}}
-                className="bg-pepper-300 text-snow-300 hover:bg-pepper-400"
-            />
-            {/* <NavItem
-                icon={faChartSimple}
-                label="Statistics"
-                onClick={() => {}}
-                className="bg-pepper-300 text-snow-300 hover:bg-pepper-400"
-            /> */}
+        <ul className="w-full flex flex-row gap-3 relative justify-center">
+            <div className="relative">
+                <NavItem
+                    icon={faTractor}
+                    label="Farms"
+                    onClick={() => setDisplayingFarms(true)}
+                    className="bg-pepper-300 text-snow-300 hover:bg-pepper-400"
+                />
+
+                <p
+                    className={clsx(
+                        'absolute -top-2 left-0 -translate-y-full mb-2',
+                        {
+                            hidden: !displayingFarms,
+                            block: displayingFarms
+                        }
+                    )}
+                >
+                    FARMS HEJRE
+                </p>
+            </div>
             <NavItem
                 icon={faGear}
                 label="Settings"
