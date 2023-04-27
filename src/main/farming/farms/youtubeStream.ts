@@ -250,6 +250,8 @@ export default class YoutubeStream extends FarmTemplate {
                     this.farmers[0]
                 );
 
+                await waitForTimeout(5000);
+
                 const adContainer = await waitForElementToAppear(
                     page,
                     'div.video-ads.ytp-ad-module'
@@ -330,7 +332,7 @@ export default class YoutubeStream extends FarmTemplate {
                      * Click the quality setting on the settings menu.
                      */
                     await page.click(
-                        'div.ytp-popup.ytp-settings-menu.ytp-rounded-menu > div.ytp-panel > div.ytp-panel-menu > div.ytp-menuitem:nth-child(3)'
+                        'div.ytp-popup.ytp-settings-menu > div.ytp-panel > div.ytp-panel-menu > div.ytp-menuitem:nth-child(3)'
                     );
 
                     /**

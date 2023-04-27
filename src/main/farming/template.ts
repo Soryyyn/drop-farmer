@@ -103,6 +103,20 @@ export default abstract class FarmTemplate {
             `*/${this.schedule} * * * *`,
             async () => {
                 try {
+                    /**
+                     * Skip the check if it is already checking or something occurd.
+                     */
+                    if (
+                        this.status === 'checking' ||
+                        this.status === 'attention-required'
+                    ) {
+                        log(
+                            'warn',
+                            `${this.id}: Check already running, waiting for it to finish`
+                        );
+                        return;
+                    }
+
                     this.runningSchedule?.cancel();
                     this.runningSchedule = makeCancellablePromise(
                         this.farmingSchedule()
@@ -868,18 +882,6 @@ export default abstract class FarmTemplate {
      */
     private async farmingSchedule(): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
-            if (
-                this.status === 'checking' ||
-                this.status === 'attention-required'
-            ) {
-                log(
-                    'warn',
-                    `${this.id}: Already checking or attention required, skipping schedule check`
-                );
-                resolve();
-                return;
-            }
-
             /**
              * Check for conditions.
              */
