@@ -1,6 +1,4 @@
-import ChangelogRenderer from '@components/global/ChangelogRenderer';
 import { Overlays } from '@components/global/Overlay/types';
-import Popup from '@components/global/Popup';
 import { ModalContext } from '@contexts/ModalContext';
 import { useAppVersion } from '@hooks/useAppVersion';
 import React, { useContext, useState } from 'react';
