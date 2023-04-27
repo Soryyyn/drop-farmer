@@ -58,5 +58,5 @@ export function useSendAndWait({
         return () => {
             api.removeAllListeners(channel);
         };
-    }, [dependency]);
+    }, [dependency, args, callback, channel, first, skipFirstRender]);
 }

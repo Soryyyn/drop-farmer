@@ -18,7 +18,7 @@ export default function SignIn() {
 
     useEffect(() => {
         if (enter) signIn({ email, password });
-    }, [enter]);
+    }, [enter, email, password, signIn]);
 
     return (
         <>

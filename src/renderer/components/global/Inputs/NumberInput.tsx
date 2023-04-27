@@ -29,7 +29,7 @@ export default function NumberInput({
 
     useEffect(() => {
         onChange(inputValue);
-    }, [inputValue]);
+    }, [inputValue, onChange]);
 
     return (
         <div className="flex flex-col gap-2 grow">

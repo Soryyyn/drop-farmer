@@ -17,5 +17,5 @@ export function useOutsideAlterter(ref: any, callback: () => void) {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [ref]);
+    }, [ref, callback]);
 }

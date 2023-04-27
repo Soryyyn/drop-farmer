@@ -21,7 +21,7 @@ export default function BasicInfoTab({ data, onChange }: Props) {
 
     useEffect(() => {
         onChange(basicInfo);
-    }, [basicInfo]);
+    }, [basicInfo, onChange]);
 
     return (
         <div className="flex flex-col gap-4">

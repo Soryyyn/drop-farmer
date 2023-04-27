@@ -72,7 +72,7 @@ export default function Menu({ button, entries, fullWidth, disabled }: Props) {
                 }
             }
         },
-        [alignment]
+        [alignment, isModalShowing]
     );
 
     return (

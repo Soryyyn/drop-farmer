@@ -58,7 +58,7 @@ export default function SidebarItem() {
         return () => {
             clearInterval(interval);
         };
-    }, [farm!.schedule, farm!.status]);
+    }, [farm]);
 
     return (
         <div className="w-full h-min p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">

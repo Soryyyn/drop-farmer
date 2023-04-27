@@ -32,7 +32,7 @@ export default function StatusIndicator({ status }: Props) {
             tooltip={getTooltipText()}
             tooltipPlacement="bottom"
             className={clsx(
-                'text-pepper-200 aspect-square p-1.5 rounded bg-gradient-to-tr',
+                'text-pepper-200 aspect-square p-1.5 rounded bg-gradient-to-tr transition-all',
                 {
                     'from-blood-500 to-blood-550': status === 'disabled',
                     'from-sky-500 to-sky-550': status === 'attention-required',

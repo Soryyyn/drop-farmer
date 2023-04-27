@@ -35,7 +35,7 @@ export default function NewFarm({ onClose }: Props) {
             onClose();
             resetValidation();
         }
-    }, [isValid]);
+    }, [isValid, onClose, resetValidation]);
 
     return (
         <OverlayContainer>

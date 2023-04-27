@@ -25,9 +25,7 @@ export function ModalContextProvider({ children }: DefaultContextProps) {
     const [showing, setShowing] = useState<boolean>(false);
     const escape = useKeyPress('Escape');
 
-    function toggleOverlay() {
-        setShowing(!showing);
-    }
+    const toggleOverlay = useCallback(() => setShowing(!showing), [showing]);
 
     /**
      * This renders the wanted modal based on, if the current modal matches one
@@ -43,14 +41,14 @@ export function ModalContextProvider({ children }: DefaultContextProps) {
         }
 
         return <></>;
-    }, [currentOverlay]);
+    }, [currentOverlay, toggleOverlay]);
 
     /**
      * Close the modal if its shown and the user tries to close it via escape key.
      */
     useEffect(() => {
         if (escape && showing) toggleOverlay();
-    }, [escape]);
+    }, [escape, showing, toggleOverlay]);
 
     return (
         <ModalContext.Provider

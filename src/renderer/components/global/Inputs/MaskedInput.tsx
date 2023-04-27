@@ -27,7 +27,7 @@ export default function MaskedInput({
         if (regex.test(currentValue)) {
             onChange(currentValue);
         }
-    }, [currentValue]);
+    }, [currentValue, onChange]);
 
     return (
         <ReactInputMask

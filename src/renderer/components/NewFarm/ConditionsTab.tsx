@@ -26,7 +26,7 @@ export default function ConditionsTab({ data, onChange }: Props) {
 
     useEffect(() => {
         onChange(conditionsInfo);
-    }, [conditionsInfo]);
+    }, [conditionsInfo, onChange]);
 
     return (
         <div className="flex flex-col gap-4">

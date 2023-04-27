@@ -34,5 +34,5 @@ export function useSendOneWay({
         return () => {
             api.removeAllListeners(channel);
         };
-    }, [dependency]);
+    }, [dependency, args, channel, first, skipFirstRender]);
 }

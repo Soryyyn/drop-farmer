@@ -23,5 +23,5 @@ export function useHandleOneWay({ channel, dependency, callback }: Props) {
         return () => {
             api.removeAllListeners(channel);
         };
-    }, [dependency]);
+    }, [dependency, callback, channel]);
 }

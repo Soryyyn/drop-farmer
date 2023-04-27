@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * Handle keypress events.
@@ -9,28 +9,34 @@ export function useKeyPress(keyCode: string, preventDefault?: boolean) {
     /**
      * Handle the key down event.
      */
-    function keyDownHandler(event: KeyboardEvent) {
-        const { key } = event;
+    const keyDownHandler = useCallback(
+        (event: KeyboardEvent) => {
+            const { key } = event;
 
-        if (preventDefault) {
-            event.preventDefault();
-        }
+            if (preventDefault) {
+                event.preventDefault();
+            }
 
-        if (key === keyCode) setPressed(true);
-    }
+            if (key === keyCode) setPressed(true);
+        },
+        [keyCode, preventDefault]
+    );
 
     /**
      * Handle the key up event.
      */
-    function keyUpHandler(event: KeyboardEvent) {
-        const { key } = event;
+    const keyUpHandler = useCallback(
+        (event: KeyboardEvent) => {
+            const { key } = event;
 
-        if (preventDefault) {
-            event.preventDefault();
-        }
+            if (preventDefault) {
+                event.preventDefault();
+            }
 
-        if (key === keyCode) setPressed(false);
-    }
+            if (key === keyCode) setPressed(false);
+        },
+        [keyCode, preventDefault]
+    );
 
     /**
      * React to the listeners.
@@ -43,7 +49,7 @@ export function useKeyPress(keyCode: string, preventDefault?: boolean) {
             window.removeEventListener('keydown', keyDownHandler);
             window.removeEventListener('keyup', keyUpHandler);
         };
-    }, []);
+    }, [keyDownHandler, keyUpHandler]);
 
     return pressed;
 }
