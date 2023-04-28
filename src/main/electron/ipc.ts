@@ -159,10 +159,8 @@ handleOneWay(IpcChannels.addNewFarm, async (event, farm: NewFarm) => {
             id: Toasts.FarmCreation,
             type: 'promise',
             duration: 4000,
-            textOnSuccess: `Successfully created farm ${removeTypeFromText(
-                farm.id
-            )}`,
-            textOnLoading: `Creating farm ${removeTypeFromText(farm.id)}...`,
+            textOnSuccess: `Successfully created farm ${farm.id}`,
+            textOnLoading: `Creating farm ${farm.id}...`,
             textOnError: `Failed creating farm`
         },
         promise: addNewFarm(farm)

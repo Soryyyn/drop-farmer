@@ -2,7 +2,7 @@ import { FarmRendererData, NewFarm } from '@df-types/farms.types';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import { useSendOneWay } from '@hooks/useSendOneWay';
-import React, { createContext, useState } from 'react';
+import React, { createContext, useCallback, useState } from 'react';
 
 export const FarmsContext = createContext<{
     farms: FarmRendererData[];
@@ -42,13 +42,9 @@ export function FarmsContextProvider({ children }: DefaultContextProps) {
         }
     });
 
-    function addFarm(farm: NewFarm): void {
-        setFarmAdded(farm);
-    }
+    const addFarm = useCallback((farm: NewFarm) => setFarmAdded(farm), []);
 
-    function resetValidation() {
-        setIsValid(false);
-    }
+    const resetValidation = useCallback(() => setIsValid(false), []);
 
     return (
         <FarmsContext.Provider

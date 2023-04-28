@@ -11,7 +11,6 @@ import React, {
     RefObject,
     useContext,
     useEffect,
-    useMemo,
     useRef,
     useState
 } from 'react';
@@ -22,7 +21,7 @@ function FarmItem() {
     const { farm } = useContext(FarmContext);
 
     return (
-        <div className="p-2 pl-3 bg-pepper-300 rounded-lg text-snow-300 w-fit min-w-[300px] flex flex-row gap-4 items-center font-semibold">
+        <div className="p-2 bg-pepper-300 rounded-lg text-snow-300 w-fit min-w-[300px] flex flex-row gap-4 items-center font-semibold">
             <span className="whitespace-nowrap mr-auto">
                 {api.removeTypeFromText(farm!.id)}
             </span>

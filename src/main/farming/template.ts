@@ -114,15 +114,14 @@ export default abstract class FarmTemplate {
                             'warn',
                             `${this.id}: Check already running, waiting for it to finish`
                         );
-                        return;
+                    } else {
+                        this.runningSchedule?.cancel();
+                        this.runningSchedule = makeCancellablePromise(
+                            this.farmingSchedule()
+                        );
+
+                        await this.runningSchedule.promise;
                     }
-
-                    this.runningSchedule?.cancel();
-                    this.runningSchedule = makeCancellablePromise(
-                        this.farmingSchedule()
-                    );
-
-                    await this.runningSchedule.promise;
                 } catch (error) {
                     log(
                         'error',

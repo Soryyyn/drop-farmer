@@ -30,7 +30,7 @@ export default function StatusIndicator({ status }: Props) {
     return (
         <SquareContainer
             tooltip={getTooltipText()}
-            tooltipPlacement="bottom"
+            tooltipPlacement="right"
             className={clsx(
                 'text-pepper-200 aspect-square p-1.5 rounded bg-gradient-to-tr transition-all',
                 {
