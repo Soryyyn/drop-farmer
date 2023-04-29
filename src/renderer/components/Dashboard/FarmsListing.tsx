@@ -6,11 +6,13 @@ import { FarmsContext } from '@contexts/FarmsContext';
 import { ModalContext } from '@contexts/ModalContext';
 import { faPlus, faTractor } from '@fortawesome/free-solid-svg-icons';
 import { useOutsideAlterter } from '@hooks/useOutsideAlerter';
+import { sortFarmsByStatus } from '@renderer/util/sort';
 import clsx from 'clsx';
 import React, {
     RefObject,
     useContext,
     useEffect,
+    useMemo,
     useRef,
     useState
 } from 'react';
@@ -22,7 +24,7 @@ function FarmItem() {
 
     return (
         <div className="p-2 bg-pepper-300 rounded-lg text-snow-300 w-fit min-w-[300px] flex flex-row gap-4 items-center font-semibold">
-            <span className="whitespace-nowrap mr-auto">
+            <span className="whitespace-nowrap mr-auto ml-1">
                 {api.removeTypeFromText(farm!.id)}
             </span>
             <StatusIndicator status={farm!.status} />
@@ -42,17 +44,29 @@ export default function FarmsListing() {
     useOutsideAlterter(ref, () => setDisplayingFarms(false));
 
     /**
+     * Sort the farms based on their status.
+     */
+    const sortedFarms = useMemo(() => sortFarmsByStatus(farms), [farms]);
+
+    /**
      * Check if a farm has the status farming.
      */
     useEffect(() => {
-        setIsFarming(farms.some((farm) => farm.status === 'farming'));
+        setIsFarming(
+            farms.some(
+                (farm) =>
+                    farm.status === 'farming' || farm.status === 'checking'
+            )
+        );
     }, [farms]);
 
     return (
         <div className="relative" ref={ref}>
             <NavItem
                 icon={faTractor}
-                label="Farms"
+                label={`${farms.length} Farm${
+                    farms.length === 0 || farms.length > 1 ? 's' : ''
+                }`}
                 withBadge={isFarming}
                 onClick={() => setDisplayingFarms(true)}
                 className="bg-pepper-300 text-snow-300 hover:bg-pepper-400"
@@ -60,24 +74,24 @@ export default function FarmsListing() {
 
             <div
                 className={clsx(
-                    'absolute -top-2 left-0 -translate-y-full mb-2 bg-pepper-300/40 backdrop-blur-sm rounded-lg flex flex-col p-2 gap-2',
+                    'absolute -top-2 -left-full -translate-y-full mb-2 bg-pepper-300/40 backdrop-blur-sm rounded-lg flex flex-col p-2 gap-2',
                     {
                         hidden: !displayingFarms,
                         block: displayingFarms
                     }
                 )}
             >
-                {farms.length > 0 && (
+                {sortedFarms.length > 0 && (
                     <div
                         ref={farmsListingRef as RefObject<HTMLDivElement>}
                         className={clsx(
-                            'flex flex-col-reverse gap-2 overflow-y-auto overflow-x-hidden',
+                            'flex flex-col-reverse gap-2 overflow-x-hidden max-h-[300px] overflow-y-auto',
                             {
                                 'pr-0': overflow
                             }
                         )}
                     >
-                        {farms.map((farm) => (
+                        {sortedFarms.map((farm) => (
                             <FarmContextProvider farm={farm} key={farm.id}>
                                 <FarmItem />
                             </FarmContextProvider>
@@ -85,7 +99,7 @@ export default function FarmsListing() {
                     </div>
                 )}
 
-                {farms.length > 0 && (
+                {sortedFarms.length > 0 && (
                     <span className="h-[2px] w-[95%] bg-pepper-300/20 self-center rounded-full" />
                 )}
 
