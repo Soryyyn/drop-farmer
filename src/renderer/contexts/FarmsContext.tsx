@@ -2,7 +2,6 @@ import { FarmRendererData, NewFarm } from '@df-types/farms.types';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import { useSendOneWay } from '@hooks/useSendOneWay';
-import { sortFarmsByStatus } from '@renderer/util/sort';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 export const FarmsContext = createContext<{

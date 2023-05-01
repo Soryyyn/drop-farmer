@@ -34,5 +34,5 @@ export function useSendOneWay({
         return () => {
             api.removeAllListeners(channel);
         };
-    }, [dependency, args, channel, skipFirstRender]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [dependency]); // eslint-disable-line react-hooks/exhaustive-deps
 }

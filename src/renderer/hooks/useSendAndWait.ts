@@ -58,5 +58,5 @@ export function useSendAndWait({
         return () => {
             api.removeAllListeners(channel);
         };
-    }, [dependency, args, callback, channel, first, skipFirstRender]);
+    }, [dependency]); // eslint-disable-line react-hooks/exhaustive-deps
 }

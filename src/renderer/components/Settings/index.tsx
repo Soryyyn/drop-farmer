@@ -45,9 +45,7 @@ export default function Settings({ onClose }: Props) {
                 ]}
             >
                 <div className="flex flex-row h-full w-full gap-8 overflow-y-auto">
-                    {/* Selectors */}
                     <ul className="min-w-fit max-w-[25%] flex flex-col gap-2 list-none">
-                        {/* Application setting selector */}
                         <Selector
                             key="application"
                             label="Application"
@@ -57,7 +55,6 @@ export default function Settings({ onClose }: Props) {
 
                         <span className="bg-pepper-500/50 h-0.5 w-[98%] rounded-full self-center" />
 
-                        {/* Farm setting selectors */}
                         {farms.map((farm) => {
                             return (
                                 <Selector

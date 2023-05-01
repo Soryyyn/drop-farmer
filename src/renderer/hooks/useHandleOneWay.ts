@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 interface Props {
     channel: any;
-    dependency?: any;
+    dependency?: React.DependencyList;
     callback: (event: any, response: any) => void;
 }
 
@@ -23,5 +23,5 @@ export function useHandleOneWay({ channel, dependency, callback }: Props) {
         return () => {
             api.removeAllListeners(channel);
         };
-    }, [dependency, callback, channel]);
+    }, [dependency]); // eslint-disable-line react-hooks/exhaustive-deps
 }

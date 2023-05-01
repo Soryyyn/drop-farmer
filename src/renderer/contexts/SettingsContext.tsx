@@ -3,7 +3,7 @@ import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
-import React, { createContext, useState } from 'react';
+import React, { createContext, useCallback, useState } from 'react';
 
 export const SettingsContext = createContext<{
     settings: MergedSettings | undefined;
@@ -48,25 +48,33 @@ export function SettingsContextProvider({ children }: DefaultContextProps) {
      * Function to save new settings in the main process.
      * Only if new changes actually happened.
      */
-    function setNewSettings(newSettings: MergedSettings) {
-        if (!isEqual(newSettings, oldSettings)) {
-            api.sendOneWay(api.channels.saveNewSettings, newSettings);
-        }
-    }
+    const setNewSettings = useCallback(
+        (newSettings: MergedSettings) => {
+            if (!isEqual(newSettings, oldSettings)) {
+                api.sendOneWay(api.channels.saveNewSettings, newSettings);
+            }
+        },
+        [oldSettings]
+    );
 
     /**
      * Reset the settings to the default values.
      */
-    function resetToDefaultSettings() {
+    const resetToDefaultSettings = useCallback(() => {
         api.sendOneWay(api.channels.resetSettingsToDefault, settings);
-    }
+    }, [settings]);
 
     /**
      * Get a specific setting or the settings of the owner, ex. application.
      */
-    function getSetting(settingOwner: string, id: string): SettingWithValue {
-        return settings?.[settingOwner].find((setting) => setting.id === id)!;
-    }
+    const getSetting = useCallback(
+        (settingOwner: string, id: string) => {
+            return settings?.[settingOwner].find(
+                (setting) => setting.id === id
+            )!;
+        },
+        [settings]
+    );
 
     return (
         <SettingsContext.Provider
