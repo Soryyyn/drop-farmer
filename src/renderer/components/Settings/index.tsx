@@ -67,7 +67,6 @@ export default function Settings({ onClose }: Props) {
                         })}
                     </ul>
 
-                    {/* Settings */}
                     <ul className="grow flex flex-col gap-4 overflow-y-auto">
                         {settings?.[selected].map((setting) => {
                             /**

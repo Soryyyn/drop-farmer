@@ -1,4 +1,8 @@
-import { FarmRendererData, LoginForFarmObject } from '@df-types/farms.types';
+import {
+    FarmRendererData,
+    FarmStatus,
+    LoginForFarmObject
+} from '@df-types/farms.types';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import React, { createContext, useState } from 'react';
 
@@ -22,9 +26,11 @@ export const FarmContext = createContext<{
 
 export function FarmContextProvider({
     children,
-    farm
+    farm,
+    onStatusUpdate
 }: DefaultContextProps & {
     farm: FarmRendererData;
+    onStatusUpdate?: (status?: FarmStatus) => void;
 }) {
     const [trackedFarm, setTrackedFarm] = useState<FarmRendererData>(farm);
     const [loginNeeded, setLoginNeeded] = useState<boolean>(false);
@@ -37,6 +43,7 @@ export function FarmContextProvider({
         callback: (event, newFarmStatus: FarmRendererData) => {
             if (newFarmStatus.id === trackedFarm.id) {
                 setTrackedFarm(newFarmStatus);
+                onStatusUpdate?.(newFarmStatus.status);
             }
         }
     });

@@ -10,6 +10,7 @@ import { sortFarmsByStatus } from '@renderer/util/sort';
 import clsx from 'clsx';
 import React, {
     RefObject,
+    useCallback,
     useContext,
     useEffect,
     useMemo,
@@ -46,7 +47,10 @@ export default function FarmsListing() {
     /**
      * Sort the farms based on their status.
      */
-    const sortedFarms = useMemo(() => sortFarmsByStatus(farms), [farms]);
+    const sortedFarms = useMemo(() => {
+        return sortFarmsByStatus(farms);
+    }, [farms]);
+    const getSortedFarms = useCallback(() => {}, []);
 
     /**
      * Check if a farm has the status farming.
@@ -64,9 +68,7 @@ export default function FarmsListing() {
         <div className="relative" ref={ref}>
             <NavItem
                 icon={faTractor}
-                label={`${farms.length} Farm${
-                    farms.length === 0 || farms.length > 1 ? 's' : ''
-                }`}
+                label="Farms"
                 withBadge={isFarming}
                 onClick={() => setDisplayingFarms(true)}
                 className="bg-pepper-300 text-snow-300 hover:bg-pepper-400"
@@ -92,7 +94,14 @@ export default function FarmsListing() {
                         )}
                     >
                         {sortedFarms.map((farm) => (
-                            <FarmContextProvider farm={farm} key={farm.id}>
+                            <FarmContextProvider
+                                farm={farm}
+                                key={farm.id}
+                                onStatusUpdate={() =>
+                                    // setSortedFarms(sortFarmsByStatus(farms))
+                                    console.log('test')
+                                }
+                            >
                                 <FarmItem />
                             </FarmContextProvider>
                         ))}
