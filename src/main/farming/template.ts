@@ -6,7 +6,7 @@ import {
     FarmingConditions
 } from '@df-types/farms.types';
 import { SettingValueWithSpecial } from '@df-types/settings.types';
-import { IpcChannels, Schedules } from '@main/common/constants';
+import { EventChannels, IpcChannels, Schedules } from '@main/common/constants';
 import { sendOneWay } from '@main/electron/ipc';
 import {
     createWindow,
@@ -26,6 +26,7 @@ import {
     remainingDaysInMonth,
     remainingDaysInWeek
 } from '@main/util/calendar';
+import { emitEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
 import { updateFarmStatistic } from '@main/util/statistics';
@@ -327,7 +328,7 @@ export default abstract class FarmTemplate {
             await this.createOrSetFarmSettings();
 
             log('info', `${this.id}: Applied new settings`);
-            sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
+            this.updateStatus();
             resolve();
         });
     }
@@ -408,9 +409,15 @@ export default abstract class FarmTemplate {
     /**
      * Update the status of a farm.
      */
-    protected updateStatus(status: FarmStatus): void {
-        this.status = status;
-        sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
+    protected updateStatus(status?: FarmStatus): void {
+        /**
+         * Only change the status when one is given.
+         */
+        if (status) {
+            this.status = status;
+        }
+
+        emitEvent(EventChannels.FarmsChanged);
     }
 
     /**
@@ -426,7 +433,7 @@ export default abstract class FarmTemplate {
             );
         }
 
-        sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
+        this.updateStatus();
     }
 
     enable(): void {
@@ -608,10 +615,7 @@ export default abstract class FarmTemplate {
             this.windowsCurrentlyShown = forcedVisibility;
         }
 
-        /**
-         * Notify renderer about the change.
-         */
-        sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
+        this.updateStatus();
     }
 
     /**
@@ -636,10 +640,7 @@ export default abstract class FarmTemplate {
                 this.updateStatus(withStatus ?? 'idle');
             }
 
-            /**
-             * Notify renderer of changed farms.
-             */
-            sendOneWay(IpcChannels.farmStatusChange, this.getRendererData());
+            this.updateStatus();
 
             resolve();
         });

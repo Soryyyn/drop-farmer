@@ -4,6 +4,7 @@ import { Overlays } from '@components/global/Overlay/types';
 import { FarmContext, FarmContextProvider } from '@contexts/FarmContext';
 import { FarmsContext } from '@contexts/FarmsContext';
 import { ModalContext } from '@contexts/ModalContext';
+import { FarmRendererData } from '@df-types/farms.types';
 import { faPlus, faTractor } from '@fortawesome/free-solid-svg-icons';
 import { useOutsideAlterter } from '@hooks/useOutsideAlerter';
 import { sortFarmsByStatus } from '@renderer/util/sort';
@@ -34,7 +35,7 @@ function FarmItem() {
 }
 
 export default function FarmsListing() {
-    const { farms } = useContext(FarmsContext);
+    const { sortedByStatus } = useContext(FarmsContext);
     const { setCurrentOverlay, toggleOverlay } = useContext(ModalContext);
 
     const ref = useRef<HTMLDivElement>(null);
@@ -45,24 +46,16 @@ export default function FarmsListing() {
     useOutsideAlterter(ref, () => setDisplayingFarms(false));
 
     /**
-     * Sort the farms based on their status.
-     */
-    const sortedFarms = useMemo(() => {
-        return sortFarmsByStatus(farms);
-    }, [farms]);
-    const getSortedFarms = useCallback(() => {}, []);
-
-    /**
      * Check if a farm has the status farming.
      */
     useEffect(() => {
         setIsFarming(
-            farms.some(
+            sortedByStatus.some(
                 (farm) =>
                     farm.status === 'farming' || farm.status === 'checking'
             )
         );
-    }, [farms]);
+    }, [sortedByStatus]);
 
     return (
         <div className="relative" ref={ref}>
@@ -76,14 +69,14 @@ export default function FarmsListing() {
 
             <div
                 className={clsx(
-                    'absolute -top-2 -left-full -translate-y-full mb-2 bg-pepper-300/40 backdrop-blur-sm rounded-lg flex flex-col p-2 gap-2',
+                    'absolute -top-2 left-0 -translate-y-full mb-2 bg-pepper-300/40 backdrop-blur-sm rounded-lg flex flex-col p-2 gap-2',
                     {
                         hidden: !displayingFarms,
                         block: displayingFarms
                     }
                 )}
             >
-                {sortedFarms.length > 0 && (
+                {sortedByStatus.length > 0 && (
                     <div
                         ref={farmsListingRef as RefObject<HTMLDivElement>}
                         className={clsx(
@@ -93,22 +86,15 @@ export default function FarmsListing() {
                             }
                         )}
                     >
-                        {sortedFarms.map((farm) => (
-                            <FarmContextProvider
-                                farm={farm}
-                                key={farm.id}
-                                onStatusUpdate={() =>
-                                    // setSortedFarms(sortFarmsByStatus(farms))
-                                    console.log('test')
-                                }
-                            >
+                        {sortedByStatus.map((farm) => (
+                            <FarmContextProvider farm={farm} key={farm.id}>
                                 <FarmItem />
                             </FarmContextProvider>
                         ))}
                     </div>
                 )}
 
-                {sortedFarms.length > 0 && (
+                {sortedByStatus.length > 0 && (
                     <span className="h-[2px] w-[95%] bg-pepper-300/20 self-center rounded-full" />
                 )}
 

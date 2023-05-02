@@ -2,15 +2,18 @@ import { FarmRendererData, NewFarm } from '@df-types/farms.types';
 import { useHandleOneWay } from '@hooks/useHandleOneWay';
 import { useSendAndWait } from '@hooks/useSendAndWait';
 import { useSendOneWay } from '@hooks/useSendOneWay';
+import { sortFarmsByStatus } from '@renderer/util/sort';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 export const FarmsContext = createContext<{
     farms: FarmRendererData[];
+    sortedByStatus: FarmRendererData[];
     isValid: boolean;
     addFarm: (farm: NewFarm) => void;
     resetValidation: () => void;
 }>({
     farms: [],
+    sortedByStatus: [],
     isValid: false,
     addFarm: () => {},
     resetValidation: () => {}
@@ -20,6 +23,7 @@ export function FarmsContextProvider({ children }: DefaultContextProps) {
     const [farms, setFarms] = useState<FarmRendererData[]>([]);
     const [farmAdded, setFarmAdded] = useState<NewFarm>();
     const [isValid, setIsValid] = useState(false);
+    const [sortedFarms, setSortedFarms] = useState<FarmRendererData[]>([]);
 
     useSendAndWait({
         channel: api.channels.getFarms,
@@ -42,13 +46,26 @@ export function FarmsContextProvider({ children }: DefaultContextProps) {
         }
     });
 
+    /**
+     * Sort the farms when they change.
+     */
+    useEffect(() => {
+        setSortedFarms(sortFarmsByStatus(farms));
+    }, [farms]);
+
     const addFarm = useCallback((farm: NewFarm) => setFarmAdded(farm), []);
 
     const resetValidation = useCallback(() => setIsValid(false), []);
 
     return (
         <FarmsContext.Provider
-            value={{ farms, isValid, addFarm, resetValidation }}
+            value={{
+                farms,
+                sortedByStatus: sortedFarms,
+                isValid,
+                addFarm,
+                resetValidation
+            }}
         >
             {children}
         </FarmsContext.Provider>
