@@ -1,23 +1,10 @@
 const path = require('path');
-
-/**
- * If asar compressing should be enabled.
- *
- * NOTE: Currently, asar packaging does not work on raspberry pi via the github
- * build.
- */
-function allowAsar() {
-    if (process.platform === 'linux') {
-        return false;
-    }
-
-    return true;
-}
+const { mainConfig, rendererConfig } = require('./webpack.config');
 
 module.exports = {
     packagerConfig: {
         icon: 'resources/icon-normal',
-        asar: allowAsar(),
+        asar: true,
         name: 'Drop Farmer'
     },
     makers: [
@@ -53,9 +40,9 @@ module.exports = {
         {
             name: '@electron-forge/plugin-webpack',
             config: {
-                mainConfig: './webpack.main.config.js',
+                mainConfig: mainConfig,
                 renderer: {
-                    config: './webpack.renderer.config.js',
+                    config: rendererConfig,
                     entryPoints: [
                         {
                             html: './src/renderer/index.html',

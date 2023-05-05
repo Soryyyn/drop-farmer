@@ -10,11 +10,11 @@
         "make": "electron-forge make",
         "publish": "electron-forge publish",
         "prepare": "husky install",
-        "lint": "eslint src/ --fix"
+        "lint": "eslint src/ -f mo"
     },
     "lint-staged": {
         "**/*.{ts,tsx,json,yml,md}": [
-            "eslint src/ --fix",
+            "eslint src/ -f mo",
             "prettier --write ."
         ]
     },
@@ -33,10 +33,7 @@
     },
     "devDependencies": {
         "@electron-forge/cli": "^6.1.1",
-        "@electron-forge/maker-deb": "^6.1.1",
-        "@electron-forge/maker-rpm": "^6.1.1",
         "@electron-forge/maker-squirrel": "^6.1.1",
-        "@electron-forge/maker-zip": "^6.1.1",
         "@electron-forge/plugin-auto-unpack-natives": "^6.1.1",
         "@electron-forge/plugin-webpack": "^6.1.1",
         "@electron-forge/publisher-github": "^6.1.1",
@@ -53,16 +50,14 @@
         "css-loader": "^6.7.3",
         "dotenv-webpack": "^8.0.1",
         "electron": "^24.1.3",
+        "eslint-formatter-mo": "^1.2.0",
         "eslint-plugin-react-hooks": "^4.6.0",
         "fork-ts-checker-webpack-plugin": "^8.0.0",
         "husky": "^8.0.3",
         "lint-staged": "^13.2.2",
-        "lodash.get": "^4.4.2",
         "node-loader": "^2.0.0",
         "postcss": "^8.4.23",
         "postcss-loader": "^7.3.0",
-        "sass": "^1.62.1",
-        "sass-loader": "^13.2.2",
         "style-loader": "^3.3.2",
         "tailwindcss": "^3.3.2",
         "ts-loader": "^9.4.2",
@@ -72,7 +67,6 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.4.0",
-        "@fortawesome/free-brands-svg-icons": "^6.4.0",
         "@fortawesome/free-solid-svg-icons": "^6.4.0",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@headlessui/react": "^1.7.14",
@@ -105,7 +99,6 @@
         "react-hot-toast": "^2.4.1",
         "react-input-mask": "^2.0.4",
         "react-markdown": "^8.0.7",
-        "react-orbits": "^1.0.5",
         "react-router-dom": "^6.11.0",
         "timer-node": "^5.0.7",
         "winston": "^3.8.2"
