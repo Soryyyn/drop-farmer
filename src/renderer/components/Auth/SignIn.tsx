@@ -4,12 +4,14 @@ import InlineLink from '@renderer/components/global/Inline/InlineLink';
 import TextInput from '@renderer/components/global/Inputs/TextInput';
 import SquareContainer from '@renderer/components/global/SquareContainer';
 import { AuthContext } from '@renderer/contexts/AuthContext';
+import { useAppVersion } from '@renderer/hooks/useAppVersion';
 import { useKeyPress } from '@renderer/hooks/useKeyPress';
 import clsx from 'clsx';
 import React, { useContext, useEffect, useState } from 'react';
 
 export default function SignIn() {
     const { signIn, signUp, resetPassword } = useContext(AuthContext);
+    const appVersion = useAppVersion();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const enter = useKeyPress('Enter');
@@ -89,7 +91,7 @@ export default function SignIn() {
             </div>
 
             <p className="bg-pepper-600/70 text-snow-300 shadow-xl shadow-pepper-600/25 backdrop-blur-2xl px-6 py-1.5 rounded-lg text-center absolute bottom-8 left-1/2 -translate-x-1/2 w-fit">
-                {window.api.currentVersion}
+                {appVersion}
             </p>
         </>
     );

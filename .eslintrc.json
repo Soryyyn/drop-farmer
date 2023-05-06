@@ -11,6 +11,7 @@
         "es2021": true
     },
     "extends": [
+        "eslint:recommended",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:@typescript-eslint/eslint-recommended"
@@ -24,7 +25,7 @@
         "ecmaFeatures": {
             "jsx": true
         },
-        "ecmaVersion": "latest",
+        "ecmaVersion": 2018,
         "sourceType": "module"
     },
     "plugins": ["react", "@typescript-eslint"],
@@ -38,10 +39,17 @@
             }
         ],
         "semi": ["error", "always"],
+        "no-unused-vars": "off",
         "no-async-promise-executor": "off",
         "no-prototype-builtins": "off",
-        "react/display-name": "off",
-        "react/jsx-uses-react": "off",
-        "react/react-in-jsx-scope": "off"
-    }
+        "react/display-name": "off"
+    },
+    "overrides": [
+        {
+            "files": [".ts", ".tsx"],
+            "rules": {
+                "no-undef": "off"
+            }
+        }
+    ]
 }

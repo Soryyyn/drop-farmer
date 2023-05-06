@@ -4,12 +4,11 @@ import {
     capitalizeFirstLetter,
     removeTypeFromText
 } from '@main/common/string.helper';
-import { IpcRendererEvent, app, ipcRenderer } from 'electron';
+import { IpcRendererEvent, ipcRenderer } from 'electron';
 
 export const API = {
     channels: IpcChannels,
     selections: Selections,
-    currentVersion: app.getVersion(),
     removeTypeFromText: (text: string) => removeTypeFromText(text),
     capitalizeFirstLetter: (text: string) => capitalizeFirstLetter(text),
     capitalize: (text: string) => capitalize(text),
