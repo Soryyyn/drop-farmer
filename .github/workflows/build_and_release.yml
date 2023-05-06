@@ -33,7 +33,7 @@ jobs:
               run: yarn
 
             - name: Build application
-              run: yarn run make --arch=${{ matrix.arch }}
+              run: yarn run build --arch=${{ matrix.arch }}
 
             - name: Create release
               uses: softprops/action-gh-release@v1
