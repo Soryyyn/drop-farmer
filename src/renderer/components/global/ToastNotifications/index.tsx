@@ -1,6 +1,6 @@
 import { Toast } from '@df-types/toast.types';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
+import { useHandleOneWay } from '@renderer/hooks/useHandleOneWay';
 import React from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import Icon from '../Icon';
@@ -26,7 +26,7 @@ function ToastContent({ label, onDismiss }: ToastContentProps) {
 
 export default function ToastNotifications() {
     useHandleOneWay({
-        channel: api.channels.toast,
+        channel: window.api.channels.toast,
         callback: (event, receivedToast: Toast) => {
             if (receivedToast.type === 'success') {
                 toast.success(

@@ -1,7 +1,7 @@
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { useSendAndWait } from '@renderer/chooks/useSendAndWait';
 import OverlayContainer from '@renderer/components/global/Overlay/OverlayContainer';
 import OverlayContent from '@renderer/components/global/Overlay/OverlayContent';
+import { useSendAndWait } from '@renderer/hooks/useSendAndWait';
 import React, { useState } from 'react';
 
 type Props = {
@@ -12,7 +12,7 @@ export default function Changelog({ onClose }: Props) {
     const [changelog, setChangelog] = useState('');
 
     useSendAndWait({
-        channel: api.channels.getChangelog,
+        channel: window.api.channels.getChangelog,
         callback: (err, changelogString) => {
             if (!err) setChangelog(changelogString);
         }

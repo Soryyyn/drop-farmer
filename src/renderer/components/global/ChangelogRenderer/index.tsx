@@ -1,4 +1,4 @@
-import { useSendAndWait } from '@renderer/chooks/useSendAndWait';
+import { useSendAndWait } from '@renderer/hooks/useSendAndWait';
 import React, { useState } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 
@@ -6,7 +6,7 @@ export default function ChangelogRenderer() {
     const [changelog, setChangelog] = useState('');
 
     useSendAndWait({
-        channel: api.channels.getChangelog,
+        channel: window.api.channels.getChangelog,
         callback: (err, changelogString) => {
             if (!err) setChangelog(changelogString);
         }

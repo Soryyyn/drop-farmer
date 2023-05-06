@@ -6,6 +6,7 @@
     },
     "env": {
         "browser": true,
+        "node": true,
         "es6": true,
         "es2021": true
     },
@@ -42,5 +43,13 @@
         "no-async-promise-executor": "off",
         "no-prototype-builtins": "off",
         "react/display-name": "off"
-    }
+    },
+    "overrides": [
+        {
+            "files": [".ts", ".tsx"],
+            "rules": {
+                "no-undef": "off"
+            }
+        }
+    ]
 }

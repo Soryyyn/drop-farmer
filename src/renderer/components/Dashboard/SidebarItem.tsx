@@ -63,7 +63,7 @@ export default function SidebarItem() {
     return (
         <div className="w-full h-min p-4 flex flex-row items-center gap-2 bg-pepper-900/75 rounded-lg">
             <span className="grow flex flex-row gap-2 items-center text-pepper-200 text-lg capitalize font-medium leading-none">
-                {api.removeTypeFromText(farm!.id)}
+                {window.api.removeTypeFromText(farm!.id)}
             </span>
 
             {farm?.isProtected && <ProtecedIndicator />}

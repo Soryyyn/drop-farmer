@@ -1,7 +1,7 @@
 import { faQuestion } from '@fortawesome/free-solid-svg-icons';
-import { useAppVersion } from '@renderer/chooks/useAppVersion';
 import Icon from '@renderer/components/global/Icon';
 import Tooltip from '@renderer/components/global/Tooltip';
+import { useAppVersion } from '@renderer/hooks/useAppVersion';
 import React from 'react';
 
 export default function AboutButton() {

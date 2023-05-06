@@ -1,9 +1,9 @@
-import { useKeyPress } from '@renderer/chooks/useKeyPress';
 import Changelog from '@renderer/components/Changelog';
 import NewFarm from '@renderer/components/NewFarm';
 import Settings from '@renderer/components/Settings';
 import Overlay from '@renderer/components/global/Overlay';
 import { Overlays } from '@renderer/components/global/Overlay/types';
+import { useKeyPress } from '@renderer/hooks/useKeyPress';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 export const ModalContext = createContext<{

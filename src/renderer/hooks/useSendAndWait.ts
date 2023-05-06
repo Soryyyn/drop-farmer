@@ -27,7 +27,8 @@ export function useSendAndWait({
         if (skipFirstRender) {
             if (first) setFirst(false);
             else {
-                api.sendAndWait(channel, args)
+                window.api
+                    .sendAndWait(channel, args)
                     .then((result) => {
                         callback(undefined, result);
                     })
@@ -41,7 +42,8 @@ export function useSendAndWait({
                     });
             }
         } else {
-            api.sendAndWait(channel, args)
+            window.api
+                .sendAndWait(channel, args)
                 .then((result) => {
                     callback(undefined, result);
                 })
@@ -56,7 +58,7 @@ export function useSendAndWait({
         }
 
         return () => {
-            api.removeAllListeners(channel);
+            window.api.removeAllListeners(channel);
         };
     }, [dependency]); // eslint-disable-line react-hooks/exhaustive-deps
 }

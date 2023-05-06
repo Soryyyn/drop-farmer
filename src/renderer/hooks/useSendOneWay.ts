@@ -25,14 +25,14 @@ export function useSendOneWay({
         if (skipFirstRender) {
             if (first) setFirst(false);
             else {
-                api.sendOneWay(channel, args);
+                window.api.sendOneWay(channel, args);
             }
         } else {
-            api.sendOneWay(channel, args);
+            window.api.sendOneWay(channel, args);
         }
 
         return () => {
-            api.removeAllListeners(channel);
+            window.api.removeAllListeners(channel);
         };
     }, [dependency]); // eslint-disable-line react-hooks/exhaustive-deps
 }

@@ -1,4 +1,4 @@
-import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
+import { useHandleOneWay } from '@renderer/hooks/useHandleOneWay';
 import React, { createContext, useState } from 'react';
 
 export const UpdateContext = createContext<{
@@ -15,18 +15,18 @@ export function UpdateContextProvider({ children }: DefaultContextProps) {
     const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
     useHandleOneWay({
-        channel: api.channels.updateStatus,
+        channel: window.api.channels.updateStatus,
         callback: (event, status: boolean) => {
             setUpdateAvailable(status);
         }
     });
 
     function checkForUpdate() {
-        api.sendOneWay(api.channels.updateCheck);
+        window.api.sendOneWay(window.api.channels.updateCheck);
     }
 
     function installUpdate() {
-        api.sendOneWay(api.channels.installUpdate);
+        window.api.sendOneWay(window.api.channels.installUpdate);
     }
 
     return (

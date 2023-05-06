@@ -33,13 +33,13 @@ export default function ConditionsTab({ data, onChange }: Props) {
             <Select
                 label="Type of condition"
                 value={
-                    api.selections.FarmConditionSelect.find(
+                    window.api.selections.FarmConditionSelect.find(
                         (select) => select.value === conditionsInfo.type
                     ) as SelectOption<string>
                 }
                 fullWidth
                 options={
-                    api.selections
+                    window.api.selections
                         .FarmConditionSelect as unknown as SelectOption<string>[]
                 }
                 onChange={(changed) =>

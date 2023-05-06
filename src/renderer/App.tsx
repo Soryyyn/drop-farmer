@@ -1,5 +1,5 @@
-import ToastNotifications from '@components/global/ToastNotifications';
 import Dragbar from '@renderer/components/global/Dragbar';
+import ToastNotifications from '@renderer/components/global/ToastNotifications';
 import { FarmsContextProvider } from '@renderer/contexts/FarmsContext';
 import { ModalContextProvider } from '@renderer/contexts/ModalContext';
 import { SettingsContextProvider } from '@renderer/contexts/SettingsContext';

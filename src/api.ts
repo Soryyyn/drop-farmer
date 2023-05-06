@@ -6,7 +6,7 @@ import {
 } from '@main/common/string.helper';
 import { IpcRendererEvent, ipcRenderer } from 'electron';
 
-export default {
+export const API = {
     channels: IpcChannels,
     selections: Selections,
     removeTypeFromText: (text: string) => removeTypeFromText(text),

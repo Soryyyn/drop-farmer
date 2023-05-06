@@ -1,3 +1,3 @@
 type DefaultContextProps = {
-    children: JSX.Element | JSX.Element[];
+    children: JSX.Element;
 };

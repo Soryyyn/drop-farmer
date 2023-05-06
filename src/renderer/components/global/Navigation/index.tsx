@@ -61,7 +61,9 @@ export default function Navigation() {
                 icon={faPowerOff}
                 label="Quit"
                 className="bg-pepper-300 text-snow-300 hover:bg-gradient-to-tr hover:from-blood-500 hover:to-blood-550 hover:text-pepper-200"
-                onClick={() => api.sendOneWay(api.channels.shutdown)}
+                onClick={() =>
+                    window.api.sendOneWay(window.api.channels.shutdown)
+                }
             />
         </ul>
     );

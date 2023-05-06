@@ -1,11 +1,11 @@
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons';
-import { useAppVersion } from '@renderer/chooks/useAppVersion';
-import { useKeyPress } from '@renderer/chooks/useKeyPress';
 import Icon from '@renderer/components/global/Icon';
 import InlineLink from '@renderer/components/global/Inline/InlineLink';
 import TextInput from '@renderer/components/global/Inputs/TextInput';
 import SquareContainer from '@renderer/components/global/SquareContainer';
 import { AuthContext } from '@renderer/contexts/AuthContext';
+import { useAppVersion } from '@renderer/hooks/useAppVersion';
+import { useKeyPress } from '@renderer/hooks/useKeyPress';
 import clsx from 'clsx';
 import React, { useContext, useEffect, useState } from 'react';
 
@@ -78,7 +78,9 @@ export default function SignIn() {
                             <SquareContainer
                                 className="bg-pepper-700 hover:bg-pepper-900 text-snow-300 p-3 rounded-lg cursor-pointer hover:bg-gradient-to-tr hover:from-blood-500 hover:to-blood-550 hover:text-pepper-200 active:brightness-90"
                                 onClick={() =>
-                                    api.sendOneWay(api.channels.shutdown)
+                                    window.api.sendOneWay(
+                                        window.api.channels.shutdown
+                                    )
                                 }
                             >
                                 <Icon sprite={faPowerOff} size="1x" />

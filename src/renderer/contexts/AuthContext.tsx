@@ -20,19 +20,19 @@ export function AuthContextProvider({ children }: DefaultContextProps) {
     const [session, setSession] = useState<Session | null>(null);
 
     function signIn(signInObject: SignInObject) {
-        api.sendOneWay(api.channels.signIn, signInObject);
+        window.api.sendOneWay(window.api.channels.signIn, signInObject);
     }
 
     function signOut() {
-        api.sendOneWay(api.channels.signOut);
+        window.api.sendOneWay(window.api.channels.signOut);
     }
 
     /**
      * Move the user to the sign up page in the browser.
      */
     function signUp() {
-        api.sendOneWay(
-            api.channels.openLinkInExternal,
+        window.api.sendOneWay(
+            window.api.channels.openLinkInExternal,
             'https://drop-farmer.soryn.dev/signup'
         );
     }

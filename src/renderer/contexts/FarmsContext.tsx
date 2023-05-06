@@ -1,7 +1,7 @@
 import { FarmRendererData, NewFarm } from '@df-types/farms.types';
-import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
-import { useSendAndWait } from '@renderer/chooks/useSendAndWait';
-import { useSendOneWay } from '@renderer/chooks/useSendOneWay';
+import { useHandleOneWay } from '@renderer/hooks/useHandleOneWay';
+import { useSendAndWait } from '@renderer/hooks/useSendAndWait';
+import { useSendOneWay } from '@renderer/hooks/useSendOneWay';
 import { sortFarmsByStatus } from '@renderer/util/sort';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
@@ -26,21 +26,21 @@ export function FarmsContextProvider({ children }: DefaultContextProps) {
     const [sortedFarms, setSortedFarms] = useState<FarmRendererData[]>([]);
 
     useSendAndWait({
-        channel: api.channels.getFarms,
+        channel: window.api.channels.getFarms,
         callback: (err, farms: FarmRendererData[]) => {
             if (!err) setFarms(farms);
         }
     });
 
     useSendOneWay({
-        channel: api.channels.addNewFarm,
+        channel: window.api.channels.addNewFarm,
         args: farmAdded,
         dependency: farmAdded,
         skipFirstRender: true
     });
 
     useHandleOneWay({
-        channel: api.channels.farmsChanged,
+        channel: window.api.channels.farmsChanged,
         callback: (event, changedFarms: FarmRendererData[]) => {
             setFarms(changedFarms);
         }

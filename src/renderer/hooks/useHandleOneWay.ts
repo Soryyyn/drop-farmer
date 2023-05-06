@@ -16,12 +16,12 @@ interface Props {
  */
 export function useHandleOneWay({ channel, dependency, callback }: Props) {
     useEffect(() => {
-        api.handleOneWay(channel, (event: any, response: any) => {
+        window.api.handleOneWay(channel, (event: any, response: any) => {
             callback(event, response);
         });
 
         return () => {
-            api.removeAllListeners(channel);
+            window.api.removeAllListeners(channel);
         };
     }, [dependency]); // eslint-disable-line react-hooks/exhaustive-deps
 }

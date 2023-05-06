@@ -3,7 +3,7 @@ import {
     FarmStatus,
     LoginForFarmObject
 } from '@df-types/farms.types';
-import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
+import { useHandleOneWay } from '@renderer/hooks/useHandleOneWay';
 import React, { createContext, useState } from 'react';
 
 export const FarmContext = createContext<{
@@ -33,7 +33,7 @@ export function FarmContextProvider({
     const [loginNeeded, setLoginNeeded] = useState<boolean>(false);
 
     useHandleOneWay({
-        channel: api.channels.farmLogin,
+        channel: window.api.channels.farmLogin,
         callback: (event, data: LoginForFarmObject) => {
             if (data.id === farm.id) {
                 setLoginNeeded(data.needed);
@@ -42,26 +42,29 @@ export function FarmContextProvider({
     });
 
     function setWindowsVisibility(shouldBeShown: boolean) {
-        api.sendOneWay(api.channels.farmWindowsVisibility, {
+        window.api.sendOneWay(window.api.channels.farmWindowsVisibility, {
             ...farm,
             windowsShown: shouldBeShown
         });
     }
 
     function restartSchedule() {
-        api.sendOneWay(api.channels.restartScheduler, farm.id);
+        window.api.sendOneWay(window.api.channels.restartScheduler, farm.id);
     }
 
     function clearCache() {
-        api.sendOneWay(api.channels.clearCache, farm.id);
+        window.api.sendOneWay(window.api.channels.clearCache, farm.id);
     }
 
     function deleteSelf() {
-        api.sendOneWay(api.channels.deleteFarm, farm.id);
+        window.api.sendOneWay(window.api.channels.deleteFarm, farm.id);
     }
 
     function resetConditions() {
-        api.sendOneWay(api.channels.resetFarmingConditions, farm.id);
+        window.api.sendOneWay(
+            window.api.channels.resetFarmingConditions,
+            farm.id
+        );
     }
 
     return (

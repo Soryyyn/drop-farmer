@@ -4,7 +4,7 @@ import NotificationBadge from '../NotificationBadge';
 import Tooltip from '../Tooltip';
 
 interface Props {
-    children: JSX.Element | JSX.Element[];
+    children: JSX.Element;
     className?: string;
     tooltip?: string | JSX.Element;
     tooltipPlacement?: any;

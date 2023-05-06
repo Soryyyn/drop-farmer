@@ -10,12 +10,12 @@
         "make": "electron-forge make",
         "publish": "electron-forge publish",
         "prepare": "husky install",
-        "lint": "eslint src/ -f mo"
+        "lint": "eslint src/**/*.{ts,tsx} -f mo "
     },
     "lint-staged": {
-        "src/*.{ts,tsx}": [
-            "eslint src/ -f mo",
-            "prettier --write src/"
+        "src/**/*.{ts,tsx}": [
+            "eslint src/**/*.{ts,tsx} -f mo",
+            "prettier --write src/**/*.{ts,tsx}"
         ]
     },
     "husky": {

@@ -1,7 +1,7 @@
-import { ModalContext } from '@contexts/ModalContext';
-import { useAppVersion } from '@hooks/useAppVersion';
 import { Overlays } from '@renderer/components/global/Overlay/types';
-import React, { useContext, useState } from 'react';
+import { ModalContext } from '@renderer/contexts/ModalContext';
+import { useAppVersion } from '@renderer/hooks/useAppVersion';
+import React, { useContext } from 'react';
 
 export default function Subtitle() {
     const { setCurrentOverlay, toggleOverlay } = useContext(ModalContext);

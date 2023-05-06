@@ -1,6 +1,6 @@
 import { MergedSettings, SettingWithValue } from '@df-types/settings.types';
-import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
-import { useSendAndWait } from '@renderer/chooks/useSendAndWait';
+import { useHandleOneWay } from '@renderer/hooks/useHandleOneWay';
+import { useSendAndWait } from '@renderer/hooks/useSendAndWait';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import React, { createContext, useCallback, useState } from 'react';
@@ -27,7 +27,7 @@ export function SettingsContextProvider({ children }: DefaultContextProps) {
     const [oldSettings, setOldSettings] = useState<MergedSettings>();
 
     useSendAndWait({
-        channel: api.channels.getSettings,
+        channel: window.api.channels.getSettings,
         callback: (err, settings: MergedSettings) => {
             if (!err) {
                 setSettings(settings);
@@ -37,7 +37,7 @@ export function SettingsContextProvider({ children }: DefaultContextProps) {
     });
 
     useHandleOneWay({
-        channel: api.channels.settingsChanged,
+        channel: window.api.channels.settingsChanged,
         callback: (event, changedSettings: MergedSettings) => {
             setSettings(changedSettings);
             setOldSettings(cloneDeep(changedSettings));
@@ -51,7 +51,10 @@ export function SettingsContextProvider({ children }: DefaultContextProps) {
     const setNewSettings = useCallback(
         (newSettings: MergedSettings) => {
             if (!isEqual(newSettings, oldSettings)) {
-                api.sendOneWay(api.channels.saveNewSettings, newSettings);
+                window.api.sendOneWay(
+                    window.api.channels.saveNewSettings,
+                    newSettings
+                );
             }
         },
         [oldSettings]
@@ -61,7 +64,10 @@ export function SettingsContextProvider({ children }: DefaultContextProps) {
      * Reset the settings to the default values.
      */
     const resetToDefaultSettings = useCallback(() => {
-        api.sendOneWay(api.channels.resetSettingsToDefault, settings);
+        window.api.sendOneWay(
+            window.api.channels.resetSettingsToDefault,
+            settings
+        );
     }, [settings]);
 
     /**

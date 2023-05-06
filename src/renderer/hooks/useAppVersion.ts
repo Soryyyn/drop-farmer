@@ -5,7 +5,7 @@ export function useAppVersion() {
     const [appVersion, setAppVersion] = useState<string>('');
 
     useSendAndWait({
-        channel: api.channels.getApplicationVersion,
+        channel: window.api.channels.getApplicationVersion,
         callback(err, applicationVersion: string) {
             if (!err) setAppVersion(applicationVersion);
         }

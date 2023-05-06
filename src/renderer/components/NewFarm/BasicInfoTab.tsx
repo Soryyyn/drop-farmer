@@ -48,13 +48,13 @@ export default function BasicInfoTab({ data, onChange }: Props) {
             <Select
                 label="Farming location (stream site)"
                 value={
-                    api.selections.FarmingLocation.find(
+                    window.api.selections.FarmingLocation.find(
                         (select) => select.value === basicInfo.type
                     ) as SelectOption<string>
                 }
                 fullWidth
                 options={
-                    api.selections
+                    window.api.selections
                         .FarmingLocation as unknown as SelectOption<string>[]
                 }
                 onChange={(changed) => {
