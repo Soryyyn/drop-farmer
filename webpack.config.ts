@@ -100,9 +100,15 @@ const RendererConfigPlugins: Configuration['plugins'] = [
  * Minimize the build with terser.
  */
 const Optimization: Configuration['optimization'] = {
+    minimize: true,
     minimizer: [
         new TerserPlugin({
-            parallel: true
+            parallel: true,
+            terserOptions: {
+                mangle: {
+                    toplevel: true
+                }
+            }
         })
     ]
 };
