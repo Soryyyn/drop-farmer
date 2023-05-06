@@ -1,7 +1,7 @@
-import OverlayContainer from '@components/global/Overlay/OverlayContainer';
-import OverlayContent from '@components/global/Overlay/OverlayContent';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { useSendAndWait } from '@hooks/useSendAndWait';
+import { useSendAndWait } from '@renderer/chooks/useSendAndWait';
+import OverlayContainer from '@renderer/components/global/Overlay/OverlayContainer';
+import OverlayContent from '@renderer/components/global/Overlay/OverlayContent';
 import React, { useState } from 'react';
 
 type Props = {

@@ -1,5 +1,5 @@
-import { FarmContextProvider } from '@contexts/FarmContext';
-import { FarmsContext } from '@contexts/FarmsContext';
+import { FarmContextProvider } from '@renderer/contexts/FarmContext';
+import { FarmsContext } from '@renderer/contexts/FarmsContext';
 import React, { useContext } from 'react';
 import AddFarmButton from './AddFarmButton';
 import SidebarItem from './SidebarItem';

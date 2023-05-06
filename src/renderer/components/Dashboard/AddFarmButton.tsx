@@ -1,7 +1,7 @@
-import Icon from '@components/global/Icon';
-import { Overlays } from '@components/global/Overlay/types';
-import { ModalContext } from '@contexts/ModalContext';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import Icon from '@renderer/components/global/Icon';
+import { Overlays } from '@renderer/components/global/Overlay/types';
+import { ModalContext } from '@renderer/contexts/ModalContext';
 import React, { useContext } from 'react';
 
 export default function AddFarmButton() {

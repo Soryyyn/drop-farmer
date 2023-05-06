@@ -1,4 +1,4 @@
-import Tooltip from '@components/global/Tooltip';
+import Tooltip from '@renderer/components/global/Tooltip';
 import React from 'react';
 
 export default function DisabledIndicator() {

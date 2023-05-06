@@ -1,13 +1,13 @@
-import DateInput from '@components/global/Inputs/DateInput';
-import NumberInput from '@components/global/Inputs/NumberInput';
-import Select from '@components/global/Inputs/Select';
-import Switch from '@components/global/Inputs/Switch';
-import TextInput from '@components/global/Inputs/TextInput';
 import {
     SelectionSetting,
     SettingValueWithSpecial,
     SettingWithValue
 } from '@df-types/settings.types';
+import DateInput from '@renderer/components/global/Inputs/DateInput';
+import NumberInput from '@renderer/components/global/Inputs/NumberInput';
+import Select from '@renderer/components/global/Inputs/Select';
+import Switch from '@renderer/components/global/Inputs/Switch';
+import TextInput from '@renderer/components/global/Inputs/TextInput';
 import React from 'react';
 import DisabledIndicator from './DisabledIndicator';
 import RestartIndicator from './RestartIndicator';

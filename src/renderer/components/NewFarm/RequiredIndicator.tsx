@@ -1,5 +1,5 @@
-import Icon from '@components/global/Icon';
 import { faStarOfLife } from '@fortawesome/free-solid-svg-icons';
+import Icon from '@renderer/components/global/Icon';
 import React from 'react';
 
 export default function RequiredIndicator() {

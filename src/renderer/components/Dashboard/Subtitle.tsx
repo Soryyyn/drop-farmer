@@ -1,6 +1,6 @@
-import { Overlays } from '@components/global/Overlay/types';
 import { ModalContext } from '@contexts/ModalContext';
 import { useAppVersion } from '@hooks/useAppVersion';
+import { Overlays } from '@renderer/components/global/Overlay/types';
 import React, { useContext, useState } from 'react';
 
 export default function Subtitle() {

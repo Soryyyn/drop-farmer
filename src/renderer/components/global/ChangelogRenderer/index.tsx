@@ -1,4 +1,4 @@
-import { useSendAndWait } from '@hooks/useSendAndWait';
+import { useSendAndWait } from '@renderer/chooks/useSendAndWait';
 import React, { useState } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 

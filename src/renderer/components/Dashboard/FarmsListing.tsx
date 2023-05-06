@@ -1,12 +1,15 @@
-import Icon from '@components/global/Icon';
-import NavItem from '@components/global/Navigation/NavItem';
-import { Overlays } from '@components/global/Overlay/types';
-import { FarmContext, FarmContextProvider } from '@contexts/FarmContext';
-import { FarmsContext } from '@contexts/FarmsContext';
-import { ModalContext } from '@contexts/ModalContext';
 import { FarmRendererData } from '@df-types/farms.types';
 import { faPlus, faTractor } from '@fortawesome/free-solid-svg-icons';
-import { useOutsideAlterter } from '@hooks/useOutsideAlerter';
+import { useOutsideAlterter } from '@renderer/chooks/useOutsideAlerter';
+import Icon from '@renderer/components/global/Icon';
+import NavItem from '@renderer/components/global/Navigation/NavItem';
+import { Overlays } from '@renderer/components/global/Overlay/types';
+import {
+    FarmContext,
+    FarmContextProvider
+} from '@renderer/contexts/FarmContext';
+import { FarmsContext } from '@renderer/contexts/FarmsContext';
+import { ModalContext } from '@renderer/contexts/ModalContext';
 import { sortFarmsByStatus } from '@renderer/util/sort';
 import clsx from 'clsx';
 import React, {

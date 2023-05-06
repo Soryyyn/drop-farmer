@@ -1,6 +1,6 @@
 import { MergedSettings, SettingWithValue } from '@df-types/settings.types';
-import { useHandleOneWay } from '@hooks/useHandleOneWay';
-import { useSendAndWait } from '@hooks/useSendAndWait';
+import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
+import { useSendAndWait } from '@renderer/chooks/useSendAndWait';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import React, { createContext, useCallback, useState } from 'react';

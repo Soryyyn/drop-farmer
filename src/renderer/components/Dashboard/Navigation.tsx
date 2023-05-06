@@ -1,13 +1,13 @@
-import NavItem from '@components/global/Navigation/NavItem';
-import { Overlays } from '@components/global/Overlay/types';
-import { ModalContext } from '@contexts/ModalContext';
-import { UpdateContext } from '@contexts/UpdateContext';
 import {
     faDownload,
     faGear,
     faPowerOff,
     faRotate
 } from '@fortawesome/free-solid-svg-icons';
+import NavItem from '@renderer/components/global/Navigation/NavItem';
+import { Overlays } from '@renderer/components/global/Overlay/types';
+import { ModalContext } from '@renderer/contexts/ModalContext';
+import { UpdateContext } from '@renderer/contexts/UpdateContext';
 import React, { useContext } from 'react';
 import FarmsListing from './FarmsListing';
 

@@ -3,7 +3,7 @@ import {
     FarmStatus,
     LoginForFarmObject
 } from '@df-types/farms.types';
-import { useHandleOneWay } from '@hooks/useHandleOneWay';
+import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
 import React, { createContext, useState } from 'react';
 
 export const FarmContext = createContext<{

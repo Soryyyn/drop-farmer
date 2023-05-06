@@ -13,9 +13,9 @@
         "lint": "eslint src/ -f mo"
     },
     "lint-staged": {
-        "**/*.{ts,tsx,json,yml,md}": [
+        "src/*.{ts,tsx}": [
             "eslint src/ -f mo",
-            "prettier --write ."
+            "prettier --write src/"
         ]
     },
     "husky": {

@@ -1,9 +1,9 @@
-import DateInput from '@components/global/Inputs/DateInput';
-import NumberInput from '@components/global/Inputs/NumberInput';
-import Select from '@components/global/Inputs/Select';
-import Switch from '@components/global/Inputs/Switch';
 import { ConditionType } from '@df-types/farms.types';
 import { SelectOption } from '@df-types/settings.types';
+import DateInput from '@renderer/components/global/Inputs/DateInput';
+import NumberInput from '@renderer/components/global/Inputs/NumberInput';
+import Select from '@renderer/components/global/Inputs/Select';
+import Switch from '@renderer/components/global/Inputs/Switch';
 import React, { useEffect, useState } from 'react';
 
 export type ConditionsObject = {

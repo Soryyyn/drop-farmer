@@ -1,6 +1,6 @@
-import SignIn from '@components/Auth/SignIn';
-import Dashboard from '@components/Dashboard';
-import { AuthContext } from '@contexts/AuthContext';
+import SignIn from '@renderer/components/Auth/SignIn';
+import Dashboard from '@renderer/components/Dashboard';
+import { AuthContext } from '@renderer/contexts/AuthContext';
 import React, { useContext } from 'react';
 import { MemoryRouter, Navigate, Route, Routes } from 'react-router-dom';
 

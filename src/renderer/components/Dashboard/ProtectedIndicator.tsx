@@ -1,6 +1,6 @@
-import Icon from '@components/global/Icon';
-import SquareContainer from '@components/global/SquareContainer';
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import Icon from '@renderer/components/global/Icon';
+import SquareContainer from '@renderer/components/global/SquareContainer';
 import React from 'react';
 
 export default function ProtecedIndicator() {

@@ -1,7 +1,7 @@
 import { FarmRendererData, NewFarm } from '@df-types/farms.types';
-import { useHandleOneWay } from '@hooks/useHandleOneWay';
-import { useSendAndWait } from '@hooks/useSendAndWait';
-import { useSendOneWay } from '@hooks/useSendOneWay';
+import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
+import { useSendAndWait } from '@renderer/chooks/useSendAndWait';
+import { useSendOneWay } from '@renderer/chooks/useSendOneWay';
 import { sortFarmsByStatus } from '@renderer/util/sort';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 

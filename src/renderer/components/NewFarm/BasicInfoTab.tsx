@@ -1,7 +1,7 @@
-import NumberInput from '@components/global/Inputs/NumberInput';
-import Select from '@components/global/Inputs/Select';
-import TextInput from '@components/global/Inputs/TextInput';
 import { SelectOption } from '@df-types/settings.types';
+import NumberInput from '@renderer/components/global/Inputs/NumberInput';
+import Select from '@renderer/components/global/Inputs/Select';
+import TextInput from '@renderer/components/global/Inputs/TextInput';
 import React, { useEffect, useState } from 'react';
 
 export type BasicInfoObject = {

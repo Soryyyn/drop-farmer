@@ -1,9 +1,9 @@
-import Dragbar from '@components/global/Dragbar';
 import ToastNotifications from '@components/global/ToastNotifications';
-import { FarmsContextProvider } from '@contexts/FarmsContext';
-import { ModalContextProvider } from '@contexts/ModalContext';
-import { SettingsContextProvider } from '@contexts/SettingsContext';
-import { UpdateContextProvider } from '@contexts/UpdateContext';
+import Dragbar from '@renderer/components/global/Dragbar';
+import { FarmsContextProvider } from '@renderer/contexts/FarmsContext';
+import { ModalContextProvider } from '@renderer/contexts/ModalContext';
+import { SettingsContextProvider } from '@renderer/contexts/SettingsContext';
+import { UpdateContextProvider } from '@renderer/contexts/UpdateContext';
 import React from 'react';
 import Router from './Router';
 import './global.css';

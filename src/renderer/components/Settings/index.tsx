@@ -1,13 +1,13 @@
-import OverlayContainer from '@components/global/Overlay/OverlayContainer';
-import OverlayContent from '@components/global/Overlay/OverlayContent';
-import { FarmsContext } from '@contexts/FarmsContext';
-import { SettingsContext } from '@contexts/SettingsContext';
 import { SettingValueWithSpecial } from '@df-types/settings.types';
 import {
     faFloppyDisk,
     faRotateRight,
     faXmark
 } from '@fortawesome/free-solid-svg-icons';
+import OverlayContainer from '@renderer/components/global/Overlay/OverlayContainer';
+import OverlayContent from '@renderer/components/global/Overlay/OverlayContent';
+import { FarmsContext } from '@renderer/contexts/FarmsContext';
+import { SettingsContext } from '@renderer/contexts/SettingsContext';
 import React, { useContext, useState } from 'react';
 import Selector from './Selector';
 import Setting from './Setting';

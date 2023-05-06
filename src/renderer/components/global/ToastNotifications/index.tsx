@@ -1,6 +1,6 @@
 import { Toast } from '@df-types/toast.types';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { useHandleOneWay } from '@hooks/useHandleOneWay';
+import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
 import React from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import Icon from '../Icon';

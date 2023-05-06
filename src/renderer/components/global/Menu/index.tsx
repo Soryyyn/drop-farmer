@@ -1,5 +1,5 @@
-import { ModalContext } from '@contexts/ModalContext';
 import { Menu as HeadlessMenu } from '@headlessui/react';
+import { ModalContext } from '@renderer/contexts/ModalContext';
 import clsx from 'clsx';
 import React, { useCallback, useContext, useState } from 'react';
 

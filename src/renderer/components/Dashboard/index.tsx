@@ -1,4 +1,4 @@
-import Model from '@components/global/Model';
+import Model from '@renderer/components/global/Model';
 import React from 'react';
 import Navigation from './Navigation';
 import Subtitle from './Subtitle';

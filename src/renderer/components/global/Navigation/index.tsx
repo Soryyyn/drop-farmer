@@ -1,5 +1,3 @@
-import { ModalContext } from '@contexts/ModalContext';
-import { UpdateContext } from '@contexts/UpdateContext';
 import {
     faDownload,
     faGear,
@@ -7,6 +5,8 @@ import {
     faRotate,
     faTractor
 } from '@fortawesome/free-solid-svg-icons';
+import { ModalContext } from '@renderer/contexts/ModalContext';
+import { UpdateContext } from '@renderer/contexts/UpdateContext';
 import clsx from 'clsx';
 import React, { useContext, useState } from 'react';
 import { Overlays } from '../Overlay/types';

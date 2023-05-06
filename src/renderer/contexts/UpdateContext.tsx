@@ -1,4 +1,4 @@
-import { useHandleOneWay } from '@hooks/useHandleOneWay';
+import { useHandleOneWay } from '@renderer/chooks/useHandleOneWay';
 import React, { createContext, useState } from 'react';
 
 export const UpdateContext = createContext<{

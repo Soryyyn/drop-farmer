@@ -1,11 +1,11 @@
-import Icon from '@components/global/Icon';
-import InlineLink from '@components/global/Inline/InlineLink';
-import TextInput from '@components/global/Inputs/TextInput';
-import SquareContainer from '@components/global/SquareContainer';
-import { AuthContext } from '@contexts/AuthContext';
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons';
-import { useAppVersion } from '@hooks/useAppVersion';
-import { useKeyPress } from '@hooks/useKeyPress';
+import { useAppVersion } from '@renderer/chooks/useAppVersion';
+import { useKeyPress } from '@renderer/chooks/useKeyPress';
+import Icon from '@renderer/components/global/Icon';
+import InlineLink from '@renderer/components/global/Inline/InlineLink';
+import TextInput from '@renderer/components/global/Inputs/TextInput';
+import SquareContainer from '@renderer/components/global/SquareContainer';
+import { AuthContext } from '@renderer/contexts/AuthContext';
 import clsx from 'clsx';
 import React, { useContext, useEffect, useState } from 'react';
 
