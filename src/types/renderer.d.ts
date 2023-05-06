@@ -1,4 +1,4 @@
-import { API } from '../api';
+import { API } from '../main/exposed/api';
 
 declare global {
     interface Window {
