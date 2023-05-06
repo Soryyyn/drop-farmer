@@ -27,7 +27,8 @@ const DefaultWindowOptions = {
     show: false,
     closable: false,
     webPreferences: {
-        devTools: !(process.env.NODE_ENV === 'production')
+        devTools: !(process.env.NODE_ENV === 'production'),
+        sandbox: false
     }
 };
 
@@ -51,8 +52,7 @@ export function createMainWindow(): void {
             symbolColor: '#000000'
         },
         webPreferences: {
-            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-            sandbox: false
+            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
         }
     });
 
