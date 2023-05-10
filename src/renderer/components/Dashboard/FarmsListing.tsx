@@ -83,7 +83,7 @@ export default function FarmsListing() {
                     <div
                         ref={farmsListingRef as RefObject<HTMLDivElement>}
                         className={clsx(
-                            'flex flex-col-reverse gap-2 overflow-x-hidden max-h-[300px] overflow-y-auto',
+                            'flex flex-col-reverse gap-2 overflow-x-hidden max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-rounded-lg scrollbar-track-rounded-lg scrollbar-thumb-pepper-300 scrollbar-track-pepper-300/30 pr-2',
                             {
                                 'pr-0': overflow
                             }

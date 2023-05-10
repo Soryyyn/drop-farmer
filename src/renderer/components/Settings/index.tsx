@@ -69,7 +69,7 @@ export default function Settings({ onClose }: Props) {
                         })}
                     </ul>
 
-                    <ul className="grow flex flex-col gap-4 overflow-y-auto">
+                    <ul className="grow flex flex-col gap-4 overflow-y-auto scrollbar-thin scrollbar-thumb-rounded-lg scrollbar-track-rounded-lg scrollbar-thumb-pepper-700 hover:scrollbar-thumb-pepper-800 scrollbar-track-pepper-300/50 pr-2">
                         {settings?.[selected].map((setting) => {
                             /**
                              * Only render a setting, if it has a shown name and

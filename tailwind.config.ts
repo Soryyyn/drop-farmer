@@ -63,7 +63,13 @@ const TailwindConfig: Config = {
             }
         }
     },
-    plugins: []
+    variants: {
+        scrollbar: ['rounded']
+    },
+    plugins: [
+        require('@tailwindcss/typography'),
+        require('tailwind-scrollbar')({ nocompatible: true })
+    ]
 };
 
 export default TailwindConfig;
