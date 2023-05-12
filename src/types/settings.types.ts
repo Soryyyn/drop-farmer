@@ -1,5 +1,3 @@
-import { Selection } from '@main/common/constants';
-
 export type SelectOption<T> = {
     display: string;
     value: T;
