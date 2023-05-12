@@ -1,10 +1,16 @@
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import Dotenv from 'dotenv-webpack';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import path from 'path';
+import path, { join } from 'path';
+import SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import type { Configuration } from 'webpack';
+
+/**
+ * Measure the speed of the webpack builds.
+ */
+const SpeedMeasure = new SpeedMeasurePlugin();
 
 /**
  * Webpack rules.
@@ -27,10 +33,12 @@ const Rules: Required<Configuration>['module']['rules'] = [
     {
         test: /\.tsx?$/,
         exclude: /(node_modules|\.webpack)/,
+        include: join(__dirname, '/src'),
         use: {
             loader: 'ts-loader',
             options: {
-                transpileOnly: true
+                transpileOnly: true,
+                happyPackMode: true
             }
         }
     },
@@ -100,7 +108,7 @@ const RendererConfigPlugins: Configuration['plugins'] = [
  * Minimize the build with terser.
  */
 const Optimization: Configuration['optimization'] = {
-    minimize: true,
+    minimize: process.env.NODE_ENV === 'prodcution',
     minimizer: [
         new TerserPlugin({
             parallel: true,
@@ -113,7 +121,7 @@ const Optimization: Configuration['optimization'] = {
     ]
 };
 
-export const MainProcessConfig: Configuration = {
+export const MainProcessConfig: Configuration = SpeedMeasure.wrap({
     target: 'electron-main',
     entry: './src/main/main.ts',
     optimization: Optimization,
@@ -128,9 +136,9 @@ export const MainProcessConfig: Configuration = {
     watchOptions: {
         ignored: /node_modules/
     }
-};
+});
 
-export const RendererProcessConfig: Configuration = {
+export const RendererProcessConfig: Configuration = SpeedMeasure.wrap({
     target: 'web',
     optimization: Optimization,
     module: {
@@ -144,4 +152,4 @@ export const RendererProcessConfig: Configuration = {
     watchOptions: {
         ignored: /node_modules/
     }
-};
+});
