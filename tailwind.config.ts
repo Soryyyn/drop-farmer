@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 const TailwindConfig: Config = {
-    content: ['./src/**/*.{html,js,ts,tsx}'],
+    content: ['./src/**/*.{ts,tsx}'],
     theme: {
         colors: {
             transparent: '#00000000',

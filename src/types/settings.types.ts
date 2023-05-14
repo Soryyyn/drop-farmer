@@ -1,3 +1,5 @@
+import { PossibleSettings } from '@main/common/constants';
+
 export type SelectOption<T> = {
     display: string;
     value: T;
@@ -74,3 +76,6 @@ export type SettingsStoreSchema = {
 export type MergedSettings = {
     [name: string]: SettingWithValue[];
 };
+
+export type PossibleSetting = (typeof PossibleSettings)[number];
+export type PossibleSettingId = (typeof PossibleSettings)[number]['id'];

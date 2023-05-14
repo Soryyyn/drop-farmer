@@ -86,6 +86,13 @@ const store = new ElectronStore<SettingsStoreSchema>({
                 'application-automaticLowResolution',
                 getSettingConfig('application-automaticLowResolution')!
             );
+
+            addSettingForMigration(
+                store,
+                'application',
+                'application-farmsPinned',
+                getSettingConfig('application-farmsPinned')!
+            );
         }
     }
 });

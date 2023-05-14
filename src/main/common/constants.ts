@@ -141,6 +141,12 @@ export const PossibleSettings = [
         desc: 'Enable this setting to automatically set the lowest resolution possible on all streams.',
         default: true
     },
+    {
+        id: 'application-farmsPinned',
+        shown: 'Farm status pinned on dashboard',
+        desc: 'Enable this setting for the farms to be pinned to the dashboard and visible at first sight..',
+        default: false
+    },
 
     /**
      * Farm settings.

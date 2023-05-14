@@ -1,4 +1,10 @@
-import { MergedSettings, SettingWithValue } from '@df-types/settings.types';
+import {
+    MergedSettings,
+    PossibleSetting,
+    PossibleSettingId,
+    SettingValue,
+    SettingWithValue
+} from '@df-types/settings.types';
 import { useHandleOneWay } from '@renderer/hooks/useHandleOneWay';
 import { useSendAndWait } from '@renderer/hooks/useSendAndWait';
 import cloneDeep from 'lodash.clonedeep';
@@ -11,15 +17,21 @@ export const SettingsContext = createContext<{
     resetToDefaultSettings: () => void;
     getSetting: (
         settingOwner: string,
-        id: string
+        id: PossibleSettingId
     ) => SettingWithValue | undefined;
+    updateSetting: (
+        settingOwner: string,
+        id: PossibleSettingId,
+        value: SettingValue
+    ) => void;
 }>({
     settings: undefined,
     setNewSettings() {},
     resetToDefaultSettings() {},
     getSetting() {
         return undefined;
-    }
+    },
+    updateSetting: () => {}
 });
 
 export function SettingsContextProvider({ children }: DefaultContextProps) {
@@ -74,12 +86,29 @@ export function SettingsContextProvider({ children }: DefaultContextProps) {
      * Get a specific setting or the settings of the owner, ex. application.
      */
     const getSetting = useCallback(
-        (settingOwner: string, id: string) => {
+        (settingOwner: string, id: PossibleSettingId) => {
             return settings?.[settingOwner].find(
                 (setting) => setting.id === id
             )!;
         },
         [settings]
+    );
+
+    /**
+     * Update a single setting.
+     */
+    const updateSetting = useCallback(
+        (settingOwner: string, id: PossibleSettingId, value: SettingValue) => {
+            const copiedSettings = { ...settings };
+
+            const indexToSetNewValue = copiedSettings[settingOwner].findIndex(
+                (setting) => setting.id === id
+            );
+
+            copiedSettings[settingOwner][indexToSetNewValue].value = value;
+            setNewSettings(copiedSettings);
+        },
+        [setNewSettings, settings]
     );
 
     return (
@@ -88,7 +117,8 @@ export function SettingsContextProvider({ children }: DefaultContextProps) {
                 settings,
                 setNewSettings,
                 resetToDefaultSettings,
-                getSetting
+                getSetting,
+                updateSetting
             }}
         >
             {children}
