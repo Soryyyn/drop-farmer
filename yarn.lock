@@ -186,18 +186,9 @@
     fs-extra "^10.0.0"
     mime-types "^2.1.25"
 
-"@electron-forge/shared-types@6.1.1":
+"@electron-forge/shared-types@6.1.1", "@electron-forge/shared-types@^6.1.1":
   version "6.1.1"
   resolved "https://registry.npmjs.org/@electron-forge/shared-types/-/shared-types-6.1.1.tgz"
-  integrity sha512-sFQQ2ldMq5mlNv4m7lZOZLf9aOn6MLNc8QVeTzOBQ+psxI3mVTDjb+/Lhs/jU8dm2igVfEqAmlj57Gi+C4u4Vw==
-  dependencies:
-    "@electron/rebuild" "^3.2.10"
-    electron-packager "^17.1.1"
-    listr2 "^5.0.3"
-
-"@electron-forge/shared-types@^6.1.1":
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/@electron-forge/shared-types/-/shared-types-6.1.1.tgz#f08cf783bf0a086331784b9f13110b4fade84846"
   integrity sha512-sFQQ2ldMq5mlNv4m7lZOZLf9aOn6MLNc8QVeTzOBQ+psxI3mVTDjb+/Lhs/jU8dm2igVfEqAmlj57Gi+C4u4Vw==
   dependencies:
     "@electron/rebuild" "^3.2.10"
@@ -3492,10 +3483,10 @@ fraction.js@^4.2.0:
   resolved "https://registry.npmjs.org/fraction.js/-/fraction.js-4.2.0.tgz"
   integrity sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==
 
-framer-motion@^10.12.10:
-  version "10.12.10"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.12.10.tgz#39aff293d8c520f6d9a4a34bf25121a8f1a12d6d"
-  integrity sha512-f/VkrpxfG4xSmBi105/NCfcTt219IgglQEUR0BsuFZAg+be6N3QAcujFyBEvBvbDOSP9Ccv6OMiaY0HFMnBoMA==
+framer-motion@^10.12.12:
+  version "10.12.12"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.12.12.tgz#24c3620520f225e446972c42cad1c94d6ce70bbc"
+  integrity sha512-DDCqp60U6hR7aUrXj/BXc/t0Sd/U4ep6w/NZQkw898K+u7s+Vv/P8yxq4WTNA86kU9QCsqOgn1Qhz2DpYK0Oag==
   dependencies:
     tslib "^2.4.0"
   optionalDependencies:
@@ -6149,18 +6140,9 @@ postcss-value-parser@^4.0.0, postcss-value-parser@^4.1.0, postcss-value-parser@^
   resolved "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^8.4.19:
+postcss@^8.4.19, postcss@^8.4.23:
   version "8.4.23"
   resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.23.tgz"
-  integrity sha512-bQ3qMcpF6A/YjR55xtoTr0jGOlnPOKAIMdOWiv0EIT6HVPEaJiJB4NLljSbiHoC2RX7DN5Uvjtpbg1NPdwv1oA==
-  dependencies:
-    nanoid "^3.3.6"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8.4.23:
-  version "8.4.23"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.23.tgz#df0aee9ac7c5e53e1075c24a3613496f9e6552ab"
   integrity sha512-bQ3qMcpF6A/YjR55xtoTr0jGOlnPOKAIMdOWiv0EIT6HVPEaJiJB4NLljSbiHoC2RX7DN5Uvjtpbg1NPdwv1oA==
   dependencies:
     nanoid "^3.3.6"
@@ -7378,20 +7360,9 @@ temp@^0.9.0:
     mkdirp "^0.5.1"
     rimraf "~2.6.2"
 
-terser-webpack-plugin@^5.3.7:
+terser-webpack-plugin@^5.3.7, terser-webpack-plugin@^5.3.8:
   version "5.3.8"
   resolved "https://registry.npmjs.org/terser-webpack-plugin/-/terser-webpack-plugin-5.3.8.tgz"
-  integrity sha512-WiHL3ElchZMsK27P8uIUh4604IgJyAW47LVXGbEoB21DbQcZ+OuMpGjVYnEUaqcWM6dO8uS2qUbA7LSCWqvsbg==
-  dependencies:
-    "@jridgewell/trace-mapping" "^0.3.17"
-    jest-worker "^27.4.5"
-    schema-utils "^3.1.1"
-    serialize-javascript "^6.0.1"
-    terser "^5.16.8"
-
-terser-webpack-plugin@^5.3.8:
-  version "5.3.8"
-  resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-5.3.8.tgz#415e03d2508f7de63d59eca85c5d102838f06610"
   integrity sha512-WiHL3ElchZMsK27P8uIUh4604IgJyAW47LVXGbEoB21DbQcZ+OuMpGjVYnEUaqcWM6dO8uS2qUbA7LSCWqvsbg==
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.17"
