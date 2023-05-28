@@ -1,9 +1,9 @@
-import { IpcChannel, IpcChannels, Selections } from '@main/common/constants';
+import { IpcChannel, IpcChannels, Selections } from '@main/util/constants';
 import {
     capitalize,
     capitalizeFirstLetter,
     removeTypeFromText
-} from '@main/common/string.helper';
+} from '@main/util/strings';
 import { IpcRendererEvent, ipcRenderer } from 'electron';
 
 export const API = {

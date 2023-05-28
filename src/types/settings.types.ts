@@ -1,81 +1,138 @@
-import { PossibleSettings } from '@main/common/constants';
+import { Selection } from '@main/util/constants';
 
-export type SelectOption<T> = {
+export type SelectOption = {
     display: string;
-    value: T;
+    value: string;
 };
 
-export type ReadonlySetting = {
-    id: string;
-    default?: string | number | boolean;
-};
+export enum SettingType {
+    Basic = 'basic',
+    Number = 'number',
+    Selection = 'selection',
+    Text = 'text',
+    Date = 'date',
+    Toggle = 'toggle'
+}
 
-export type DisplayedSettingBase = {
-    id: string;
-    shown: string;
-    desc: string;
+export enum SettingId {
+    LaunchOnStartup = 'application-launchOnStartup',
+    ShowMainWindowOnLaunch = 'application-showMainWindowOnLaunch',
+    ShowWindowsForLogin = 'application-showWindowsForLogin',
+    ReducedMotion = 'application-reducedMotion',
+    LowResolution = 'application-automaticLowResolution',
+    Enabled = 'farm-enabled',
+    Schedule = 'farm-schedule',
+    URL = 'farm-url',
+    ConditionType = 'farm-condition-type',
+    ConditionStarted = 'farm-condition-started',
+    ConditionFulfilled = 'farm-condition-fulfilled',
+    ConditionAmount = 'farm-condition-amount',
+    ConditionAmountToFulfill = 'farm-condition-amountToFulfill',
+    ConditionBuffer = 'farm-condition-buffer',
+    ConditionRepeating = 'farm-condition-repeating',
+    ConditionFrom = 'farm-condition-from',
+    ConditionTo = 'farm-condition-to'
+}
+
+export type SpecialSettingAttributes = {
     requiresRestart?: boolean;
+    disabled?: boolean;
+    deprecated?: boolean;
 };
 
-export type NumberSetting = DisplayedSettingBase & {
-    default: number;
-    min: number;
-    max: number;
-};
-
-export type BoolishSetting = DisplayedSettingBase & {
-    default: boolean;
-};
-
-export type TextSetting = DisplayedSettingBase & {
-    default?: string;
-};
-
-export type SelectionSetting = DisplayedSettingBase & {
-    default: string;
-    options: any[];
-};
-
-export type Setting = {
-    id: string;
+export type BasicSetting = {
+    type: SettingType.Basic;
+    id: SettingId;
+    value?: string | number | boolean;
     default?: string | number | boolean;
-    shown?: string;
-    desc?: string;
+};
+
+export type ToggleSetting = {
+    type: SettingType.Toggle;
+    id: SettingId;
+    label: string;
+    desc: string;
+    value?: boolean;
+    default: boolean;
+    special?: SpecialSettingAttributes;
+};
+
+export type NumberSetting = {
+    type: SettingType.Number;
+    id: SettingId;
+    label: string;
+    desc: string;
+    value?: number;
+    default: number;
     min?: number;
     max?: number;
-    options?: SelectOption<any>[];
-    requiresRestart?: boolean;
+    special?: SpecialSettingAttributes;
 };
 
-export type SettingWithValue = Setting & {
-    value: SettingValue;
+export type SelectionSetting = {
+    type: SettingType.Selection;
+    id: SettingId;
+    label: string;
+    desc: string;
+    value?: Selection[number]['value'];
+    default: Selection[number]['value'];
+    options: Selection;
+    special?: SpecialSettingAttributes;
 };
 
-export type SettingsOnly = {
-    [name: string]: Setting[];
+export type TextSetting = {
+    type: SettingType.Text;
+    id: SettingId;
+    label: string;
+    desc: string;
+    value?: string;
+    default?: string;
+    special?: SpecialSettingAttributes;
 };
 
-export type SettingValueWithSpecial = {
-    value: string | number | boolean;
-    disabled?: boolean;
-    isDate?: boolean;
+export type DateSetting = {
+    type: SettingType.Date;
+    id: SettingId;
+    label: string;
+    desc: string;
+    value?: string;
+    special?: SpecialSettingAttributes;
 };
 
-export type SettingValue = string | number | boolean | SettingValueWithSpecial;
+export type SettingUnion =
+    | BasicSetting
+    | NumberSetting
+    | SelectionSetting
+    | TextSetting
+    | DateSetting
+    | ToggleSetting;
 
-export type SettingsInFile = { [settingName: string]: SettingValue };
+export type ValueOfSetting<T extends SettingUnion> = T['value'];
 
-export type SettingsOfOwners = {
-    [owner: string]: SettingsInFile;
+export enum SettingOwnerType {
+    Application = 'application',
+    FarmTwitch = 'farm-twitch',
+    FarmYoutube = 'farm-youtube'
+}
+
+export type SettingSchema = {
+    type: SettingOwnerType;
+    settings: SettingUnion[];
 };
 
-export type SettingsStoreSchema = {
-    settings: SettingsOfOwners;
+export type SettingOwner = 'application' | string;
+
+export type SettingsObject = {
+    [owner: SettingOwner]: SettingSchema;
 };
 
-export type MergedSettings = {
-    [name: string]: SettingWithValue[];
+/**
+ * The schema of the settings.
+ *
+ * Inside the settings object, each key resembles an 'owner' of the settings
+ * listed in its array of settings.
+ * Predefined is only the application owner.
+ */
+export type SettingStoreSchema = {
+    settings: SettingsObject;
 };
-
-export type PossibleSetting = (typeof PossibleSettings)[number];
-export type PossibleSettingId = (typeof PossibleSettings)[number]['id'];

@@ -6,13 +6,6 @@ import {
 } from '@df-types/farms.types';
 import { MergedSettings } from '@df-types/settings.types';
 import {
-    EventChannels,
-    IpcChannel,
-    IpcChannels,
-    Toasts
-} from '@main/common/constants';
-import { removeTypeFromText } from '@main/common/string.helper';
-import {
     addNewFarm,
     applySettingsToFarms,
     deleteFarm,
@@ -20,18 +13,25 @@ import {
     getFarmsRendererData
 } from '@main/farming/management';
 import { signIn, signOut } from '@main/util/auth';
+import {
+    EventChannels,
+    IpcChannel,
+    IpcChannels,
+    Toasts
+} from '@main/util/constants';
 import { listenForEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { disconnectPuppeteer } from '@main/util/puppeteer';
+import { removeTypeFromText } from '@main/util/strings';
+import { sendToast } from '@main/util/toast';
+import { app, ipcMain, shell } from 'electron';
+import { readFileSync } from 'fs';
 import {
     extractMergedSettings,
     getMergedSettings,
     resetSettingsToDefaultValues,
     updateSettings
-} from '@main/util/settings';
-import { sendToast } from '@main/util/toast';
-import { app, ipcMain, shell } from 'electron';
-import { readFileSync } from 'fs';
+} from 'src/main/store/settings';
 import { setIsQuitting } from './appEvents';
 import { checkIfCanUpdate, handleInstallOfUpdate } from './update';
 import { getMainWindow } from './windows';

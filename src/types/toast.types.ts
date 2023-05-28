@@ -1,4 +1,4 @@
-import { Toast as ToastId } from '@main/common/constants';
+import { Toast as ToastId } from '@main/util/constants';
 
 export type ToastType = 'success' | 'error' | 'loading' | 'basic' | 'promise';
 

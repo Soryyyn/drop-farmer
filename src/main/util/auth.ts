@@ -1,5 +1,5 @@
 import { SignInObject } from '@df-types/auth.types';
-import { Toasts } from '@main/common/constants';
+import { Toasts } from '@main/util/constants';
 import { log } from '@main/util/logging';
 import {
     AuthChangeEvent,

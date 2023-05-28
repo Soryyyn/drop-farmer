@@ -1,6 +1,7 @@
+import { SettingId, ToggleSetting } from '@df-types/settings.types';
+import { getSettingValue } from '@main/store/settings';
 import { getWindowIcon } from '@main/util/icons';
 import { log } from '@main/util/logging';
-import { getSettingValue } from '@main/util/settings';
 import { BrowserWindow, Event } from 'electron';
 import { getIsQuitting } from './appEvents';
 
@@ -62,10 +63,10 @@ export function createMainWindow(): void {
      * When window is ready.
      */
     mainWindow.on('ready-to-show', () => {
-        const shouldBeShownBySetting = getSettingValue(
+        const shouldBeShownBySetting = getSettingValue<ToggleSetting>(
             'application',
-            'application-showMainWindowOnLaunch'
-        ) as boolean;
+            SettingId.ShowMainWindowOnLaunch
+        );
 
         /**
          * Show the window if the setting is set or the app is run on linux.

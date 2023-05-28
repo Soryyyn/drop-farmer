@@ -1,5 +1,5 @@
-import { EventChannels, IpcChannels } from '@main/common/constants';
 import { sendOneWay } from '@main/electron/ipc';
+import { EventChannels, IpcChannels } from '@main/util/constants';
 import { emitEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import {

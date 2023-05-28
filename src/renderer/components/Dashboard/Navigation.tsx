@@ -18,9 +18,7 @@ export default function Navigation() {
 
     return (
         <ul className="w-full flex flex-row gap-2 relative justify-center">
-            <span className="mr-auto">
-                <FarmsListing />
-            </span>
+            <FarmsListing />
 
             <NavItem
                 icon={faGear}

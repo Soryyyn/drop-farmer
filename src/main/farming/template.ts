@@ -5,9 +5,6 @@ import {
     FarmStatus,
     FarmingConditions
 } from '@df-types/farms.types';
-import { SettingValueWithSpecial } from '@df-types/settings.types';
-import { EventChannels, IpcChannels, Schedules } from '@main/common/constants';
-import { sendOneWay } from '@main/electron/ipc';
 import {
     createWindow,
     destroyWindow,
@@ -26,22 +23,15 @@ import {
     remainingDaysInMonth,
     remainingDaysInWeek
 } from '@main/util/calendar';
+import { EventChannels, Schedules } from '@main/util/constants';
 import { emitEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import { waitForTimeout } from '@main/util/puppeteer';
-import { updateFarmStatistic } from '@main/util/statistics';
 import CrontabManager from 'cron-job-manager';
 import { BrowserWindow } from 'electron';
 import makeCancellablePromise from 'make-cancellable-promise';
-import {
-    createSettingsOwner,
-    deleteSetting,
-    getSettingOrSet,
-    getSettingValue,
-    getSettingsOfOwner,
-    setSettingValue
-} from '../util/settings';
-import { Timer } from './timer';
+import { updateFarmStatistic } from 'src/main/store/statistics';
+import { Timer } from '../util/timer';
 
 export default abstract class FarmTemplate {
     id: string;

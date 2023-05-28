@@ -1,5 +1,5 @@
 import { FarmingConditions } from '@df-types/farms.types';
-import { EventChannels } from '@main/common/constants';
+import { EventChannels } from '@main/util/constants';
 import { emitEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
 import {

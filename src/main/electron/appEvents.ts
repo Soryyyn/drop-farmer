@@ -1,5 +1,5 @@
-import { LaunchArg, LaunchArgs } from '@main/common/constants';
 import { initFarmsManagement, stopFarms } from '@main/farming/management';
+import { LaunchArg, LaunchArgs } from '@main/util/constants';
 import { log } from '@main/util/logging';
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
 import {

@@ -1,4 +1,4 @@
-import { IpcChannels, LaunchArgs, Toasts } from '@main/common/constants';
+import { IpcChannels, LaunchArgs, Toasts } from '@main/util/constants';
 import { log } from '@main/util/logging';
 import { sendToast } from '@main/util/toast';
 import { app, autoUpdater } from 'electron';
@@ -72,11 +72,7 @@ function handleUpdateCheck(): void {
 function handleUpdateNotAvailable(): void {
     log('info', 'No update available');
 
-    /**
-     * Update the update status in the renderer.
-     */
     sendOneWay(IpcChannels.updateStatus, false);
-
     sendToast({
         toast: {
             id: Toasts.UpdateChecking,
@@ -110,11 +106,7 @@ function handleUpdateAvailable(): void {
 function handleUpdateDownloaded(): void {
     log('info', 'Update has finished downloading and is installable');
 
-    /**
-     * Notify renderer.
-     */
     sendOneWay(IpcChannels.updateStatus, true);
-
     sendToast({
         toast: {
             id: Toasts.UpdateChecking,
@@ -143,11 +135,7 @@ function handleBeforeQuitForUpdate(): void {
 function handleErrorOnUpdate(error: Error): void {
     log('error', `Failed downloading / installing update. ${error}`);
 
-    /**
-     * Notify renderer.
-     */
     sendOneWay(IpcChannels.updateStatus, false);
-
     sendToast({
         toast: {
             id: Toasts.UpdateChecking,

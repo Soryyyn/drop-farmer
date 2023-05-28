@@ -1,6 +1,6 @@
 import { Toast } from '@df-types/toast.types';
-import { IpcChannels } from '@main/common/constants';
 import { sendOneWay } from '@main/electron/ipc';
+import { IpcChannels } from '@main/util/constants';
 
 /**
  * Send a toast to the frontend.

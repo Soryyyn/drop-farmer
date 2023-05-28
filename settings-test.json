@@ -1,0 +1,54 @@
+{
+	"settings": {
+		"application": [
+			{
+				"type": "toggle",
+				"id": "application-launchOnStartup",
+				"label": "Launch on startup",
+				"desc": "Enable or disable if Drop Farmer should be started when your PC has finished booting.",
+				"default": false,
+				"value": false
+			},
+			{
+				"type": "toggle",
+				"id": "application-showMainWindowOnLaunch",
+				"label": "Show main window on launch",
+				"desc": "If the main window should be shown when Drop Farmer starts.",
+				"default": true,
+				"value": true
+			},
+			{
+				"type": "toggle",
+				"id": "application-showWindowsForLogin",
+				"label": "Show farm windows automatically for login",
+				"desc": "If enabled, the window of a farm, where login is required to continue, will automatically be shown.",
+				"default": false,
+				"value": false
+			},
+			{
+				"type": "toggle",
+				"id": "application-reducedMotion",
+				"label": "Prefer reduced motion",
+				"desc": "Enable this setting to keep animations & transitions to the minimum.",
+				"default": false,
+				"special": {
+					"requiresRestart": true
+				},
+				"value": false
+			},
+			{
+				"type": "toggle",
+				"id": "application-automaticLowResolution",
+				"label": "Low resolution streams",
+				"desc": "Enable this setting to automatically set the lowest resolution possible on all streams.",
+				"default": true,
+				"value": true
+			}
+		]
+	},
+	"__internal__": {
+		"migrations": {
+			"version": "v1.0.0-beta50"
+		}
+	}
+}

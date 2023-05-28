@@ -1,4 +1,4 @@
-import { EventChannel } from '@main/common/constants';
+import { EventChannel } from '@main/util/constants';
 import { EventEmitter } from 'events';
 
 const em = new EventEmitter();

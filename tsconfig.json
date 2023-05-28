@@ -14,7 +14,7 @@
         "outDir": "dist",
         "moduleResolution": "node",
         "resolveJsonModule": true,
-        "jsx": "react",
+        "jsx": "react-jsx",
         "downlevelIteration": true,
         "paths": {
             "*": ["node_modules/*"],
@@ -24,11 +24,10 @@
             "@renderer/hooks/*": ["src/renderer/hooks/*"],
             "@renderer/contexts/*": ["src/renderer/contexts/*"],
             "@renderer/util/*": ["src/renderer/util/*"],
-            "@main/common/*": ["src/main/common/*"],
             "@main/electron/*": ["src/main/electron/*"],
             "@main/farming/*": ["src/main/farming/*"],
             "@main/util/*": ["src/main/util/*"],
-            "@main/auth/*": ["src/main/auth/*"],
+            "@main/store/*": ["src/main/store/*"],
             "@exposed/*": ["src/exposed/*"],
         },
         "typeRoots": ["./node_modules/@types", "src/types/renderer.d.ts"]

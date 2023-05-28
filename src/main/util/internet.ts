@@ -1,4 +1,4 @@
-import { Schedules, Toasts } from '@main/common/constants';
+import { Schedules, Toasts } from '@main/util/constants';
 import CrontabManager from 'cron-job-manager';
 import isOnline from 'is-online';
 import { log } from './logging';

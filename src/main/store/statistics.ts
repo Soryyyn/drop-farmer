@@ -3,12 +3,12 @@ import {
     StatisticsOnly,
     StatisticsStoreSchema
 } from '@df-types/statistics.types';
-import { FileNames } from '@main/common/constants';
+import { FileNames } from '@main/util/constants';
 import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { join } from 'path';
-import { getCurrentDate, getCurrentMonthName } from './calendar';
-import { log } from './logging';
+import { getCurrentDate, getCurrentMonthName } from '../util/calendar';
+import { log } from '../util/logging';
 
 const store = new ElectronStore<StatisticsStoreSchema>({
     name: FileNames.StatisticsStoreFileName,

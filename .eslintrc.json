@@ -42,7 +42,8 @@
         "no-unused-vars": "off",
         "no-async-promise-executor": "off",
         "no-prototype-builtins": "off",
-        "react/display-name": "off"
+        "react/display-name": "off",
+        "react/react-in-jsx-scope": "off"
     },
     "overrides": [
         {

@@ -3,21 +3,21 @@ import {
     NewFarm,
     TimeWindowCondition
 } from '@df-types/farms.types';
-import { EventChannels, RegularExpressions } from '@main/common/constants';
+import { formattedStringToDate } from '@main/util/calendar';
+import { EventChannels, RegularExpressions } from '@main/util/constants';
+import { emitEvent } from '@main/util/events';
+import { log } from '@main/util/logging';
 import {
     getTypeFromText,
     isValidURL,
     removeTypeFromText
-} from '@main/common/string.helper';
-import { formattedStringToDate } from '@main/util/calendar';
-import { emitEvent } from '@main/util/events';
-import { log } from '@main/util/logging';
+} from '@main/util/strings';
 import {
     deleteAllOwnerSettings,
     getSettingValue,
     getSettings,
     setSettingValue
-} from '@main/util/settings';
+} from 'src/main/store/settings';
 import LeagueOfLegends from './farms/leagueOfLegends';
 import TwitchStreamer from './farms/twitchStreamer';
 import YoutubeStream from './farms/youtubeStream';
