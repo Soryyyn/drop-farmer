@@ -300,7 +300,8 @@ export function addSettingToOwner(owner: SettingOwner, setting: SettingUnion) {
  */
 export function getOrSetSetting(
     owner: SettingOwner,
-    id: SettingId
+    id: SettingId,
+    override?: Partial<SettingUnion>
 ): ValueOfSetting<SettingUnion> {
     const ownerSettings = getSettingsOfOwner(owner);
 
@@ -321,7 +322,18 @@ export function getOrSetSetting(
         return foundSetting.value;
     }
 
-    const settingToAdd = applyDefaultToValue(getDefinedSetting(id)!);
+    let settingToAdd = applyDefaultToValue(getDefinedSetting(id)!);
+
+    /**
+     * Override the default setting if defined.
+     */
+    if (override) {
+        settingToAdd = {
+            ...settingToAdd,
+            ...override
+        };
+    }
+
     ownerSettings.settings.push(settingToAdd!);
     updateOwnerSettings(owner, ownerSettings.settings);
     return settingToAdd?.value;

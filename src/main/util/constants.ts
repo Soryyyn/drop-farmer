@@ -127,13 +127,6 @@ export const DefinedSettings: SettingUnion[] = [
     },
     {
         type: SettingType.Toggle,
-        id: SettingId.ShowWindowsForLogin,
-        label: 'Show farm windows automatically for login',
-        desc: 'If enabled, the window of a farm, where login is required to continue, will automatically be shown.',
-        default: false
-    },
-    {
-        type: SettingType.Toggle,
         id: SettingId.ReducedMotion,
         label: 'Prefer reduced motion',
         desc: 'Enable this setting to keep animations & transitions to the minimum.',

@@ -17,7 +17,6 @@ export enum SettingType {
 export enum SettingId {
     LaunchOnStartup = 'application-launchOnStartup',
     ShowMainWindowOnLaunch = 'application-showMainWindowOnLaunch',
-    ShowWindowsForLogin = 'application-showWindowsForLogin',
     ReducedMotion = 'application-reducedMotion',
     LowResolution = 'application-automaticLowResolution',
     Enabled = 'farm-enabled',
