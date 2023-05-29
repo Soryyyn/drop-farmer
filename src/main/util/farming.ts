@@ -1,12 +1,14 @@
 import {
+    SelectionSetting,
     SettingId,
     SettingOwnerType,
-    SettingUnion
+    SettingUnion,
+    TextSetting
 } from '@df-types/settings.types';
 import TwitchStreamer from '@main/farming/farms/twitchStreamer';
 import YoutubeStream from '@main/farming/farms/youtubeStream';
 import FarmTemplate from '@main/farming/template';
-import { createSettingsOwner, getOrSetSetting } from '@main/store/settings';
+import { addSettingToOwner, createSettingsOwner } from '@main/store/settings';
 import { log } from './logging';
 
 /**
@@ -31,10 +33,18 @@ export function createFarmSettings(farm: FarmTemplate) {
     /**
      * Create the base settings.
      */
-    getOrSetSetting(farm.id, SettingId.Enabled);
-    getOrSetSetting(farm.id, SettingId.Schedule);
-    getOrSetSetting(farm.id, SettingId.URL);
-    getOrSetSetting(farm.id, SettingId.URL);
+    addSettingToOwner(farm.id, SettingId.Enabled);
+    addSettingToOwner(farm.id, SettingId.Schedule);
+    addSettingToOwner(farm.id, SettingId.URL);
+    addSettingToOwner<TextSetting>(farm.id, SettingId.URL, {
+        value: farm.url,
+        special: {
+            disabled: true
+        }
+    });
+    addSettingToOwner(farm.id, SettingId.ConditionType);
+
+    log('info', `Created initial settings for farm ${farm.id}`);
 }
 
 /**

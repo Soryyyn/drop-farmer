@@ -29,9 +29,6 @@ const defaultSettings: SettingsObject = {
             applyDefaultToValue(
                 getDefinedSetting(SettingId.ShowMainWindowOnLaunch)!
             ),
-            applyDefaultToValue(
-                getDefinedSetting(SettingId.ShowWindowsForLogin)!
-            ),
             applyDefaultToValue(getDefinedSetting(SettingId.ReducedMotion)!),
             applyDefaultToValue(getDefinedSetting(SettingId.LowResolution)!)
         ]
@@ -146,7 +143,7 @@ export function getDefinedSetting<T extends SettingUnion>(id: SettingId) {
 /**
  * Apply the default as the value.
  */
-export function applyDefaultToValue(setting: SettingUnion) {
+export function applyDefaultToValue<T extends SettingUnion>(setting: T) {
     if (setting.type === SettingType.Date) {
         log(
             'warn',
@@ -155,7 +152,7 @@ export function applyDefaultToValue(setting: SettingUnion) {
         return setting;
     }
 
-    return { ...setting, value: setting.default } as SettingUnion;
+    return { ...setting, value: setting.default };
 }
 
 /**
@@ -279,7 +276,11 @@ export function updateSettingOfOwner(
 /**
  * Add a specific setting to the wanted owner.
  */
-export function addSettingToOwner(owner: SettingOwner, setting: SettingUnion) {
+export function addSettingToOwner<T extends SettingUnion>(
+    owner: SettingOwner,
+    id: SettingId,
+    override?: Partial<T>
+) {
     const ownerSettings = getSettingsOfOwner(owner);
 
     if (!ownerSettings) {
@@ -290,7 +291,17 @@ export function addSettingToOwner(owner: SettingOwner, setting: SettingUnion) {
         return;
     }
 
-    ownerSettings.settings.push(setting);
+    let settingToAdd = applyDefaultToValue(getDefinedSetting<T>(id));
+
+    /**
+     * Override the setting if wanted.
+     */
+    settingToAdd = {
+        ...settingToAdd,
+        ...override
+    };
+
+    ownerSettings.settings.push(settingToAdd);
     updateOwnerSettings(owner, ownerSettings.settings);
 }
 
@@ -298,11 +309,11 @@ export function addSettingToOwner(owner: SettingOwner, setting: SettingUnion) {
  * Get the value of a setting or set the setting of the owner and get the value
  * of the newly created one.
  */
-export function getOrSetSetting(
+export function getOrSetSetting<T extends SettingUnion>(
     owner: SettingOwner,
     id: SettingId,
-    override?: Partial<SettingUnion>
-): ValueOfSetting<SettingUnion> {
+    override?: Partial<T>
+): ValueOfSetting<T> {
     const ownerSettings = getSettingsOfOwner(owner);
 
     if (ownerSettings === undefined) {
@@ -313,7 +324,7 @@ export function getOrSetSetting(
         return;
     }
 
-    const foundSetting = getSetting(owner, id);
+    const foundSetting = getSetting<T>(owner, id);
 
     /**
      * Check if the owner has the wanted setting, if not, set it or return the value.
@@ -322,7 +333,7 @@ export function getOrSetSetting(
         return foundSetting.value;
     }
 
-    let settingToAdd = applyDefaultToValue(getDefinedSetting(id)!);
+    let settingToAdd = applyDefaultToValue(getDefinedSetting<T>(id)!);
 
     /**
      * Override the default setting if defined.
