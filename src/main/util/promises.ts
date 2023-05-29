@@ -1,4 +1,7 @@
-import { CancellablePromise } from '@df-types/promises.types';
+import {
+    CancellablePromise,
+    PromiseWithAssignedUUID
+} from '@df-types/promises.types';
 import makeCancellablePromise from 'make-cancellable-promise';
 import { v1 as generateUUID } from 'uuid';
 import { log } from './logging';
@@ -20,7 +23,11 @@ export function createCancellablePromiseFrom(promise: Promise<unknown>) {
      */
     const uuid = generateUUID();
     promises.set(uuid, cancellablePromise);
-    return uuid;
+
+    return {
+        uuid,
+        promise: cancellablePromise.promise
+    } as PromiseWithAssignedUUID;
 }
 
 /**

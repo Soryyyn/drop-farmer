@@ -1,27 +1,43 @@
 import {
-    SelectionSetting,
+    FarmSettings,
+    FarmStatusEnum,
+    NewConditionType
+} from '@df-types/farms.types';
+import {
     SettingId,
     SettingOwnerType,
     SettingUnion,
     TextSetting
 } from '@df-types/settings.types';
-import TwitchStreamer from '@main/farming/farms/twitchStreamer';
-import YoutubeStream from '@main/farming/farms/youtubeStream';
+import NewFarmTemplate from '@main/farming/newtemplate';
 import FarmTemplate from '@main/farming/template';
 import { addSettingToOwner, createSettingsOwner } from '@main/store/settings';
+import { Schedules } from './constants';
 import { log } from './logging';
+import { cancelPromise, createCancellablePromiseFrom } from './promises';
+
+/**
+ * The default farm settings which get overwritten after being initialized.
+ */
+export const DefaultFarmSettings: FarmSettings = {
+    enabled: false,
+    status: FarmStatusEnum.Disabled,
+    schedule: 30,
+    url: '',
+    conditions: { type: NewConditionType.Unlimited }
+};
 
 /**
  * Create the settings for the given farm.
  */
-export function createFarmSettings(farm: FarmTemplate) {
+export function createFarmSettings(farm: NewFarmTemplate) {
     /**
      * Decide on the type of the farm based on what class it instances.
      */
-    if (farm instanceof YoutubeStream) {
-        createSettingsOwner(farm.id, SettingOwnerType.FarmYoutube);
-    } else if (farm instanceof TwitchStreamer) {
-        createSettingsOwner(farm.id, SettingOwnerType.FarmTwitch);
+    if (farm.type === SettingOwnerType.FarmYoutube) {
+        createSettingsOwner(farm.name, SettingOwnerType.FarmYoutube);
+    } else if (farm.type === SettingOwnerType.FarmTwitch) {
+        createSettingsOwner(farm.name, SettingOwnerType.FarmTwitch);
     } else {
         log(
             'warn',
@@ -33,18 +49,87 @@ export function createFarmSettings(farm: FarmTemplate) {
     /**
      * Create the base settings.
      */
-    addSettingToOwner(farm.id, SettingId.Enabled);
-    addSettingToOwner(farm.id, SettingId.Schedule);
-    addSettingToOwner(farm.id, SettingId.URL);
-    addSettingToOwner<TextSetting>(farm.id, SettingId.URL, {
-        value: farm.url,
+    addSettingToOwner(farm.name, SettingId.Enabled);
+    addSettingToOwner(farm.name, SettingId.Schedule);
+    addSettingToOwner(farm.name, SettingId.URL);
+    addSettingToOwner<TextSetting>(farm.name, SettingId.URL, {
+        value: farm.settings.url,
         special: {
             disabled: true
         }
     });
-    addSettingToOwner(farm.id, SettingId.ConditionType);
+    addSettingToOwner(farm.name, SettingId.ConditionType);
 
-    log('info', `Created initial settings for farm ${farm.id}`);
+    log('info', `Created initial settings for farm ${farm.name}`);
+}
+
+/**
+ * Set the default status based on if it's enabled or the condition has
+ * been fulfilled.
+ */
+export function getInitialStatus(farm: NewFarmTemplate) {
+    if (!farm.settings.enabled) {
+        return FarmStatusEnum.Disabled;
+    } else if (
+        farm.settings.conditions.type !== NewConditionType.Unlimited &&
+        farm.settings.conditions.fulfilled
+    ) {
+        return FarmStatusEnum.ConditionFulfilled;
+    } else {
+        return FarmStatusEnum.Idle;
+    }
+}
+
+/**
+ * Create the schedule for checking to farm.
+ * Also handle the failing of the schedule etc.
+ */
+export function createCheckingSchedule(farm: NewFarmTemplate) {
+    farm.scheduler.add(
+        Schedules.CheckToFarm,
+        `*/${farm.settings.schedule} * * * *`,
+        async () => {
+            try {
+                /**
+                 * If schedule is already running, skip this check.
+                 */
+                if (
+                    farm.settings.status === FarmStatusEnum.Checking ||
+                    farm.settings.status === FarmStatusEnum.AttentionRequired
+                ) {
+                    return;
+                }
+
+                /**
+                 * If a scheduleUUID is set, a schedule is running, so
+                 * cancel it.
+                 */
+                if (farm.scheduleUUID) {
+                    cancelPromise(farm.scheduleUUID);
+                    farm.scheduleUUID = undefined;
+                    log(
+                        'info',
+                        `${farm.name}: Cancelled running schedule check`
+                    );
+                }
+
+                /**
+                 * Create the promise and save the UUID and await the
+                 * promise after to actually run it.
+                 */
+                const { uuid, promise } = createCancellablePromiseFrom(
+                    new Promise(() => {})
+                );
+                farm.scheduleUUID = uuid;
+                await promise;
+            } catch (error) {
+                log(
+                    'error',
+                    `${farm.name}: Failed running schedule check, error ${error}`
+                );
+            }
+        }
+    );
 }
 
 /**

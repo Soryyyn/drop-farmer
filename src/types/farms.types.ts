@@ -65,3 +65,71 @@ export type FarmingConditions = BaseConditions & {
 export type ConditionType = 'unlimited' | 'weekly' | 'monthly' | 'timeWindow';
 
 export type ConditionCheckReturn = 'farm' | 'conditions-fulfilled';
+
+/**
+ * Rewrite.
+ */
+export enum FarmStatusEnum {
+    Farming = 'farming',
+    Idle = 'idle',
+    Checking = 'checking',
+    Disabled = 'disabled',
+    AttentionRequired = 'attention-required',
+    ConditionFulfilled = 'condition-fulfilled'
+}
+
+export enum NewConditionType {
+    Unlimited = 'unlimited',
+    Weekly = 'weekly',
+    Monthly = 'monthly',
+    TimeWindow = 'time-window'
+}
+
+export type NewUnlimitedCondition = {
+    type: NewConditionType.Unlimited;
+};
+
+export type WeeklyCondition = {
+    type: NewConditionType.Weekly;
+    started: Date;
+    fulfilled?: Date;
+    amount: number;
+    amountWanted: number;
+    buffer: number;
+    repeat: boolean;
+};
+
+export type MonthlyCondition = {
+    type: NewConditionType.Monthly;
+    started: Date;
+    fulfilled?: Date;
+    amount: number;
+    amountWanted: number;
+    buffer: number;
+    repeat: boolean;
+};
+
+export type NewTimeWindowCondition = {
+    type: NewConditionType.TimeWindow;
+    started: Date;
+    fulfilled?: Date;
+    amount: number;
+    amountWanted: number;
+    buffer: number;
+    from: Date;
+    to: Date;
+};
+
+export type ConditionUnion =
+    | NewUnlimitedCondition
+    | WeeklyCondition
+    | MonthlyCondition
+    | NewTimeWindowCondition;
+
+export type FarmSettings = {
+    enabled: boolean;
+    url: string;
+    status: FarmStatusEnum;
+    schedule: number;
+    conditions: ConditionUnion;
+};
