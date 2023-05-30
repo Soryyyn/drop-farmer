@@ -116,13 +116,12 @@ export enum SettingOwnerType {
 
 export type SettingSchema = {
     type: SettingOwnerType;
+    name: string;
     settings: SettingUnion[];
 };
 
-export type SettingOwner = 'application' | string;
-
 export type SettingsObject = {
-    [owner: SettingOwner]: SettingSchema;
+    [owner: string]: SettingSchema;
 };
 
 /**

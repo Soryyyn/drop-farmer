@@ -4,14 +4,22 @@ import {
     NewConditionType
 } from '@df-types/farms.types';
 import {
+    NumberSetting,
+    SelectionSetting,
     SettingId,
     SettingOwnerType,
     SettingUnion,
-    TextSetting
+    TextSetting,
+    ToggleSetting
 } from '@df-types/settings.types';
 import NewFarmTemplate from '@main/farming/newtemplate';
 import FarmTemplate from '@main/farming/template';
-import { addSettingToOwner, createSettingsOwner } from '@main/store/settings';
+import {
+    addSettingToOwner,
+    createSettingsOwner,
+    getOrSetSetting,
+    getSettingsOfOwner
+} from '@main/store/settings';
 import { Schedules } from './constants';
 import { log } from './logging';
 import { cancelPromise, createCancellablePromiseFrom } from './promises';
@@ -135,7 +143,25 @@ export function createCheckingSchedule(farm: NewFarmTemplate) {
 /**
  * Apply the wanted settings to the given farm.
  */
-export function applySettingsToFarm(
-    farm: FarmTemplate,
-    settings: SettingUnion[]
-) {}
+export function applySettingsToFarm(farm: NewFarmTemplate) {
+    farm.settings.enabled = getOrSetSetting<ToggleSetting>(
+        farm.name,
+        SettingId.Enabled
+    )!;
+    farm.settings.schedule = getOrSetSetting<NumberSetting>(
+        farm.name,
+        SettingId.Schedule
+    )!;
+    farm.settings.url = getOrSetSetting<TextSetting>(farm.name, SettingId.URL)!;
+    farm.settings.conditions.type = getOrSetSetting<SelectionSetting>(
+        farm.name,
+        SettingId.ConditionType
+    )! as NewConditionType;
+
+    if (farm.settings.conditions.type === NewConditionType.Weekly) {
+        farm.settings.conditions.amount = getOrSetSetting<NumberSetting>(
+            farm.name,
+            SettingId.ConditionAmount
+        )!;
+    }
+}

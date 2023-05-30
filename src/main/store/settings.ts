@@ -1,6 +1,5 @@
 import {
     SettingId,
-    SettingOwner,
     SettingOwnerType,
     SettingSchema,
     SettingStoreSchema,
@@ -13,6 +12,8 @@ import {
 import { DefinedSettings, FileNames } from '@main/util/constants';
 import { getAppPath } from '@main/util/files';
 import { log } from '@main/util/logging';
+import { getObjectName } from '@main/util/objects';
+import { generateUUID } from '@main/util/strings';
 import AutoLaunch from 'auto-launch';
 import ElectronStore from 'electron-store';
 
@@ -22,8 +23,9 @@ const autoLauncher = new AutoLaunch({ name: 'Drop Farmer' });
  * The default settings to apply when the file doesn't exist yet.
  */
 const defaultSettings: SettingsObject = {
-    application: {
+    [generateUUID()]: {
         type: SettingOwnerType.Application,
+        name: 'application',
         settings: [
             applyDefaultToValue(getDefinedSetting(SettingId.LaunchOnStartup)!),
             applyDefaultToValue(
@@ -95,10 +97,17 @@ export function getSettings(): SettingsObject {
 }
 
 /**
- * Get all the settings of a specific owner.
+ * Get all the settings of a specific owner by UUID.
  */
-export function getSettingsOfOwner(owner: SettingOwner): SettingSchema {
-    return getSettings()[owner];
+export function getSettingsOfOwnerByUUID(uuid: string) {
+    return getSettings()[uuid];
+}
+
+/**
+ * Get the settings by name.
+ */
+export function getSettingsOfOwnerByName(name: string) {
+    return Object.values(getSettings()).find((entry) => entry.name === name);
 }
 
 /**
@@ -113,23 +122,24 @@ export function updateSettings(toUpdate: SettingsObject): void {
  * Create a settings owner in the store.
  */
 export function createSettingsOwner(
-    owner: SettingOwner,
+    name: string,
     type: SettingOwnerType
 ): void {
-    if (getSettingsOfOwner(owner) === undefined) {
+    if (getSettingsOfOwnerByName(name) === undefined) {
         const settings = getSettings();
 
         /**
          * Add the owner to the settings object.
          */
-        settings[owner] = {
+        settings[generateUUID()] = {
             type,
+            name,
             settings: []
         };
 
         updateSettings(settings);
 
-        log('info', `Created settings owner ${owner}`);
+        log('info', `Created settings owner ${name}`);
     }
 }
 
@@ -210,10 +220,10 @@ function validateSetting(setting: SettingUnion): boolean {
  * Get a specific setting of a owner from the current store.
  */
 export function getSetting<T extends SettingUnion>(
-    owner: SettingOwner,
+    name: string,
     id: SettingId
 ) {
-    return getSettingsOfOwner(owner).settings.find(
+    return getSettingsOfOwnerByName(name)?.settings.find(
         (setting) => setting.id === id
     ) as T | undefined;
 }
@@ -221,8 +231,8 @@ export function getSetting<T extends SettingUnion>(
 /**
  * Get the index of a setting in an owner.
  */
-export function getSettingIndex(owner: SettingOwner, id: SettingId) {
-    return getSettingsOfOwner(owner).settings.findIndex(
+function getSettingIndex(uuid: string, id: SettingId) {
+    return getSettingsOfOwnerByUUID(uuid).settings.findIndex(
         (setting) => setting.id === id
     );
 }
@@ -231,37 +241,50 @@ export function getSettingIndex(owner: SettingOwner, id: SettingId) {
  * Get a specific settings saved value.
  */
 export function getSettingValue<T extends SettingUnion>(
-    owner: SettingOwner,
+    name: string,
     id: SettingId
 ) {
-    return getSetting<T>(owner, id)?.value as T['value'];
+    return getSetting<T>(name, id)?.value as T['value'];
 }
 
 /**
- * Update the settings of a specific owner.
+ * Update the settings of a specific owner by uuid.
  */
-export function updateOwnerSettings(
-    owner: SettingOwner,
+export function updateOwnerSettingsByUUID(
+    uuid: string,
     ownerSettings: SettingUnion[]
 ) {
     const settings = getSettings();
-    settings[owner].settings = ownerSettings;
+    settings[uuid].settings = ownerSettings;
     updateSettings(settings);
+}
+
+/**
+ * Update the settings of a specific owner by name.
+ */
+export function updateOwnerSettingsByName(
+    name: string,
+    ownerSettings: SettingUnion[]
+) {
+    const settings = getSettings();
+    const ownerSettingsByName = getSettingsOfOwnerByName(name);
+
+    if (ownerSettingsByName) {
+        settings[getObjectName(ownerSettingsByName)].settings = ownerSettings;
+        updateSettings(settings);
+    }
 }
 
 /**
  * Update a specific setting in the given owner.
  */
-export function updateSettingOfOwner(
-    owner: SettingOwner,
-    setting: SettingUnion
-) {
-    const ownerSettings = getSettingsOfOwner(owner);
+export function updateSettingOfOwner(name: string, setting: SettingUnion) {
+    const ownerSettings = getSettingsOfOwnerByName(name);
 
     if (!ownerSettings) {
         log(
             'warn',
-            `Can't update setting of owner ${owner} because owner doesn't exist`
+            `Can't update setting of owner ${name} because owner doesn't exist`
         );
         return;
     }
@@ -270,39 +293,33 @@ export function updateSettingOfOwner(
         (ownerSetting) => ownerSetting.id === setting.id
     );
     ownerSettings.settings[indexToUpdate] = setting;
-    updateOwnerSettings(owner, ownerSettings.settings);
+    updateOwnerSettingsByName(name, ownerSettings.settings);
 }
 
 /**
  * Add a specific setting to the wanted owner.
  */
 export function addSettingToOwner<T extends SettingUnion>(
-    owner: SettingOwner,
+    name: string,
     id: SettingId,
     override?: Partial<T>
 ) {
-    const ownerSettings = getSettingsOfOwner(owner);
+    const ownerSettings = getSettingsOfOwnerByName(name);
 
-    if (!ownerSettings) {
-        log(
-            'warn',
-            `Failed adding setting to owner ${owner} because it doesn't exist`
-        );
-        return;
+    if (ownerSettings) {
+        let settingToAdd = applyDefaultToValue(getDefinedSetting<T>(id));
+
+        /**
+         * Override the setting if wanted.
+         */
+        settingToAdd = {
+            ...settingToAdd,
+            ...override
+        };
+
+        ownerSettings.settings.push(settingToAdd);
+        updateOwnerSettingsByName(name, ownerSettings.settings);
     }
-
-    let settingToAdd = applyDefaultToValue(getDefinedSetting<T>(id));
-
-    /**
-     * Override the setting if wanted.
-     */
-    settingToAdd = {
-        ...settingToAdd,
-        ...override
-    };
-
-    ownerSettings.settings.push(settingToAdd);
-    updateOwnerSettings(owner, ownerSettings.settings);
 }
 
 /**
@@ -310,21 +327,21 @@ export function addSettingToOwner<T extends SettingUnion>(
  * of the newly created one.
  */
 export function getOrSetSetting<T extends SettingUnion>(
-    owner: SettingOwner,
+    name: string,
     id: SettingId,
     override?: Partial<T>
 ): ValueOfSetting<T> {
-    const ownerSettings = getSettingsOfOwner(owner);
+    const ownerSettings = getSettingsOfOwnerByName(name);
 
     if (ownerSettings === undefined) {
         log(
             'warn',
-            `Can't get or set setting for not yet created owner ${owner}`
+            `Can't get or set setting for not yet created owner ${name}`
         );
         return;
     }
 
-    const foundSetting = getSetting<T>(owner, id);
+    const foundSetting = getSetting<T>(name, id);
 
     /**
      * Check if the owner has the wanted setting, if not, set it or return the value.
@@ -346,7 +363,7 @@ export function getOrSetSetting<T extends SettingUnion>(
     }
 
     ownerSettings.settings.push(settingToAdd!);
-    updateOwnerSettings(owner, ownerSettings.settings);
+    updateOwnerSettingsByName(name, ownerSettings.settings);
     return settingToAdd?.value;
 }
 
@@ -354,19 +371,11 @@ export function getOrSetSetting<T extends SettingUnion>(
  * Update the setting.
  */
 export function updateSetting(
-    owner: SettingOwner,
+    name: string,
     id: SettingId,
     value: ValueOfSetting<SettingUnion>
 ) {
-    if (owner === undefined) {
-        log(
-            'warn',
-            `Can't update setting ${id} of owner ${owner} when owner doesn't exist`
-        );
-        return;
-    }
-
-    const foundSetting = getSetting(owner, id);
+    const foundSetting = getSetting(name, id);
 
     /**
      * Only update the setting if the setting already exists.
@@ -378,33 +387,46 @@ export function updateSetting(
          * Only update the setting if validation passes.
          */
         validateSetting(foundSetting) &&
-            updateSettingOfOwner(owner, foundSetting);
+            updateSettingOfOwner(name, foundSetting);
     }
 }
 
 /**
  * Delete a setting of the owner by name.
  */
-export function deleteSetting(owner: SettingOwner, id: SettingId): void {
-    const ownerSettings = getSettingsOfOwner(owner);
+export function deleteSetting(name: string, id: SettingId): void {
+    const ownerSettings = getSettingsOfOwnerByName(name);
 
     if (ownerSettings) {
-        const index = getSettingIndex(owner, id);
+        const index = getSettingIndex(name, id);
 
         if (index && index !== -1) {
             ownerSettings.settings.splice(index, 1);
-            updateOwnerSettings(owner, ownerSettings.settings);
+            updateOwnerSettingsByName(name, ownerSettings.settings);
         }
     }
 }
 
 /**
- * Delete an owner of settings.
+ * Delete an owner of settings by uuid.
  */
-export function deleteOwner(owner: SettingOwner) {
+export function deleteOwnerByUUID(uuid: string) {
     const settings = getSettings();
-    delete settings[owner];
+    delete settings[uuid];
     updateSettings(settings);
+}
+
+/**
+ * Delete an owner of settings by name.
+ */
+export function deleteOwnerByName(name: string) {
+    const settings = getSettings();
+    const ownerSettings = getSettingsOfOwnerByName(name);
+
+    if (ownerSettings) {
+        delete settings[getObjectName(ownerSettings)];
+        updateSettings(settings);
+    }
 }
 
 /**

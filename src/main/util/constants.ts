@@ -1,6 +1,8 @@
+import { NewConditionType } from '@df-types/farms.types';
 import {
     SelectOption,
     SettingId,
+    SettingOwnerType,
     SettingType,
     SettingUnion
 } from '@df-types/settings.types';
@@ -78,30 +80,30 @@ export type LaunchArg = (typeof LaunchArgs)[keyof typeof LaunchArgs];
 export const Selections = {
     FarmingLocation: [
         {
-            display: 'YouTube',
-            value: 'youtube'
+            display: 'Twitch',
+            value: SettingOwnerType.FarmTwitch
         },
         {
-            display: 'Twitch',
-            value: 'twitch'
+            display: 'YouTube',
+            value: SettingOwnerType.FarmYoutube
         }
     ],
     FarmConditionSelect: [
         {
             display: 'Unlimited',
-            value: 'unlimited'
+            value: NewConditionType.Unlimited
         },
         {
             display: 'Weekly',
-            value: 'weekly'
+            value: NewConditionType.Weekly
         },
         {
             display: 'Monthly',
-            value: 'monthly'
+            value: NewConditionType.Monthly
         },
         {
-            display: 'From ... to ...',
-            value: 'timeWindow'
+            display: 'Time window',
+            value: NewConditionType.TimeWindow
         }
     ]
 } as const satisfies { [name: string]: readonly SelectOption[] };

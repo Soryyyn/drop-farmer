@@ -3,8 +3,8 @@ import {
     PromiseWithAssignedUUID
 } from '@df-types/promises.types';
 import makeCancellablePromise from 'make-cancellable-promise';
-import { v1 as generateUUID } from 'uuid';
 import { log } from './logging';
+import { generateUUID } from './strings';
 
 /**
  * Keep track of the running promises inside a map.

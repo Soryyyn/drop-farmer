@@ -1,4 +1,5 @@
 import { FarmType } from '@df-types/farms.types';
+import { v1 as uuid } from 'uuid';
 
 export function removeTypeFromText(text: string): string {
     if (text.includes('/')) {
@@ -36,4 +37,11 @@ export function getNumbersInsideString(string: string): number[] {
     return [...string.matchAll(/(\d+)/g)].map((entry) =>
         parseInt(entry.toString())
     );
+}
+
+/**
+ * Generate a UUID for use.
+ */
+export function generateUUID() {
+    return uuid();
 }
