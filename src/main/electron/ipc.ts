@@ -5,13 +5,13 @@ import {
     NewFarm
 } from '@df-types/farms.types';
 import { MergedSettings } from '@df-types/settings.types';
-import {
-    addNewFarm,
-    applySettingsToFarms,
-    deleteFarm,
-    getFarmById,
-    getFarmsRendererData
-} from '@main/farming/management';
+// import {
+//     addNewFarm,
+//     applySettingsToFarms,
+//     deleteFarm,
+//     getFarmById,
+//     getFarmsRendererData
+// } from '@main/farming/management';
 import { signIn, signOut } from '@main/util/auth';
 import {
     EventChannels,
@@ -26,12 +26,12 @@ import { removeTypeFromText } from '@main/util/strings';
 import { sendToast } from '@main/util/toast';
 import { app, ipcMain, shell } from 'electron';
 import { readFileSync } from 'fs';
-import {
-    extractMergedSettings,
-    getMergedSettings,
-    resetSettingsToDefaultValues,
-    updateSettings
-} from 'src/main/store/settings';
+// import {
+//     extractMergedSettings,
+//     getMergedSettings,
+//     resetSettingsToDefaultValues,
+//     updateSettings
+// } from 'src/main/store/settings';
 import { setIsQuitting } from './appEvents';
 import { checkIfCanUpdate, handleInstallOfUpdate } from './update';
 import { getMainWindow } from './windows';

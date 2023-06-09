@@ -1,4 +1,5 @@
-import { FarmingConditions } from '@df-types/farms.types';
+import { FarmSettings, FarmingConditions } from '@df-types/farms.types';
+import { SettingOwnerType } from '@df-types/settings.types';
 import { sendOneWay } from '@main/electron/ipc';
 import { minutesAndSecondsToMS } from '@main/util/calendar';
 import { EventChannels, IpcChannels } from '@main/util/constants';
@@ -16,29 +17,34 @@ import {
 } from '@main/util/puppeteer';
 import { getNumbersInsideString } from '@main/util/strings';
 import { getPage } from 'puppeteer-in-electron';
+import NewFarmTemplate from '../newtemplate';
 import FarmTemplate from '../template';
 
-export default class YoutubeStream extends FarmTemplate {
-    constructor(
-        id: string,
-        url: string,
-        schedule?: number,
-        conditions?: FarmingConditions
-    ) {
-        super(`youtube/${id}`, url);
-
-        /**
-         * If a schedule is provided, set it too.
-         */
-        if (schedule) {
-            this.schedule = schedule;
-        }
-
-        if (conditions) {
-            this.conditions = conditions;
-            this.updateConditions();
-        }
+export default class YoutubeStream extends NewFarmTemplate {
+    constructor(name: string) {
+        super(name, SettingOwnerType.FarmYoutube);
     }
+
+    // constructor(
+    //     id: string,
+    //     url: string,
+    //     schedule?: number,
+    //     conditions?: FarmingConditions
+    // ) {
+    //     super(`youtube/${id}`, url);
+
+    //     /**
+    //      * If a schedule is provided, set it too.
+    //      */
+    //     if (schedule) {
+    //         this.schedule = schedule;
+    //     }
+
+    //     if (conditions) {
+    //         this.conditions = conditions;
+    //         this.updateConditions();
+    //     }
+    // }
 
     stillFarming(window: Electron.BrowserWindow): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
@@ -58,7 +64,7 @@ export default class YoutubeStream extends FarmTemplate {
                 ) {
                     log(
                         'info',
-                        `${this.id}: Stream still live, continuing farming`
+                        `${this.name}: Stream still live, continuing farming`
                     );
                     resolve(undefined);
                 } else {
@@ -69,7 +75,7 @@ export default class YoutubeStream extends FarmTemplate {
 
                     log(
                         'info',
-                        `${this.id}: Stream not live anymore, stopping farming`
+                        `${this.name}: Stream not live anymore, stopping farming`
                     );
                     resolve(undefined);
                 }
@@ -91,7 +97,7 @@ export default class YoutubeStream extends FarmTemplate {
                  */
                 if (await pageUrlContains(page, 'consent.youtube.com')) {
                     await page.click('div.VfPpkd-Jh9lGc');
-                    log('info', `${this.id}: Accepted user agreement`);
+                    log('info', `${this.name}: Accepted user agreement`);
                 }
 
                 /**
@@ -106,21 +112,18 @@ export default class YoutubeStream extends FarmTemplate {
                  */
                 await gotoURL(page, 'https://www.youtube.com/signin', 3000);
 
-                log('info', `${this.id}: Navigation to login route`);
+                log('info', `${this.name}: Navigation to login route`);
 
                 if (await pageUrlContains(page, 'accounts.google.com')) {
-                    log('info', `${this.id}: Login is needed by user`);
+                    log('info', `${this.name}: Login is needed by user`);
 
                     wasLoginNeeded = true;
                     emitEvent(EventChannels.LoginForFarm, {
-                        id: this.id,
+                        id: this.name,
                         needed: true
                     });
 
-                    if (
-                        this.windowsCurrentlyShown ||
-                        this.windowsShownByDefault
-                    ) {
+                    if (this.settings.windowsShowing) {
                         window.show();
                         window.focus();
                     }
@@ -137,20 +140,20 @@ export default class YoutubeStream extends FarmTemplate {
                     ]));
 
                     if (!(await pageUrlContains(page, 'accounts.google.com'))) {
-                        log('info', `${this.id}: Login completed`);
+                        log('info', `${this.name}: Login completed`);
                     } else {
-                        await gotoURL(page, this.url);
+                        await gotoURL(page, this.settings.url);
                         await page.waitForNavigation();
-                        log('info', `${this.id}: Login completed`);
+                        log('info', `${this.name}: Login completed`);
                     }
                 } else {
-                    await gotoURL(page, this.url, 3000);
-                    log('info', `${this.id}: Login completed`);
+                    await gotoURL(page, this.settings.url, 3000);
+                    log('info', `${this.name}: Login completed`);
                 }
 
                 if (wasLoginNeeded) {
                     sendOneWay(IpcChannels.farmLogin, {
-                        id: this.id,
+                        id: this.name,
                         needed: false
                     });
                 }
@@ -171,7 +174,7 @@ export default class YoutubeStream extends FarmTemplate {
                     /**
                      * Re-route to checker route for safety.
                      */
-                    await gotoURL(page, this.url, 1000);
+                    await gotoURL(page, this.settings.url, 1000);
 
                     /**
                      * Check if any live indicator is shown before 10seconds expire.
@@ -184,45 +187,46 @@ export default class YoutubeStream extends FarmTemplate {
                         10000
                     ).then((appeared) => {
                         if (appeared) {
-                            log('info', `${this.id}: Found livestream`);
+                            log('info', `${this.name}: Found livestream`);
 
                             /**
                              * Create the farming window and open the livestream.
                              */
-                            this.createArrayWindow(this.url, this.farmers).then(
-                                async (farmingWindow) => {
-                                    const farmingWindowPage = await getPage(
-                                        getBrowserConnection(),
-                                        farmingWindow
-                                    );
-                                    await farmingWindowPage.waitForNetworkIdle();
-                                    await waitForTimeout(2000);
+                            this.createArrayWindow(
+                                this.settings.url,
+                                this.farmers
+                            ).then(async (farmingWindow) => {
+                                const farmingWindowPage = await getPage(
+                                    getBrowserConnection(),
+                                    farmingWindow!
+                                );
+                                await farmingWindowPage.waitForNetworkIdle();
+                                await waitForTimeout(2000);
 
-                                    /**
-                                     * Click on the first video element which is found.
-                                     * In case of a livestream it is always the
-                                     * first one.
-                                     */
-                                    const firstVideoSelector =
-                                        'div.style-scope.ytd-video-renderer';
-                                    await farmingWindowPage.click(
-                                        firstVideoSelector
-                                    );
+                                /**
+                                 * Click on the first video element which is found.
+                                 * In case of a livestream it is always the
+                                 * first one.
+                                 */
+                                const firstVideoSelector =
+                                    'div.style-scope.ytd-video-renderer';
+                                await farmingWindowPage.click(
+                                    firstVideoSelector
+                                );
 
-                                    await this.handleAds();
+                                await this.handleAds();
 
-                                    log(
-                                        'info',
-                                        `${this.id}: Farming with "${this.farmers.length}" windows`
-                                    );
+                                log(
+                                    'info',
+                                    `${this.name}: Farming with "${this.farmers.length}" windows`
+                                );
 
-                                    resolve(undefined);
-                                }
-                            );
+                                resolve(undefined);
+                            });
                         } else {
                             log(
                                 'info',
-                                `${this.id}: No livestream found, no need to farm`
+                                `${this.name}: No livestream found, no need to farm`
                             );
 
                             resolve(undefined);
@@ -231,7 +235,7 @@ export default class YoutubeStream extends FarmTemplate {
                 } else {
                     log(
                         'info',
-                        `${this.id}: Already farming, no need to start again`
+                        `${this.name}: Already farming, no need to start again`
                     );
 
                     resolve(undefined);
@@ -282,7 +286,7 @@ export default class YoutubeStream extends FarmTemplate {
 
                     log(
                         'info',
-                        `${this.id}: ${amountOfAds[1]} Ads found, waiting for ads to finish`
+                        `${this.name}: ${amountOfAds[1]} Ads found, waiting for ads to finish`
                     );
 
                     /**
@@ -302,9 +306,9 @@ export default class YoutubeStream extends FarmTemplate {
                         await waitForTimeout(milliseconds + 10000);
                     }
 
-                    log('info', `${this.id}: Finished awaiting ads`);
+                    log('info', `${this.name}: Finished awaiting ads`);
                 } else {
-                    log('info', `${this.id}: No ads found`);
+                    log('info', `${this.name}: No ads found`);
                 }
 
                 resolve();
@@ -362,7 +366,7 @@ export default class YoutubeStream extends FarmTemplate {
                     ].click();
                 }
 
-                log('info', `${this.id}: Set to lowest resolution possible`);
+                log('info', `${this.name}: Set to lowest resolution possible`);
                 resolve();
             } catch (error) {
                 reject(error);

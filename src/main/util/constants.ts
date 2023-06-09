@@ -193,8 +193,8 @@ export const DefinedSettings: SettingUnion[] = [
     },
     {
         type: SettingType.Number,
-        id: SettingId.ConditionAmountToFulfill,
-        label: 'Amount to fulfill condition',
+        id: SettingId.ConditionAmountWanted,
+        label: 'Amount wanted',
         desc: 'The amount of hours the farm needs to farm before the stopping/reset condition has been fulfilled.',
         default: 4,
         min: 1,

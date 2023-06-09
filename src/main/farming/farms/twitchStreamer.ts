@@ -1,4 +1,5 @@
-import { FarmingConditions } from '@df-types/farms.types';
+import { FarmSettings, FarmingConditions } from '@df-types/farms.types';
+import { SettingOwnerType } from '@df-types/settings.types';
 import { EventChannels } from '@main/util/constants';
 import { emitEvent } from '@main/util/events';
 import { log } from '@main/util/logging';
@@ -11,28 +12,12 @@ import {
     waitForTimeout
 } from '@main/util/puppeteer';
 import { getPage } from 'puppeteer-in-electron';
+import NewFarmTemplate from '../newtemplate';
 import FarmTemplate from '../template';
 
-export default class TwitchStreamer extends FarmTemplate {
-    constructor(
-        id: string,
-        url: string,
-        schedule?: number,
-        conditions?: FarmingConditions
-    ) {
-        super(`twitch/${id}`, url);
-
-        /**
-         * If a schedule is provided, set it too.
-         */
-        if (schedule) {
-            this.schedule = schedule;
-        }
-
-        if (conditions) {
-            this.conditions = conditions;
-            this.updateConditions();
-        }
+export default class TwitchStreamer extends NewFarmTemplate {
+    constructor(name: string) {
+        super(name, SettingOwnerType.FarmTwitch);
     }
 
     login(window: Electron.BrowserWindow): Promise<any> {
@@ -48,7 +33,7 @@ export default class TwitchStreamer extends FarmTemplate {
                 if (
                     (await waitForElementToAppear(page, loginButton)) !== null
                 ) {
-                    log('info', `${this.id}: Login is needed by user`);
+                    log('info', `${this.name}: Login is needed by user`);
 
                     /**
                      * Navigate to login page.
@@ -56,14 +41,11 @@ export default class TwitchStreamer extends FarmTemplate {
                     await gotoURL(page, 'https://www.twitch.tv/login');
 
                     emitEvent(EventChannels.LoginForFarm, {
-                        id: this.id,
+                        id: this.name,
                         needed: true
                     });
 
-                    if (
-                        this.windowsCurrentlyShown ||
-                        this.windowsShownByDefault
-                    ) {
+                    if (this.settings.windowsShowing) {
                         window.show();
                         window.focus();
                     }
@@ -74,14 +56,14 @@ export default class TwitchStreamer extends FarmTemplate {
                         0
                     );
 
-                    await gotoURL(page, this.url);
+                    await gotoURL(page, this.settings.url);
 
-                    log('info', `${this.id}: Login completed`);
+                    log('info', `${this.name}: Login completed`);
                     resolve(undefined);
                 } else {
                     log(
                         'info',
-                        `${this.id}: User already logged in, continuing`
+                        `${this.name}: User already logged in, continuing`
                     );
                     resolve(undefined);
                 }
@@ -104,7 +86,7 @@ export default class TwitchStreamer extends FarmTemplate {
                 ) {
                     log(
                         'info',
-                        `${this.id}: Stream still live, continue farming`
+                        `${this.name}: Stream still live, continue farming`
                     );
                     resolve(undefined);
                 } else {
@@ -112,7 +94,7 @@ export default class TwitchStreamer extends FarmTemplate {
 
                     log(
                         'info',
-                        `${this.id}: Stream not live anymore, stopping farming`
+                        `${this.name}: Stream not live anymore, stopping farming`
                     );
                     resolve(undefined);
                 }
@@ -142,49 +124,50 @@ export default class TwitchStreamer extends FarmTemplate {
                             'div.live-indicator-container'
                         )
                     ) {
-                        log('info', `${this.id}: Found livestream`);
+                        log('info', `${this.name}: Found livestream`);
 
                         /**
                          * Create the farming window and open the livestream.
                          */
-                        this.createArrayWindow(this.url, this.farmers).then(
-                            async (window) => {
-                                const page = await getPage(
-                                    getBrowserConnection(),
-                                    window
+                        this.createArrayWindow(
+                            this.settings.url,
+                            this.farmers
+                        ).then(async (window) => {
+                            const page = await getPage(
+                                getBrowserConnection(),
+                                window!
+                            );
+
+                            /**
+                             * Check if the stream is only for mature users.
+                             */
+                            if (
+                                await doesElementExist(
+                                    page,
+                                    'button[data-a-target="player-overlay-mature-accept"]'
+                                )
+                            ) {
+                                await page.click(
+                                    'button[data-a-target="player-overlay-mature-accept"]'
                                 );
-
-                                /**
-                                 * Check if the stream is only for mature users.
-                                 */
-                                if (
-                                    await doesElementExist(
-                                        page,
-                                        'button[data-a-target="player-overlay-mature-accept"]'
-                                    )
-                                ) {
-                                    await page.click(
-                                        'button[data-a-target="player-overlay-mature-accept"]'
-                                    );
-                                    await waitForTimeout(2000);
-
-                                    log(
-                                        'info',
-                                        `${this.id}: Needed to accept mature stream`
-                                    );
-                                }
+                                await waitForTimeout(2000);
 
                                 log(
                                     'info',
-                                    `${this.id}: Farming with "${this.farmers.length}" windows`
+                                    `${this.name}: Needed to accept mature stream`
                                 );
-                                resolve(undefined);
                             }
-                        );
+
+                            log(
+                                'info',
+                                `${this.name}: Farming with "${this.farmers.length}" windows`
+                            );
+                            resolve(undefined);
+                        });
                     } else {
                         log(
                             'info',
-                            `${this.id}: Stream not live, no need to farm`
+                            `${this.name}: Stream not live, no need to farm`
                         );
 
                         resolve(undefined);
@@ -192,7 +175,7 @@ export default class TwitchStreamer extends FarmTemplate {
                 } else {
                     log(
                         'info',
-                        `${this.id}: Already farming, no need to start again`
+                        `${this.name}: Already farming, no need to start again`
                     );
 
                     resolve(undefined);
@@ -226,7 +209,7 @@ export default class TwitchStreamer extends FarmTemplate {
                  */
                 await page.reload();
 
-                log('info', `${this.id}: Set to lowest resolution possible`);
+                log('info', `${this.name}: Set to lowest resolution possible`);
                 resolve();
             } catch (error) {
                 reject(error);

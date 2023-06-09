@@ -1,4 +1,5 @@
-import { initFarmsManagement, stopFarms } from '@main/farming/management';
+// import { initFarmsManagement, stopFarms } from '@main/farming/management';
+import { initFarmsManagement } from '@main/farming/newmanagement';
 import { LaunchArg, LaunchArgs } from '@main/util/constants';
 import { log } from '@main/util/logging';
 import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
@@ -47,6 +48,7 @@ export function handleAppReady(): void {
      */
     app.setAppUserModelId('com.squirrel.soryn.DropFarmer');
 
+    // initFarmsManagement();
     initFarmsManagement();
     createTray();
     createMainWindow();
@@ -74,7 +76,7 @@ export function handleAppBeforeQuit(event?: Electron.Event): void {
         if (event) event.preventDefault();
 
         destroyTray();
-        stopFarms();
+        // stopFarms();
         destroyAllWindowsLeft();
 
         finishedBeforeQuit = true;

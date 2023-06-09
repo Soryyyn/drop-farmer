@@ -4,22 +4,22 @@ import {
     NewConditionType
 } from '@df-types/farms.types';
 import {
+    DateSetting,
     NumberSetting,
     SelectionSetting,
     SettingId,
     SettingOwnerType,
-    SettingUnion,
     TextSetting,
     ToggleSetting
 } from '@df-types/settings.types';
 import NewFarmTemplate from '@main/farming/newtemplate';
-import FarmTemplate from '@main/farming/template';
 import {
     addSettingToOwner,
     createSettingsOwner,
-    getOrSetSetting,
-    getSettingsOfOwner
+    deleteSetting,
+    getOrSetSetting
 } from '@main/store/settings';
+import { ISOStringToDate } from './calendar';
 import { Schedules } from './constants';
 import { log } from './logging';
 import { cancelPromise, createCancellablePromiseFrom } from './promises';
@@ -32,6 +32,7 @@ export const DefaultFarmSettings: FarmSettings = {
     status: FarmStatusEnum.Disabled,
     schedule: 30,
     url: '',
+    windowsShowing: false,
     conditions: { type: NewConditionType.Unlimited }
 };
 
@@ -59,7 +60,6 @@ export function createFarmSettings(farm: NewFarmTemplate) {
      */
     addSettingToOwner(farm.name, SettingId.Enabled);
     addSettingToOwner(farm.name, SettingId.Schedule);
-    addSettingToOwner(farm.name, SettingId.URL);
     addSettingToOwner<TextSetting>(farm.name, SettingId.URL, {
         value: farm.settings.url,
         special: {
@@ -126,7 +126,7 @@ export function createCheckingSchedule(farm: NewFarmTemplate) {
                  * promise after to actually run it.
                  */
                 const { uuid, promise } = createCancellablePromiseFrom(
-                    new Promise(() => {})
+                    farm.schedule()
                 );
                 farm.scheduleUUID = uuid;
                 await promise;
@@ -143,7 +143,7 @@ export function createCheckingSchedule(farm: NewFarmTemplate) {
 /**
  * Apply the wanted settings to the given farm.
  */
-export function applySettingsToFarm(farm: NewFarmTemplate) {
+export function hydrateFarm(farm: NewFarmTemplate) {
     farm.settings.enabled = getOrSetSetting<ToggleSetting>(
         farm.name,
         SettingId.Enabled
@@ -158,10 +158,75 @@ export function applySettingsToFarm(farm: NewFarmTemplate) {
         SettingId.ConditionType
     )! as NewConditionType;
 
-    if (farm.settings.conditions.type === NewConditionType.Weekly) {
+    /**
+     * Basically delete every setting when the type is set to unlimited.
+     */
+    if (farm.settings.conditions.type === NewConditionType.Unlimited) {
+        deleteSetting(farm.name, SettingId.ConditionStarted);
+        deleteSetting(farm.name, SettingId.ConditionFulfilled);
+        deleteSetting(farm.name, SettingId.ConditionAmount);
+        deleteSetting(farm.name, SettingId.ConditionAmountWanted);
+        deleteSetting(farm.name, SettingId.ConditionBuffer);
+        deleteSetting(farm.name, SettingId.ConditionRepeating);
+        deleteSetting(farm.name, SettingId.ConditionTo);
+        deleteSetting(farm.name, SettingId.ConditionFrom);
+    }
+
+    /**
+     * Hydrate the settings for weekly or monthly types.
+     */
+    if (
+        farm.settings.conditions.type === NewConditionType.Weekly ||
+        farm.settings.conditions.type === NewConditionType.Monthly
+    ) {
+        farm.settings.conditions.started = ISOStringToDate(
+            getOrSetSetting<DateSetting>(farm.name, SettingId.ConditionStarted)!
+        );
+        farm.settings.conditions.fulfilled = ISOStringToDate(
+            getOrSetSetting<DateSetting>(
+                farm.name,
+                SettingId.ConditionFulfilled
+            )!
+        );
         farm.settings.conditions.amount = getOrSetSetting<NumberSetting>(
             farm.name,
             SettingId.ConditionAmount
         )!;
+        farm.settings.conditions.amountWanted = getOrSetSetting<NumberSetting>(
+            farm.name,
+            SettingId.ConditionAmountWanted
+        )!;
+        farm.settings.conditions.buffer = getOrSetSetting<NumberSetting>(
+            farm.name,
+            SettingId.ConditionBuffer
+        )!;
+        farm.settings.conditions.repeat = getOrSetSetting<ToggleSetting>(
+            farm.name,
+            SettingId.ConditionRepeating
+        )!;
+
+        /**
+         * Delete not wanted settings.
+         */
+        deleteSetting(farm.name, SettingId.ConditionTo);
+        deleteSetting(farm.name, SettingId.ConditionFrom);
+    }
+
+    /**
+     * Handle the time window type.
+     */
+    if (farm.settings.conditions.type === NewConditionType.TimeWindow) {
+        farm.settings.conditions.to = ISOStringToDate(
+            getOrSetSetting<DateSetting>(farm.name, SettingId.ConditionTo)!
+        );
+        farm.settings.conditions.from = ISOStringToDate(
+            getOrSetSetting<DateSetting>(farm.name, SettingId.ConditionTo)!
+        );
+
+        /**
+         * Delete not wanted settings.
+         */
+        deleteSetting(farm.name, SettingId.ConditionBuffer);
+        deleteSetting(farm.name, SettingId.ConditionRepeating);
     }
 }

@@ -131,5 +131,6 @@ export type FarmSettings = {
     url: string;
     status: FarmStatusEnum;
     schedule: number;
+    windowsShowing: boolean;
     conditions: ConditionUnion;
 };

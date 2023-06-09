@@ -26,7 +26,7 @@ export enum SettingId {
     ConditionStarted = 'farm-condition-started',
     ConditionFulfilled = 'farm-condition-fulfilled',
     ConditionAmount = 'farm-condition-amount',
-    ConditionAmountToFulfill = 'farm-condition-amountToFulfill',
+    ConditionAmountWanted = 'farm-condition-amountToFulfill',
     ConditionBuffer = 'farm-condition-buffer',
     ConditionRepeating = 'farm-condition-repeating',
     ConditionFrom = 'farm-condition-from',
@@ -109,9 +109,9 @@ export type SettingUnion =
 export type ValueOfSetting<T extends SettingUnion> = T['value'];
 
 export enum SettingOwnerType {
-    Application = 'application',
-    FarmTwitch = 'farm-twitch',
-    FarmYoutube = 'farm-youtube'
+    Application = 'APPLICATION',
+    FarmTwitch = 'FARM_TWITCH',
+    FarmYoutube = 'FARM_YOUTUBE'
 }
 
 export type SettingSchema = {

@@ -8,7 +8,7 @@ import {
     handleRendererProcessGone,
     handleSecondInstanceOpened
 } from './electron/appEvents';
-import './electron/ipc';
+// import './electron/ipc';
 import { initAuth } from './util/auth';
 import './util/internet';
 import { initPuppeteerConnection } from './util/puppeteer';

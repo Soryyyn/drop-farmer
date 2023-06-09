@@ -1,7 +1,6 @@
 import {
     SettingId,
     SettingOwnerType,
-    SettingSchema,
     SettingStoreSchema,
     SettingType,
     SettingUnion,
@@ -25,7 +24,7 @@ const autoLauncher = new AutoLaunch({ name: 'Drop Farmer' });
 const defaultSettings: SettingsObject = {
     [generateUUID()]: {
         type: SettingOwnerType.Application,
-        name: 'application',
+        name: 'Application',
         settings: [
             applyDefaultToValue(getDefinedSetting(SettingId.LaunchOnStartup)!),
             applyDefaultToValue(
@@ -306,7 +305,7 @@ export function addSettingToOwner<T extends SettingUnion>(
 ) {
     const ownerSettings = getSettingsOfOwnerByName(name);
 
-    if (ownerSettings) {
+    if (ownerSettings && !getSetting(name, id)) {
         let settingToAdd = applyDefaultToValue(getDefinedSetting<T>(id));
 
         /**
@@ -445,4 +444,11 @@ function toggleAutoLaunch(): void {
             autoLauncher.disable();
         }
     });
+}
+
+/**
+ * Get all owners which have a specific type.
+ */
+export function getOwnersByType(type: SettingOwnerType) {
+    return Object.values(getSettings()).filter((owner) => owner.type === type);
 }

@@ -30,7 +30,7 @@ import { waitForTimeout } from '@main/util/puppeteer';
 import CrontabManager from 'cron-job-manager';
 import { BrowserWindow } from 'electron';
 import makeCancellablePromise from 'make-cancellable-promise';
-import { updateFarmStatistic } from 'src/main/store/statistics';
+// import { updateFarmStatistic } from 'src/main/store/statistics';
 import { Timer } from '../util/timer';
 
 export default abstract class FarmTemplate {
