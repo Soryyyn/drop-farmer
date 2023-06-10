@@ -96,13 +96,6 @@ export function getSettings(): SettingsObject {
 }
 
 /**
- * Get all the settings of a specific owner by UUID.
- */
-export function getSettingsOfOwnerByUUID(uuid: string) {
-    return getSettings()[uuid];
-}
-
-/**
  * Get the settings by name.
  */
 export function getSettingsOfOwnerByName(name: string) {
@@ -230,8 +223,8 @@ export function getSetting<T extends SettingUnion>(
 /**
  * Get the index of a setting in an owner.
  */
-function getSettingIndex(uuid: string, id: SettingId) {
-    return getSettingsOfOwnerByUUID(uuid).settings.findIndex(
+function getSettingIndex(name: string, id: SettingId) {
+    return getSettingsOfOwnerByName(name)?.settings.findIndex(
         (setting) => setting.id === id
     );
 }
@@ -451,4 +444,15 @@ function toggleAutoLaunch(): void {
  */
 export function getOwnersByType(type: SettingOwnerType) {
     return Object.values(getSettings()).filter((owner) => owner.type === type);
+}
+
+/**
+ * Set the default value for all settings.
+ */
+export function resetSettingsToDefault() {
+    const settings = getSettings();
+
+    Object.values(settings).forEach((object) =>
+        object.settings.forEach((setting) => applyDefaultToValue(setting))
+    );
 }

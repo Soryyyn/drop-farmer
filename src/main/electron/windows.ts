@@ -64,7 +64,7 @@ export function createMainWindow(): void {
      */
     mainWindow.on('ready-to-show', () => {
         const shouldBeShownBySetting = getSettingValue<ToggleSetting>(
-            'application',
+            'Application',
             SettingId.ShowMainWindowOnLaunch
         );
 

@@ -1,67 +1,60 @@
 import {
-    MergedSettings,
-    PossibleSetting,
-    PossibleSettingId,
-    SettingValue,
-    SettingWithValue
+    SettingId,
+    SettingUnion,
+    SettingsObject
 } from '@df-types/settings.types';
 import { useHandleOneWay } from '@renderer/hooks/useHandleOneWay';
 import { useSendAndWait } from '@renderer/hooks/useSendAndWait';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
-import React, { createContext, useCallback, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 
-export const SettingsContext = createContext<{
-    settings: MergedSettings | undefined;
-    setNewSettings: (newSettings: MergedSettings) => void;
-    resetToDefaultSettings: () => void;
-    getSetting: (
-        settingOwner: string,
-        id: PossibleSettingId
-    ) => SettingWithValue | undefined;
-    updateSetting: (
-        settingOwner: string,
-        id: PossibleSettingId,
-        value: SettingValue
-    ) => void;
-}>({
-    settings: undefined,
-    setNewSettings() {},
-    resetToDefaultSettings() {},
-    getSetting() {
-        return undefined;
-    },
-    updateSetting: () => {}
-});
+type SettingsContextProps = {
+    settings: SettingsObject;
+    updateSettings: (newSettings: SettingsObject) => void;
+    reset: () => void;
+    getSetting: (owner: string, id: SettingId) => SettingUnion;
+};
+
+const SettingsContext = createContext<SettingsContextProps | undefined>(
+    undefined
+);
 
 export function SettingsContextProvider({ children }: DefaultContextProps) {
-    const [settings, setSettings] = useState<MergedSettings>();
-    const [oldSettings, setOldSettings] = useState<MergedSettings>();
+    const [settings, setSettings] = useState<SettingsObject | undefined>();
+    const [oldSettings, setOldSettings] = useState<
+        SettingsObject | undefined
+    >();
 
+    /**
+     * Hydrate the settings on renderer init.
+     */
     useSendAndWait({
         channel: window.api.channels.getSettings,
-        callback: (err, settings: MergedSettings) => {
+        callback(err, response: SettingsObject) {
             if (!err) {
-                setSettings(settings);
-                setOldSettings(cloneDeep(settings));
+                setSettings(response);
+                setOldSettings(cloneDeep(response));
             }
         }
     });
 
+    /**
+     * React to changes from the main process.
+     */
     useHandleOneWay({
         channel: window.api.channels.settingsChanged,
-        callback: (event, changedSettings: MergedSettings) => {
-            setSettings(changedSettings);
-            setOldSettings(cloneDeep(changedSettings));
+        callback(_, response: SettingsObject) {
+            setSettings(response);
+            setOldSettings(cloneDeep(response));
         }
     });
 
     /**
-     * Function to save new settings in the main process.
-     * Only if new changes actually happened.
+     * Update the whole settings if they have changed.
      */
-    const setNewSettings = useCallback(
-        (newSettings: MergedSettings) => {
+    const updateSettings = useCallback(
+        (newSettings: SettingsObject) => {
             if (!isEqual(newSettings, oldSettings)) {
                 window.api.sendOneWay(
                     window.api.channels.saveNewSettings,
@@ -73,55 +66,41 @@ export function SettingsContextProvider({ children }: DefaultContextProps) {
     );
 
     /**
-     * Reset the settings to the default values.
+     * Reset the settings to the default.
      */
-    const resetToDefaultSettings = useCallback(() => {
-        window.api.sendOneWay(
-            window.api.channels.resetSettingsToDefault,
-            settings
-        );
-    }, [settings]);
-
-    /**
-     * Get a specific setting or the settings of the owner, ex. application.
-     */
-    const getSetting = useCallback(
-        (settingOwner: string, id: PossibleSettingId) => {
-            return settings?.[settingOwner].find(
-                (setting) => setting.id === id
-            )!;
-        },
-        [settings]
+    const reset = useCallback(
+        () => window.api.sendOneWay(window.api.channels.resetSettingsToDefault),
+        []
     );
 
     /**
-     * Update a single setting.
+     * Get a setting from a owner.
      */
-    const updateSetting = useCallback(
-        (settingOwner: string, id: PossibleSettingId, value: SettingValue) => {
-            const copiedSettings = { ...settings };
-
-            const indexToSetNewValue = copiedSettings[settingOwner].findIndex(
-                (setting) => setting.id === id
-            );
-
-            copiedSettings[settingOwner][indexToSetNewValue].value = value;
-            setNewSettings(copiedSettings);
-        },
-        [setNewSettings, settings]
+    const getSetting = useCallback(
+        (owner: string, id: SettingId) =>
+            Object.values(settings!)
+                .find((object) => object.name === owner)!
+                .settings.find((setting) => setting.id === id)!,
+        [settings]
     );
 
     return (
         <SettingsContext.Provider
-            value={{
-                settings,
-                setNewSettings,
-                resetToDefaultSettings,
-                getSetting,
-                updateSetting
-            }}
+            value={{ settings: settings!, updateSettings, reset, getSetting }}
         >
             {children}
         </SettingsContext.Provider>
     );
+}
+
+export function useSettings() {
+    const context = useContext(SettingsContext);
+
+    if (context === undefined) {
+        throw new Error(
+            'useSettings needs to be inside a SettingsContextProvider'
+        );
+    }
+
+    return context;
 }

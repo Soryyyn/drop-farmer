@@ -9,6 +9,7 @@ import {
     handleSecondInstanceOpened
 } from './electron/appEvents';
 // import './electron/ipc';
+import '@main/electron/newipc';
 import { initAuth } from './util/auth';
 import './util/internet';
 import { initPuppeteerConnection } from './util/puppeteer';

@@ -4,7 +4,6 @@ import { FarmsContextProvider } from '@renderer/contexts/FarmsContext';
 import { ModalContextProvider } from '@renderer/contexts/ModalContext';
 import { SettingsContextProvider } from '@renderer/contexts/SettingsContext';
 import { UpdateContextProvider } from '@renderer/contexts/UpdateContext';
-import React from 'react';
 import Router from './Router';
 import './global.css';
 
