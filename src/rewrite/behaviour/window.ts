@@ -1,9 +1,9 @@
 import { BrowserWindow } from 'electron';
 import isEqual from 'lodash.isequal';
+import { MAIN_WINDOW_INDEX } from '../util/constants';
 import { isRunningOnProd } from '../util/environment';
 import { getWindowIcon } from '../util/icons';
 import { LogLevel, log } from '../util/logging';
-// import { LogLevel, log } from './logging';
 
 /**
  * Needed for forge to build the window with webpack.
@@ -46,15 +46,15 @@ export function createMainWindow(visible: boolean = false) {
      */
     window.on('ready-to-show', () => {
         /**
-         * Set the main window at index 0.
+         * Set the main window at index MAIN_WINDOW_INDEX.
          */
-        windows[0] = window;
+        windows[MAIN_WINDOW_INDEX] = window;
 
         if (visible) {
             showWindow(window);
         }
 
-        log(LogLevel.Info, `Created main window at index 0`);
+        log(LogLevel.Info, `Created main window at index ${MAIN_WINDOW_INDEX}`);
     });
 }
 
@@ -120,7 +120,9 @@ export function createNormalWindow(
 /**
  * Get the `BrowserWindow` object by either a window or the index.
  */
-export function getWindow(windowOrIndex: BrowserWindow | number = 0) {
+export function getWindow(
+    windowOrIndex: BrowserWindow | number = MAIN_WINDOW_INDEX
+) {
     if (typeof windowOrIndex === 'number') return windows[windowOrIndex];
     return windows.find((window) => isEqual(window, windowOrIndex));
 }
@@ -129,7 +131,9 @@ export function getWindowIndex(window: BrowserWindow) {
     return windows.findIndex((createdWindow) => createdWindow === window);
 }
 
-export function destroyWindow(windowOrIndex: BrowserWindow | number = 0) {
+export function destroyWindow(
+    windowOrIndex: BrowserWindow | number = MAIN_WINDOW_INDEX
+) {
     const window = getWindow(windowOrIndex);
 
     if (canWindowBeDestroyed(window)) {

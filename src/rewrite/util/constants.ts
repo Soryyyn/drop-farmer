@@ -4,3 +4,5 @@ export const FileNames = {
     StatisticsStoreFileName: 'statistics'
 } as const;
 export type FileName = (typeof FileNames)[keyof typeof FileNames];
+
+export const MAIN_WINDOW_INDEX = 0;

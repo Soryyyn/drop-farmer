@@ -1,4 +1,5 @@
 import { app, Menu, Tray } from 'electron';
+import { MAIN_WINDOW_INDEX } from '../util/constants';
 import { getTrayicon } from '../util/icons';
 import { log, LogLevel } from '../util/logging';
 import { getWindow, showWindow } from './window';
@@ -14,16 +15,10 @@ let tray: Tray;
 export function createTray(): void {
     tray = new Tray(getTrayicon());
 
-    /**
-     * Hover tooltip.
-     */
     tray.setToolTip(
         `Drop Farmer ${process.env.NODE_ENV === 'production' ? '' : '(DEV)'}`
     );
 
-    /**
-     * Set the context menu (right click menu).
-     */
     tray.setContextMenu(
         Menu.buildFromTemplate([
             {
@@ -38,7 +33,7 @@ export function createTray(): void {
                 label: 'Show Window',
                 type: 'normal',
                 click: () => {
-                    showWindow(getWindow(0));
+                    showWindow(getWindow(MAIN_WINDOW_INDEX));
                 }
             },
             {
@@ -58,7 +53,7 @@ export function createTray(): void {
      * On double click, show the main window.
      */
     tray.on('double-click', () => {
-        showWindow(getWindow(0));
+        showWindow(getWindow(MAIN_WINDOW_INDEX));
     });
 
     log(LogLevel.Info, 'Created system tray');

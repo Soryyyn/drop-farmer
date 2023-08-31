@@ -2,6 +2,7 @@ import { app } from 'electron';
 import { join } from 'path';
 import { createLogger, format, transports } from 'winston';
 import { FileNames } from './constants';
+import { isRunningOnProd } from './environment';
 
 export enum LogLevel {
     Info = 'info',
@@ -10,10 +11,9 @@ export enum LogLevel {
     Warn = 'warn'
 }
 
-const filePath =
-    process.env.NODE_ENV === 'production'
-        ? join(app.getPath('userData'), FileNames.LogFileName)
-        : join(__dirname, '../../', FileNames.LogFileName);
+const filePath = isRunningOnProd()
+    ? join(app.getPath('userData'), FileNames.LogFileName)
+    : join(__dirname, '../../', FileNames.LogFileName);
 
 const logger = createLogger({
     transports: [

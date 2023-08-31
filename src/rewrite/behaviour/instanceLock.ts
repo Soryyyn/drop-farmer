@@ -2,17 +2,9 @@ import { app } from 'electron';
 import { LogLevel, log } from '../util/logging';
 
 /**
- * Request a single instance lock for the app.
- * Return if the app is holding the current lock.
+ * Check if the app is the primary instance (the only instance which should be running)
  */
-export function requestSingleInstanceLock(): boolean {
+export function isPrimaryInstance() {
     log(LogLevel.Info, 'Requested single instance lock');
     return app.requestSingleInstanceLock();
-}
-
-/**
- * If the app has its instance locked.
- */
-export function hasInstanceLocked(): boolean {
-    return app.hasSingleInstanceLock();
 }
