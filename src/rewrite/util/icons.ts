@@ -1,10 +1,11 @@
-import { nativeImage, NativeImage } from 'electron';
-import { resolve } from 'path';
+import { nativeImage } from 'electron';
 import {
+    isPlatformLinux,
     isPlatformMacOS,
     isPlatformWindows,
     isRunningOnProd
 } from './environment';
+import { ResourcesPath } from './files';
 
 /**
  * Icon names.
@@ -13,40 +14,34 @@ const defaultIcon: string = 'icon-normal';
 const devIcon: string = 'icon-dev';
 const dawinTemplateIcon: string = 'icon-macosTemplate';
 
-/**
- * Get the icon name depending on the environment.
- */
-function getEnvironmentDependingIcon(): string {
+function getEnvironmentDependingIcon() {
     return isRunningOnProd() ? defaultIcon : devIcon;
 }
 
 /**
  * Get the icon needed for the window.
  */
-export function getWindowIcon(): string {
-    return resolve(
-        __dirname,
-        `resources/${getEnvironmentDependingIcon()}.${
-            process.platform !== 'linux' ? 'ico' : 'png'
-        }`
-    );
+export function getWindowIcon() {
+    return `${ResourcesPath}/${getEnvironmentDependingIcon()}.${
+        isPlatformLinux() ? 'png' : 'ico'
+    }`;
 }
 
 /**
  * Get the approriate image for the tray depending on os.
  */
-export function getTrayicon(): NativeImage {
+export function getTrayicon() {
     if (isPlatformWindows()) {
         return nativeImage.createFromPath(
-            resolve(__dirname, `resources/${getEnvironmentDependingIcon()}.ico`)
+            `${ResourcesPath}/${getEnvironmentDependingIcon()}.ico`
         );
     } else if (isPlatformMacOS()) {
         return nativeImage.createFromPath(
-            resolve(__dirname, `resources/${dawinTemplateIcon}.png`)
+            `${ResourcesPath}/${dawinTemplateIcon}.png`
         );
     } else {
         return nativeImage.createFromPath(
-            resolve(__dirname, `resources/${getEnvironmentDependingIcon()}.png`)
+            `${ResourcesPath}/${getEnvironmentDependingIcon()}.png`
         );
     }
 }

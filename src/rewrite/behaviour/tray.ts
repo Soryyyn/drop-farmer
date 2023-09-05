@@ -4,14 +4,8 @@ import { getTrayicon } from '../util/icons';
 import { log, LogLevel } from '../util/logging';
 import { getWindow, showWindow } from './window';
 
-/**
- * The tray object reference.
- */
 let tray: Tray;
 
-/**
- * Create the tray on app start.
- */
 export function createTray(): void {
     tray = new Tray(getTrayicon());
 
@@ -59,9 +53,6 @@ export function createTray(): void {
     log(LogLevel.Info, 'Created system tray');
 }
 
-/**
- * Destroy the tray.
- */
 export function destroyTray(): void {
     tray.destroy();
     log(LogLevel.Info, 'Destroyed tray');
