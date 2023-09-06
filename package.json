@@ -52,7 +52,7 @@
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.7.3",
         "dotenv-webpack": "^8.0.1",
-        "electron": "^24.3.0",
+        "electron": "^24.7.1",
         "eslint-formatter-mo": "^1.2.0",
         "eslint-plugin-react-hooks": "^4.6.0",
         "fork-ts-checker-webpack-plugin": "^8.0.0",
