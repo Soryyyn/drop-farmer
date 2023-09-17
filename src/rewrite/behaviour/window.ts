@@ -1,8 +1,12 @@
 import { BrowserWindow } from 'electron';
 import isEqual from 'lodash.isequal';
-import { MAIN_WINDOW_INDEX } from '../util/constants';
+import {
+    DEFAULT_MAIN_WINDOW_HEIGHT,
+    DEFAULT_MAIN_WINDOW_WIDTH,
+    MAIN_WINDOW_INDEX
+} from '../util/constants';
 import { isRunningOnProd } from '../util/environment';
-import { getWindowIcon } from '../util/icons';
+import { getWindowIcon } from '../util/getWindowIcon';
 import { LogLevel, log } from '../util/logging';
 
 /**
@@ -23,8 +27,8 @@ export function createMainWindow(visible: boolean = false) {
         center: true,
         show: false, // NOTE: inital show state, will later get shown depending on `visible`.
         title: 'Drop Farmer',
-        height: 800,
-        width: 1200,
+        width: DEFAULT_MAIN_WINDOW_WIDTH,
+        height: DEFAULT_MAIN_WINDOW_HEIGHT,
         autoHideMenuBar: true,
         titleBarStyle: 'hidden',
         titleBarOverlay: {

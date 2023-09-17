@@ -1,11 +1,11 @@
 import { nativeImage } from 'electron';
+import { RESOURCES_PATH } from './constants';
 import {
     isPlatformLinux,
     isPlatformMacOS,
     isPlatformWindows,
     isRunningOnProd
 } from './environment';
-import { ResourcesPath } from './files';
 
 /**
  * Icon names.
@@ -22,7 +22,7 @@ function getEnvironmentDependingIcon() {
  * Get the icon needed for the window.
  */
 export function getWindowIcon() {
-    return `${ResourcesPath}/${getEnvironmentDependingIcon()}.${
+    return `${RESOURCES_PATH}/${getEnvironmentDependingIcon()}.${
         isPlatformLinux() ? 'png' : 'ico'
     }`;
 }
@@ -33,15 +33,15 @@ export function getWindowIcon() {
 export function getTrayicon() {
     if (isPlatformWindows()) {
         return nativeImage.createFromPath(
-            `${ResourcesPath}/${getEnvironmentDependingIcon()}.ico`
+            `${RESOURCES_PATH}/${getEnvironmentDependingIcon()}.ico`
         );
     } else if (isPlatformMacOS()) {
         return nativeImage.createFromPath(
-            `${ResourcesPath}/${dawinTemplateIcon}.png`
+            `${RESOURCES_PATH}/${dawinTemplateIcon}.png`
         );
     } else {
         return nativeImage.createFromPath(
-            `${ResourcesPath}/${getEnvironmentDependingIcon()}.png`
+            `${RESOURCES_PATH}/${getEnvironmentDependingIcon()}.png`
         );
     }
 }
