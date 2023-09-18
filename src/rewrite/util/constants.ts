@@ -11,3 +11,5 @@ export const LOG_TIMESTAMP = 'DD-MM-YYYY HH:mm:ss';
 export const TASK_QUEUE_CONCURRENCY = 1;
 export const TASK_QUEUE_LOW_PRIO = 1;
 export const TASK_QUEUE_HIGH_PRIO = 5;
+export const INTERNET_CONNECTION_SCHEDULE = 2;
+export const DEFAULT_TOAST_DURATION = 4000;

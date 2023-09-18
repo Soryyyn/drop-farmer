@@ -1,10 +1,16 @@
 import { handleAppBeforeQuit } from '@main/electron/appEvents';
 import { default as ESH } from '@paymoapp/electron-shutdown-handler';
 import { app, autoUpdater } from 'electron';
-import { MAIN_WINDOW_INDEX, USER_MODEL_ID } from '../util/constants';
+import {
+    INTERNET_CONNECTION_SCHEDULE,
+    MAIN_WINDOW_INDEX,
+    USER_MODEL_ID
+} from '../util/constants';
+import { CronKey, createCronSchedule } from '../util/cron';
 import { isRunningOnProd } from '../util/environment';
 import { LogLevel, log } from '../util/logging';
 import { pauseQueue, resumeQueue } from '../util/taskQueue';
+import { checkCurrentNetworkConntection } from './network';
 import { getMainWindowNativeHandle, getWindow, showWindow } from './window';
 
 export enum LaunchArg {
@@ -145,4 +151,13 @@ function handleGracefulShutdown() {
 /**
  * Initializes a couple of things which need to be done before the app is ready.
  */
-export function prepareBeforeReady() {}
+export function prepareBeforeReady() {
+    createCronSchedule(
+        CronKey.InternetConnection,
+        `*/${INTERNET_CONNECTION_SCHEDULE} * * * *`,
+        true,
+        async () => {
+            await checkCurrentNetworkConntection();
+        }
+    );
+}
