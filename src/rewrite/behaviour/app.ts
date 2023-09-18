@@ -45,7 +45,7 @@ export function isPrimaryInstance() {
 /**
  * Relaunch the app with specified args.
  */
-function relaunch(args: LaunchArg[] = []) {
+export function relaunch(args: LaunchArg[] = []) {
     log(LogLevel.Info, 'Relaunching app');
 
     setAppQuitting();
@@ -141,3 +141,8 @@ function handleGracefulShutdown() {
 
     log(LogLevel.Info, 'Setup graceful shutdown');
 }
+
+/**
+ * Initializes a couple of things which need to be done before the app is ready.
+ */
+export function prepareBeforeReady() {}
