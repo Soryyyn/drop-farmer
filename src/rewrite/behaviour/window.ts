@@ -6,7 +6,7 @@ import {
     MAIN_WINDOW_INDEX
 } from '../util/constants';
 import { isRunningOnProd } from '../util/environment';
-import { getWindowIcon } from '../util/getWindowIcon';
+import { getWindowIcon } from '../util/icons';
 import { LogLevel, log } from '../util/logging';
 
 /**
