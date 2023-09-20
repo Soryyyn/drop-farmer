@@ -12,8 +12,8 @@ const taskQueue = new PQueue({
  * By default the task has a low priority.
  */
 export function addToQueue(
-    priority: number = TASK_QUEUE_LOW_PRIO,
-    fn: (...args: any[]) => void | Promise<void>
+    fn: (...args: any[]) => void | Promise<void>,
+    priority: number = TASK_QUEUE_LOW_PRIO
 ) {
     taskQueue.add(fn, {
         priority

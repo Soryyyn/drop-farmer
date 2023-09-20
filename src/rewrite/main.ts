@@ -1,12 +1,15 @@
 import { app, powerMonitor } from 'electron';
 import {
+    LaunchArg,
     handleAppLaunch,
     handleBeforeQuit,
     handleQuit,
     handleSecondInstance,
     handleSleep,
     handleWakeUp,
-    prepareBeforeReady
+    prepareBeforeReady,
+    relaunch,
+    withLaunchArg
 } from './behaviour/app';
 
 /**
@@ -14,6 +17,14 @@ import {
  */
 if (require('electron-squirrel-startup')) {
     app.quit();
+}
+
+/**
+ * If it's the first squirrel run, updating won't be possible.
+ * That's why the app will get relaunched.
+ */
+if (withLaunchArg(LaunchArg.SquirrelFirstRun)) {
+    relaunch();
 }
 
 prepareBeforeReady();

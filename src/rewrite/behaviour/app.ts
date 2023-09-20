@@ -2,15 +2,18 @@ import { handleAppBeforeQuit } from '@main/electron/appEvents';
 import { default as ESH } from '@paymoapp/electron-shutdown-handler';
 import { app, autoUpdater } from 'electron';
 import {
+    DEFAULT_UPDATE_SCHEDULE,
     INTERNET_CONNECTION_SCHEDULE,
     MAIN_WINDOW_INDEX,
+    TASK_QUEUE_HIGH_PRIO,
     USER_MODEL_ID
 } from '../util/constants';
 import { CronKey, createCronSchedule } from '../util/cron';
 import { isRunningOnProd } from '../util/environment';
 import { LogLevel, log } from '../util/logging';
-import { pauseQueue, resumeQueue } from '../util/taskQueue';
+import { addToQueue, pauseQueue, resumeQueue } from '../util/taskQueue';
 import { checkCurrentNetworkConntection } from './network';
+import { updateCheck } from './update';
 import { getMainWindowNativeHandle, getWindow, showWindow } from './window';
 
 export enum LaunchArg {
@@ -156,8 +159,16 @@ export function prepareBeforeReady() {
         CronKey.InternetConnection,
         `*/${INTERNET_CONNECTION_SCHEDULE} * * * *`,
         true,
-        async () => {
-            await checkCurrentNetworkConntection();
-        }
+        () =>
+            addToQueue(async () => {
+                await checkCurrentNetworkConntection();
+            }, TASK_QUEUE_HIGH_PRIO)
+    );
+
+    createCronSchedule(
+        CronKey.CheckForUpdate,
+        `*/${DEFAULT_UPDATE_SCHEDULE} * * * *`, // TODO: replace with setting
+        true, // TODO: replace with setting
+        () => addToQueue(updateCheck, TASK_QUEUE_HIGH_PRIO)
     );
 }

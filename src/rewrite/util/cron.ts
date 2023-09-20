@@ -2,7 +2,8 @@ import CrontabManager from 'cron-job-manager';
 import { LogLevel, log } from './logging';
 
 export enum CronKey {
-    InternetConnection = 'internet-connection'
+    InternetConnection = 'internet-connection',
+    CheckForUpdate = 'check-for-update'
 }
 
 /**

@@ -2,7 +2,10 @@ import { IpcMainInvokeEvent, ipcMain } from 'electron';
 import { LogLevel, log } from '../util/logging';
 import { getWindow } from './window';
 
-export enum IPCChannel {}
+export enum IPCChannel {
+    UpdateStatus = 'update-status',
+    CheckForUpdate = 'check-for-update'
+}
 
 /**
  * When the renderer process sends an IPC signal to the main process, the func
