@@ -18,6 +18,11 @@ export function addToQueue(
     taskQueue.add(fn, {
         priority
     });
+
+    log(
+        LogLevel.Info,
+        `Added new task to queue with priority ${priority} (pending: ${taskQueue.pending}, size: ${taskQueue.size})`
+    );
 }
 
 export function clearQueue() {
@@ -41,13 +46,6 @@ export function resumeQueue() {
         `Resumed queue (pending: ${taskQueue.pending}, size: ${taskQueue.size})`
     );
 }
-
-taskQueue.on('add', () =>
-    log(
-        LogLevel.Info,
-        `Added new task to queue (pending: ${taskQueue.pending}, size: ${taskQueue.size})`
-    )
-);
 
 taskQueue.on('idle', () =>
     log(
