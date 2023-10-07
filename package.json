@@ -59,7 +59,7 @@
         "husky": "^8.0.3",
         "lint-staged": "^13.2.2",
         "node-loader": "^2.0.0",
-        "postcss": "^8.4.23",
+        "postcss": "^8.4.31",
         "postcss-loader": "^7.3.0",
         "speed-measure-webpack-plugin": "^1.5.0",
         "style-loader": "^3.3.2",
