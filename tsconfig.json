@@ -16,6 +16,9 @@
         "resolveJsonModule": true,
         "jsx": "react",
         "downlevelIteration": true,
+        "noUncheckedIndexedAccess": true,
+        "isolatedModules": true,
+        "moduleDetection": "force",
         "paths": {
             "*": ["node_modules/*"],
             "@df-types/*": ["src/types/*"],
