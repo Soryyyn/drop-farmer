@@ -4,7 +4,8 @@ import { getWindow } from './window';
 
 export enum IPCChannel {
     UpdateStatus = 'update-status',
-    CheckForUpdate = 'check-for-update'
+    CheckForUpdate = 'check-for-update',
+    SendToastToRenderer = 'send-toast-to-renderer'
 }
 
 /**
